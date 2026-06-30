@@ -72,6 +72,9 @@ pnpm-lock.yaml
 *.key
 *.cert
 
+# Markdown documentation files (kept locally, not in git)
+*.md
+
 # Secrets
 secrets/
 *.secret
