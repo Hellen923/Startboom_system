@@ -1,0 +1,7 @@
+category,subcategory,name,sku,price,currency,unit,stock_quantity,low_stock_threshold,description
+Soap,Liquid Soap,Dettol 500ml,SKU-001,4500,UGX,bottle,100,10,Dettol liquid hand wash 500ml
+Soap,Bar Soap,Imperial Leather,SKU-002,3000,UGX,piece,150,15,Imperial Leather bar soap
+Soap,Washing Powder,Omo 1kg,SKU-003,12000,UGX,packet,80,20,Omo washing powder 1kg packet
+Beverages,,Coca Cola 300ml,SKU-004,1500,UGX,bottle,200,50,Coca Cola 300ml glass bottle
+Electronics,Mobile Phones,Samsung A14,SKU-005,450000,UGX,piece,25,5,Samsung Galaxy A14 smartphone
+Electronics,Accessories,USB Cable Type-C,SKU-006,8000,UGX,piece,100,20,Type-C USB charging cable
