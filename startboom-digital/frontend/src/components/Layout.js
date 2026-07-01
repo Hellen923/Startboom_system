@@ -29,7 +29,6 @@ import ProfileModal from './ProfileModal';
 import LogoutModal from './LogoutModal';
 import QuickActionModal from './QuickActionModal';
 import Taskbar from './Taskbar';
-import logo from '../assets/logo.png';
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -181,45 +180,45 @@ const agentNavSections = [
       <Link
         to={item.path}
         onClick={onClick}
-        className={`flex items-center space-x-3 px-3 py-3 rounded-2xl text-sm font-medium transition-all group ${isActive
-            ? 'bg-secondary-300/95 text-white shadow-lg shadow-secondary-950/20'
-            : 'text-white/95 hover:bg-white/10'
-          }`}
+        className={`sidebar-item flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-medium group ${isActive ? 'active' : ''}`}
       >
-        <Icon className="w-5 h-5 shrink-0 text-white" strokeWidth={2} />
+        <Icon className={`sidebar-item-icon w-5 h-5 shrink-0 transition-all ${isActive ? '' : 'text-white/80 group-hover:text-white'}`} strokeWidth={2.5} />
         <div className="flex-1 min-w-0">
-          <div className="font-medium text-white">{item.label}</div>
+          <div className="font-semibold">{item.label}</div>
         </div>
+        {isActive && (
+          <div className="w-2 h-2 rounded-full bg-white animate-pulse sidebar-active-dot" />
+        )}
       </Link>
     );
   };
 
   const SidebarHeader = () => (
-    <div className="flex items-center justify-between px-6 py-5 border-b border-white/15">
+    <div className="flex items-center justify-between px-6 py-6 border-b sidebar-divider backdrop-blur-sm">
       <div className="flex items-center space-x-4 min-w-0">
-        <div className="w-14 h-14 rounded-2xl bg-secondary-300/45 flex items-center justify-center shadow-lg shadow-secondary-950/15 shrink-0">
+        <div className="w-16 h-16 rounded-2xl bg-white/15 flex items-center justify-center shadow-lg shrink-0 border border-white/25">
               <img
             src={user?.tenant?.logo || user?.tenant?.settings?.logo || '/Swavelink.png'}
             alt="Logo"
-            className="w-8 h-8 object-contain"
+            className="w-9 h-9 object-contain"
           />
         </div>
         <div className="min-w-0">
           <h2 className="text-xl font-bold text-white leading-tight truncate">{roleTitle}</h2>
-          <p className="text-xs font-medium tracking-[0.18em] uppercase text-white/85 mt-1">{roleSubtitle}</p>
+          <p className="text-xs font-semibold tracking-wider uppercase text-white/75 mt-1">{roleSubtitle}</p>
         </div>
       </div>
     </div>
   );
 
   const SidebarNav = ({ onItemClick }) => (
-    <nav className="flex-1 px-3 py-6 overflow-y-auto">
+    <nav className="flex-1 px-4 py-6 overflow-y-auto scrollbar-thin">
       {navSections.map((section, index) => (
-        <div key={section.title} className={index > 0 ? 'mt-8 border-t border-white/10 pt-6' : ''}>
-          <p className="px-3 pb-3 text-xs font-bold uppercase tracking-wide text-white">
+        <div key={section.title} className={index > 0 ? 'mt-8 border-t sidebar-divider pt-6' : ''}>
+          <p className="px-4 pb-4 sidebar-section-label">
             {section.title}
           </p>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {section.items.map((item) => {
               const isActive = location.pathname === item.path || (
                 item.path !== '/admin' &&
@@ -243,9 +242,9 @@ const agentNavSections = [
   );
 
   const SidebarFooter = ({ mobile = false }) => (
-    <div className="border-t border-white/15 p-4">
+    <div className="sidebar-footer p-5 backdrop-blur-sm">
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary-300 text-white font-bold shadow-lg shadow-secondary-950/15">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white font-bold shadow-lg border border-white/25">
           {userInitial}
         </div>
         <div className="min-w-0 flex-1">
@@ -258,7 +257,7 @@ const agentNavSections = [
             if (mobile) setSidebarOpen(false);
             handleLogout();
           }}
-          className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 text-white transition hover:bg-white/10"
+          className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/25 text-white transition hover:bg-white/15"
           title="Sign out"
         >
           <LogOut className="w-5 h-5" />
@@ -268,28 +267,28 @@ const agentNavSections = [
   );
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: 'var(--workspace-bg)' }}>
-      {/* Desktop Sidebar - Always Visible */}
+    <div className="flex h-screen overflow-hidden bg-[var(--color-bg-page)]">
+      {/* Desktop Sidebar */}
       <div className="hidden lg:flex lg:flex-shrink-0">
-        <div className="w-72 flex flex-col shadow-xl border-r border-white/15 text-white bg-gradient-to-b from-secondary-500 via-secondary-600 to-secondary-800">
+        <div className="sidebar-shell w-72 flex flex-col shadow-2xl text-white">
           <SidebarHeader />
           <SidebarNav onItemClick={() => {}} />
           <SidebarFooter />
         </div>
       </div>
 
-      {/* Mobile Sidebar - Shows when toggled */}
+      {/* Mobile Sidebar */}
       {sidebarOpen && (
         <div className="lg:hidden">
           <div className="fixed inset-0 flex z-40">
             <div
-              className="fixed inset-0 bg-gray-600 bg-opacity-75"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
               onClick={() => setSidebarOpen(false)}
             />
-              <div className="relative flex-1 flex flex-col max-w-xs w-full shadow-xl text-white bg-gradient-to-b from-secondary-500 via-secondary-600 to-secondary-800">
+            <div className="sidebar-shell relative flex-1 flex flex-col max-w-xs w-full shadow-2xl text-white">
               <div className="absolute top-0 right-0 -mr-12 pt-2">
                 <button
-                  className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                  className="ml-1 flex items-center justify-center h-10 w-10 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all focus:outline-none"
                   onClick={() => setSidebarOpen(false)}
                 >
                   <X className="h-6 w-6 text-white" />
@@ -305,7 +304,7 @@ const agentNavSections = [
 
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-auto" style={{ backgroundColor: 'var(--workspace-bg)' }}>
+        <main className="flex-1 overflow-auto bg-[var(--color-bg-page)]">
           <Taskbar
             onOpenNotifications={() => setShowNotifications(true)}
             onOpenQuickActions={() => setShowQuickActions(true)}
@@ -313,12 +312,14 @@ const agentNavSections = [
             onMenuClick={() => setSidebarOpen(true)}
             unreadNotifications={unreadNotifications}
           />
-          <div className="p-3 sm:p-4 md:p-6 lg:p-8 space-y-4">
-            <div className="space-y-2">
-              <h1 className="text-2xl font-semibold text-gray-900">{activeNavItem.label}</h1>
-              <p className="text-sm text-gray-600 max-w-3xl">{activeNavItem.description || 'Welcome to Swavelink — your central workspace.'}</p>
+          <div className="p-3 sm:p-4 md:p-6 lg:p-8">
+            <div className="dashboard-page">
+              <div className="space-y-1">
+                <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{activeNavItem.label}</h1>
+                <p className="text-sm text-[var(--color-text-muted)] max-w-3xl">{activeNavItem.description || 'Welcome to Swavelink — your central workspace.'}</p>
+              </div>
+              {children}
             </div>
-            {children}
           </div>
         </main>
       </div>
