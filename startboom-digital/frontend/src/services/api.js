@@ -61,6 +61,8 @@ export const usersAPI = {
   getProfile: () => api.get('/auth/me'),
   updateProfile: (id, data) => api.put(`/users/${id}`, data),
   setTargets: (id, data) => api.put(`/users/${id}/targets`, data),
+  setCommission: (id, data) => api.put(`/users/${id}/commission`, data),
+  getLeaderboard: () => api.get('/users/leaderboard'),
 };
 
 
@@ -274,6 +276,19 @@ export const issuesAPI = {
   update: (id, data) => api.patch(`/issues/${id}`, data),
   updateStatus: (id, data) => api.patch(`/issues/${id}/status`, data),
   delete: (id) => api.delete(`/issues/${id}`),
+};
+
+// Products API
+export const productsAPI = {
+  getAll: (params) => api.get('/products', { params }),
+  getCategories: () => api.get('/products/categories'),
+  getById: (id) => api.get(`/products/${id}`),
+};
+
+// Territories API
+export const territoriesAPI = {
+  getMyTerritory: () => api.get('/territories/my-territory'),
+  getAll: (params) => api.get('/territories', { params }),
 };
 
 // Default export
