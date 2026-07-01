@@ -1,16 +1,17 @@
 // routes/sales.js
 import express from 'express';
-import fs from 'fs';
 import Sale from '../models/Sale.js';
 import Stock from '../models/Stock.js';
+import Product from '../models/Product.js';
 import User from '../models/User.js';
 import { body, validationResult } from 'express-validator';
 import { createNotification } from '../utils/notifications.js';
 import { tenantAuth } from '../middleware/tenantAuth.js';
+import { saleCreationLimiter } from '../middleware/rateLimiter.js';
+
+const PAYMENT_METHODS = ['cash', 'credit', 'mtn_momo', 'airtel_momo', 'bank_transfer', 'cheque'];
 
 const router = express.Router();
-
-// Apply tenant-aware middleware to all routes
 router.use(tenantAuth);
 
 // Get all sales (admin sees all, agents see their own)
@@ -228,33 +229,15 @@ router.get('/stats', async (req, res) => {
 });
 
 // Create new sale
-router.post('/', [
+router.post('/', saleCreationLimiter, [
   body('customerName').trim().isLength({ min: 1 }).withMessage('Customer name is required'),
-  body('finalAmount').optional().isFloat({ min: 0.01 }).withMessage('Sale amount must be greater than 0'),
-  body('totalAmount').optional().isFloat({ min: 0.01 }).withMessage('Sale amount must be greater than 0'),
-  body('items').optional().isArray({ min: 1 }).withMessage('At least one item is required when items are provided'),
-  body('paymentMethod').optional().isIn(['cash', 'credit']).withMessage('Invalid payment method')
+  body('paymentMethod').optional().isIn(PAYMENT_METHODS).withMessage('Invalid payment method')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      console.error('Validation errors:', errors.array());
-      return res.status(400).json({ message: 'Validation errors', errors: errors.array() });
-    }
+    if (!errors.isEmpty()) return res.status(400).json({ message: 'Validation errors', errors: errors.array() });
 
-    const {
-      customerName,
-      customerEmail,
-      customerPhone,
-      items,
-      paymentMethod = 'cash',
-      client,
-      notes,
-      dueDate,
-      saleDate,
-      finalAmount,
-      totalAmount
-    } = req.body;
+    const { customerName, customerEmail, customerPhone, items, paymentMethod = 'cash', client, notes, dueDate, saleDate, finalAmount, totalAmount } = req.body;
     const saleAmount = Number(finalAmount ?? totalAmount ?? 0);
 
     if ((!items || !Array.isArray(items) || items.length === 0) && saleAmount <= 0) {
@@ -264,23 +247,18 @@ router.post('/', [
     if (items && Array.isArray(items)) {
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
-        if (!item.itemName || !item.itemName.trim()) {
-          return res.status(400).json({ message: `Item ${i + 1}: Item name is required` });
-        }
-        if (!item.quantity || item.quantity < 1) {
-          return res.status(400).json({ message: `Item ${i + 1}: Quantity must be at least 1` });
-        }
-        if (item.unitPrice === undefined || item.unitPrice === null || item.unitPrice < 0) {
-          return res.status(400).json({ message: `Item ${i + 1}: Unit price must be non-negative` });
-        }
+        if (!item.itemName?.trim()) return res.status(400).json({ message: `Item ${i + 1}: name is required` });
+        if (!item.quantity || item.quantity < 1) return res.status(400).json({ message: `Item ${i + 1}: quantity must be at least 1` });
+        if (item.unitPrice === undefined || item.unitPrice < 0) return res.status(400).json({ message: `Item ${i + 1}: unit price must be non-negative` });
       }
     }
 
-    // Create sale with tenant assignment
+    // Fetch agent commission rate
+    const agentUser = await User.findById(req.user.userId).select('commissionRate');
+    const commissionRate = agentUser?.commissionRate || 0;
+
     const sale = new Sale({
-      customerName,
-      customerEmail,
-      customerPhone,
+      customerName, customerEmail, customerPhone,
       items: Array.isArray(items) ? items : [],
       totalAmount: saleAmount,
       finalAmount: saleAmount,
@@ -289,73 +267,68 @@ router.post('/', [
       tenant: req.user.tenantId,
       client: client || null,
       notes,
-      dueDate: paymentMethod === 'credit' ? dueDate : null,
+      commissionRate,
+      dueDate: ['credit'].includes(paymentMethod) ? dueDate : null,
       saleDate: saleDate ? new Date(saleDate) : new Date()
     });
 
-    try {
+    await sale.save();
+
+    // Commission amount (calculated after save so finalAmount is set)
+    if (commissionRate > 0) {
+      sale.commissionAmount = (sale.finalAmount * commissionRate) / 100;
       await sale.save();
-    } catch (validationError) {
-      console.error('Sale validation error:', validationError);
-      return res.status(400).json({ 
-        message: 'Failed to save sale', 
-        error: validationError.message 
-      });
     }
 
-    // Update stock levels for each item
+    // Deduct stock from Product catalogue for each item that has a productId
     for (const item of Array.isArray(items) ? items : []) {
       try {
-        let stockItem = await Stock.findOne({ itemName: item.itemName });
-        if (stockItem) {
-          await stockItem.updateStock(item.quantity, 'subtract');
+        if (item.productId) {
+          const product = await Product.findOne({ _id: item.productId, ...req.tenantQuery });
+          if (product && product.stockQuantity > 0) {
+            await product.updateStock(item.quantity, 'subtract');
+            // Low stock notification
+            if (product.stockQuantity <= product.lowStockThreshold) {
+              await createNotification({
+                type: 'low_stock',
+                actorId: req.user.userId,
+                entityType: 'Product',
+                entityId: product._id,
+                metadata: { productName: product.name, stockQuantity: product.stockQuantity, threshold: product.lowStockThreshold }
+              }).catch(() => {});
+            }
+          }
+        } else {
+          // Legacy: fall back to Stock model by name
+          const stockItem = await Stock.findOne({ itemName: item.itemName });
+          if (stockItem) await stockItem.updateStock(item.quantity, 'subtract');
         }
-      } catch (error) {
-        console.warn(`Could not update stock for ${item.itemName}:`, error.message);
+      } catch (e) {
+        console.warn(`Stock update failed for ${item.itemName}:`, e.message);
       }
     }
 
-    // Update agent's sales metrics
-    const agent = await User.findById(req.user.userId);
-    if (agent) {
-      agent.totalSales += 1;
-      agent.totalSalesAmount += sale.finalAmount;
-
-      // Update monthly stats
+    // Update agent metrics
+    if (agentUser) {
+      agentUser.totalSales = (agentUser.totalSales || 0) + 1;
+      agentUser.totalSalesAmount = (agentUser.totalSalesAmount || 0) + sale.finalAmount;
+      agentUser.commissionEarned = (agentUser.commissionEarned || 0) + (sale.commissionAmount || 0);
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      const monthlySales = await Sale.find({
-        agent: req.user.userId,
-        saleDate: { $gte: startOfMonth },
-        status: 'completed'
-      });
-
-      agent.monthlySales = monthlySales.length;
-      agent.monthlySalesAmount = monthlySales.reduce((sum, sale) => sum + sale.finalAmount, 0);
-
-      await agent.save();
+      const monthlySales = await Sale.find({ agent: req.user.userId, saleDate: { $gte: startOfMonth }, ...req.tenantQuery });
+      agentUser.monthlySales = monthlySales.length;
+      agentUser.monthlySalesAmount = monthlySales.reduce((s, x) => s + (x.finalAmount || 0), 0);
+      await agentUser.save();
     }
 
-    // Create notification for admins
     await createNotification({
-      type: 'sale_created',
-      actorId: req.user.userId,
-      entityType: 'Sale',
-      entityId: sale._id,
-      metadata: {
-        customerName: sale.customerName,
-        finalAmount: sale.finalAmount,
-        itemCount: Array.isArray(items) ? items.length : 0
-      }
-    });
+      type: 'sale_created', actorId: req.user.userId, entityType: 'Sale', entityId: sale._id,
+      metadata: { customerName: sale.customerName, finalAmount: sale.finalAmount, itemCount: Array.isArray(items) ? items.length : 0 }
+    }).catch(() => {});
 
     await sale.populate('agent', 'name email');
     await sale.populate('client', 'name email phone');
-
-    res.status(201).json({
-      message: 'Sale created successfully',
-      sale
-    });
+    res.status(201).json({ message: 'Sale created successfully', sale });
   } catch (error) {
     console.error('Error creating sale:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
