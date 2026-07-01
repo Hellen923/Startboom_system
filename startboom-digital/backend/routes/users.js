@@ -437,7 +437,7 @@ router.delete('/:id', tenantAuth, requireRole(['admin', 'manager', 'superadmin']
 router.put('/:userId/targets', tenantAuth, requireRole(['admin', 'superadmin', 'manager']), async (req, res) => {
    try {
      const { userId } = req.params;
-     const { monthlyTargetDeals, monthlyTargetAmount, monthlyTargetClients } = req.body;
+     const { monthlyTargetDeals, monthlyTargetAmount, monthlyTargetClients, monthlyTarget } = req.body;
 
      // Find user with tenant filtering
      const query = req.isSuperAdmin
@@ -450,8 +450,11 @@ router.put('/:userId/targets', tenantAuth, requireRole(['admin', 'superadmin', '
        return res.status(404).json({ message: 'User not found' });
      }
 
-     // Update targets
+     // Update targets - support both monthlyTarget (simple) and monthlyTargetAmount (specific)
      const updateData = {};
+     if (typeof monthlyTarget !== 'undefined') {
+       updateData.monthlyTargetAmount = monthlyTarget;
+     }
      if (typeof monthlyTargetDeals !== 'undefined') {
        updateData.monthlyTargetDeals = monthlyTargetDeals;
      }
@@ -492,5 +495,55 @@ router.put('/:userId/targets', tenantAuth, requireRole(['admin', 'superadmin', '
     }
  });
 
+
+// Set commission rate for agent
+router.put('/:userId/commission', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), async (req, res) => {
+  try {
+    const { commissionRate } = req.body;
+    if (typeof commissionRate !== 'number' || commissionRate < 0 || commissionRate > 100) {
+      return res.status(400).json({ message: 'Commission rate must be 0–100' });
+    }
+    const query = req.isSuperAdmin ? { _id: req.params.userId } : { _id: req.params.userId, tenant: req.tenantId };
+    const user = await User.findOneAndUpdate(query, { commissionRate }, { new: true }).select('-password -otp');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ message: 'Commission rate updated', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Leaderboard — agents ranked by monthly sales amount
+router.get('/leaderboard', tenantAuth, async (req, res) => {
+  try {
+    const query = req.isSuperAdmin ? { role: 'agent', isActive: true } : { tenant: req.tenantId, role: 'agent', isActive: true };
+    const agents = await User.find(query).select('name email agentRank monthlySales monthlySalesAmount monthlyTargetAmount commissionRate commissionEarned').lean();
+    
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const salesQuery = req.isSuperAdmin ? { saleDate: { $gte: startOfMonth } } : { tenant: req.tenantId, saleDate: { $gte: startOfMonth } };
+    const monthlySales = await Sale.find(salesQuery).lean();
+    
+    const board = agents.map(agent => {
+      const agentSales = monthlySales.filter(s => String(s.agent) === String(agent._id));
+      const amount = agentSales.reduce((sum, s) => sum + (s.finalAmount || 0), 0);
+      const target = agent.monthlyTargetAmount || 0;
+      const commissionAmount = agentSales.reduce((sum, s) => sum + (s.commissionAmount || 0), 0);
+      
+      return {
+        _id: agent._id,
+        name: agent.name,
+        email: agent.email,
+        monthlySales: amount,
+        target: target,
+        commission: commissionAmount,
+        salesCount: agentSales.length
+      };
+    }).sort((a, b) => b.monthlySales - a.monthlySales);
+    
+    res.json({ leaderboard: board });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
 
 export { router as userRoutes };
