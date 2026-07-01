@@ -114,8 +114,8 @@ const ResetPassword = () => {
                         </Link>
 
                         <div className="flex items-center justify-center lg:justify-start space-x-3 mb-6">
-                            <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-2 rounded-xl flex items-center justify-center">
-                                <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
+                            <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-2 rounded-xl flex items-center justify-center">
+                              <img src="/Swavelink.png" alt="Logo" className="w-8 h-8 object-contain" />
                             </div>
                         </div>
 
@@ -142,7 +142,7 @@ const ResetPassword = () => {
                                         name="otp"
                                         type="text"
                                         required
-                                        className="block w-full px-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200 tracking-widest text-center text-lg font-mono"
+                                        className="block w-full px-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 tracking-widest text-center text-lg font-mono"
                                         placeholder="000000"
                                         maxLength="6"
                                         value={formData.otp}
@@ -157,7 +157,7 @@ const ResetPassword = () => {
                                 whileTap={{ scale: 0.98 }}
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 px-4 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white py-3 px-4 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                             >
                                 {loading ? (
                                     <div className="flex items-center justify-center space-x-2">
@@ -189,7 +189,7 @@ const ResetPassword = () => {
                                         name="newPassword"
                                         type={showPassword ? 'text' : 'password'}
                                         required
-                                        className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
+                                        className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
                                         placeholder="At least 6 characters"
                                         value={formData.newPassword}
                                         onChange={handleChange}
@@ -223,7 +223,7 @@ const ResetPassword = () => {
                                         name="confirmPassword"
                                         type="password"
                                         required
-                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
+                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
                                         placeholder="Re-enter password"
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
@@ -236,7 +236,7 @@ const ResetPassword = () => {
                                 whileTap={{ scale: 0.98 }}
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 px-4 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white py-3 px-4 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                             >
                                 {loading ? (
                                     <div className="flex items-center justify-center space-x-2">
@@ -256,7 +256,7 @@ const ResetPassword = () => {
             </div>
 
             {/* Right Side - Illustration */}
-            <div className="hidden lg:flex flex-1 bg-gradient-to-br from-orange-500 to-orange-600">
+            <div className="hidden lg:flex flex-1 bg-gradient-to-br from-primary-500 to-primary-600">
                 <div className="flex-1 flex items-center justify-center p-12 text-white text-center">
                     <motion.div
                         key={step}
@@ -269,7 +269,7 @@ const ResetPassword = () => {
                             {step === 1 ? <ShieldCheck className="w-12 h-12 text-white" /> : <Lock className="w-12 h-12 text-white" />}
                         </div>
                         <h3 className="text-3xl font-bold mb-4">{step === 1 ? 'Verify Identity' : 'Secure Account'}</h3>
-                        <p className="text-orange-100 text-lg">
+                        <p className="text-primary-100 text-lg">
                             {step === 1 ? 'First, let\'s make sure it\'s really you.' : 'Now, create a new password to protect your data.'}
                         </p>
                     </motion.div>

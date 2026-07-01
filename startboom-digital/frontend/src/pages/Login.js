@@ -77,10 +77,10 @@ const Login = () => {
           <div className="text-center lg:text-left">
             <div className="flex items-center justify-center lg:justify-start space-x-3 mb-8">
               <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-2 rounded-xl flex items-center justify-center">
-                <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
+                <img src="/Swavelink.png" alt="Logo" className="w-8 h-8 object-contain" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Startboom Digital</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Swavelink</h1>
                 <p className="text-sm text-primary-600 font-medium">Sales Management</p>
               </div>
             </div>
@@ -182,7 +182,7 @@ const Login = () => {
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-600">
               Need help?{' '}
-              <a href="mailto:support@startboomdigital.com" className="text-primary-600 hover:text-primary-500 font-medium">
+              <a href="mailto:support@swavelink.com" className="text-primary-600 hover:text-primary-500 font-medium">
                 Contact support
               </a>
             </p>
@@ -200,8 +200,8 @@ const Login = () => {
             className="text-center text-white"
           >
             <div className="mb-8">
-              <img src={logo} alt="Logo" className="w-24 h-24 mx-auto mb-6 opacity-90 object-contain" />
-              <h3 className="text-4xl font-bold mb-4">Startboom Digital</h3>
+              <img src="/Swavelink.png" alt="Logo" className="w-24 h-24 mx-auto mb-6 opacity-90 object-contain" />
+              <h3 className="text-4xl font-bold mb-4">Swavelink</h3>
               <p className="text-primary-100 text-lg max-w-md mx-auto">
                 Streamline your sales process, manage clients efficiently, and boost your team's performance with our powerful sales management solution.
               </p>

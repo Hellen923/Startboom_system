@@ -53,8 +53,8 @@ const ForgotPassword = () => {
                         </Link>
 
                         <div className="flex items-center justify-center lg:justify-start space-x-3 mb-6">
-                            <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-2 rounded-xl flex items-center justify-center">
-                                <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
+                            <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-2 rounded-xl flex items-center justify-center">
+                              <img src="/Swavelink.png" alt="Logo" className="w-8 h-8 object-contain" />
                             </div>
                         </div>
 
@@ -113,7 +113,7 @@ const ForgotPassword = () => {
                                         name="email"
                                         type="email"
                                         required
-                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors duration-200"
+                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
                                         placeholder="Enter your registered email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
@@ -126,7 +126,7 @@ const ForgotPassword = () => {
                                 whileTap={{ scale: 0.98 }}
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 px-4 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white py-3 px-4 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                             >
                                 {loading ? (
                                     <div className="flex items-center justify-center space-x-2">
@@ -146,7 +146,7 @@ const ForgotPassword = () => {
             </div>
 
             {/* Right Side - Illustration */}
-            <div className="hidden lg:flex flex-1 bg-gradient-to-br from-orange-500 to-orange-600">
+            <div className="hidden lg:flex flex-1 bg-gradient-to-br from-primary-500 to-primary-600">
                 <div className="flex-1 flex items-center justify-center p-12 text-white text-center">
                     <div className="max-w-md">
                         <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-8 backdrop-blur-sm">
