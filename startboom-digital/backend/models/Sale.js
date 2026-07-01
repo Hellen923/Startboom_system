@@ -78,7 +78,7 @@ const saleSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['cash', 'credit'],
+    enum: ['cash', 'credit', 'mtn_momo', 'airtel_momo', 'bank_transfer', 'cheque'],
     default: 'cash'
   },
   status: {
@@ -101,6 +101,17 @@ const saleSchema = new mongoose.Schema({
   client: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Client'
+  },
+  // Commission tracking
+  commissionRate: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 100
+  },
+  commissionAmount: {
+    type: Number,
+    default: 0
   },
   notes: String,
   saleDate: {
