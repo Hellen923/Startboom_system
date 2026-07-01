@@ -3,6 +3,8 @@ import { TrendingUp, Users, Target, AlertTriangle, BarChart3, PieChart, Activity
 import { LineChart, Line, BarChart, Bar, PieChart as RechartsPieChart, Cell, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 // import { predictiveAnalyticsAPI } from '../../services/api';
 import toast from 'react-hot-toast';
+import { useChartTheme } from '../utils/chartTheme';
+import dm from '../utils/darkModeClasses';
 
 // Mock API for development
 const predictiveAnalyticsAPI = {
@@ -137,6 +139,7 @@ const predictiveAnalyticsAPI = {
 };
 
 const PredictiveAnalytics = () => {
+  const { grid, axis, tooltipStyle, labelStyle, itemStyle } = useChartTheme();
   const [activeTab, setActiveTab] = useState('forecast');
   const [salesForecast, setSalesForecast] = useState(null);
   const [leadScoring, setLeadScoring] = useState(null);
@@ -177,7 +180,7 @@ const PredictiveAnalytics = () => {
       <div className="py-4">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FFD700] mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading predictive analytics...</p>
+          <p className={`mt-2 ${dm.textSecondary}`}>Loading predictive analytics...</p>
         </div>
       </div>
     );
@@ -188,8 +191,8 @@ const PredictiveAnalytics = () => {
       <div className="mb-6">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-2xl font-bold mb-1">Predictive Analytics</h2>
-            <p className="text-gray-600 mb-0">AI-powered insights for strategic decision making</p>
+            <h2 className={`text-2xl font-bold mb-1 ${dm.textPrimary}`}>Predictive Analytics</h2>
+            <p className={`mb-0 ${dm.textSecondary}`}>AI-powered insights for strategic decision making</p>
           </div>
           <div className="flex gap-2">
             <button
@@ -205,7 +208,7 @@ const PredictiveAnalytics = () => {
 
       {/* Navigation Tabs */}
       <div className="mb-6">
-        <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+        <div className="tab-bar">
           {[
             { id: 'forecast', label: 'Sales Forecast', icon: TrendingUp },
             { id: 'leads', label: 'Lead Scoring', icon: Target },
@@ -216,10 +219,9 @@ const PredictiveAnalytics = () => {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-white text-primary-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                activeTab === tab.id ? 'active' : ''
               }`}
+              data-active={activeTab === tab.id ? 'true' : undefined}
             >
               <tab.icon className="mr-2" size={16} />
               {tab.label}
@@ -232,7 +234,7 @@ const PredictiveAnalytics = () => {
       {activeTab === 'forecast' && salesForecast && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-[var(--color-bg-card)] rounded-lg shadow-sm p-6">
               <div className="flex items-center">
                 <TrendingUp className="text-green-500 mr-3" size={24} />
                 <div>
@@ -243,7 +245,7 @@ const PredictiveAnalytics = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-[var(--color-bg-card)] rounded-lg shadow-sm p-6">
               <div className="flex items-center">
                 <BarChart3 className="text-blue-500 mr-3" size={24} />
                 <div>
@@ -252,7 +254,7 @@ const PredictiveAnalytics = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-[var(--color-bg-card)] rounded-lg shadow-sm p-6">
               <div className="flex items-center">
                 <Activity className="text-purple-500 mr-3" size={24} />
                 <div>
@@ -265,14 +267,14 @@ const PredictiveAnalytics = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold mb-4">Sales Forecast Trend</h3>
+          <div className="chart-panel">
+            <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Sales Forecast Trend</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={salesForecast.forecast}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="monthName" />
-                <YAxis tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
-                <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Predicted Revenue']} />
+                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                <XAxis dataKey="monthName" stroke={axis} />
+                <YAxis tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} stroke={axis} />
+                <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Predicted Revenue']} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
                 <Line type="monotone" dataKey="predictedRevenue" stroke="#FFD700" strokeWidth={3} />
               </LineChart>
             </ResponsiveContainer>
@@ -294,14 +296,14 @@ const PredictiveAnalytics = () => {
       {/* Lead Scoring Tab */}
       {activeTab === 'leads' && leadScoring && (
         <div className="space-y-6">
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div className="bg-[var(--color-bg-card)] rounded-lg shadow-sm overflow-hidden">
             <div className="p-6 border-b">
               <h3 className="text-lg font-semibold">Lead Scoring Dashboard</h3>
               <p className="text-gray-600 text-sm">AI-powered lead prioritization</p>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="table-header">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
@@ -309,7 +311,7 @@ const PredictiveAnalytics = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recommended Action</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-[var(--color-bg-card)] divide-y divide-gray-200">
                   {leadScoring.leads.map(lead => (
                     <tr key={lead._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
@@ -353,7 +355,7 @@ const PredictiveAnalytics = () => {
       {activeTab === 'churn' && churnPrediction && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-[var(--color-bg-card)] rounded-lg shadow-sm p-6">
               <div className="flex items-center">
                 <AlertTriangle className="text-red-500 mr-3" size={24} />
                 <div>
@@ -362,7 +364,7 @@ const PredictiveAnalytics = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-[var(--color-bg-card)] rounded-lg shadow-sm p-6">
               <div className="flex items-center">
                 <AlertTriangle className="text-yellow-500 mr-3" size={24} />
                 <div>
@@ -371,7 +373,7 @@ const PredictiveAnalytics = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-[var(--color-bg-card)] rounded-lg shadow-sm p-6">
               <div className="flex items-center">
                 <Users className="text-green-500 mr-3" size={24} />
                 <div>
@@ -382,7 +384,7 @@ const PredictiveAnalytics = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm">
+          <div className="bg-[var(--color-bg-card)] rounded-lg shadow-sm">
             <div className="p-6 border-b">
               <h3 className="text-lg font-semibold">Churn Risk Assessment</h3>
             </div>
@@ -438,7 +440,7 @@ const PredictiveAnalytics = () => {
       {activeTab === 'performance' && performancePrediction && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-[var(--color-bg-card)] rounded-lg shadow-sm p-6">
               <div className="flex items-center">
                 <Activity className="text-blue-500 mr-3" size={24} />
                 <div>
@@ -456,7 +458,7 @@ const PredictiveAnalytics = () => {
                 </span>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-[var(--color-bg-card)] rounded-lg shadow-sm p-6">
               <div className="flex items-center">
                 <Target className="text-green-500 mr-3" size={24} />
                 <div>
@@ -470,7 +472,7 @@ const PredictiveAnalytics = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-[var(--color-bg-card)] rounded-lg shadow-sm p-6">
             <h3 className="text-lg font-semibold mb-4">Performance Factors</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center p-4 bg-gray-50 rounded-lg">
