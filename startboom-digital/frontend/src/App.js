@@ -17,7 +17,6 @@ const Deals = lazy(() => import('./pages/agent/Deals'));
 const Schedules = lazy(() => import('./pages/agent/Schedules'));
 const Tasks = lazy(() => import('./pages/agent/Tasks'));
 const Issues = lazy(() => import('./pages/agent/Issues'));
-const Sales = lazy(() => import('./pages/agent/Sales'));
 const SalesManagement = lazy(() => import('./pages/agent/SalesManagement'));
 const Notes = lazy(() => import('./pages/agent/Notes'));
 const UserManagement = lazy(() => import('./pages/admin/UserManagement'));
@@ -91,7 +90,7 @@ function App() {
     <Router>
       <ThemeProvider>
         <AuthProvider>
-          <div className="App min-h-screen bg-gray-50">
+          <div className="App min-h-screen bg-[var(--color-bg-page)]">
             <Suspense fallback={<PageLoader />}>
               <Routes>
                 <Route path="/login" element={
