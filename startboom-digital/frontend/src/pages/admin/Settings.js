@@ -975,7 +975,7 @@ const Settings = () => {
 
               <div className="border-t border-gray-200 pt-6 overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-gray-50 border-b">
+                  <thead className="table-header">
                     <tr>
                       <th className="px-4 py-3 text-left font-medium text-gray-700">Name</th>
                       <th className="px-4 py-3 text-left font-medium text-gray-700">Type</th>
@@ -1089,7 +1089,7 @@ const Settings = () => {
                 ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50 border-b">
+                    <thead className="table-header">
                       <tr>
                         <th className="px-4 py-3 text-left font-medium text-gray-700">Action</th>
                         <th className="px-4 py-3 text-left font-medium text-gray-700">User</th>

@@ -446,21 +446,21 @@ const UserManagement = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="relative">
-<div className="w-16 h-16 border-4 border-primary-200 rounded-full"></div>
-                           <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+            <div className="w-16 h-16 border-4 border-primary-200 rounded-full"></div>
+            <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
           </div>
-          <p className="mt-4 text-lg text-gray-600 font-medium">Loading users...</p>
-          <p className="text-sm text-gray-500">Please wait while we fetch the data</p>
+          <p className="mt-4 text-lg text-gray-800 dark:text-gray-200 font-medium">Loading users...</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Please wait while we fetch the data</p>
         </div>
       </div>
     );
   }
 
 return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
+    <div className="min-h-screen py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="mb-8">
@@ -471,7 +471,7 @@ return (
                 whileTap={{ scale: 0.98 }}
                 onClick={loadUsers}
                 disabled={loading}
-                className="bg-white text-gray-700 px-4 py-2.5 rounded-xl flex items-center space-x-2 hover:bg-gray-50 transition-all shadow-sm border border-gray-200 disabled:opacity-50"
+                className="modern-card glass-effect text-gray-700 dark:text-gray-200 px-4 py-2.5 rounded-xl flex items-center space-x-2 hover:bg-gray-100 dark:hover:bg-primary-500/10 transition-all shadow-sm border border-gray-200/50 dark:border-white/10 disabled:opacity-50"
               >
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                 <span>Refresh</span>
@@ -485,7 +485,7 @@ return (
                     setNewUser({ name: '', email: '', phone: '', role: isSuperAdmin ? 'manager' : 'agent' });
                     setShowAddModal(true);
                   }}
-                  className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-2.5 rounded-xl flex items-center space-x-2 hover:from-primary-600 hover:to-primary-700 transition-all shadow-lg shadow-primary-500/25"
+                  className="btn-brand text-white px-6 py-2.5 rounded-xl flex items-center space-x-2 hover:opacity-90 transition-all shadow-lg shadow-primary-500/25 font-semibold"
                 >
                   <UserPlus className="w-5 h-5" />
                   <span>{isSuperAdmin ? 'Register Platform Role' : 'Add New Agent'}</span>
@@ -501,7 +501,7 @@ return (
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
+            className="modern-card glass-effect rounded-xl shadow-md p-6 border border-white/10 hover:shadow-lg transition-all"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -537,7 +537,7 @@ return (
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
+            className="modern-card glass-effect rounded-xl shadow-md p-6 border border-white/10 hover:shadow-lg transition-all"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -554,7 +554,7 @@ return (
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
+            className="modern-card glass-effect rounded-xl shadow-md p-6 border border-white/10 hover:shadow-lg transition-all"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -571,7 +571,7 @@ return (
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
+            className="modern-card glass-effect rounded-xl shadow-md p-6 border border-white/10 hover:shadow-lg transition-all"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -588,7 +588,7 @@ return (
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
+            className="modern-card glass-effect rounded-xl shadow-md p-6 border border-white/10 hover:shadow-lg transition-all"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -603,7 +603,8 @@ return (
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <div className="modern-card glass-effect rounded-xl shadow-md border border-white/10 p-6 mb-6"
+>
           <div className="flex flex-col lg:flex-row lg:items-center gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -708,11 +709,11 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
         </div>
 
         {/* Users Grid/Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="modern-card glass-effect rounded-xl shadow-md border border-white/10 overflow-hidden">
           {filteredUsers.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-100">
+                <thead className="table-header">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Contact</th>
@@ -921,7 +922,7 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
                     setNewUser({ name: '', email: '', phone: '', role: isSuperAdmin ? 'manager' : 'agent' });
                     setShowAddModal(true);
                   }}
-                  className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-xl inline-flex items-center space-x-2 hover:from-primary-600 hover:to-primary-700 shadow-lg shadow-primary-500/25"
+                  className="btn-brand text-white px-6 py-3 rounded-xl inline-flex items-center space-x-2 hover:opacity-90 shadow-lg shadow-primary-500/25"
                 >
                   <UserPlus className="w-5 h-5" />
                   <span>{isSuperAdmin ? 'Register First Platform Role' : 'Register First Agent'}</span>
@@ -968,7 +969,7 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header */}
-<div className="px-6 py-5 bg-gradient-to-r from-primary-500 to-primary-600 flex items-start justify-between">
+<div className="px-6 py-5 brand-header flex items-start justify-between">
                  <div className="flex items-center space-x-4">
                    <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
                      {React.createElement(getRoleMeta(detailsUser.role).icon, { className: 'w-8 h-8 text-white' })}
@@ -1142,7 +1143,7 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden"
             >
-              <div className="px-6 py-4 bg-gradient-to-r from-primary-500 to-primary-600">
+              <div className="px-6 py-4 brand-header">
                 <h3 className="text-lg font-semibold text-white">
                   {isSuperAdmin ? 'Register Platform Role' : 'Register New Agent'}
                 </h3>
@@ -1314,7 +1315,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-3 px-4 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all disabled:opacity-50 shadow-lg shadow-primary-500/25"
+                    className="flex-1 py-3 px-4 btn-brand text-white rounded-xl hover:opacity-90 transition-all disabled:opacity-50 shadow-lg shadow-primary-500/25"
                     disabled={formLoading}
                   >
                     {formLoading ? (
@@ -1373,7 +1374,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
               <div className="mt-6">
                 <button
                   onClick={() => setShowSuccessModal(false)}
-                  className="w-full py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all shadow-lg shadow-primary-500/25"
+                  className="w-full py-3 btn-brand text-white rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary-500/25"
                 >
                   Done
                 </button>
@@ -1393,7 +1394,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
               exit={{ opacity: 0, scale: 0.95 }}
               className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden"
             >
-              <div className="px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600">
+              <div className="px-6 py-4 brand-header">
                 <h3 className="text-lg font-semibold text-white">Edit User</h3>
                 <p className="text-blue-100 text-sm mt-1">Update user information</p>
               </div>
@@ -1529,7 +1530,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all shadow-lg shadow-blue-500/25"
+                    className="flex-1 py-3 px-4 btn-brand text-white rounded-xl hover:opacity-90 transition-all shadow-lg shadow-blue-500/25"
                   >
                     Save Changes
                   </button>
@@ -1605,7 +1606,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                exit={{ opacity: 0, scale: 0.9, y: 20 }}
                className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden"
              >
-<div className="px-6 py-4 bg-gradient-to-r from-primary-500 to-primary-600">
+<div className="px-6 py-4 brand-header">
                   <h3 className="text-lg font-semibold text-white">Set Targets for {targetUser.name}</h3>
                   <p className="text-primary-100 text-sm mt-1">Define monthly performance goals</p>
                 </div>
@@ -1688,7 +1689,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                    </button>
                    <button
                      type="submit"
-                     className="flex-1 py-3 px-4 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all disabled:opacity-50 shadow-lg shadow-primary-500/25"
+                     className="flex-1 py-3 px-4 btn-brand text-white rounded-xl hover:opacity-90 transition-all disabled:opacity-50 shadow-lg shadow-primary-500/25"
                    >
                      {formLoading ? (
                        <div className="flex items-center justify-center space-x-2">
