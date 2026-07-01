@@ -19,6 +19,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { getSearchConfig } from '../utils/roleConfig';
 import { exportCurrentPage } from '../utils/pageExport';
+import dm from '../utils/darkModeClasses';
 
 const WhatsAppIcon = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -35,19 +36,13 @@ const formatMonthRange = (date = new Date()) => {
   return `${monthName} ${pad(1)} – ${monthName} ${pad(lastDay)}, ${year}`;
 };
 
-const IconButton = ({ icon: Icon, badge, onClick, title, isDark, active, children }) => (
+const IconButton = ({ icon: Icon, badge, onClick, title, active, children }) => (
   <button
     type="button"
     onClick={onClick}
     title={title}
-    className={`relative flex h-10 w-10 items-center justify-center rounded-xl transition ${
-      active
-        ? 'ring-2 ring-[var(--primary-color)] text-[var(--primary-color)]'
-        : ''
-    } ${
-      isDark
-        ? 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'
-        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'
+    className={`relative flex h-10 w-10 items-center justify-center rounded-xl transition icon-btn ${
+      active ? 'ring-2 ring-[var(--primary-color)] text-[var(--primary-color)]' : ''
     }`}
   >
     {children || (Icon && <Icon className="h-[18px] w-[18px]" />)}
@@ -133,50 +128,36 @@ const Taskbar = ({
   const whatsappPath = role === 'agent' ? '/agent/clients' : '/admin/users';
 
   return (
-    <div className={`sticky top-0 z-30 -mx-3 sm:-mx-4 md:-mx-6 lg:-mx-8 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 pb-3 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div
-        className={`rounded-2xl shadow-sm px-3 sm:px-4 py-3 ${
-          isDark ? 'bg-[#0f172a] border border-slate-700/50 shadow-lg' : 'bg-white border border-gray-200'
-        }`}
-      >
+    <div className={`sticky top-0 z-30 -mx-3 sm:-mx-4 md:-mx-6 lg:-mx-8 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 pb-3 ${dm.taskbarShell}`}>
+      <div className={`rounded-2xl shadow-sm px-3 sm:px-4 py-3 ${dm.taskbarPanel}`}>
         <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:gap-4">
           <div className="flex items-center gap-3 min-w-0 shrink-0">
             <button
               type="button"
               onClick={onMenuClick}
-              className={`lg:hidden flex h-10 w-10 items-center justify-center rounded-xl transition ${
-                isDark
-                  ? 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'
-              }`}
+              className="lg:hidden flex h-10 w-10 items-center justify-center rounded-xl transition icon-btn"
               aria-label="Open menu"
             >
               <Menu className="h-5 w-5" />
             </button>
-            <p className={`text-sm sm:text-base font-semibold truncate ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <p className={`text-sm sm:text-base font-semibold truncate ${dm.textPrimary}`}>
               Welcome back, {firstName}
             </p>
           </div>
 
           <form onSubmit={handleSearch} className="flex-1 min-w-0">
             <div className="relative flex items-center">
-              <Search className={`absolute left-3.5 h-4 w-4 pointer-events-none ${isDark ? 'text-gray-500' : 'text-gray-400'}`} />
+              <Search className={`absolute left-3.5 h-4 w-4 pointer-events-none ${dm.textMuted}`} />
               <input
                 ref={searchRef}
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={searchConfig.placeholder}
-                className={`w-full rounded-xl py-2.5 pl-10 pr-20 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-ring)] ${
-                  isDark
-                    ? 'bg-slate-800/80 border border-slate-700/60 text-gray-200 placeholder-gray-500'
-                    : 'bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400'
-                }`}
+                className={`w-full rounded-xl py-2.5 pl-10 pr-20 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-ring)] ${dm.input}`}
               />
               <kbd
-                className={`hidden sm:inline-flex absolute right-3 items-center rounded-md px-1.5 py-0.5 text-[10px] font-medium ${
-                  isDark ? 'border border-slate-600 bg-slate-900/60 text-gray-500' : 'border border-gray-200 bg-white text-gray-400'
-                }`}
+                className={`hidden sm:inline-flex absolute right-3 items-center rounded-md px-1.5 py-0.5 text-[10px] font-medium border ${dm.border} bg-[var(--color-bg-input)] ${dm.textMuted}`}
               >
                 Ctrl+K
               </kbd>
@@ -184,12 +165,11 @@ const Taskbar = ({
           </form>
 
           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap xl:flex-nowrap shrink-0">
-            <IconButton icon={Bell} badge={unreadNotifications} onClick={onOpenNotifications} title="Notifications" isDark={isDark} />
+            <IconButton icon={Bell} badge={unreadNotifications} onClick={onOpenNotifications} title="Notifications" />
 
             <IconButton
               onClick={() => navigate(whatsappPath, { state: { channel: 'whatsapp' } })}
               title="WhatsApp follow-ups"
-              isDark={isDark}
               badge={whatsappCount}
             >
               <WhatsAppIcon className="h-[18px] w-[18px] text-green-500" />
@@ -199,14 +179,12 @@ const Taskbar = ({
               icon={Sun}
               onClick={() => updateTheme({ mode: 'light' })}
               title="Light mode"
-              isDark={isDark}
               active={!isDark}
             />
             <IconButton
               icon={Moon}
               onClick={() => updateTheme({ mode: 'dark' })}
               title="Dark mode"
-              isDark={isDark}
               active={isDark}
             />
 
@@ -216,31 +194,19 @@ const Taskbar = ({
                 onClick={() => setExportOpen((v) => !v)}
                 disabled={exporting}
                 title="Export"
-                className={`flex h-10 items-center gap-1 rounded-xl px-2.5 transition ${
-                  isDark
-                    ? 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'
-                }`}
+                className="flex h-10 items-center gap-1 rounded-xl px-2.5 transition icon-btn"
               >
                 <Download className="h-[18px] w-[18px]" />
                 <ChevronDown className="h-3.5 w-3.5 opacity-70" />
               </button>
               {exportOpen && (
-                <div className="absolute right-0 mt-2 w-44 rounded-xl border border-gray-200 bg-white shadow-lg py-1 z-50">
-                  <button
-                    type="button"
-                    onClick={() => handleExport('csv')}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  >
-                    <FileSpreadsheet className="h-4 w-4 text-green-600" />
+                <div className={`absolute right-0 mt-2 w-44 rounded-xl border shadow-lg py-1 z-50 dropdown-menu ${dm.border}`}>
+                  <button type="button" onClick={() => handleExport('csv')} className="flex w-full items-center gap-2 px-3 py-2 text-sm dropdown-item">
+                    <FileSpreadsheet className="h-4 w-4 text-green-500" />
                     Export as CSV
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => handleExport('pdf')}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  >
-                    <FileText className="h-4 w-4 text-red-600" />
+                  <button type="button" onClick={() => handleExport('pdf')} className="flex w-full items-center gap-2 px-3 py-2 text-sm dropdown-item">
+                    <FileText className="h-4 w-4 text-red-500" />
                     Export as PDF
                   </button>
                 </div>
@@ -251,11 +217,7 @@ const Taskbar = ({
               type="button"
               onClick={() => navigate(calendarPath)}
               title="Calendar"
-              className={`hidden md:inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs sm:text-sm transition whitespace-nowrap ${
-                isDark
-                  ? 'bg-slate-800/80 border border-slate-700/60 text-gray-300 hover:bg-slate-700/60'
-                  : 'bg-gray-50 border border-gray-200 text-gray-600 hover:bg-gray-100'
-              }`}
+              className={`hidden md:inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs sm:text-sm transition whitespace-nowrap border ${dm.border} bg-[var(--color-bg-input-subtle)] ${dm.textSecondary} hover:bg-[var(--color-bg-hover)]`}
             >
               <Calendar className="h-4 w-4 shrink-0 opacity-70" />
               <span>{dateLabel}</span>
@@ -271,7 +233,7 @@ const Taskbar = ({
               <span className="hidden sm:inline">Add New</span>
             </button>
 
-            <IconButton icon={User} onClick={onOpenProfile} title="View profile" isDark={isDark} />
+            <IconButton icon={User} onClick={onOpenProfile} title="View profile" />
           </div>
         </div>
       </div>
