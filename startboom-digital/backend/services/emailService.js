@@ -25,8 +25,8 @@ const sendEmailViaBrevoAPI = async (to, subject, html) => {
       'https://api.brevo.com/v3/smtp/email',
       {
         sender: {
-          email: process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@crm.com',
-          name: 'CRM System'
+          email: process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@swavelink.com',
+          name: 'Swavelink Sales Management'
         },
         to: [{ email: to }],
         subject: subject,
@@ -149,10 +149,10 @@ const emailTemplates = {
       day: 'numeric', hour: '2-digit', minute: '2-digit'
     });
 
-    const headerColor  = isOverdue ? '#dc2626' : '#f97316';
-    const badgeColor   = isOverdue ? '#fef2f2' : '#fff7ed';
-    const badgeBorder  = isOverdue ? '#fca5a5' : '#fed7aa';
-    const badgeText    = isOverdue ? '#dc2626' : '#ea580c';
+    const headerColor  = isOverdue ? '#dc2626' : '#FFD700';
+    const badgeColor   = isOverdue ? '#fef2f2' : '#FFFBEB';
+    const badgeBorder  = isOverdue ? '#fca5a5' : '#FFD700';
+    const badgeText    = isOverdue ? '#dc2626' : '#B8860B';
     const statusLabel  = isOverdue ? '⚠️ OVERDUE' : '⏰ DUE SOON';
     const subject      = isOverdue
       ? `Overdue Task: "${taskTitle}" for ${clientName}`
@@ -165,32 +165,34 @@ const emailTemplates = {
         <html>
         <head>
           <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background: #f9fafb; }
-            .wrapper { max-width: 600px; margin: 30px auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-            .header { background: ${headerColor}; color: white; padding: 28px 32px; }
-            .header h1 { margin: 0 0 4px; font-size: 20px; }
-            .header p  { margin: 0; font-size: 13px; opacity: 0.9; }
-            .body { padding: 28px 32px; }
-            .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; background: ${badgeColor}; border: 1px solid ${badgeBorder}; color: ${badgeText}; margin-bottom: 20px; }
-            .task-card { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid ${headerColor}; border-radius: 8px; padding: 20px; margin: 20px 0; }
-            .task-card h3 { margin: 0 0 8px; font-size: 16px; color: #1e293b; }
-            .task-card p  { margin: 4px 0; font-size: 14px; color: #64748b; }
-            .task-card .due { font-weight: bold; color: ${badgeText}; }
-            .cta { text-align: center; margin: 28px 0 8px; }
-            .cta a { background: ${headerColor}; color: white; padding: 13px 32px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: bold; display: inline-block; }
-            .footer { text-align: center; padding: 18px 32px; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #1E293B; margin: 0; padding: 0; background: #F1F5F9; }
+            .wrapper { max-width: 600px; margin: 30px auto; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+            .header { background: linear-gradient(135deg, ${headerColor} 0%, ${isOverdue ? '#b91c1c' : '#FFC700'} 100%); color: ${isOverdue ? 'white' : '#1E293B'}; padding: 32px; text-align: center; }
+            .header img { width: 48px; height: 48px; margin-bottom: 12px; }
+            .header h1 { margin: 0 0 8px; font-size: 24px; font-weight: 700; }
+            .header p  { margin: 0; font-size: 14px; opacity: 0.9; }
+            .body { padding: 32px; }
+            .badge { display: inline-block; padding: 8px 16px; border-radius: 24px; font-size: 12px; font-weight: 700; background: ${badgeColor}; border: 2px solid ${badgeBorder}; color: ${badgeText}; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.5px; }
+            .task-card { background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%); border: 1px solid #E2E8F0; border-left: 4px solid ${headerColor}; border-radius: 12px; padding: 24px; margin: 24px 0; }
+            .task-card h3 { margin: 0 0 12px; font-size: 18px; color: #0F172A; font-weight: 700; }
+            .task-card p  { margin: 8px 0; font-size: 14px; color: #475569; }
+            .task-card .due { font-weight: 700; color: ${badgeText}; font-size: 15px; }
+            .cta { text-align: center; margin: 32px 0; }
+            .cta a { background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%); color: #1E293B; padding: 14px 36px; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 700; display: inline-block; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3); transition: all 0.3s; }
+            .footer { text-align: center; padding: 24px 32px; font-size: 12px; color: #94A3B8; border-top: 1px solid #F1F5F9; background: #F8FAFC; }
+            .footer .brand { font-weight: 700; color: #FFD700; }
           </style>
         </head>
         <body>
           <div class="wrapper">
             <div class="header">
               <h1>📋 Task Reminder</h1>
-              <p>CRM System — Automated Notification</p>
+              <p>Swavelink Sales Management — Automated Notification</p>
             </div>
             <div class="body">
               <div class="badge">${statusLabel}</div>
               <p>Hi <strong>${agentName}</strong>,</p>
-              <p>You have a task ${isOverdue ? 'that is <strong>overdue</strong>' : 'coming up <strong>soon</strong>'} for client <strong>${clientName}</strong>.</p>
+              <p>You have a task ${isOverdue ? 'that is <strong style="color:#dc2626;">overdue</strong>' : 'coming up <strong>soon</strong>'} for client <strong>${clientName}</strong>.</p>
 
               <div class="task-card">
                 <h3>${taskTitle}</h3>
@@ -200,18 +202,19 @@ const emailTemplates = {
               </div>
 
               ${isOverdue
-                ? '<p style="color:#dc2626;font-weight:bold;">This task is past its due date. Please action it as soon as possible.</p>'
-                : '<p>Please make sure to complete this task on time to keep your client relationship on track.</p>'
+                ? '<p style="color:#dc2626;font-weight:700;background:#FEF2F2;padding:12px;border-radius:8px;border-left:4px solid #dc2626;">⚠️ This task is past its due date. Please action it as soon as possible.</p>'
+                : '<p style="background:#FFFBEB;padding:12px;border-radius:8px;border-left:4px solid #FFD700;">💡 Please make sure to complete this task on time to keep your client relationship on track.</p>'
               }
 
               ${appUrl ? `
               <div class="cta">
-                <a href="${appUrl}/agent/clients">View Client</a>
+                <a href="${appUrl}/agent/clients">View Client Details →</a>
               </div>` : ''}
             </div>
             <div class="footer">
-              <p>This is an automated reminder from your CRM System. Do not reply to this email.</p>
-              <p>© ${new Date().getFullYear()} CRM System. All rights reserved.</p>
+              <p><span class="brand">Swavelink</span> — Sales Management System</p>
+              <p>This is an automated reminder. Do not reply to this email.</p>
+              <p>© ${new Date().getFullYear()} Swavelink. All rights reserved.</p>
             </div>
           </div>
         </body>
@@ -433,93 +436,110 @@ const emailTemplates = {
 
   agentWelcome: (templateData) => {
     const { name, email, otp } = templateData;
+    const appUrl = process.env.FRONTEND_URL || process.env.APP_URL || 'http://localhost:3000';
 
     return {
-      subject: `Welcome to CRM System, ${name}! - Your Login Credentials`,
+      subject: `Welcome to Swavelink, ${name}! 🎉 Your Login Credentials`,
       html: `
         <!DOCTYPE html>
         <html>
         <head>
           <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
-            .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
-            .header { background: linear-gradient(135deg, #FF6B35, #FF8C42); color: white; padding: 30px; text-align: center; }
-            .content { padding: 30px; }
-            .welcome-text { font-size: 18px; margin-bottom: 20px; }
-            .credentials { background: #f8f9fa; padding: 25px; border-radius: 10px; border-left: 4px solid #FF6B35; margin: 25px 0; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #1E293B; margin: 0; padding: 0; background: #F1F5F9; }
+            .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+            .header { background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%); color: #1E293B; padding: 40px; text-align: center; }
+            .header h1 { margin: 0 0 8px; font-size: 28px; font-weight: 700; }
+            .header p { margin: 0; font-size: 15px; opacity: 0.9; font-weight: 600; }
+            .logo { width: 64px; height: 64px; margin-bottom: 16px; }
+            .content { padding: 40px; }
+            .welcome-text { font-size: 18px; margin-bottom: 24px; color: #0F172A; }
+            .credentials { background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%); padding: 28px; border-radius: 12px; border-left: 4px solid #FFD700; margin: 28px 0; }
             .otp-code { 
               font-family: 'Courier New', monospace; 
-              font-size: 32px; 
-              font-weight: bold; 
-              color: #FF6B35; 
+              font-size: 36px; 
+              font-weight: 900; 
+              color: #B8860B; 
               text-align: center; 
-              letter-spacing: 8px;
-              margin: 20px 0;
-              padding: 15px;
-              background: #fff;
-              border: 2px dashed #FF6B35;
-              border-radius: 8px;
+              letter-spacing: 10px;
+              margin: 24px 0;
+              padding: 20px;
+              background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+              border: 3px dashed #FFD700;
+              border-radius: 12px;
+              box-shadow: 0 4px 12px rgba(255, 215, 0, 0.15);
             }
-            .login-info { background: #e7f3ff; padding: 20px; border-radius: 8px; margin: 20px 0; }
-            .steps { background: #fff8e1; padding: 20px; border-radius: 8px; margin: 20px 0; }
-            .step { margin: 10px 0; padding-left: 15px; }
-            .footer { text-align: center; margin-top: 30px; padding: 20px; color: #666; font-size: 12px; border-top: 1px solid #eee; }
+            .login-info { background: #FFFBEB; padding: 24px; border-radius: 10px; margin: 24px 0; border: 1px solid #FFD700; }
+            .login-info strong { color: #B8860B; }
+            .steps { background: #F0F9FF; padding: 24px; border-radius: 10px; margin: 24px 0; border-left: 4px solid #3B82F6; }
+            .step { margin: 12px 0; padding-left: 16px; font-size: 15px; }
+            .step strong { color: #1E40AF; }
+            .footer { text-align: center; margin-top: 32px; padding: 24px; color: #64748B; font-size: 13px; border-top: 1px solid #E2E8F0; background: #F8FAFC; }
+            .footer .brand { font-weight: 700; color: #FFD700; font-size: 14px; }
             .button { 
-              background: #FF6B35; 
-              color: white; 
-              padding: 15px 40px; 
+              background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%); 
+              color: #1E293B; 
+              padding: 16px 48px; 
               text-decoration: none; 
-              border-radius: 8px; 
+              border-radius: 12px; 
               display: inline-block; 
-              margin: 20px 0; 
+              margin: 24px 0; 
               font-size: 16px;
-              font-weight: bold;
+              font-weight: 700;
+              box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+              transition: all 0.3s;
             }
-            .info-box { background: #f0f7ff; padding: 15px; border-radius: 6px; margin: 15px 0; }
+            .info-box { background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); padding: 20px; border-radius: 10px; margin: 20px 0; border-left: 4px solid #3B82F6; }
+            .info-box strong { color: #1E40AF; }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="header">
-              <h1>🏢 CRM Pro System</h1>
-              <p>Your Sales Performance Platform</p>
+              <h1>🎯 Welcome to Swavelink!</h1>
+              <p>Sales Management System — Uganda's Premier CRM Platform</p>
             </div>
             
             <div class="content">
-              <h2>Welcome aboard, ${name}! 👋</h2>
-              <p class="welcome-text">Your account has been successfully created in our CRM system. We're excited to have you on the team!</p>
+              <h2 style="color:#0F172A;font-size:22px;margin:0 0 16px;">Hello ${name}! 👋</h2>
+              <p class="welcome-text">Your account has been successfully created. We're excited to have you join our team of high-performing sales professionals!</p>
               
               <div class="credentials">
-                <h3>🔐 Your Login Credentials:</h3>
+                <h3 style="color:#0F172A;margin:0 0 16px;font-size:18px;">🔐 Your Login Credentials:</h3>
                 <div class="login-info">
-                  <p><strong>📧 Email:</strong> ${email}</p>
-                  <p><strong>🔑 One-Time Password (OTP):</strong></p>
+                  <p style="margin:8px 0;"><strong>📧 Email Address:</strong><br/>${email}</p>
+                  <p style="margin:16px 0 8px;"><strong>🔑 One-Time Password (OTP):</strong></p>
                   <div class="otp-code">${otp}</div>
-                  <p><em>This OTP expires in 24 hours</em></p>
+                  <p style="text-align:center;margin:8px 0;color:#B8860B;font-weight:700;">⏱ Expires in 24 hours</p>
                 </div>
               </div>
 
               <div class="steps">
-                <h3>🚀 Getting Started:</h3>
-                <div class="step">1. Go to the login page: <a href="https://crm-dbs.vercel.app/login">https://crm-dbs.vercel.app/login</a></div>
-                <div class="step">2. Enter your email: <strong>${email}</strong></div>
-                <div class="step">3. Use the OTP above as your password</div>
-                <div class="step">4. You'll be prompted to create a new secure password</div>
-                <div class="step">5. Start exploring your dashboard!</div>
+                <h3 style="color:#1E40AF;margin:0 0 16px;font-size:18px;">🚀 Quick Start Guide:</h3>
+                <div class="step">1️⃣ <strong>Visit:</strong> <a href="${appUrl}/login" style="color:#2563EB;">${appUrl}/login</a></div>
+                <div class="step">2️⃣ <strong>Enter your email:</strong> ${email}</div>
+                <div class="step">3️⃣ <strong>Use the OTP above</strong> as your temporary password</div>
+                <div class="step">4️⃣ <strong>Create a secure password</strong> when prompted</div>
+                <div class="step">5️⃣ <strong>Start exploring</strong> your personalized dashboard!</div>
               </div>
 
               <div class="info-box">
-                <p><strong>💡 Security Tip:</strong> For security reasons, please change your password immediately after first login and don't share your credentials with anyone.</p>
+                <p style="margin:0;"><strong>🔒 Security Reminder:</strong> For your account security, please change your password immediately after first login. Never share your credentials with anyone.</p>
               </div>
 
               <div style="text-align: center;">
-                <a href="https://crm-dbs.vercel.app/login" class="button">🎯 Login to Your Dashboard</a>
+                <a href="${appUrl}/login" class="button">🎯 Login to Dashboard →</a>
+              </div>
+
+              <div style="background:#FFFBEB;padding:16px;border-radius:8px;margin:24px 0;text-align:center;">
+                <p style="margin:0;color:#B8860B;font-weight:600;">Need help? Contact your administrator or visit ${appUrl}</p>
               </div>
 
               <div class="footer">
-                <p>This is an automated message. Please do not reply to this email.</p>
-                <p>If you didn't request this account, please contact your administrator immediately.</p>
-                <p>© ${new Date().getFullYear()} CRM Pro System. All rights reserved.</p>
+                <p style="margin:8px 0;"><span class="brand">Swavelink</span> — Sales Management System</p>
+                <p style="margin:8px 0;">Built for Uganda, Designed for Growth</p>
+                <p style="margin:8px 0;">This is an automated message. Do not reply to this email.</p>
+                <p style="margin:8px 0;">If you didn't request this account, please contact your administrator immediately.</p>
+                <p style="margin:16px 0 0;color:#94A3B8;">© ${new Date().getFullYear()} Swavelink. All rights reserved.</p>
               </div>
             </div>
           </div>
@@ -556,7 +576,7 @@ export const sendEmail = async (to, templateName, templateData) => {
     const transporter = await createTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER || 'florencenamukisa08@gmail.com',
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@swavelink.com',
       to,
       subject: emailContent.subject,
       html: emailContent.html
@@ -607,7 +627,7 @@ export const sendEmailWithAttachment = async (to, subject, htmlContent, attachme
     const transporter = await createTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER || 'florencenamukisa08@gmail.com',
+      from: process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@swavelink.com',
       to,
       subject,
       html: htmlContent || '<p>Please find the attached report.</p>',
