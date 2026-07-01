@@ -107,6 +107,7 @@ const Layout = ({ children }) => {
       items: [
         { path: '/admin/products', icon: Package, label: 'Products', description: 'Manage product catalog and inventory.' },
         { path: '/admin/territories', icon: MapPin, label: 'Territories', description: 'Manage locations and agent assignments.' },
+        { path: '/admin/targets', icon: Target, label: 'Targets & Commission', description: 'Set monthly sales targets and commission rates for agents.' },
         { path: '/admin/analytics', icon: TrendingUp, label: 'Analytics', description: 'Performance metrics and conversion tracking.' },
       ],
     },
@@ -130,11 +131,13 @@ const agentNavSections = [
       title: 'Workspace',
       items: [
         { path: '/agent',            icon: PieChart,   label: 'Dashboard', description: 'Your sales dashboard with performance and activity summaries.' },
-        { path: '/agent/leads',      icon: UserCheck,  label: 'Leads', description: 'Track and manage sales leads in one place.' },
         { path: '/agent/clients',    icon: Users,      label: 'Clients & Organizations', description: 'View your client list and manage customer relationships.' },
         { path: '/agent/contacts',   icon: BookUser,   label: 'Contacts', description: 'Manage your contact directory and communication details.' },
+        { path: '/agent/leads',      icon: UserCheck,  label: 'Leads', description: 'Track and manage sales leads in one place.' },
         { path: '/agent/deals',      icon: Target,     label: 'Sales Pipeline', description: 'Review and progress your current deals.' },
         { path: '/agent/sales',      icon: TrendingUp, label: 'Sales', description: 'Track sales performance and revenue results.' },
+        { path: '/agent/products',   icon: Package,    label: 'Product Catalogue', description: 'Browse available products and pricing to quote clients.' },
+        { path: '/agent/my-territory', icon: MapPin,   label: 'My Territory', description: 'View your assigned territory and team members.' },
       ],
     },
     {
@@ -195,8 +198,8 @@ const agentNavSections = [
     <div className="flex items-center justify-between px-6 py-5 border-b border-white/15">
       <div className="flex items-center space-x-4 min-w-0">
         <div className="w-14 h-14 rounded-2xl bg-secondary-300/45 flex items-center justify-center shadow-lg shadow-secondary-950/15 shrink-0">
-          <img
-            src={user?.tenant?.logo || user?.tenant?.settings?.logo || logo}
+              <img
+            src={user?.tenant?.logo || user?.tenant?.settings?.logo || '/Swavelink.png'}
             alt="Logo"
             className="w-8 h-8 object-contain"
           />
@@ -313,7 +316,7 @@ const agentNavSections = [
           <div className="p-3 sm:p-4 md:p-6 lg:p-8 space-y-4">
             <div className="space-y-2">
               <h1 className="text-2xl font-semibold text-gray-900">{activeNavItem.label}</h1>
-              <p className="text-sm text-gray-600 max-w-3xl">{activeNavItem.description || 'Welcome to CRM Pro — your central workspace.'}</p>
+              <p className="text-sm text-gray-600 max-w-3xl">{activeNavItem.description || 'Welcome to Swavelink — your central workspace.'}</p>
             </div>
             {children}
           </div>
