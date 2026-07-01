@@ -411,7 +411,7 @@ const Products = () => {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="table-header">
                 <tr>
                   {['Product', 'SKU', 'Category', 'Price', 'Stock', 'Status', ''].map(h => (
                     <th key={h} className="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>

@@ -3,6 +3,8 @@ import { Users, TrendingUp, DollarSign, Target, Download, FileText } from 'lucid
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import DonutChart, { StageValueChart, ORANGE_GRADIENT_COLORS } from '../../components/charts/DonutChart';
 import { useAuth } from '../../context/AuthContext';
+import { useChartTheme } from '../../utils/chartTheme';
+import dm from '../../utils/darkModeClasses';
 import { dealsAPI, salesAPI, clientsAPI, usersAPI, tenantsAPI } from '../../services/api';
 import OnboardingWizard from '../../components/OnboardingWizard';
 import DashboardQuickActions from '../../components/DashboardQuickActions';
@@ -10,13 +12,13 @@ import toast from 'react-hot-toast';
 const PERIODS = ['daily', 'weekly', 'monthly', 'yearly'];
 
 const StatCard = ({ icon: Icon, title, value }) => (
-  <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
+  <div className={`stat-card hover:shadow-md transition-shadow ${dm.card}`}>
     <div className="flex items-center justify-between">
       <div className="flex-1">
-        <p className="text-sm font-medium text-gray-600">{title}</p>
-        <p className="text-3xl font-bold text-gray-900 mt-2">{typeof value === 'number' ? value.toLocaleString() : value}</p>
+        <p className={`text-sm font-medium ${dm.textSecondary}`}>{title}</p>
+        <p className={`text-3xl font-bold mt-2 ${dm.textPrimary}`}>{typeof value === 'number' ? value.toLocaleString() : value}</p>
       </div>
-      <div className="p-3 rounded-full bg-primary-50">
+      <div className="p-3 rounded-full bg-primary-50 dark:bg-[var(--color-accent-surface)]">
         <Icon className="w-6 h-6 text-primary-500" />
       </div>
     </div>
@@ -25,6 +27,7 @@ const StatCard = ({ icon: Icon, title, value }) => (
 
 const AdminDashboard = () => {
   const { user } = useAuth();
+  const { isDark, grid, axis, tooltipStyle, labelStyle, itemStyle, legend } = useChartTheme();
   const [period, setPeriod] = useState('monthly');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -366,12 +369,17 @@ const AdminDashboard = () => {
         <OnboardingWizard onComplete={() => setShowOnboarding(false)} />
       )}
 
-      <div className="space-y-6 pt-4">
+      <div className="space-y-6 pt-4 dashboard-page">
         {/* Period Filter */}
         <div className="flex justify-end">
-          <div className="flex items-center space-x-2">
+          <div className="tab-bar">
             {PERIODS.map(p => (
-              <button key={p} onClick={() => setPeriod(p)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${p === period ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
+              <button
+                key={p}
+                onClick={() => setPeriod(p)}
+                className={p === period ? 'active' : ''}
+                data-active={p === period ? 'true' : undefined}
+              >
                 {p[0].toUpperCase() + p.slice(1)}
               </button>
             ))}
@@ -379,7 +387,7 @@ const AdminDashboard = () => {
         </div>
 
       {/* Stats Cards — spec: Sales (Monthly), Users (All time), Deals */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="stat-grid">
         <StatCard icon={DollarSign} title="Sales (This Month)" value={`UGX ${Number(totalRevenue || 0).toLocaleString('en-UG')}`} />
         <StatCard icon={Users} title="Users (All Time)" value={totalUsersAllTime} />
         <StatCard icon={Target} title="Deals" value={dealsCount} />
@@ -388,41 +396,48 @@ const AdminDashboard = () => {
       <DashboardQuickActions role={user?.role || 'admin'} />
 
       {/* Deals Won vs Lost */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Deals Won vs Deals Lost</h3>
-          <div className="flex items-center gap-4 text-sm">
+      <div className="chart-panel">
+        <div className={`${dm.unifiedCardHeader} flex-wrap gap-2`}>
+          <h3>Deals Won vs Deals Lost</h3>
+          <div className="flex items-center gap-4 text-sm ml-auto">
             <div className="flex items-center gap-2">
-              <span className="inline-block w-3 h-3 rounded-full bg-green-500" />
-              <span className="text-gray-600">Won</span>
-              <span className="font-bold text-gray-900 tabular-nums">{dealsWonLostTotals.won.toLocaleString()}</span>
+              <span className="inline-block w-3 h-3 rounded-full bg-green-400" />
+              <span>Won</span>
+              <span className="font-bold tabular-nums">{dealsWonLostTotals.won.toLocaleString()}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="inline-block w-3 h-3 rounded-full bg-red-500" />
-              <span className="text-gray-600">Lost</span>
-              <span className="font-bold text-gray-900 tabular-nums">{dealsWonLostTotals.lost.toLocaleString()}</span>
+              <span className="inline-block w-3 h-3 rounded-full bg-red-400" />
+              <span>Lost</span>
+              <span className="font-bold tabular-nums">{dealsWonLostTotals.lost.toLocaleString()}</span>
             </div>
           </div>
         </div>
+        <div className={dm.chartBody}>
         {dealsWonLostTotals.won === 0 && dealsWonLostTotals.lost === 0 ? (
-          <p className="text-sm text-gray-500 text-center py-8">No data</p>
+          <p className={`text-sm text-center py-8 ${dm.textMuted}`}>No data</p>
         ) : (
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={dealsWonLostData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" stroke="#999" />
-              <YAxis stroke="#999" allowDecimals={false} />
-              <Tooltip formatter={(value, name, item) => [Number(value || 0).toLocaleString(), name || item?.dataKey || 'Value']} />
-              <Legend />
+              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+              <XAxis dataKey="month" stroke={axis} />
+              <YAxis stroke={axis} allowDecimals={false} />
+              <Tooltip
+                formatter={(value, name, item) => [Number(value || 0).toLocaleString(), name || item?.dataKey || 'Value']}
+                contentStyle={tooltipStyle}
+                labelStyle={labelStyle}
+                itemStyle={itemStyle}
+              />
+              <Legend wrapperStyle={{ color: legend }} />
               <Line type="monotone" dataKey="won" name="Won" stroke="#10b981" strokeWidth={3} dot={{ fill: '#10b981', r: 4 }} />
               <Line type="monotone" dataKey="lost" name="Lost" stroke="#ef4444" strokeWidth={3} dot={{ fill: '#ef4444', r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         )}
+        </div>
       </div>
 
 {/* Row 1: Sales by Agent & Closed Won Deals */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="chart-grid">
         <StageValueChart 
           data={dealStagesByValueData}
           formatCurrency={formatUGX}
@@ -430,15 +445,15 @@ const AdminDashboard = () => {
           emptyMessage="No deal stage data available"
         />
 
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold mb-4">Closed Won Deals by Agent</h3>
+        <div className="chart-panel">
+          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Closed Won Deals by Agent</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={closedDealsByRegionData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" stroke="#999" />
-              <YAxis stroke="#999" />
-              <Tooltip />
-              <Legend />
+              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+              <XAxis dataKey="month" stroke={axis} />
+              <YAxis stroke={axis} />
+              <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+              <Legend wrapperStyle={{ color: legend }} />
               {agentsList.map((agent, idx) => (
                 <Bar key={agent._id} dataKey={agent._id} name={agent.name} fill={ORANGE_GRADIENT_COLORS[idx % ORANGE_GRADIENT_COLORS.length]} />
               ))}
@@ -448,17 +463,17 @@ const AdminDashboard = () => {
       </div>
 
       {/* Row 2: Monthly Revenue & Company Deals */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold mb-4">Monthly Revenue by Agent</h3>
-          <p className="text-xs text-gray-500 mb-3">Computed from each sale&apos;s final amount for the selected period.</p>
+      <div className="chart-grid">
+        <div className="chart-panel">
+          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Monthly Revenue by Agent</h3>
+          <p className={`text-xs mb-3 ${dm.textMuted}`}>Computed from each sale&apos;s final amount for the selected period.</p>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={monthlyRevenueByRegionData} layout="horizontal">
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis type="category" dataKey="month" stroke="#999" />
-              <YAxis type="number" stroke="#999" />
-              <Tooltip />
-              <Legend />
+              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+              <XAxis type="category" dataKey="month" stroke={axis} />
+              <YAxis type="number" stroke={axis} />
+              <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+              <Legend wrapperStyle={{ color: legend }} />
               {agentsList.map((agent, idx) => (
                 <Bar key={agent._id} dataKey={agent._id} name={agent.name} fill={ORANGE_GRADIENT_COLORS[idx % ORANGE_GRADIENT_COLORS.length]} />
               ))}
@@ -466,15 +481,15 @@ const AdminDashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold mb-4">Company Total Deals</h3>
+        <div className="chart-panel">
+          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Company Total Deals</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={companyDealsData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" stroke="#999" />
-              <YAxis stroke="#999" />
-              <Tooltip />
-              <Legend />
+              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+              <XAxis dataKey="month" stroke={axis} />
+              <YAxis stroke={axis} />
+              <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+              <Legend wrapperStyle={{ color: legend }} />
               <Line type="monotone" dataKey="Open" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3 }} />
               <Line type="monotone" dataKey="Closed-Won" stroke="#10b981" strokeWidth={2} dot={{ r: 3 }} />
               <Line type="monotone" dataKey="Closed-Lost" stroke="#ef4444" strokeWidth={2} dot={{ r: 3 }} />
@@ -484,34 +499,34 @@ const AdminDashboard = () => {
       </div>
 
       {/* Row 3: Monthly Sales & Conversion Rates */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold mb-4">Monthly Sales</h3>
-          <span className="text-sm text-gray-600">Transactions</span>
+      <div className="chart-grid">
+        <div className="chart-panel">
+          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Monthly Sales</h3>
+          <span className={`text-sm ${dm.textSecondary}`}>Transactions</span>
           {salesCountData.length === 0 ? (
-            <p className="text-sm text-gray-500 text-center py-8">No data</p>
+            <p className={`text-sm text-center py-8 ${dm.textMuted}`}>No data</p>
           ) : (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={salesCountData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="month" stroke="#999" />
-                <YAxis stroke="#999" allowDecimals={false} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                <XAxis dataKey="month" stroke={axis} />
+                <YAxis stroke={axis} allowDecimals={false} />
+                <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
                 <Bar dataKey="sales" fill="#FFD700" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold mb-4">Conversion Rates by Agent</h3>
+        <div className="chart-panel">
+          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Conversion Rates by Agent</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={conversionRatesData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" stroke="#999" />
-              <YAxis stroke="#999" />
-              <Tooltip formatter={(value) => `${value}%`} />
-              <Legend />
+              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+              <XAxis dataKey="month" stroke={axis} />
+              <YAxis stroke={axis} />
+              <Tooltip formatter={(value) => `${value}%`} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+              <Legend wrapperStyle={{ color: legend }} />
               {agentsList.map((agent, idx) => (
                 <Line key={agent._id} type="monotone" dataKey={agent._id} name={agent.name} stroke={ORANGE_GRADIENT_COLORS[idx % ORANGE_GRADIENT_COLORS.length]} strokeWidth={2} dot={{ r: 3 }} />
               ))}
@@ -586,7 +601,7 @@ const UserTable = ({ users }) => {
       <html><head><title>Users Report</title>
       <style>
         body { font-family: Arial, sans-serif; font-size: 12px; }
-        h2 { color: #FFD700; }
+        h2 { color: #1795CC; }
         table { width: 100%; border-collapse: collapse; margin-top: 12px; }
         th { background: #1f2937; color: white; padding: 8px; text-align: left; font-size: 11px; }
         td { padding: 7px 8px; border-bottom: 1px solid #e5e7eb; }
@@ -608,26 +623,26 @@ const UserTable = ({ users }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5 border-b border-gray-100">
-        <h3 className="text-lg font-semibold text-gray-900">Users</h3>
+    <div className={`rounded-xl shadow-sm border ${dm.card}`}>
+      <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5 border-b ${dm.border}`}>
+        <h3 className={`text-lg font-semibold ${dm.textPrimary}`}>Users</h3>
         <div className="flex items-center gap-3">
           <input
             type="text"
             placeholder="Search users..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 w-48"
+            className={`px-3 py-2 rounded-lg text-sm w-48 ${dm.input}`}
           />
           <button
             onClick={exportExcel}
-            className="flex items-center gap-1.5 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors ${dm.btnSecondary}`}
           >
             <Download className="w-4 h-4" /> Excel
           </button>
           <button
             onClick={exportPDF}
-            className="flex items-center gap-1.5 px-3 py-2 border border-blue-300 rounded-lg text-sm text-blue-700 hover:bg-blue-50 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 border border-blue-300 rounded-lg text-sm text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-900/30 transition-colors"
           >
             <FileText className="w-4 h-4" /> PDF
           </button>
@@ -636,15 +651,15 @@ const UserTable = ({ users }) => {
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b border-gray-100">
+          <thead className={`table-header`}>
             <tr>
-              <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">Name</th>
-              <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">Email</th>
-              <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">Role</th>
-              <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">Status</th>
-              <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">Deals</th>
-              <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">Sales Amount</th>
-              <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">Joined</th>
+              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Name</th>
+              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Email</th>
+              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Role</th>
+              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Status</th>
+              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Deals</th>
+              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Sales Amount</th>
+              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Joined</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">

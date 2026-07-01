@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Users, Target, Award } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { useChartTheme } from '../../utils/chartTheme';
+import dm from '../../utils/darkModeClasses';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 
@@ -40,7 +42,7 @@ const Analytics = () => {
       <div className="p-6 flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="inline-block w-12 h-12 border-4 border-primary-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-gray-600">Loading analytics...</p>
+          <p className={`mt-4 ${dm.textSecondary}`}>Loading analytics...</p>
         </div>
       </div>
     );
@@ -50,8 +52,8 @@ const Analytics = () => {
     <div className="p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Sales Analytics</h1>
-        <p className="text-gray-600 mt-1">Track performance and conversion metrics</p>
+        <h1 className={`text-3xl font-bold ${dm.textPrimary}`}>Sales Analytics</h1>
+        <p className={`mt-1 ${dm.textSecondary}`}>Track performance and conversion metrics</p>
       </div>
 
       {/* Stats Cards */}
@@ -86,16 +88,16 @@ const Analytics = () => {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Conversion Pie Chart */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Conversion Overview</h2>
+        <div className={`rounded-lg shadow p-6 ${dm.card}`}>
+          <h2 className={`text-xl font-bold mb-4 ${dm.textPrimary}`}>Conversion Overview</h2>
           {conversionData && (
             <ConversionChart data={conversionData} />
           )}
         </div>
 
         {/* Client Activity */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Client Activity</h2>
+        <div className={`rounded-lg shadow p-6 ${dm.card}`}>
+          <h2 className={`text-xl font-bold mb-4 ${dm.textPrimary}`}>Client Activity</h2>
           {clientActivity && (
             <ClientActivityChart data={clientActivity} />
           )}
@@ -103,10 +105,10 @@ const Analytics = () => {
       </div>
 
       {/* Leaderboard */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className={`rounded-lg shadow p-6 ${dm.card}`}>
         <div className="flex items-center mb-6">
           <Award className="w-6 h-6 text-secondary-500 mr-2" />
-          <h2 className="text-xl font-bold">Agent Leaderboard</h2>
+          <h2 className={`text-xl font-bold ${dm.textPrimary}`}>Agent Leaderboard</h2>
         </div>
         <Leaderboard data={leaderboard} />
       </div>
@@ -127,14 +129,14 @@ const StatsCard = ({ title, value, icon: Icon, color, subtitle }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-lg shadow p-6"
+      className={`rounded-lg shadow p-6 ${dm.card}`}
     >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-600 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-gray-900">{value}</p>
+          <p className={`text-sm mb-1 ${dm.textSecondary}`}>{title}</p>
+          <p className={`text-3xl font-bold ${dm.textPrimary}`}>{value}</p>
           {subtitle && (
-            <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
+            <p className={`text-xs mt-1 ${dm.textMuted}`}>{subtitle}</p>
           )}
         </div>
         <div className={`p-3 rounded-full ${colorClasses[color]}`}>
@@ -147,6 +149,7 @@ const StatsCard = ({ title, value, icon: Icon, color, subtitle }) => {
 
 // Conversion Chart Component
 const ConversionChart = ({ data }) => {
+  const { grid, axis, tooltipStyle, labelStyle, itemStyle, legend } = useChartTheme();
   const chartData = [
     { name: 'Won Deals', value: data.convertedDeals, color: '#10B981' },
     { name: 'Lost Deals', value: data.lostDeals, color: '#EF4444' },
@@ -162,13 +165,13 @@ const ConversionChart = ({ data }) => {
           >
             {data.conversionRate}%
           </div>
-          <div className="text-sm text-gray-500">Current Conversion</div>
+          <div className={`text-sm ${dm.textMuted}`}>Current Conversion</div>
         </div>
       </div>
 
-      <div className="bg-gray-100 rounded-md p-3 mb-4">
+      <div className={`rounded-md p-3 mb-4 bg-[var(--color-bg-muted)]`}>
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-700">Benchmark (40%)</span>
+          <span className={`text-sm ${dm.textSecondary}`}>Benchmark (40%)</span>
           <span
             className={`font-semibold ${
               data.benchmarkDifference >= 0 ? 'text-green-600' : 'text-red-600'
@@ -196,8 +199,8 @@ const ConversionChart = ({ data }) => {
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
-          <Tooltip />
-          <Legend />
+          <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+          <Legend wrapperStyle={{ color: legend }} />
         </PieChart>
       </ResponsiveContainer>
     </div>
@@ -206,6 +209,7 @@ const ConversionChart = ({ data }) => {
 
 // Client Activity Chart Component
 const ClientActivityChart = ({ data }) => {
+  const { grid, axis, tooltipStyle, labelStyle, itemStyle } = useChartTheme();
   const chartData = [
     { name: 'Active', value: data.activeClients, color: '#10B981' },
     { name: 'Dormant', value: data.dormantClients, color: '#F59E0B' },
@@ -216,22 +220,22 @@ const ClientActivityChart = ({ data }) => {
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="text-center">
           <div className="text-3xl font-bold text-green-600">{data.activeClients}</div>
-          <div className="text-sm text-gray-600">Active</div>
-          <div className="text-xs text-gray-500">{data.activePercentage}%</div>
+          <div className={`text-sm ${dm.textSecondary}`}>Active</div>
+          <div className={`text-xs ${dm.textMuted}`}>{data.activePercentage}%</div>
         </div>
         <div className="text-center">
           <div className="text-3xl font-bold text-primary-600">{data.dormantClients}</div>
-          <div className="text-sm text-gray-600">Dormant</div>
-          <div className="text-xs text-gray-500">{data.dormantPercentage}%</div>
+          <div className={`text-sm ${dm.textSecondary}`}>Dormant</div>
+          <div className={`text-xs ${dm.textMuted}`}>{data.dormantPercentage}%</div>
         </div>
       </div>
 
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
+          <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+          <XAxis dataKey="name" stroke={axis} />
+          <YAxis stroke={axis} />
+          <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
           <Bar dataKey="value" fill="#FFD700" />
         </BarChart>
       </ResponsiveContainer>
@@ -250,7 +254,7 @@ const Leaderboard = ({ data }) => {
 
   if (data.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className={`text-center py-8 ${dm.textMuted}`}>
         No performance data available yet
       </div>
     );
@@ -259,25 +263,25 @@ const Leaderboard = ({ data }) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full">
-        <thead className="bg-gray-50">
+        <thead className="table-header">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rank</th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase">Rank</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Agent</th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Sales</th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Revenue</th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Conversion</th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Score</th>
+            <th className="px-6 py-3 text-right text-xs font-medium uppercase">Sales</th>
+            <th className="px-6 py-3 text-right text-xs font-medium uppercase">Revenue</th>
+            <th className="px-6 py-3 text-right text-xs font-medium uppercase">Conversion</th>
+            <th className="px-6 py-3 text-right text-xs font-medium uppercase">Score</th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody>
           {data.map((entry) => (
-            <tr key={entry.agent.id} className="hover:bg-gray-50">
+            <tr key={entry.agent.id} className="table-row">
               <td className="px-6 py-4 whitespace-nowrap text-2xl">
                 {getMedalEmoji(entry.rank)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
-                <div className="font-semibold text-gray-900">{entry.agent.name}</div>
-                <div className="text-xs text-gray-500">{entry.agent.email}</div>
+                <div className={`font-semibold ${dm.textPrimary}`}>{entry.agent.name}</div>
+                <div className={`text-xs ${dm.textMuted}`}>{entry.agent.email}</div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right font-medium">
                 {entry.stats.totalSales}

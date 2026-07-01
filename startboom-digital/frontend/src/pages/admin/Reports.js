@@ -964,7 +964,7 @@ const Reports = () => {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gradient-to-r from-primary-500 to-primary-600 text-white">
+                <thead className="table-header">
                   <tr>
                     <th className="px-4 py-3 text-left font-medium">Date</th>
                     <th className="px-4 py-3 text-left font-medium">Customer Name</th>
@@ -988,7 +988,7 @@ const Reports = () => {
                       </td>
                       <td className="px-4 py-3 text-center">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                           deal.paymentMethod === 'cash' ? 'bg-primary-100 text-primary-800' : 'bg-primary-50 text-primary-800'
+                           sale.paymentMethod === 'cash' ? 'bg-primary-100 text-primary-800' : 'bg-primary-50 text-primary-800'
                         }`}>
                           {sale.paymentMethod}
                         </span>
@@ -1032,7 +1032,7 @@ const Reports = () => {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gradient-to-r from-primary-500 to-primary-600 text-white">
+                <thead className="table-header">
                   <tr>
                     <th className="px-4 py-3 text-left font-medium">Sales Agent Name</th>
                     <th className="px-4 py-3 text-left font-medium">Email</th>
@@ -1170,7 +1170,7 @@ const Reports = () => {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gradient-to-r from-primary-500 to-primary-600 text-white">
+                <thead className="table-header">
                   <tr>
                     <th className="px-4 py-3 text-left font-medium">Date</th>
                     <th className="px-4 py-3 text-left font-medium">Deal Title</th>
