@@ -257,7 +257,7 @@ const SuperAdminDashboard = () => {
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="table-header">
               <tr>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
@@ -320,7 +320,7 @@ const SuperAdminDashboard = () => {
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="table-header">
               <tr>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Organization</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -369,7 +369,7 @@ const SuperAdminDashboard = () => {
       </div>
 
       {/* Super Admin Info Card */}
-      <div className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-6 text-white">
+      <div className="brand-header rounded-xl p-6 text-white">
         <div className="flex items-center space-x-4">
           <div className="p-3 bg-white/20 rounded-xl">
             <ShieldCheck className="w-8 h-8 text-white" />
