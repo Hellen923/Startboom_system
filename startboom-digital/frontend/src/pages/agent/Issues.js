@@ -227,7 +227,7 @@ export default function Issues() {
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-slate-50">
+            <thead className="table-header">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase">Client</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase">Type</th>
