@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { getAddNewActions, getIconColors } from '../utils/roleConfig';
+import dm from '../utils/darkModeClasses';
 
 const QuickActionModal = ({ isOpen, onClose }) => {
   const { user } = useAuth();
@@ -17,45 +18,35 @@ const QuickActionModal = ({ isOpen, onClose }) => {
     onClose();
   };
 
-  const roleLabel = {
-    superadmin: 'Platform',
-    admin: 'Organization',
-    manager: 'Organization',
-    agent: 'Sales',
-  }[role] || 'Quick';
+  const roleLabel = { superadmin: 'Platform', admin: 'Organization', manager: 'Organization', agent: 'Sales' }[role] || 'Quick';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
-      <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+    <div className={dm.modalOverlay}>
+      <div className={`${dm.modalShell} max-w-md relative`}>
+        <div className={dm.modalHeader}>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Add New</h2>
-            <p className="text-sm text-gray-500 mt-0.5">{roleLabel} actions for your role</p>
+            <h2 className="text-lg font-semibold">Add New</h2>
+            <p className="text-sm opacity-90 mt-0.5">{roleLabel} actions for your role</p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition"
-          >
+          <button type="button" onClick={onClose} className="p-2 rounded-lg hover:opacity-80 transition-opacity">
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="p-4 grid grid-cols-1 gap-2 max-h-[60vh] overflow-y-auto">
+        <div className={`${dm.modalBody} grid grid-cols-1 gap-2 max-h-[60vh]`}>
           {actions.map((action) => {
             const Icon = action.icon;
-            const colors = getIconColors('orange');
+            const colors = getIconColors('primary');
             return (
               <button
                 key={action.label}
                 type="button"
                 onClick={() => handleAction(action)}
-                className="flex items-center gap-4 w-full rounded-xl border border-gray-200 p-4 text-left hover:border-orange-300 hover:bg-orange-50/30 transition"
+                className={`flex items-center gap-4 w-full rounded-xl border p-4 text-left transition hover:bg-[var(--color-bg-row-hover)] ${dm.border}`}
               >
                 <div className={`rounded-xl p-2.5 ${colors.bg} ${colors.text}`}>
                   <Icon className="w-5 h-5" />
                 </div>
-                <span className="font-medium text-gray-900">{action.label}</span>
+                <span className={`font-medium ${dm.textPrimary}`}>{action.label}</span>
               </button>
             );
           })}
