@@ -771,7 +771,7 @@ const Settings = () => {
                 {/* Custom Domain */}
                 <div className="mt-8 border-t border-gray-200 pt-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Custom Subdomain</label>
-                   <p className="text-xs text-gray-500 mb-3">Set your company's custom subdomain (e.g. <span className="font-mono text-primary-600">xtreative.crm.com</span>). Contact your platform provider to activate DNS routing after saving.</p>
+                   <p className="text-xs text-gray-500 mb-3">Set your company's custom subdomain (e.g. <span className="font-mono text-primary-600">swavelink.crm.com</span>). Contact your platform provider to activate DNS routing after saving.</p>
                   <div className="flex items-center space-x-3">
                     <input
                       type="text"
@@ -813,7 +813,7 @@ const Settings = () => {
                   <p className="text-sm font-medium text-gray-700 mb-3">Preview</p>
                   <div className="flex items-center space-x-3 p-3 rounded-lg" style={{ backgroundColor: branding.primaryColor }}>
                     {logoPreview && <img src={logoPreview} alt="Logo" className="w-8 h-8 object-contain" />}
-                    <span className="text-white font-bold">Your Company CRM</span>
+                  <span className="text-white font-bold">Swavelink CRM</span>
                   </div>
                 </div>
               </div>
