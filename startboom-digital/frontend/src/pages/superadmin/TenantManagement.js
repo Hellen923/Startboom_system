@@ -131,7 +131,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center space-x-3">
-            <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-2 rounded-xl">
+            <div className="brand-header p-2 rounded-xl">
               <img src={logo} alt="Logo" className="w-6 h-6 object-contain" />
             </div>
             <h2 className="text-lg font-bold text-gray-900">Create New Organization</h2>
@@ -338,7 +338,7 @@ const ViewDetailsModal = ({ tenant, onClose }) => {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center space-x-3">
-            <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-2 rounded-xl">
+            <div className="brand-header p-2 rounded-xl">
               <Eye className="w-6 h-6 text-white" />
             </div>
             <h2 className="text-lg font-bold text-gray-900">Organization Details</h2>
@@ -534,7 +534,7 @@ const EditModal = ({ tenant, onClose, onUpdated }) => {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center space-x-3">
-            <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-2 rounded-xl">
+            <div className="brand-header p-2 rounded-xl">
               <Edit className="w-6 h-6 text-white" />
             </div>
             <h2 className="text-lg font-bold text-gray-900">Edit Organization</h2>
@@ -851,7 +851,7 @@ className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
 
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="table-header">
               <tr>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Organization</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>

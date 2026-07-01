@@ -32,6 +32,8 @@ import {
 import toast from 'react-hot-toast';
 import { tenantsAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { useChartTheme } from '../../utils/chartTheme';
+import dm from '../../utils/darkModeClasses';
 import logo from '../../assets/logo.png';
 
 const formatNumber = (value) => new Intl.NumberFormat().format(Math.round(value || 0));
@@ -48,7 +50,7 @@ const statusClasses = {
   inactive: 'bg-gray-100 text-gray-600 border-gray-200'
 };
 
-const cardClass = 'bg-white rounded-lg border border-gray-200 shadow-sm';
+const cardClass = 'chart-panel';
 
 const StatusBadge = ({ status }) => (
   <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold capitalize ${statusClasses[status] || statusClasses.inactive}`}>
@@ -69,9 +71,9 @@ const MetricCard = ({ icon: Icon, label, value, detail, tone = 'primary' }) => {
     <div className={`${cardClass} p-5`}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-gray-500">{label}</p>
-          <p className="mt-2 text-3xl font-bold text-gray-950">{value}</p>
-          {detail && <p className="mt-2 text-sm text-gray-500">{detail}</p>}
+          <p className={`text-sm font-medium ${dm.textMuted}`}>{label}</p>
+          <p className={`mt-2 text-3xl font-bold ${dm.textPrimary}`}>{value}</p>
+          {detail && <p className={`mt-2 text-sm ${dm.textMuted}`}>{detail}</p>}
         </div>
         <div className={`rounded-lg p-3 ${tones[tone]}`}>
           <Icon className="h-5 w-5" />
@@ -82,15 +84,16 @@ const MetricCard = ({ icon: Icon, label, value, detail, tone = 'primary' }) => {
 };
 
 const EmptyState = ({ title, text }) => (
-  <div className="rounded-lg border border-dashed border-gray-300 bg-white p-8 text-center">
-    <Search className="mx-auto h-8 w-8 text-gray-300" />
-    <p className="mt-3 font-semibold text-gray-900">{title}</p>
-    {text && <p className="mt-1 text-sm text-gray-500">{text}</p>}
+  <div className={`rounded-lg border border-dashed p-8 text-center ${dm.border} bg-[var(--color-bg-card)]`}>
+    <Search className={`mx-auto h-8 w-8 ${dm.textMuted}`} />
+    <p className={`mt-3 font-semibold ${dm.textPrimary}`}>{title}</p>
+    {text && <p className={`mt-1 text-sm ${dm.textMuted}`}>{text}</p>}
   </div>
 );
 
 const GlobalCommandCenter = () => {
   const { user } = useAuth();
+  const { grid, axis, tooltipStyle, labelStyle, itemStyle } = useChartTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -259,10 +262,10 @@ const GlobalCommandCenter = () => {
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={revenueChart} layout="vertical" margin={{ left: 18, right: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                <XAxis type="number" tickFormatter={(value) => `$${Math.round(value / 1000)}k`} />
-                <YAxis dataKey="name" type="category" width={130} tickLine={false} axisLine={false} />
-                <Tooltip formatter={(value) => formatCurrency(value)} />
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={grid} />
+                <XAxis type="number" tickFormatter={(value) => `$${Math.round(value / 1000)}k`} stroke={axis} />
+                <YAxis dataKey="name" type="category" width={130} tickLine={false} axisLine={false} stroke={axis} />
+                <Tooltip formatter={(value) => formatCurrency(value)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
                 <Bar dataKey="revenue" fill="#FFD700" radius={[0, 6, 6, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -308,10 +311,10 @@ const GlobalCommandCenter = () => {
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={tenantHealthChart}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="name" tickLine={false} axisLine={false} />
-                <YAxis allowDecimals={false} tickLine={false} axisLine={false} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={grid} />
+                <XAxis dataKey="name" tickLine={false} axisLine={false} stroke={axis} />
+                <YAxis allowDecimals={false} tickLine={false} axisLine={false} stroke={axis} />
+                <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
                 <Bar dataKey="value" radius={[6, 6, 0, 0]}>
                   {tenantHealthChart.map((entry) => (
                     <Cell key={entry.name} fill={entry.color} />
@@ -341,7 +344,7 @@ const GlobalCommandCenter = () => {
 
           <div className="overflow-x-auto">
             <table className="w-full min-w-[760px]">
-              <thead className="bg-gray-50">
+              <thead className="table-header">
                 <tr>
                   {['Tenant', 'Status', 'Users', 'Revenue', 'MRR', 'Security'].map((head) => (
                     <th key={head} className="px-4 py-3 text-left text-xs font-semibold uppercase text-gray-500">{head}</th>
