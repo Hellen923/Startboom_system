@@ -2,380 +2,635 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS Reset for consistent cross-environment rendering */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+/* ============================================================
+   SWAVELINK — GLOBAL THEME SYSTEM (CSS variable driven)
+   ThemeContext.applyTheme() sets all --color-* tokens on :root.
+   Components use var(--color-*) or dm.* utility classes.
+   ============================================================ */
+
+/* ---------- CSS custom properties (light defaults; ThemeContext overrides on toggle) ---------- */
+:root {
+  --primary-color: #1795CC;
+  --primary-hover: #1178A6;
+  --primary-ring: rgba(23, 149, 204, 0.25);
+  --workspace-bg: #F8FAFC;
+  --color-bg-page: #F8FAFC;
+  --color-bg-card: #FFFFFF;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-elevated: #F9FAFB;
+  --color-bg-input: #FFFFFF;
+  --color-bg-input-subtle: #F9FAFB;
+  --color-bg-row-hover: #EFF6FF;
+  --color-bg-hover: #F3F4F6;
+  --color-bg-muted: #F3F4F6;
+  --color-bg-icon-btn: #F3F4F6;
+  --color-border: #E5E7EB;
+  --color-border-strong: #D1D5DB;
+  --color-border-subtle: #F3F4F6;
+  --color-text-primary: #111827;
+  --color-text-secondary: #374151;
+  --color-text-muted: #6B7280;
+  --color-text-placeholder: #9CA3AF;
+  --color-chart-grid: #E5E7EB;
+  --color-chart-axis: #9CA3AF;
+  --color-tooltip-bg: #FFFFFF;
+  --color-tooltip-border: #E5E7EB;
+  --color-tooltip-label: #6B7280;
+  --color-tooltip-value: #111827;
+  --color-overlay: rgba(0,0,0,0.5);
+  --color-shadow: rgba(0,0,0,0.06);
+  --color-shadow-strong: rgba(0,0,0,0.12);
+  --color-accent-surface: #EFF6FF;
+  --color-scrollbar: #CBD5E1;
+  --color-tab-inactive: #F3F4F6;
+  --color-tab-active-bg: #FFFFFF;
+  --brand-header-bg: linear-gradient(to right, #1795CC, #1178A6);
+  --btn-brand-bg: linear-gradient(to right, #1795CC, #1178A6);
+  --brand-header-text: #FFFFFF;
+  --brand-header-solid: #0D5B80;
+  --gradient-from: #1795CC;
+  --gradient-to: #1178A6;
+  --sidebar-bg: linear-gradient(180deg, #1795CC 0%, #1178A6 55%, #0D5B80 100%);
+  --sidebar-border: rgba(255,255,255,0.15);
+  --sidebar-nav-active: rgba(255,255,255,0.22);
+  --sidebar-nav-hover: rgba(255,255,255,0.12);
+  --sidebar-section-label: rgba(255,255,255,0.65);
 }
 
+/* ---------- View transition (theme toggle) ---------- */
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 0.25s;
+  animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* ---------- Base reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
 html {
-  font-size: 16px; /* Consistent base font size */
+  font-size: 16px;
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
-  -moz-tab-size: 4;
-  tab-size: 4;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: #111827;
-  background-color: #F8FAFC;
+  background-color: var(--color-bg-page, #F8FAFC);
+  color: var(--color-text-primary, #111827);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Ensure consistent spacing and sizing */
-h1, h2, h3, h4, h5, h6 {
-  margin: 0;
-  font-weight: 600;
-  line-height: 1.25;
-}
-
-p {
-  margin: 0;
-}
-
-button, input, optgroup, select, textarea {
-  font-family: inherit;
-  font-size: 100%;
-  line-height: 1.15;
-  margin: 0;
-}
-
-/* Dark mode support */
-.dark {
-  color-scheme: dark;
-}
-
-.dark body {
-  background-color: #0F172A;
-  color: #F8FAFC;
-}
-
-.dark .bg-gray-50 {
-  background-color: #1f2937;
-}
-
-.dark .bg-white {
-  background-color: #374151;
-}
-
-.dark .text-gray-900 {
-  color: #f9fafb;
-}
-
-.dark .text-gray-700 {
-  color: #d1d5db;
-}
-
-.dark .text-gray-600 {
-  color: #9ca3af;
-}
-
-.dark .border-gray-200 {
-  border-color: #4b5563;
-}
-
-/* Responsive improvements */
-@media (max-width: 640px) {
-  /* Mobile optimizations */
-  * {
-    -webkit-tap-highlight-color: transparent;
-  }
-}
-
-/* Performance optimizations */
-* {
-  box-sizing: border-box;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Focus styles for accessibility */
-button:focus-visible,
-a:focus-visible {
-  outline: 2px solid #1795CC;
-  outline-offset: 2px;
-}
-
-/* Consistent component sizing across environments */
-.btn {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 1.25rem;
-  text-align: center;
-  text-decoration: none;
-  border: 1px solid transparent;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
-}
-
-/* Ensure consistent modal and overlay sizing */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-  padding: 1rem;
-}
-
-/* Card component consistency */
-.card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  overflow: hidden;
-}
-
-/* Form input consistency */
-.form-input {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #1795CC;
-  box-shadow: 0 0 0 3px rgba(23, 149, 204, 0.15);
-}
-
-/* Grid system consistency */
-.grid {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.grid-cols-1 {
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-}
-
-@media (min-width: 768px) {
-  .md\\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1024px) {
-  .lg\\:grid-cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-/* Ensure consistent spacing */
-.space-y-6 > * + * {
-  margin-top: 1.5rem;
-}
-
-.gap-6 {
-  gap: 1.5rem;
-}
-
-/* Text sizing consistency */
-.text-xs { font-size: 0.75rem; line-height: 1rem; }
-.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-.text-base { font-size: 1rem; line-height: 1.5rem; }
-.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-.text-2xl { font-size: 1.5rem; line-height: 2rem; }
-
-/* Ensure consistent viewport handling */
 #root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-bg-page, #F8FAFC);
 }
 
-/* Dashboard specific consistency */
-.dashboard-container {
-  padding: 1.5rem;
-  max-width: 100%;
-  margin: 0 auto;
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-scrollbar, #CBD5E1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
+
+/* ---------- Focus ring ---------- */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
-.dashboard-header {
-  margin-bottom: 1.5rem;
+/* ============================================================
+   SIDEBAR — blue gradient in light mode, dark navy in dark mode
+   ============================================================ */
+.sidebar-shell {
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  transition: background 0.25s ease, border-color 0.25s ease;
 }
 
-.dashboard-grid {
-  display: grid;
-  gap: 1.5rem;
+.sidebar-divider { border-color: rgba(255,255,255,0.12); }
+.dark .sidebar-divider { border-color: rgba(255,255,255,0.1); }
+
+.sidebar-section-label {
+  color: var(--sidebar-section-label);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-.dashboard-kpi-grid {
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+.sidebar-item {
+  color: rgba(255,255,255,0.9);
+  border-left: 2px solid transparent;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.sidebar-item:hover {
+  background-color: var(--sidebar-nav-hover);
+  color: #FFFFFF;
+}
+.sidebar-item.active {
+  background-color: var(--sidebar-nav-active);
+  border-left-color: #FFFFFF;
+  color: #FFFFFF;
+}
+.sidebar-item.active .sidebar-item-icon { color: #FFFFFF; }
+
+.dark .sidebar-item.active {
+  border-left-color: var(--primary-color);
+}
+.dark .sidebar-item.active .sidebar-item-icon {
+  color: var(--primary-color);
+}
+.dark .sidebar-item.active .sidebar-active-dot {
+  background-color: var(--primary-color);
 }
 
-.dashboard-chart-grid {
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+.sidebar-footer {
+  border-top: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+}
+.dark .sidebar-footer { background: rgba(255,255,255,0.05); }
+
+/* ============================================================
+   MAIN CONTENT AREA
+   ============================================================ */
+.main-content {
+  background-color: var(--color-bg-page);
+  transition: background-color 0.2s ease;
 }
 
-/* Card component specific styles */
-.dashboard-card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  padding: 1.5rem;
-  transition: box-shadow 0.15s ease-in-out;
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px var(--color-shadow);
+  transition: box-shadow 0.15s ease, background-color 0.2s ease;
+}
+.card:hover {
+  box-shadow: 0 4px 12px var(--color-shadow-strong);
+  background-color: var(--color-bg-elevated);
 }
 
-.dashboard-card:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+/* ============================================================
+   TABLES — global catch-all for unstyled table markup
+   ============================================================ */
+.table-header {
+  background-color: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-muted);
 }
 
-/* Modal consistency */
-.dashboard-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-  padding: 1rem;
+.table-header th {
+  color: var(--color-text-muted);
 }
 
-.dashboard-modal-content {
-  background-color: white;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  max-width: 28rem;
+.table-row {
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-text-primary);
+  transition: background-color 0.1s ease;
+}
+.table-row:hover { background-color: var(--color-bg-row-hover); }
+
+table thead th {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1.25rem;
+}
+table tbody tr {
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-text-primary);
+}
+table tbody tr:hover { background-color: var(--color-bg-row-hover); }
+table tbody td { color: var(--color-text-primary); }
+
+/* Table headers never use brand gradient — sidebar/modals only */
+table thead,
+table thead th,
+thead.table-header,
+thead.table-header th,
+.unified-table thead,
+.unified-table thead th {
+  background-color: var(--color-bg-elevated) !important;
+  color: var(--color-text-muted) !important;
+}
+table thead th,
+thead.table-header th,
+.unified-table thead th {
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ============================================================
+   INPUTS & SELECTS — global catch-all
+   ============================================================ */
+.form-input,
+input[type="text"]:not([class*="bg-"]),
+input[type="email"]:not([class*="bg-"]),
+input[type="password"]:not([class*="bg-"]),
+input[type="number"]:not([class*="bg-"]),
+input[type="search"]:not([class*="bg-"]),
+input[type="tel"]:not([class*="bg-"]),
+input[type="url"]:not([class*="bg-"]),
+select:not([class*="bg-"]),
+textarea:not([class*="bg-"]) {
+  background-color: var(--color-bg-input);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+.form-input {
   width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+}
+.form-input::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-placeholder);
+}
+.form-input:hover,
+input:hover:not([type="checkbox"]):not([type="radio"]),
+select:hover,
+textarea:hover {
+  border-color: var(--color-border-strong);
+}
+.form-input:focus,
+input:focus:not([type="checkbox"]):not([type="radio"]),
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-ring);
 }
 
-/* Button consistency */
-.dashboard-btn {
+label {
+  color: var(--color-text-secondary);
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background: var(--btn-brand-bg);
+  color: var(--brand-header-text);
+  border: none; border-radius: 8px;
+  font-size: 0.875rem; font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-primary:hover { filter: brightness(1.08); box-shadow: 0 4px 12px rgba(23,149,204,0.3); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background-color: var(--color-bg-input);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border); border-radius: 8px;
+  font-size: 0.875rem; font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.btn-secondary:hover {
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-border-strong);
+}
+
+/* ============================================================
+   MODALS / OVERLAYS — global catch-all
+   ============================================================ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background-color: var(--color-overlay);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 50; padding: 1rem;
+}
+
+.modal-panel {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px var(--color-shadow-strong);
+  color: var(--color-text-primary);
+  width: 100%; max-height: 90vh; overflow-y: auto;
+}
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem; font-weight: 600;
+}
+
+/* ============================================================
+   TASKBAR / NAVBAR
+   ============================================================ */
+.taskbar {
+  background-color: var(--color-bg-card);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ============================================================
+   ICON BUTTONS
+   ============================================================ */
+.icon-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 2.5rem; height: 2.5rem;
+  border-radius: 10px;
+  background-color: var(--color-bg-icon-btn);
+  color: var(--color-text-secondary);
+  border: none; cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.icon-btn:hover {
+  background-color: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+/* ============================================================
+   STAT / KPI CARDS
+   ============================================================ */
+.stat-card {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px; padding: 1.25rem 1.5rem;
+  color: var(--color-text-primary);
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* ============================================================
+   DROPDOWN MENUS
+   ============================================================ */
+.dropdown-menu {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px var(--color-shadow-strong);
+  overflow: hidden;
+}
+
+.dropdown-item {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.dropdown-item:hover {
+  background-color: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+
+/* ============================================================
+   SEARCH INPUT
+   ============================================================ */
+.search-input {
+  background-color: var(--color-bg-input-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
+  width: 100%;
+  transition: border-color 0.15s ease, background-color 0.2s ease;
+}
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-ring);
+  background-color: var(--color-bg-input);
+}
+.search-input::placeholder { color: var(--color-text-placeholder); }
+
+/* ============================================================
+   DIVIDERS & TEXT UTILITIES
+   ============================================================ */
+.divider { border: none; border-top: 1px solid var(--color-border); }
+
+.text-muted { color: var(--color-text-muted); }
+.text-heading { color: var(--color-text-primary); font-weight: 700; }
+
+/* ============================================================
+   TAB BARS — period filters, segmented controls
+   ============================================================ */
+.tab-bar {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  gap: 0.25rem;
+  background-color: var(--color-bg-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+}
+.tab-bar button {
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
   font-size: 0.875rem;
   font-weight: 500;
-  text-decoration: none;
-  border: 1px solid transparent;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
   cursor: pointer;
-  transition: all 0.15s ease-in-out;
-  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.tab-bar button:hover { background-color: var(--color-bg-hover); }
+.tab-bar button.active,
+.tab-bar button[data-active="true"] {
+  background-color: var(--color-tab-active-bg);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 2px var(--color-shadow);
 }
 
-.dashboard-btn-primary {
-  background-color: #1795CC;
-  color: white;
-  border-color: #1795CC;
+/* ============================================================
+   CHART CONTAINERS
+   ============================================================ */
+.chart-panel {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 3px var(--color-shadow);
+}
+.chart-panel-body { padding: 1.5rem; }
+
+/* ============================================================
+   UNIFIED DESIGN SYSTEM — brand gradient (light) / solid blue (dark)
+   Used on sidebar, modal headers, and primary buttons only
+   ============================================================ */
+.brand-header {
+  background: var(--brand-header-bg);
+  color: var(--brand-header-text);
+}
+.brand-header h1, .brand-header h2, .brand-header h3,
+.brand-header p, .brand-header span { color: inherit; }
+
+.btn-brand {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--btn-brand-bg);
+  color: var(--brand-header-text);
+  border: none; border-radius: 0.75rem;
+  font-size: 0.875rem; font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 8px rgba(23,149,204,0.25);
+}
+.btn-brand:hover { filter: brightness(1.08); }
+.btn-brand:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.unified-card {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px var(--color-shadow);
+  color: var(--color-text-primary);
+}
+.unified-card-header {
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.unified-card-header h2,
+.unified-card-header h3 { font-weight: 600; font-size: 1.125rem; margin: 0; color: var(--color-text-primary); }
+.unified-card-header p { font-size: 0.875rem; color: var(--color-text-muted); margin: 0.125rem 0 0; }
+.unified-card-body { padding: 1.5rem; }
+.unified-card-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
 }
 
-.dashboard-btn-primary:hover {
-  background-color: #1178A6;
-  border-color: #1178A6;
+.unified-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.unified-table thead {
+  background-color: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border);
+}
+.unified-table thead th {
+  padding: 0.75rem 1.25rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-elevated);
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+}
+.unified-table tbody tr {
+  border-bottom: 1px solid var(--color-border-subtle);
+  transition: background-color 0.1s ease;
+}
+.unified-table tbody tr:hover { background-color: var(--color-bg-row-hover); }
+.unified-table tbody td {
+  padding: 0.875rem 1.25rem;
+  color: var(--color-text-primary);
 }
 
-.dashboard-btn-secondary {
-  background-color: white;
-  color: #374151;
-  border-color: #d1d5db;
+/* Dashboard layout — uniform spacing across all roles */
+.dashboard-page { display: flex; flex-direction: column; gap: 1.5rem; }
+.stat-grid { display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 1rem; }
+@media (min-width: 768px) { .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .stat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1280px) { .stat-grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.chart-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+@media (min-width: 1024px) { .chart-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Legacy page compat — maps old Tailwind grays/whites to theme tokens inside app pages */
+.dashboard-page .bg-white { background-color: var(--color-bg-card) !important; }
+.dashboard-page .bg-gray-50 { background-color: var(--color-bg-elevated) !important; }
+.dashboard-page .bg-gray-100 { background-color: var(--color-bg-muted) !important; }
+.dashboard-page .text-gray-900 { color: var(--color-text-primary) !important; }
+.dashboard-page .text-gray-800,
+.dashboard-page .text-gray-700 { color: var(--color-text-secondary) !important; }
+.dashboard-page .text-gray-600,
+.dashboard-page .text-gray-500,
+.dashboard-page .text-gray-400 { color: var(--color-text-muted) !important; }
+.dashboard-page .border-gray-100,
+.dashboard-page .border-gray-200,
+.dashboard-page .border-gray-300 { border-color: var(--color-border) !important; }
+.dashboard-page thead.bg-gray-50,
+.dashboard-page .bg-gray-50.border-b { background-color: var(--color-bg-elevated) !important; color: var(--color-text-muted) !important; }
+.dashboard-page thead.bg-gray-50 th,
+.dashboard-page thead th.text-gray-500 { color: var(--color-text-muted) !important; }
+.dashboard-page .hover\:bg-gray-50:hover { background-color: var(--color-bg-row-hover) !important; }
+.dashboard-page input.border-gray-300,
+.dashboard-page select.border-gray-300,
+.dashboard-page textarea.border-gray-300 {
+  background-color: var(--color-bg-input) !important;
+  border-color: var(--color-border-strong) !important;
+  color: var(--color-text-primary) !important;
 }
 
-.dashboard-btn-secondary:hover {
-  background-color: #f9fafb;
-  border-color: #9ca3af;
-}
-
-/* Form consistency */
-.dashboard-form-group {
-  margin-bottom: 1rem;
-}
-
-.dashboard-form-label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 0.5rem;
-}
-
-.dashboard-form-input {
+.modal-shell {
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 20px 60px var(--color-shadow-strong);
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.modal-shell .brand-header { padding: 1.25rem 1.5rem; }
+.modal-shell-body { padding: 1.5rem; color: var(--color-text-primary); }
+.modal-shell-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
 }
 
-.dashboard-form-input:focus {
-  outline: none;
-  border-color: #1795CC;
-  box-shadow: 0 0 0 3px rgba(23, 149, 204, 0.15);
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
-/* Loading and animation consistency */
-.dashboard-spinner {
-  display: inline-block;
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid #E2E8F0;
-  border-top: 2px solid #1795CC;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
+.fade-in-up { animation: fadeInUp 0.25s ease-out; }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
+  0%   { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+.spin { animation: spin 1s linear infinite; }
 
-/* Ensure proper text rendering */
-.dashboard-text {
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  color: inherit;
-  margin: 0;
-  padding: 0;
-}
-
-/* Responsive utilities */
-@media (max-width: 640px) {
-  .dashboard-container {
-    padding: 1rem;
-  }
-
-  .dashboard-modal-content {
-    margin: 0.5rem;
-    padding: 1rem;
-  }
-}
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 640px) { * { -webkit-tap-highlight-color: transparent; } }

@@ -1,101 +1,188 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const ThemeContext = createContext();
 
 export const ACCENT_PRESETS = [
-  { id: 'gold', label: 'Gold', color: '#FFD700' },
-  { id: 'amber', label: 'Amber', color: '#d97706' },
-  { id: 'emerald', label: 'Emerald', color: '#059669' },
-  { id: 'blue', label: 'Blue', color: '#2563eb' },
-  { id: 'purple', label: 'Purple', color: '#7c3aed' },
-  { id: 'rose', label: 'Rose', color: '#e11d48' },
-  { id: 'slate', label: 'Slate', color: '#475569' },
-  { id: 'brown', label: 'Brown', color: '#92400e' },
+  { id: 'swavelink', label: 'Swavelink Blue', color: '#1795CC' },
+  { id: 'gold',      label: 'Gold',           color: '#F59E0B' },
+  { id: 'emerald',   label: 'Emerald',        color: '#059669' },
+  { id: 'violet',    label: 'Violet',         color: '#7C3AED' },
+  { id: 'rose',      label: 'Rose',           color: '#E11D48' },
+  { id: 'slate',     label: 'Slate',          color: '#475569' },
 ];
 
 const DEFAULT_THEME = {
-  primaryColor: '#FFD700',
-  accentPreset: 'gold',
-  sidebarStyle: 'expanded',
   mode: 'light',
+  primaryColor: '#1795CC',
+  accentPreset: 'swavelink',
+};
+
+/** Full light/dark token sets — applied to :root via applyTheme() */
+const THEME_TOKENS = {
+  light: {
+    '--workspace-bg':          '#F8FAFC',
+    '--color-bg-page':         '#F8FAFC',
+    '--color-bg-card':         '#FFFFFF',
+    '--color-bg-surface':      '#FFFFFF',
+    '--color-bg-elevated':     '#F9FAFB',
+    '--color-bg-input':        '#FFFFFF',
+    '--color-bg-input-subtle': '#F9FAFB',
+    '--color-bg-row-hover':    '#EFF6FF',
+    '--color-bg-hover':        '#F3F4F6',
+    '--color-bg-muted':        '#F3F4F6',
+    '--color-bg-icon-btn':     '#F3F4F6',
+    '--color-border':          '#E5E7EB',
+    '--color-border-strong':   '#D1D5DB',
+    '--color-border-subtle':   '#F3F4F6',
+    '--color-text-primary':    '#111827',
+    '--color-text-secondary':  '#374151',
+    '--color-text-muted':      '#6B7280',
+    '--color-text-placeholder':'#9CA3AF',
+    '--color-chart-grid':      '#E5E7EB',
+    '--color-chart-axis':      '#9CA3AF',
+    '--color-tooltip-bg':      '#FFFFFF',
+    '--color-tooltip-border':  '#E5E7EB',
+    '--color-tooltip-label':   '#6B7280',
+    '--color-tooltip-value':   '#111827',
+    '--color-overlay':         'rgba(0,0,0,0.5)',
+    '--color-shadow':          'rgba(0,0,0,0.06)',
+    '--color-shadow-strong':   'rgba(0,0,0,0.12)',
+    '--color-accent-surface':  '#EFF6FF',
+    '--color-scrollbar':       '#CBD5E1',
+    '--color-tab-inactive':    '#F3F4F6',
+    '--color-tab-active-bg':   '#FFFFFF',
+    '--brand-header-text':     '#FFFFFF',
+    '--brand-header-solid':    '#0D5B80',
+    '--sidebar-bg':            'linear-gradient(180deg, #1795CC 0%, #1178A6 55%, #0D5B80 100%)',
+    '--sidebar-border':        'rgba(255,255,255,0.15)',
+    '--sidebar-nav-active':    'rgba(255,255,255,0.22)',
+    '--sidebar-nav-hover':     'rgba(255,255,255,0.12)',
+    '--sidebar-section-label': 'rgba(255,255,255,0.65)',
+  },
+  dark: {
+    '--workspace-bg':          '#0F1117',
+    '--color-bg-page':         '#0F1117',
+    '--color-bg-card':         '#1A1D27',
+    '--color-bg-surface':      '#222536',
+    '--color-bg-elevated':     '#222536',
+    '--color-bg-input':        '#2A2D3E',
+    '--color-bg-input-subtle': '#2A2D3E',
+    '--color-bg-row-hover':    '#222536',
+    '--color-bg-hover':        '#3A3D52',
+    '--color-bg-muted':        '#2A2D3E',
+    '--color-bg-icon-btn':     'rgba(255,255,255,0.05)',
+    '--color-border':          '#3A3D52',
+    '--color-border-strong':   '#4A4D66',
+    '--color-border-subtle':   '#3A3D52',
+    '--color-text-primary':    '#FFFFFF',
+    '--color-text-secondary':  '#A0AEC0',
+    '--color-text-muted':      '#6B7280',
+    '--color-text-placeholder':'#6B7280',
+    '--color-chart-grid':      '#3A3D52',
+    '--color-chart-axis':      '#6B7280',
+    '--color-tooltip-bg':      '#222536',
+    '--color-tooltip-border':  '#3A3D52',
+    '--color-tooltip-label':   '#A0AEC0',
+    '--color-tooltip-value':   '#FFFFFF',
+    '--color-overlay':         'rgba(0,0,0,0.65)',
+    '--color-shadow':          'rgba(0,0,0,0.4)',
+    '--color-shadow-strong':   'rgba(0,0,0,0.6)',
+    '--color-accent-surface':  '#193A52',
+    '--color-scrollbar':       '#3A3D52',
+    '--color-tab-inactive':    '#2A2D3E',
+    '--color-tab-active-bg':   '#1A1D27',
+    '--brand-header-text':     '#FFFFFF',
+    '--brand-header-solid':    '#0D5B80',
+    '--sidebar-bg':            'linear-gradient(180deg, #0F1117 0%, #1A1D27 60%, #0F1117 100%)',
+    '--sidebar-border':        '#3A3D52',
+    '--sidebar-nav-active':    '#193A52',
+    '--sidebar-nav-hover':     '#222536',
+    '--sidebar-section-label': '#6B7280',
+  },
 };
 
 export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
+  const ctx = useContext(ThemeContext);
+  if (!ctx) throw new Error('useTheme must be used within ThemeProvider');
+  return ctx;
 };
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(DEFAULT_THEME);
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('crm_theme');
-    if (savedTheme) {
-      try {
-        const parsedTheme = JSON.parse(savedTheme);
-        const merged = { ...DEFAULT_THEME, ...parsedTheme };
-        setTheme(merged);
-        applyTheme(merged);
-      } catch (error) {
-        console.error('Failed to parse saved theme:', error);
-      }
+  const hexToRgba = (hex, alpha) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  };
+
+  const shiftColor = (hex, amount) => {
+    const num = parseInt(hex.slice(1), 16);
+    const clamp = (v) => Math.max(0, Math.min(255, v));
+    const r = clamp((num >> 16) + amount);
+    const g = clamp(((num >> 8) & 0xff) + amount);
+    const b = clamp((num & 0xff) + amount);
+    return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+  };
+
+  const applyTheme = useCallback((t) => {
+    const root = document.documentElement;
+    const primary = t.primaryColor || DEFAULT_THEME.primaryColor;
+    const mode = t.mode === 'dark' ? 'dark' : 'light';
+    const tokens = THEME_TOKENS[mode];
+
+    root.style.setProperty('--primary-color', primary);
+    root.style.setProperty('--primary-hover', shiftColor(primary, -20));
+    root.style.setProperty('--primary-ring', hexToRgba(primary, 0.25));
+
+    const gradientTo = shiftColor(primary, -25);
+    root.style.setProperty('--gradient-from', primary);
+    root.style.setProperty('--gradient-to', gradientTo);
+
+    if (mode === 'light') {
+      const gradient = `linear-gradient(to right, ${primary}, ${gradientTo})`;
+      const sidebarGradient = `linear-gradient(180deg, ${primary} 0%, ${gradientTo} 55%, ${shiftColor(primary, -35)} 100%)`;
+      root.style.setProperty('--brand-header-bg', gradient);
+      root.style.setProperty('--btn-brand-bg', gradient);
+      root.style.setProperty('--sidebar-bg', sidebarGradient);
     } else {
-      applyTheme(DEFAULT_THEME);
+      root.style.setProperty('--brand-header-bg', tokens['--brand-header-solid']);
+      root.style.setProperty('--btn-brand-bg', tokens['--brand-header-solid']);
+      root.style.setProperty('--sidebar-bg', tokens['--sidebar-bg']);
+    }
+    root.style.setProperty('--brand-header-text', tokens['--brand-header-text']);
+
+    Object.entries(tokens).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
+
+    if (mode === 'dark') {
+      root.classList.add('dark');
+      root.setAttribute('data-theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      root.setAttribute('data-theme', 'light');
     }
   }, []);
 
-  const applyTheme = (themeConfig) => {
-    const root = document.documentElement;
-    const body = document.body;
-    const primary = themeConfig.primaryColor || DEFAULT_THEME.primaryColor;
-
-    root.style.setProperty('--primary-color', primary);
-    root.style.setProperty('--primary-hover', adjustColor(primary, -20));
-    root.style.setProperty('--primary-light', adjustColor(primary, 40));
-    root.style.setProperty('--primary-ring', `${primary}66`);
-    root.style.setProperty('--workspace-bg', `color-mix(in srgb, ${primary} 7%, #f9fafb)`);
-    root.style.setProperty('--workspace-sidebar', primary);
-    root.style.setProperty('--workspace-sidebar-hover', adjustColor(primary, -20));
-
-    if (themeConfig.mode === 'dark') {
-      root.classList.add('dark');
-      body.classList.add('dark');
-      root.style.setProperty('--workspace-bg', `color-mix(in srgb, ${primary} 10%, #111827)`);
-    } else {
-      root.classList.remove('dark');
-      body.classList.remove('dark');
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('swavelink_theme');
+      const parsed = saved ? JSON.parse(saved) : DEFAULT_THEME;
+      const merged = { ...DEFAULT_THEME, ...parsed };
+      setTheme(merged);
+      applyTheme(merged);
+    } catch {
+      applyTheme(DEFAULT_THEME);
     }
-  };
+  }, [applyTheme]);
 
-  const adjustColor = (color, amount) => {
-    const usePound = color[0] === '#';
-    const col = usePound ? color.slice(1) : color;
-    const num = parseInt(col, 16);
-    let r = (num >> 16) + amount;
-    let g = ((num >> 8) & 0x00ff) + amount;
-    let b = (num & 0x0000ff) + amount;
-    r = r > 255 ? 255 : r < 0 ? 0 : r;
-    g = g > 255 ? 255 : g < 0 ? 0 : g;
-    b = b > 255 ? 255 : b < 0 ? 0 : b;
-    return (usePound ? '#' : '') + (r << 16 | g << 8 | b).toString(16).padStart(6, '0');
-  };
-
-  const updateTheme = (newTheme) => {
-    const updatedTheme = { ...theme, ...newTheme };
-    if (newTheme.accentPreset) {
-      const preset = ACCENT_PRESETS.find((p) => p.id === newTheme.accentPreset);
-      if (preset) updatedTheme.primaryColor = preset.color;
-    }
-    if (newTheme.primaryColor && !newTheme.accentPreset) {
-      const match = ACCENT_PRESETS.find((p) => p.color.toLowerCase() === newTheme.primaryColor.toLowerCase());
-      updatedTheme.accentPreset = match?.id || 'custom';
-    }
-    setTheme(updatedTheme);
-    localStorage.setItem('crm_theme', JSON.stringify(updatedTheme));
-    applyTheme(updatedTheme);
+  const updateTheme = (partial) => {
+    const next = { ...theme, ...partial };
+    setTheme(next);
+    localStorage.setItem('swavelink_theme', JSON.stringify(next));
+    applyTheme(next);
   };
 
   const setAccentPreset = (presetId) => {
@@ -105,17 +192,8 @@ export const ThemeProvider = ({ children }) => {
 
   const resetTheme = () => updateTheme(DEFAULT_THEME);
 
-  const value = {
-    theme,
-    updateTheme,
-    setAccentPreset,
-    resetTheme,
-    applyTheme,
-    accentPresets: ACCENT_PRESETS,
-  };
-
   return (
-    <ThemeContext.Provider value={value}>
+    <ThemeContext.Provider value={{ theme, updateTheme, setAccentPreset, resetTheme, applyTheme, accentPresets: ACCENT_PRESETS }}>
       {children}
     </ThemeContext.Provider>
   );

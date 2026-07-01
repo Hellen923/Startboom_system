@@ -1,14 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         primary: {
           DEFAULT: '#1795CC',
-          50: '#EFF8FD',
+          50:  '#EFF8FD',
           100: '#D4EEFA',
           200: '#A9DDF5',
           300: '#7ECBF0',
@@ -21,7 +20,7 @@ module.exports = {
         },
         secondary: {
           DEFAULT: '#0F172A',
-          50: '#F8FAFC',
+          50:  '#F8FAFC',
           100: '#F1F5F9',
           200: '#E2E8F0',
           300: '#CBD5E1',
@@ -33,59 +32,39 @@ module.exports = {
           900: '#0F172A',
           950: '#020617',
         },
-        brand: {
-          bg: '#F8FAFC',
-          sidebar: '#0F172A',
-          navbar: '#FFFFFF',
-          cardBorder: '#E5E7EB',
-          tableHeader: '#F1F5F9',
-          tableRowHover: '#EFF6FF',
-          tableBorder: '#E5E7EB',
-          inputBorder: '#D1D5DB',
-          inputFocus: '#1795CC',
-          textPrimary: '#111827',
-          textSecondary: '#6B7280',
-          success: '#22C55E',
-          warning: '#F59E0B',
-          danger: '#EF4444',
+        // Dark mode design tokens — use as dark:bg-dm-card etc.
+        dm: {
+          bg:           '#0F1117',
+          sidebar:      '#1A1D27',
+          card:         '#1A1D27',
+          surface:      '#222536',
+          input:        '#2A2D3E',
+          'row-hover':  '#222536',
+          border:       '#3A3D52',
+          'border-strong': '#4A4D66',
+          'text-primary':  '#FFFFFF',
+          'text-secondary':'#A0AEC0',
+          'text-muted':    '#6B7280',
+          accent:       '#1795CC',
+          'accent-hover':'#1178A6',
+          'accent-surface':'#193A52',
         },
-        dark: {
-          bg: '#0F172A',
-          surface: '#1E293B',
-          border: '#334155',
-        },
+        success: '#22C55E',
+        warning: '#F59E0B',
+        danger:  '#EF4444',
       },
       fontFamily: {
-        sans: [
-          '-apple-system',
-          'BlinkMacSystemFont',
-          '"Segoe UI"',
-          'Roboto',
-          '"Helvetica Neue"',
-          'Arial',
-          'sans-serif',
-        ],
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
       },
-      fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1rem' }],
-        'sm': ['0.875rem', { lineHeight: '1.25rem' }],
-        'base': ['1rem', { lineHeight: '1.5rem' }],
-        'lg': ['1.125rem', { lineHeight: '1.75rem' }],
-        'xl': ['1.25rem', { lineHeight: '1.75rem' }],
-        '2xl': ['1.5rem', { lineHeight: '2rem' }],
-        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
-        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+      borderRadius: {
+        xl: '12px', '2xl': '16px', '3xl': '24px',
       },
-      spacing: {
-        '18': '4.5rem',
-        '88': '22rem',
-        '96': '24rem',
-        '128': '32rem',
-      },
-      screens: {
-        'xs': '475px',
+      boxShadow: {
+        card: '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
+        'card-hover': '0 4px 12px rgba(0,0,0,0.08)',
+        modal: '0 20px 60px rgba(0,0,0,0.15)',
       },
     },
   },
   plugins: [],
-}
+};
