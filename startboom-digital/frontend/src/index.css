@@ -26,8 +26,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-size: 1rem;
   line-height: 1.5;
-  color: #1f2937;
-  background-color: #f9fafb;
+  color: #111827;
+  background-color: #F8FAFC;
 }
 
 /* Ensure consistent spacing and sizing */
@@ -54,8 +54,8 @@ button, input, optgroup, select, textarea {
 }
 
 .dark body {
-  background-color: #111827;
-  color: #f9fafb;
+  background-color: #0F172A;
+  color: #F8FAFC;
 }
 
 .dark .bg-gray-50 {
@@ -108,7 +108,7 @@ html {
 /* Focus styles for accessibility */
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid #FFD700;
+  outline: 2px solid #1795CC;
   outline-offset: 2px;
 }
 
@@ -163,8 +163,8 @@ a:focus-visible {
 
 .form-input:focus {
   outline: none;
-  border-color: #FFD700;
-  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+  border-color: #1795CC;
+  box-shadow: 0 0 0 3px rgba(23, 149, 204, 0.15);
 }
 
 /* Grid system consistency */
@@ -292,14 +292,14 @@ a:focus-visible {
 }
 
 .dashboard-btn-primary {
-  background-color: #FFD700;
+  background-color: #1795CC;
   color: white;
-  border-color: #FFD700;
+  border-color: #1795CC;
 }
 
 .dashboard-btn-primary:hover {
-  background-color: #E6C200;
-  border-color: #E6C200;
+  background-color: #1178A6;
+  border-color: #1178A6;
 }
 
 .dashboard-btn-secondary {
@@ -338,8 +338,8 @@ a:focus-visible {
 
 .dashboard-form-input:focus {
   outline: none;
-  border-color: #FFD700;
-  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+  border-color: #1795CC;
+  box-shadow: 0 0 0 3px rgba(23, 149, 204, 0.15);
 }
 
 /* Loading and animation consistency */
@@ -347,8 +347,8 @@ a:focus-visible {
   display: inline-block;
   width: 1rem;
   height: 1rem;
-  border: 2px solid #f3f3f3;
-  border-top: 2px solid #FFD700;
+  border: 2px solid #E2E8F0;
+  border-top: 2px solid #1795CC;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
