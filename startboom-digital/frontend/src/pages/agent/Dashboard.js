@@ -19,6 +19,8 @@ import toast from 'react-hot-toast';
 import DashboardQuickActions from '../../components/DashboardQuickActions';
 import Leaderboard from '../../components/Leaderboard';
 import TargetProgress from '../../components/TargetProgress';
+import { useChartTheme } from '../../utils/chartTheme';
+import dm from '../../utils/darkModeClasses';
 const exportToCSV = (data, headers, filename) => {
   const csv = [headers, ...data].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -58,13 +60,13 @@ const KPICard = ({ icon: Icon, title, value, subtitle, iconBg, iconColor }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow"
+    className={`stat-card hover:shadow-md transition-shadow ${dm.card}`}
   >
     <div className="flex items-center justify-between">
       <div className="flex-1">
-        <p className="text-sm font-medium text-gray-600">{title}</p>
-        <p className="text-2xl font-bold text-gray-900 mt-2">{value}</p>
-        {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+        <p className={`text-sm font-medium ${dm.textSecondary}`}>{title}</p>
+        <p className={`text-2xl font-bold mt-2 ${dm.textPrimary}`}>{value}</p>
+        {subtitle && <p className={`text-xs mt-1 ${dm.textMuted}`}>{subtitle}</p>}
       </div>
       <div className={`p-3 rounded-full ${iconBg}`}>
         <Icon className={`w-6 h-6 ${iconColor}`} />
@@ -89,6 +91,7 @@ const PRIORITY_STYLES = {
 // ─── Main Component ───────────────────────────────────────────────────────────
 const AgentDashboard = () => {
   const { user } = useAuth();
+  const { grid, axis, tooltipStyle, labelStyle, itemStyle } = useChartTheme();
 
   // ── KPI state ──
   const [salesValue, setSalesValue]     = useState(0);
@@ -264,9 +267,9 @@ const AgentDashboard = () => {
       : <ChevronDown className="w-3 h-3 inline ml-1" />;
 
 return (
-    <div className="space-y-6 pt-4">
+    <div className="dashboard-page pt-4">
       {/* ── 4 KPI Cards (spec: Sales Value, Pipeline, Total Clients, Leads) ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="stat-grid cols-4">
         <KPICard
           icon={DollarSign}
           title="Sales Value"
@@ -304,7 +307,7 @@ return (
       <DashboardQuickActions role={user?.role || 'agent'} />
 
       {/* ── Target Progress & Leaderboard ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="chart-grid">
         <TargetProgress salesValue={salesValue} />
         <Leaderboard />
       </div>
@@ -316,15 +319,15 @@ return (
         without navigating to a separate page. This is the agent's primary workspace.
       */}
       {/* ── Charts Row 1: Monthly Sales + Deal Status ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Sales Revenue</h3>
+      <div className="chart-grid">
+        <div className="chart-panel">
+          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Monthly Sales Revenue</h3>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={monthlySalesData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" stroke="#999" />
-              <YAxis stroke="#999" />
-              <Tooltip formatter={v => formatUGX(v)} />
+              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+              <XAxis dataKey="month" stroke={axis} />
+              <YAxis stroke={axis} />
+              <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
               <Bar dataKey="sales" fill="var(--primary-color)" radius={[4,4,0,0]} name="Sales" />
             </BarChart>
           </ResponsiveContainer>
@@ -334,36 +337,36 @@ return (
       </div>
 
       {/* ── Charts Row 2: Revenue Over Time + Pipeline Value ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Over Time</h3>
+      <div className="chart-grid">
+        <div className="chart-panel">
+          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Revenue Over Time</h3>
           <ResponsiveContainer width="100%" height={260}>
             <AreaChart data={revenueOverTimeData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" stroke="#999" />
-              <YAxis stroke="#999" />
-              <Tooltip formatter={v => formatUGX(v)} />
-              <Area type="monotone" dataKey="revenue" stroke="#FFD700" fill="#FFFEF5" strokeWidth={2} name="Revenue" />
+              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+              <XAxis dataKey="month" stroke={axis} />
+              <YAxis stroke={axis} />
+              <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+        <Area type="monotone" dataKey="revenue" stroke="var(--primary-color)" fill="rgba(23,149,204,0.1)" strokeWidth={2} name="Revenue" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Pipeline Value by Stage</h3>
+        <div className="chart-panel">
+          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Pipeline Value by Stage</h3>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={pipelineValueData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="stage" stroke="#999" />
-              <YAxis stroke="#999" />
-              <Tooltip formatter={v => formatUGX(v)} />
-              <Bar dataKey="value" fill="#FFD700" radius={[4,4,0,0]} name="Value" />
+              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+              <XAxis dataKey="stage" stroke={axis} />
+              <YAxis stroke={axis} />
+              <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+              <Bar dataKey="value" fill="var(--primary-color)" radius={[4,4,0,0]} name="Value" />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* ── Charts Row 3: Cash vs Credit + Follow-up Status ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="chart-grid">
         <PaymentMethodChart 
           data={creditVsCashData} 
           formatCurrency={formatUGX}
@@ -379,15 +382,15 @@ title="Follow-up Task Status"
       </div>
 
       {/* My Clients Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="p-5 border-b border-gray-100">
+      <div className={`rounded-xl shadow-sm border ${dm.card}`}>
+        <div className={`p-5 border-b ${dm.border}`}>
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-            <h2 className="text-lg font-semibold text-gray-900 flex-1">My Clients</h2>
+            <h2 className={`text-lg font-semibold flex-1 ${dm.textPrimary}`}>My Clients</h2>
             {/* Status filter */}
             <select
               value={tableStatus}
               onChange={e => { setTableStatus(e.target.value); setTablePage(1); }}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className={`px-3 py-2 rounded-lg text-sm ${dm.input}`}
             >
               <option value="">All Status</option>
               <option value="prospect">Prospect (Lead)</option>
@@ -400,7 +403,7 @@ title="Follow-up Task Status"
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-100">
+            <thead className="table-header">
               <tr>
                 <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('name')}>
                   Client <SortIcon col="name" />
@@ -426,7 +429,7 @@ title="Follow-up Task Status"
               {tableLoading ? (
                 <tr>
                   <td colSpan="6" className="px-5 py-10 text-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#FFD700] mx-auto" />
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-500 mx-auto" />
                   </td>
                 </tr>
               ) : clients.length === 0 ? (

@@ -559,7 +559,7 @@ const DealsTableView = ({ deals, onUpdateStage, onDeleteDeal, formatUGX }) => {
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="table-header">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deal</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>

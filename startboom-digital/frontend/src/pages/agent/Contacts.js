@@ -309,7 +309,7 @@ export default function Contacts() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-100">
+              <thead className="table-header">
                 <tr>
                   <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider cursor-pointer" onClick={() => toggleSort('name')}>
                     Contact <SortIcon col="name" />

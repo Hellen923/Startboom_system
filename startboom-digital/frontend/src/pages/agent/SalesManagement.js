@@ -305,7 +305,7 @@ const SalesManagement = () => {
         >
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b">
+              <thead className="table-header">
                 <tr>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Customer</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Sale Date</th>
@@ -372,7 +372,7 @@ const SalesManagement = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[min(90vh,900px)] flex flex-col overflow-hidden"
           >
-            <div className="flex-shrink-0 bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 flex items-center justify-between">
+            <div className="flex-shrink-0 brand-header text-white p-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold">
                 {editingSale ? 'Edit Sale' : 'Create New Sale'}
               </h2>
@@ -545,7 +545,7 @@ const SalesManagement = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
           >
-            <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 flex items-center justify-between">
+            <div className="sticky top-0 brand-header text-white p-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold">Sale Details</h2>
               <button onClick={() => setShowDetailsModal(false)} className="hover:bg-orange-700 p-2 rounded-lg">
                 <X className="w-5 h-5" />
@@ -640,7 +640,7 @@ const SalesManagement = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-2xl shadow-xl max-w-md w-full"
           >
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 flex items-center justify-between">
+            <div className="brand-header text-white p-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold">Record Payment</h2>
               <button onClick={() => setShowPaymentModal(false)} className="hover:bg-orange-700 p-2 rounded-lg">
                 <X className="w-5 h-5" />
