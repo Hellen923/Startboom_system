@@ -17,6 +17,8 @@ import { performanceAPI, dealsAPI, clientsAPI, salesAPI } from '../../services/a
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import DashboardQuickActions from '../../components/DashboardQuickActions';
+import Leaderboard from '../../components/Leaderboard';
+import TargetProgress from '../../components/TargetProgress';
 const exportToCSV = (data, headers, filename) => {
   const csv = [headers, ...data].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -300,6 +302,12 @@ return (
       </div>
 
       <DashboardQuickActions role={user?.role || 'agent'} />
+
+      {/* ── Target Progress & Leaderboard ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TargetProgress salesValue={salesValue} />
+        <Leaderboard />
+      </div>
 
       {/* ── Customer Table with Search & Filter ── */}
       {/*
