@@ -8,14 +8,14 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
         {/* Header - Orange */}
-        <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-t-2xl flex items-center justify-between">
+        <div className="bg-gradient-to-r from-primary-500 to-primary-600 text-white p-6 rounded-t-2xl flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <AlertCircle className="w-6 h-6" />
             <h2 className="text-xl font-bold">Confirm Logout</h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-orange-700 rounded-lg transition-colors"
+            className="p-1 hover:bg-primary-700 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -27,9 +27,9 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
             Are you sure you want to logout? You'll need to sign in again to access your account.
           </p>
 
-          <div className="flex items-center space-x-3 mb-6 p-4 bg-orange-50 rounded-lg border border-orange-200">
-            <LogOut className="w-5 h-5 text-orange-500" />
-            <span className="text-sm text-orange-700">
+          <div className="flex items-center space-x-3 mb-6 p-4 bg-primary-50 rounded-lg border border-primary-200">
+            <LogOut className="w-5 h-5 text-primary-500" />
+            <span className="text-sm text-primary-700">
               Your session will be ended and you'll be redirected to the login page.
             </span>
           </div>
@@ -45,7 +45,7 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
           </button>
           <button
             onClick={onConfirm}
-            className="px-6 py-2.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-medium transition-colors flex items-center space-x-2"
+            className="px-6 py-2.5 bg-primary-500 text-white rounded-lg hover:bg-primary-600 font-medium transition-colors flex items-center space-x-2"
           >
             <LogOut className="w-4 h-4" />
             <span>Logout</span>
