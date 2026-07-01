@@ -26,6 +26,9 @@ const Products = lazy(() => import('./pages/admin/Products'));
 const Territories = lazy(() => import('./pages/admin/Territories'));
 const Analytics = lazy(() => import('./pages/admin/Analytics'));
 const Settings = lazy(() => import('./pages/admin/Settings'));
+const AgentProducts = lazy(() => import('./pages/agent/Products'));
+const MyTerritory = lazy(() => import('./pages/agent/MyTerritory'));
+const Targets = lazy(() => import('./pages/admin/Targets'));
 const SuperAdminDashboardFull = lazy(() => import('./pages/superadmin/SuperAdminDashboard'));
 const TenantManagement = lazy(() => import('./pages/superadmin/TenantManagement'));
 const BulkOperations = lazy(() => import('./pages/admin/BulkOperations'));
@@ -160,6 +163,11 @@ function App() {
                     <BulkOperations />
                   </ProtectedRoute>
                 } />
+                <Route path="/admin/targets" element={
+                  <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                    <Targets />
+                  </ProtectedRoute>
+                } />
 
                 {/* Agent Routes */}
                 <Route path="/change-password" element={
@@ -217,6 +225,16 @@ function App() {
                      <Notes />
                    </ProtectedRoute>
                  } />
+                <Route path="/agent/products" element={
+                  <ProtectedRoute allowedRoles={['agent']}>
+                    <AgentProducts />
+                  </ProtectedRoute>
+                } />
+                <Route path="/agent/my-territory" element={
+                  <ProtectedRoute allowedRoles={['agent']}>
+                    <MyTerritory />
+                  </ProtectedRoute>
+                } />
 
                 {/* Dashboard Route - Available to all authenticated users */}
                 <Route path="/dashboard" element={
