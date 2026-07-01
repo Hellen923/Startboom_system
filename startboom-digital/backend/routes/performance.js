@@ -22,9 +22,14 @@ router.get('/agent/:agentId', async (req, res) => {
     const totalValue = wonDeals.reduce((sum, deal) => sum + (Number(deal.value) || 0), 0);
     const successRate = deals.length > 0 ? (wonDeals.length / deals.length * 100) : 0;
 
-    // attempt to read user's monthlyGoal if set
-    const user = await User.findById(agentId).select('monthlyGoal performanceScore name email');
+    // Get user with target and commission data
+    const user = await User.findById(agentId).select('monthlyGoal monthlyTargetAmount commissionRate commissionEarned monthlySalesAmount performanceScore name email');
     const monthlyGoal = user?.monthlyGoal || null;
+    const monthlyTarget = user?.monthlyTargetAmount || 0;
+    const commissionRate = user?.commissionRate || 0;
+    const commissionEarned = user?.commissionEarned || 0;
+    const monthlySales = user?.monthlySalesAmount || 0;
+    
     const progress = monthlyGoal ? Math.round((totalValue / monthlyGoal) * 100) : null;
 
     const stats = {
@@ -37,7 +42,12 @@ router.get('/agent/:agentId', async (req, res) => {
       successRate: successRate.toFixed(1),
       averageDealValue: wonDeals.length > 0 ? (totalValue / wonDeals.length).toFixed(2) : 0,
       monthlyGoal,
-      progress
+      progress,
+      // New fields for target tracking and commission
+      monthlyTarget,
+      monthlySales,
+      commissionRate,
+      commissionEarned
     };
 
     res.json(stats);
