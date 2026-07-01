@@ -150,6 +150,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  // Commission & target tracking
+  commissionRate: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 100
+  },
+  commissionEarned: {
+    type: Number,
+    default: 0
+  },
   region: {
     type: String,
     default: ''
