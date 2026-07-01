@@ -1,92 +1,60 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { useChartTheme } from '../../utils/chartTheme';
+import dm from '../../utils/darkModeClasses';
 
-/**
- * Standardized Donut Chart Component
- * Modern, consistent pie chart with center hole for better readability
- */
-
-// Unified color palette - Blue-based theme with harmonious complementary colors
-// This creates a cohesive look across all dashboards
 const DEFAULT_COLORS = [
-  '#10b981', // Green - for positive/won/success
-  '#ef4444', // Red - for negative/lost/danger  
-  '#f59e0b', // Amber - for warning/pending
-  '#3b82f6', // Blue - for info/active
-  '#FFD700', // Primary Gold - for primary/cash
-  '#8b5cf6', // Purple - for special/vip
+  '#10b981', '#ef4444', '#f59e0b', '#3b82f6', '#FFD700', '#8b5cf6',
 ];
 
-// Blue gradient palette for multi-agent charts (harmonious shades)
 export const ORANGE_GRADIENT_COLORS = [
-  '#FFD700', // Primary gold
-  '#FFF166', // Light gold
-  '#E6C200', // Dark gold
-  '#10b981', // Green
-  '#3b82f6', // Blue
-  '#8b5cf6', // Purple
-  '#FFF9CC', // Very light gold
-  '#FFFCE6', // Pale gold
+  '#FFD700', '#FFF166', '#E6C200', '#10b981', '#3b82f6', '#8b5cf6', '#FFF9CC', '#FFFCE6',
 ];
 
 const DonutChart = ({
-  data = [],
-  title,
-  subtitle,
-  colors = DEFAULT_COLORS,
-  height = 300,
-  innerRadius = 60,
-  outerRadius = 100,
-  showPercentage = true,
-  showLegend = true,
-  showTooltip = true,
-  labelFormatter,
-  tooltipFormatter,
-  centerContent,
+  data = [], title, subtitle, colors = DEFAULT_COLORS, height = 300,
+  innerRadius = 60, outerRadius = 100, showPercentage = true, showLegend = true,
+  showTooltip = true, labelFormatter, tooltipFormatter, centerContent,
   emptyMessage = 'No data available',
 }) => {
-  // Check if data is empty or all values are zero
+  const { isDark, tooltipStyle, legend, labelStyle, itemStyle } = useChartTheme();
   const hasData = data && data.length > 0 && data.some(item => item.value > 0);
 
-  // Default label formatter showing percentage
-  const defaultLabelFormatter = ({ name, percent }) => {
-    if (showPercentage) {
-      return `${name} ${(percent * 100).toFixed(0)}%`;
-    }
-    return name;
-  };
+  const defaultLabelFormatter = ({ name, percent }) =>
+    showPercentage ? `${name} ${(percent * 100).toFixed(0)}%` : name;
 
-  // Custom tooltip content
+  const tooltipBoxStyle = tooltipStyle;
+
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
-      const data = payload[0];
-      const value = tooltipFormatter ? tooltipFormatter(data.value) : data.value.toLocaleString();
+      const d = payload[0];
+      const value = tooltipFormatter ? tooltipFormatter(d.value) : d.value.toLocaleString();
       return (
-        <div className="bg-white px-3 py-2 rounded-lg shadow-lg border border-gray-200">
-          <p className="text-sm font-semibold text-gray-900">{data.name}</p>
-          <p className="text-sm text-gray-600">{value}</p>
+        <div style={tooltipBoxStyle} className="px-3 py-2 shadow-lg">
+          <p className="text-sm font-semibold" style={itemStyle}>{d.name}</p>
+          <p className="text-sm" style={labelStyle}>{value}</p>
         </div>
       );
     }
     return null;
   };
 
-  // Calculate total for center display
   const total = data.reduce((sum, item) => sum + (item.value || 0), 0);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 h-full">
-      {/* Header */}
+    <div className={`chart-panel h-full ${dm.card}`}>
       {(title || subtitle) && (
-        <div className="mb-4">
-          {title && <h3 className="text-lg font-semibold text-gray-900">{title}</h3>}
-          {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+        <div className={`${dm.unifiedCardHeader} -mx-[1px] -mt-[1px] rounded-t-xl`}>
+          <div>
+            {title && <h3>{title}</h3>}
+            {subtitle && <p>{subtitle}</p>}
+          </div>
         </div>
       )}
 
-      {/* Chart or Empty State */}
+      <div className={title || subtitle ? dm.chartBody : 'p-6'}>
       {!hasData ? (
-        <div className="flex items-center justify-center text-gray-400 text-sm" style={{ height }}>
+        <div className={`flex items-center justify-center text-sm ${dm.textMuted}`} style={{ height }}>
           <div className="text-center">
             <svg className="w-16 h-16 mx-auto mb-2 opacity-20" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
@@ -99,114 +67,81 @@ const DonutChart = ({
         <div className="relative">
           <ResponsiveContainer width="100%" height={height}>
             <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={innerRadius}
-                outerRadius={outerRadius}
-                paddingAngle={2}
-                dataKey="value"
-                nameKey="name"
+              <Pie data={data} cx="50%" cy="50%" innerRadius={innerRadius} outerRadius={outerRadius}
+                paddingAngle={2} dataKey="value" nameKey="name"
                 label={labelFormatter || defaultLabelFormatter}
-                labelLine={{ stroke: '#d1d5db', strokeWidth: 1 }}
-              >
+                labelLine={{ stroke: isDark ? '#3A3D52' : '#E5E7EB', strokeWidth: 1 }}>
                 {data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={entry.color || colors[index % colors.length]}
-                    className="transition-opacity hover:opacity-80 cursor-pointer"
-                  />
+                  <Cell key={`cell-${index}`} fill={entry.color || colors[index % colors.length]}
+                    className="transition-opacity hover:opacity-80 cursor-pointer" />
                 ))}
               </Pie>
               {showTooltip && <Tooltip content={<CustomTooltip />} />}
               {showLegend && (
-                <Legend
-                  verticalAlign="bottom"
-                  height={36}
-                  iconType="circle"
-                  formatter={(value) => <span className="text-sm text-gray-700">{value}</span>}
-                />
+                <Legend verticalAlign="bottom" height={36} iconType="circle"
+                  wrapperStyle={{ color: legend }}
+                  formatter={(value) => <span style={{ color: legend, fontSize: '13px' }}>{value}</span>} />
               )}
             </PieChart>
           </ResponsiveContainer>
-
-          {/* Center Content (Total, Custom Text, etc.) */}
           {centerContent && (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
               {typeof centerContent === 'function' ? centerContent(total) : centerContent}
             </div>
           )}
         </div>
       )}
+      </div>
     </div>
   );
 };
 
 export default DonutChart;
 
-// Preset configurations for common use cases
 export const DealStatusChart = ({ data, ...props }) => (
-  <DonutChart
-    data={data}
-    title="Deal Outcomes"
-    subtitle="Closed wins, closed losses, and open pipeline counts"
-    colors={['#10b981', '#ef4444', '#f59e0b']} // Green, Red, Amber
+  <DonutChart data={data} title="Deal Outcomes" subtitle="Closed wins, closed losses, and open pipeline counts"
+    colors={['#10b981', '#ef4444', '#f59e0b']}
     labelFormatter={({ name, value }) => `${name}: ${value}`}
     tooltipFormatter={(value) => `${value.toLocaleString()} deal${value === 1 ? '' : 's'}`}
     centerContent={(total) => (
       <div>
-        <p className="text-3xl font-bold text-gray-900">{total}</p>
-        <p className="text-xs text-gray-500 mt-1">Total Deals</p>
+        <p className={`text-3xl font-bold ${dm.textPrimary}`}>{total}</p>
+        <p className={`text-xs mt-1 ${dm.textMuted}`}>Total Deals</p>
       </div>
     )}
-    {...props}
-  />
+    {...props} />
 );
 
 export const PaymentMethodChart = ({ data, formatCurrency, ...props }) => (
-  <DonutChart
-    data={data}
-    title="Payment Methods"
-    colors={['#FFD700', '#FFF166']} // Primary Gold (Cash), Light Gold (Credit)
+  <DonutChart data={data} title="Payment Methods" colors={['#FFD700', '#FFF166']}
     tooltipFormatter={formatCurrency}
     labelFormatter={({ name, value }) => `${name}: ${formatCurrency ? formatCurrency(value) : value}`}
-    {...props}
-  />
+    {...props} />
 );
 
 export const TaskStatusChart = ({ data, ...props }) => (
-  <DonutChart
-    data={data}
-    title="Task Status"
-    showLegend={true}
+  <DonutChart data={data} title="Task Status" showLegend={true}
     centerContent={(total) => (
       <div>
-        <p className="text-3xl font-bold text-gray-900">{total}</p>
-        <p className="text-xs text-gray-500 mt-1">Total Tasks</p>
+        <p className={`text-3xl font-bold ${dm.textPrimary}`}>{total}</p>
+        <p className={`text-xs mt-1 ${dm.textMuted}`}>Total Tasks</p>
       </div>
     )}
-    {...props}
-  />
+    {...props} />
 );
 
 export const StageValueChart = ({ data, formatCurrency, ...props }) => (
-  <DonutChart
-    data={data}
-    title="Deal Stages by Value"
+  <DonutChart data={data} title="Deal Stages by Value"
     colors={['#E6C200', '#f59e0b', '#FFD700', '#10b981', '#22c55e', '#ef4444']}
-    tooltipFormatter={formatCurrency}
-    {...props}
-  />
+    tooltipFormatter={formatCurrency} {...props} />
 );
 
-// Horizontal bar chart component for better agent comparison
 export const TopAgentsChart = ({ data, formatCurrency, title = "Top Agents by Won Deals", height = 280 }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
-        <div className="flex items-center justify-center text-gray-400 text-sm" style={{ height }}>
+      <div className={`rounded-xl shadow-sm p-6 ${dm.card}`}>
+        <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>{title}</h3>
+        <div className={`flex items-center justify-center text-sm ${dm.textMuted}`} style={{ height }}>
           <div className="text-center">
             <svg className="w-16 h-16 mx-auto mb-2 opacity-20" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
@@ -219,51 +154,36 @@ export const TopAgentsChart = ({ data, formatCurrency, title = "Top Agents by Wo
     );
   }
 
-  // Sort and take top 6 agents
-  const topAgents = [...data]
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 6)
-    .map((agent, index) => ({
-      ...agent,
-      rank: index + 1,
-      color: ORANGE_GRADIENT_COLORS[index % ORANGE_GRADIENT_COLORS.length]
-    }));
+  const topAgents = [...data].sort((a, b) => b.value - a.value).slice(0, 6)
+    .map((agent, index) => ({ ...agent, rank: index + 1, color: ORANGE_GRADIENT_COLORS[index % ORANGE_GRADIENT_COLORS.length] }));
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
+    <div className={`rounded-xl shadow-sm p-6 ${dm.card}`}>
+      <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>{title}</h3>
       <div className="space-y-3">
         {topAgents.map((agent) => {
           const maxValue = topAgents[0].value;
           const percentage = (agent.value / maxValue) * 100;
-          
           return (
             <div key={agent.name} className="group">
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary-100 text-primary-600 text-xs font-bold">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-bold">
                     {agent.rank}
                   </span>
-                  <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
+                  <span className={`text-sm font-medium ${dm.textSecondary} group-hover:text-[var(--color-text-primary)] transition-colors`}>
                     {agent.name}
                   </span>
                 </div>
-                <span className="text-sm font-bold text-gray-900">
+                <span className={`text-sm font-bold ${dm.textPrimary}`}>
                   {formatCurrency ? formatCurrency(agent.value) : agent.value.toLocaleString()}
                 </span>
               </div>
-              <div className="relative h-8 bg-gray-100 rounded-lg overflow-hidden">
-                <div
-                  className="absolute inset-y-0 left-0 rounded-lg transition-all duration-500 ease-out group-hover:opacity-90"
-                  style={{
-                    width: `${percentage}%`,
-                    background: `linear-gradient(90deg, ${agent.color} 0%, ${agent.color}dd 100%)`
-                  }}
-                >
+              <div className="relative h-8 bg-[var(--color-bg-muted)] rounded-lg overflow-hidden">
+                <div className="absolute inset-y-0 left-0 rounded-lg transition-all duration-500 ease-out group-hover:opacity-90"
+                  style={{ width: `${percentage}%`, background: `linear-gradient(90deg, ${agent.color} 0%, ${agent.color}dd 100%)` }}>
                   <div className="absolute inset-0 flex items-center justify-end pr-3">
-                    <span className="text-xs font-semibold text-white drop-shadow">
-                      {percentage.toFixed(0)}%
-                    </span>
+                    <span className="text-xs font-semibold text-white drop-shadow">{percentage.toFixed(0)}%</span>
                   </div>
                 </div>
               </div>
@@ -271,12 +191,10 @@ export const TopAgentsChart = ({ data, formatCurrency, title = "Top Agents by Wo
           );
         })}
       </div>
-      
-      {/* Summary footer */}
-      <div className="mt-4 pt-4 border-t border-gray-100">
+      <div className={`mt-4 pt-4 border-t ${dm.border}`}>
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600">Total Won Value</span>
-          <span className="font-bold text-gray-900">
+          <span className={dm.textSecondary}>Total Won Value</span>
+          <span className={`font-bold ${dm.textPrimary}`}>
             {formatCurrency ? formatCurrency(topAgents.reduce((sum, a) => sum + a.value, 0)) : topAgents.reduce((sum, a) => sum + a.value, 0).toLocaleString()}
           </span>
         </div>
