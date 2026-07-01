@@ -23,26 +23,28 @@ import {
 } from 'recharts';
 import DonutChart, { DealStatusChart, PaymentMethodChart, TaskStatusChart, TopAgentsChart } from '../components/charts/DonutChart';
 import { useAuth } from '../context/AuthContext';
+import { useChartTheme } from '../utils/chartTheme';
+import dm from '../utils/darkModeClasses';
 import DashboardQuickActions from '../components/DashboardQuickActions';
 import { performanceAPI, dealsAPI, clientsAPI, salesAPI, usersAPI } from '../services/api';
 
 // ─── thin wrapper so both roles share the same KPI card style ────────────────
 const KPICard = ({ icon: Icon, title, value, subtitle, trend, color = 'primary' }) => {
   const colors = {
-    primary: 'bg-primary-50 text-primary-600',
-    blue:   'bg-blue-50   text-blue-600',
-    green:  'bg-green-50  text-green-600',
-    purple: 'bg-purple-50 text-purple-600',
-    red:    'bg-red-50    text-red-600',
-    teal:   'bg-teal-50   text-teal-600',
+    primary: 'bg-primary-50 dark:bg-[#193A52] text-primary-600 dark:text-[#1795CC]',
+    blue:    'bg-blue-50   dark:bg-[#193A52] text-blue-600   dark:text-[#1795CC]',
+    green:   'bg-green-50  dark:bg-[#1a3a2a] text-green-600  dark:text-green-400',
+    purple:  'bg-purple-50 dark:bg-[#2a1a3a] text-purple-600 dark:text-purple-400',
+    red:     'bg-red-50    dark:bg-[#3a1a1a] text-red-600    dark:text-red-400',
+    teal:    'bg-teal-50   dark:bg-[#1a3a38] text-teal-600   dark:text-teal-400',
   };
   return (
-    <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-100 hover:shadow-md transition-shadow">
+    <div className={`rounded-xl shadow-sm p-5 hover:shadow-md transition-all duration-150 ${dm.card} ${dm.cardHover}`}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-500">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
-          {subtitle && <p className="text-xs text-gray-400 mt-1">{subtitle}</p>}
+          <p className={`text-sm font-medium ${dm.textMuted}`}>{title}</p>
+          <p className={`text-2xl font-bold mt-1 ${dm.textPrimary}`}>{value}</p>
+          {subtitle && <p className={`text-xs mt-1 ${dm.textMuted}`}>{subtitle}</p>}
           {trend !== undefined && (
             <div className={`flex items-center text-xs mt-1 ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {trend >= 0 ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
@@ -103,6 +105,8 @@ const QuickActions = ({ role }) => {
 const Dashboard = () => {
   const { user } = useAuth();
   const role = user?.role;
+  const { isDark, grid, axis, tooltipStyle, labelStyle, itemStyle, legend } = useChartTheme();
+  const axisProps     = { tick: { fill: axis, fontSize: 12 }, axisLine: { stroke: grid }, tickLine: { stroke: grid } };
 
   const [loading, setLoading] = useState(true);
   const [kpi, setKpi]               = useState({});
@@ -329,14 +333,14 @@ const Dashboard = () => {
 
           {/* Charts — 2 × 2 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Revenue</h3>
+            <div className="bg-white dark:bg-[#1A1D27] border border-gray-100 dark:border-[#3A3D52] rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Monthly Revenue</h3>
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={monthlySalesData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="month" stroke="#999" />
-                  <YAxis stroke="#999" />
-                  <Tooltip formatter={v => formatUSD(v)} cursor={{ fill: '#fef3c7' }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                  <XAxis dataKey="month" {...axisProps} />
+                  <YAxis {...axisProps} />
+                  <Tooltip formatter={v => formatUSD(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} cursor={{ fill: isDark ? '#2A2D3E' : '#fef3c7' }} />
                   <Bar dataKey="revenue" fill="#FFD700" radius={[4,4,0,0]} name="Revenue" />
                 </BarChart>
               </ResponsiveContainer>
@@ -344,14 +348,14 @@ const Dashboard = () => {
 
             <DealStatusChart data={dealStatusData} height={280} />
 
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Deal Stages by Value</h3>
+            <div className="bg-white dark:bg-[#1A1D27] border border-gray-100 dark:border-[#3A3D52] rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Deal Stages by Value</h3>
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={pipelineValueData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="stage" stroke="#999" />
-                  <YAxis stroke="#999" />
-                  <Tooltip formatter={v => formatUGX(v)} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                  <XAxis dataKey="stage" {...axisProps} />
+                  <YAxis {...axisProps} />
+                  <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} cursor={{ fill: isDark ? '#2A2D3E' : '#fef3c7' }} />
                   <Bar dataKey="value" fill="#FFD700" radius={[4,4,0,0]} name="Pipeline Value" />
                 </BarChart>
               </ResponsiveContainer>
@@ -391,14 +395,14 @@ const Dashboard = () => {
 
           {/* Charts — same 3-row layout from original dashboard */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Sales Revenue</h3>
+            <div className="bg-white dark:bg-[#1A1D27] border border-gray-100 dark:border-[#3A3D52] rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Monthly Sales Revenue</h3>
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={monthlySalesData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="month" stroke="#999" />
-                  <YAxis stroke="#999" />
-                  <Tooltip formatter={v => formatUGX(v)} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                  <XAxis dataKey="month" {...axisProps} />
+                  <YAxis {...axisProps} />
+                  <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} cursor={{ fill: isDark ? '#2A2D3E' : '#fef3c7' }} />
                   <Bar dataKey="sales" fill="#FFD700" radius={[4,4,0,0]} name="Sales" />
                 </BarChart>
               </ResponsiveContainer>
@@ -408,27 +412,27 @@ const Dashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Over Time</h3>
+            <div className="bg-white dark:bg-[#1A1D27] border border-gray-100 dark:border-[#3A3D52] rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Revenue Over Time</h3>
               <ResponsiveContainer width="100%" height={260}>
                 <AreaChart data={revenueOverTimeData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="month" stroke="#999" />
-                  <YAxis stroke="#999" />
-                  <Tooltip formatter={v => formatUGX(v)} />
-                  <Area type="monotone" dataKey="revenue" stroke="#FFD700" fill="#FFFEF5" strokeWidth={2} name="Revenue" />
+                  <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                  <XAxis dataKey="month" {...axisProps} />
+                  <YAxis {...axisProps} />
+                  <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+                  <Area type="monotone" dataKey="revenue" stroke="#FFD700" fill={isDark ? '#2A2D1A' : '#FFFEF5'} strokeWidth={2} name="Revenue" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Pipeline Value by Stage</h3>
+            <div className="bg-white dark:bg-[#1A1D27] border border-gray-100 dark:border-[#3A3D52] rounded-xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Pipeline Value by Stage</h3>
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={pipelineValueData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="stage" stroke="#999" />
-                  <YAxis stroke="#999" />
-                  <Tooltip formatter={v => formatUGX(v)} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                  <XAxis dataKey="stage" {...axisProps} />
+                  <YAxis {...axisProps} />
+                  <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} cursor={{ fill: isDark ? '#2A2D3E' : '#fef3c7' }} />
                   <Bar dataKey="value" fill="#FFD700" radius={[4,4,0,0]} name="Pipeline Value" />
                 </BarChart>
               </ResponsiveContainer>
