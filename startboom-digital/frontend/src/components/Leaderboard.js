@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Trophy, Medal, TrendingUp } from 'lucide-react';
 import { usersAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import UnifiedCard from './UnifiedCard';
+import dm from '../utils/darkModeClasses';
 
 const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
@@ -48,24 +50,21 @@ const Leaderboard = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Leaderboard</h3>
+      <UnifiedCard title="Top Performers" headerAction={<Trophy className="w-5 h-5 text-yellow-300" />}>
         <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-color)]"></div>
         </div>
-      </div>
+      </UnifiedCard>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-        <Trophy className="w-5 h-5 text-yellow-500" />
-        Top Performers
-      </h3>
-      
+    <UnifiedCard
+      title="Top Performers"
+      headerAction={<Trophy className="w-5 h-5 text-yellow-300" />}
+    >
       {leaderboard.length === 0 ? (
-        <p className="text-gray-500 text-center py-4">No data available</p>
+        <p className={`text-center py-4 ${dm.textMuted}`}>No data available</p>
       ) : (
         <div className="space-y-3">
           {leaderboard.map((agent, index) => {
@@ -77,7 +76,7 @@ const Leaderboard = () => {
             return (
               <div
                 key={agent._id}
-                className={`p-4 rounded-lg border ${badge.bg} transition-transform hover:scale-102`}
+                className={`p-4 rounded-lg border transition-transform hover:scale-[1.01] ${dm.border} bg-[var(--color-bg-input-subtle)]`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-3">
@@ -85,23 +84,23 @@ const Leaderboard = () => {
                       <BadgeIcon className={`w-6 h-6 ${badge.color}`} />
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900">{agent.name}</p>
-                      <p className="text-xs text-gray-600">{formatCurrency(agent.monthlySales)}</p>
+                      <p className="font-semibold text-gray-900 dark:text-gray-100">{agent.name}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">{formatCurrency(agent.monthlySales)}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-gray-600">Target</p>
-                    <p className="text-sm font-medium text-gray-900">{formatCurrency(agent.target)}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Target</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{formatCurrency(agent.target)}</p>
                   </div>
                 </div>
                 
                 {/* Progress Bar */}
                 <div className="mt-2">
-                  <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                  <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
                     <span>{percentage.toFixed(0)}% Complete</span>
                     <span className="font-medium text-green-600">{formatCurrency(agent.commission)}</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-[#2A2D3E] rounded-full h-2">
                     <div
                       className={`h-2 rounded-full transition-all ${getProgressColor(percentage)}`}
                       style={{ width: `${Math.min(percentage, 100)}%` }}
@@ -113,7 +112,7 @@ const Leaderboard = () => {
           })}
         </div>
       )}
-    </div>
+    </UnifiedCard>
   );
 };
 
