@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import logo from '../assets/logo.png';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -66,7 +65,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Form */}
-      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-white">
+      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-white dark:bg-[#1A1D27]">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -80,15 +79,15 @@ const Login = () => {
                 <img src="/Swavelink.png" alt="Logo" className="w-8 h-8 object-contain" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Swavelink</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Swavelink</h1>
                 <p className="text-sm text-primary-600 font-medium">Sales Management</p>
               </div>
             </div>
 
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               Welcome back
             </h2>
-            <p className="text-gray-600 mb-8">
+            <p className="text-gray-600 dark:text-gray-400 mb-8">
               Sign in to your account to continue
             </p>
           </div>
@@ -97,7 +96,7 @@ const Login = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Email Address
               </label>
               <div className="relative">
@@ -109,7 +108,7 @@ const Login = () => {
                   name="email"
                   type="email"
                   required
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-[#3A3D52] dark:bg-[#2A2D3E] dark:text-gray-100 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
@@ -120,7 +119,7 @@ const Login = () => {
             {/* Password Field */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Password
                 </label>
                 <button
@@ -140,7 +139,7 @@ const Login = () => {
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
-                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-[#3A3D52] dark:bg-[#2A2D3E] dark:text-gray-100 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleChange}
