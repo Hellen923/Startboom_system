@@ -2,9 +2,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  Users, BarChart3, Calendar, MessageSquare, TrendingUp, Shield, ArrowRight
+  Users, BarChart3, Calendar, ShoppingCart, TrendingUp, Shield, ArrowRight,
+  CheckCircle, Star, Zap, Target, DollarSign, LineChart
 } from 'lucide-react';
-import logo from '../assets/logo.png';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -13,343 +13,354 @@ const LandingPage = () => {
     {
       icon: Users,
       title: 'Client Management',
-      description: 'Organize all your clients in one centralized platform',
-      iconSize: 'w-10 h-10'
+      description: 'Organize contacts, track interactions, and never miss a follow-up'
     },
     {
-      icon: BarChart3,
-      title: 'Sales Analytics',
-      description: 'Track performance with real-time insights and reporting',
-      iconSize: 'w-9 h-9'
-    },
-    {
-      icon: Calendar,
-      title: 'Smart Scheduling',
-      description: 'Never miss important meetings with intelligent reminders',
-      iconSize: 'w-10 h-10'
-    },
-    {
-      icon: MessageSquare,
-      title: 'WhatsApp Integration',
-      description: 'Connect with clients instantly through integrated messaging',
-      iconSize: 'w-9 h-9'
+      icon: ShoppingCart,
+      title: 'Product Catalogue',
+      description: 'Manage inventory with real-time stock tracking and auto-deduction'
     },
     {
       icon: TrendingUp,
-      title: 'Deal Pipeline',
-      description: 'Manage your sales pipeline with visual tracking',
-      iconSize: 'w-11 h-11'
+      title: 'Sales Pipeline',
+      description: 'Visual deal tracking from lead to close with win/loss analytics'
+    },
+    {
+      icon: BarChart3,
+      title: 'Real-Time Analytics',
+      description: 'Performance dashboards, leaderboards, and target tracking'
+    },
+    {
+      icon: Target,
+      title: 'Commission Tracking',
+      description: 'Automated commission calculation and agent performance rewards'
     },
     {
       icon: Shield,
-      title: 'Secure & Reliable',
-      description: 'Enterprise-grade security for your business data',
-      iconSize: 'w-10 h-10'
+      title: 'Multi-Tenant Security',
+      description: 'Enterprise-grade security with role-based access control'
     }
   ];
 
-  // Quadruple for seamless infinite loop
-  const carouselFeatures = [...features, ...features, ...features, ...features];
+  const stats = [
+    { value: '50+', label: 'Active Users' },
+    { value: '99.9%', label: 'Uptime' },
+    { value: '24/7', label: 'Support' }
+  ];
+
+  const benefits = [
+    'Complete sales pipeline from lead to close',
+    'Stock management with auto-deduction',
+    'Receipt generation for every sale',
+    'Agent leaderboards and targets',
+    'Mobile Money integration (MTN, Airtel)',
+    'Territory management with GPS'
+  ];
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-black">
-      {/* Cinematic Volumetric Light Rays and Plasma Energy */}
-      <div className="absolute inset-0">
-        {/* Pure black base */}
-        <div className="absolute inset-0 bg-black" />
-        
-        {/* Dramatic volumetric light beams from top-right */}
-        <div className="absolute inset-0">
-          {/* Main volumetric light ray */}
-          <motion.div
-            animate={{
-              opacity: [0.5, 0.7, 0.5],
-              scale: [1, 1.15, 1],
-              rotate: [-3, 2, -3],
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-1/4 -right-1/4 w-[2200px] h-[2200px]"
-            style={{
-              background: 'conic-gradient(from 225deg at 85% 15%, rgba(249, 115, 22, 0.6) 0deg, rgba(234, 88, 12, 0.5) 40deg, rgba(194, 65, 12, 0.35) 80deg, transparent 160deg)',
-              filter: 'blur(90px)',
-              transformOrigin: '85% 15%',
-            }}
-          />
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      
+      {/* Hero Section */}
+      <section className="relative pt-20 pb-20 px-6 lg:px-12 overflow-hidden">
+        {/* Animated background gradient */}
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 90, 0],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary-600/20 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            scale: [1.2, 1, 1.2],
+            rotate: [90, 0, 90],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-3xl"
+        />
 
-          {/* Secondary plasma stream */}
-          <motion.div
-            animate={{
-              opacity: [0.4, 0.6, 0.4],
-              x: [0, 120, 0],
-              rotate: [0, 8, 0],
-            }}
-            transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -top-20 right-0 w-[1800px] h-[1400px]"
-            style={{
-              background: 'radial-gradient(ellipse at top right, rgba(251, 146, 60, 0.5) 0%, rgba(249, 115, 22, 0.35) 25%, rgba(234, 88, 12, 0.2) 45%, transparent 65%)',
-              filter: 'blur(100px)',
-              transform: 'rotate(-30deg)',
-            }}
-          />
-
-          {/* Energy wave diagonal sweep */}
-          <motion.div
-            animate={{
-              opacity: [0.35, 0.55, 0.35],
-              scale: [1, 1.2, 1],
-              rotate: [-5, 5, -5],
-            }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-0 right-1/4 w-[1600px] h-[1600px]"
-            style={{
-              background: 'radial-gradient(circle, rgba(249, 115, 22, 0.45) 0%, rgba(234, 88, 12, 0.25) 35%, transparent 60%)',
-              filter: 'blur(110px)',
-            }}
-          />
-        </div>
-
-        {/* Floating ember sparks - animated particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(35)].map((_, i) => (
-            <motion.div
-              key={i}
-              animate={{
-                y: [typeof window !== 'undefined' ? Math.random() * window.innerHeight : 800, -120],
-                x: [0, (Math.random() - 0.5) * 250],
-                opacity: [0, 0.9, 0.9, 0],
-                scale: [0, 1.2, 1, 0],
-              }}
-              transition={{
-                duration: 10 + Math.random() * 12,
-                repeat: Infinity,
-                delay: Math.random() * 6,
-                ease: "linear",
-              }}
-              className="absolute rounded-full"
-              style={{
-                left: `${30 + Math.random() * 60}%`,
-                top: `${100 + Math.random() * 25}%`,
-                width: `${2 + Math.random() * 5}px`,
-                height: `${2 + Math.random() * 5}px`,
-                background: `rgba(249, 115, 22, ${0.7 + Math.random() * 0.3})`,
-                boxShadow: '0 0 12px rgba(249, 115, 22, 1), 0 0 24px rgba(234, 88, 12, 0.6)',
-                filter: 'blur(0.8px)',
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Main Hero Content */}
-      <div className="relative min-h-screen flex items-center">
-        <div className="w-full px-8 md:px-16 lg:px-24 py-12">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-20">
+        <div className="container mx-auto relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             
-            {/* LEFT SIDE - Branding & Content */}
-            <div className="flex-1 max-w-2xl z-10">
-              {/* Logo Badge - Matching Reference */}
+            {/* Left - Content */}
+            <div>
+              {/* Logo above headline */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="inline-flex items-center mb-12 px-5 py-3 rounded-2xl border border-orange-900/30"
-                style={{
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  backdropFilter: 'blur(10px)',
-                }}
+                transition={{ duration: 0.5 }}
+                className="flex items-center gap-3 mb-8"
               >
-                <motion.div
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.6 }}
-                  className="bg-gradient-to-br from-primary-600 to-primary-700 p-2 rounded-lg mr-3"
-                >
-                  <img src={logo} alt="Logo" className="w-6 h-6 object-contain" />
-                </motion.div>
+                <img src="/Swavelink.png" alt="Swavelink" className="h-16 w-16 object-contain" />
                 <div>
-                  <h1 className="text-base font-bold text-white leading-tight">Startboom Digital</h1>
-                  <p className="text-xs text-primary-400/80 font-normal">Sales Management</p>
+                  <h1 className="text-2xl font-bold text-white">Swavelink</h1>
+                  <p className="text-sm text-primary-400">Sales Management System</p>
                 </div>
               </motion.div>
 
-              {/* Headline - Matching Reference Style */}
-              <motion.h2
+              <motion.h1
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.2 }}
-                className="text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-4 leading-[1.05] tracking-tight"
+                transition={{ duration: 0.7, delay: 0.1 }}
+                className="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight"
               >
-                Grow Your Business
-              </motion.h2>
-              <motion.h3
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.3 }}
-                className="text-6xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[1.05] tracking-tight"
-                style={{
-                  background: 'linear-gradient(to right, #E6C200, #FFD700)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                Smarter & Faster
-              </motion.h3>
+                Grow Your Sales,
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-yellow-300">
+                  Track Everything
+                </span>
+              </motion.h1>
 
-              {/* Description */}
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.4 }}
-                className="text-xl text-gray-400 mb-10 leading-relaxed"
+                transition={{ duration: 0.7, delay: 0.2 }}
+                className="text-xl text-gray-300 mb-8 leading-relaxed"
               >
-                The simple CRM built for small businesses
+                Complete sales management system built for small businesses in Uganda. 
+                Manage leads, track inventory, record sales, and grow your team.
               </motion.p>
 
-              {/* CTA Button - White with Orange Text */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.5 }}
-                className="space-y-5"
+                transition={{ duration: 0.7, delay: 0.3 }}
               >
                 <motion.button
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => navigate('/login')}
-                  className="group px-10 py-4 bg-white text-primary-700 rounded-xl text-base font-bold flex items-center gap-3 shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="group px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-2xl shadow-primary-600/50 transition-all"
                 >
-                  <span>Get Started</span>
+                  Get Started
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </motion.button>
-                
-                {/* Trust Indicator */}
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.7 }}
-                  className="text-gray-500 text-sm flex items-center gap-2"
-                >
-                  <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Manage leads, clients, and sales in one place
-                </motion.p>
               </motion.div>
             </div>
 
-            {/* RIGHT SIDE - Cards with Orange Glow Borders */}
-            <div className="flex-1 relative w-full lg:w-auto min-h-[600px]">
-              {/* Ambient orange glow behind cards */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <motion.div
-                  animate={{
-                    scale: [1, 1.1, 1],
-                    opacity: [0.3, 0.5, 0.3],
-                  }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                  className="w-[120%] h-[80%]"
-                  style={{
-                    background: 'radial-gradient(ellipse, rgba(234, 88, 12, 0.25) 0%, transparent 60%)',
-                    filter: 'blur(80px)',
-                  }}
-                />
-              </div>
-
-              {/* Floating Cards Track */}
-              <div className="absolute inset-0 flex items-center">
-                <div className="relative w-full h-full flex items-center overflow-hidden">
-                  {/* Infinite Scroll */}
+            {/* Right - Feature Cards */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="relative"
+            >
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-primary-600/20 rounded-3xl blur-3xl" />
+              
+              <div className="relative grid grid-cols-2 gap-4">
+                {features.slice(0, 4).map((feature, index) => (
                   <motion.div
-                    animate={{ x: ['0%', '-50%'] }}
-                    transition={{
-                      duration: 40,
-                      repeat: Infinity,
-                      ease: "linear",
-                      repeatType: "loop"
-                    }}
-                    className="flex gap-6 will-change-transform"
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + index * 0.1 }}
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all group"
                   >
-                    {carouselFeatures.map((feature, index) => (
-                      <motion.div
-                        key={`feature-${index}`}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: index * 0.02, duration: 0.5 }}
-                        whileHover={{ 
-                          scale: 1.05,
-                          y: -12,
-                          transition: { duration: 0.3 }
-                        }}
-                        className="relative group flex-shrink-0"
-                      >
-                        {/* Orange Glowing Border Card */}
-                        <div
-                          className="relative w-[320px] h-[380px] rounded-3xl overflow-hidden"
-                          style={{
-                            background: 'linear-gradient(135deg, rgba(20, 15, 10, 0.9) 0%, rgba(30, 20, 15, 0.8) 100%)',
-                            backdropFilter: 'blur(20px)',
-                            border: '1.5px solid rgba(234, 88, 12, 0.4)',
-                            boxShadow: `
-                              0 0 40px rgba(234, 88, 12, 0.3),
-                              0 20px 60px rgba(0, 0, 0, 0.6),
-                              inset 0 1px 0 rgba(234, 88, 12, 0.2)
-                            `,
-                          }}
-                        >
-                          {/* Inner glow */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-orange-900/20 via-transparent to-transparent" />
-                          
-                          {/* Hover glow intensification */}
-                          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                            style={{
-                              boxShadow: '0 0 60px rgba(234, 88, 12, 0.5), inset 0 0 40px rgba(234, 88, 12, 0.1)',
-                            }}
-                          />
-                          
-                          {/* Content */}
-                          <div className="relative h-full flex flex-col items-center justify-center p-10 text-center">
-                            {/* Icon with Orange Background */}
-                            <motion.div
-                              whileHover={{ rotate: 360, scale: 1.1 }}
-                              transition={{ duration: 0.7 }}
-                              className="relative w-20 h-20 rounded-2xl flex items-center justify-center mb-8"
-                              style={{
-                                background: 'rgba(234, 88, 12, 0.15)',
-                                border: '1px solid rgba(234, 88, 12, 0.3)',
-                                boxShadow: '0 8px 32px rgba(234, 88, 12, 0.2)',
-                              }}
-                            >
-                              <feature.icon className="w-10 h-10 text-primary-500" strokeWidth={1.5} />
-                            </motion.div>
-                            
-                            {/* Title */}
-                            <h3 className="text-2xl font-bold text-white mb-4 leading-tight">
-                              {feature.title}
-                            </h3>
-                            
-                            {/* Description */}
-                            <p className="text-gray-400 text-sm leading-relaxed">
-                              {feature.description}
-                            </p>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
+                    <div className="w-12 h-12 bg-primary-600/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary-600/30 transition-colors">
+                      <feature.icon className="w-6 h-6 text-primary-400" />
+                    </div>
+                    <h3 className="text-white font-bold mb-2">{feature.title}</h3>
+                    <p className="text-sm text-gray-400">{feature.description}</p>
                   </motion.div>
-                </div>
+                ))}
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Simple Footer */}
-      <footer className="backdrop-blur-md bg-white/70 border-t border-white/60 py-6">
-        <div className="container mx-auto px-8">
-          <div className="flex items-center justify-center">
-            <p className="text-gray-600 text-sm text-center">
-              © 2026 Startboom Digital. All rights reserved.
+      {/* Stats Section */}
+      <section className="py-16 px-6 lg:px-12 border-y border-white/10 backdrop-blur-sm bg-white/5">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-3 gap-8">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="text-center"
+              >
+                <div className="text-4xl lg:text-5xl font-bold text-primary-400 mb-2">{stat.value}</div>
+                <div className="text-gray-400">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid Section */}
+      <section className="py-20 px-6 lg:px-12">
+        <div className="container mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
+              Everything You Need to
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-yellow-300"> Manage Sales</span>
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              From lead generation to commission tracking, we've got you covered
             </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -8 }}
+                className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 hover:border-primary-600/50 transition-all group"
+              >
+                <div className="w-14 h-14 bg-primary-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary-600/30 group-hover:scale-110 transition-all">
+                  <feature.icon className="w-7 h-7 text-primary-400" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
+                <p className="text-gray-400 leading-relaxed">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className="py-20 px-6 lg:px-12 bg-gradient-to-br from-primary-600/10 to-transparent">
+        <div className="container mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+                Why Choose Swavelink?
+              </h2>
+              <p className="text-xl text-gray-300 mb-8">
+                Built specifically for Ugandan businesses with local payment methods, 
+                real-time stock tracking, and complete sales automation.
+              </p>
+              
+              <div className="space-y-4">
+                {benefits.map((benefit, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                    className="flex items-center gap-3"
+                  >
+                    <div className="flex-shrink-0 w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 text-green-400" />
+                    </div>
+                    <span className="text-gray-300">{benefit}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="relative"
+            >
+              <div className="absolute inset-0 bg-primary-600/30 rounded-3xl blur-3xl" />
+              <div className="relative backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-3xl font-bold text-white mb-1">1,000+</div>
+                      <div className="text-gray-400">Sales Recorded</div>
+                    </div>
+                    <LineChart className="w-12 h-12 text-primary-400" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-3xl font-bold text-white mb-1">50+</div>
+                      <div className="text-gray-400">Active Agents</div>
+                    </div>
+                    <Users className="w-12 h-12 text-blue-400" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-3xl font-bold text-white mb-1">UGX 50M+</div>
+                      <div className="text-gray-400">Revenue Tracked</div>
+                    </div>
+                    <DollarSign className="w-12 h-12 text-green-400" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-6 lg:px-12">
+        <div className="container mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative backdrop-blur-xl bg-gradient-to-r from-primary-600/20 to-blue-600/20 border border-white/20 rounded-3xl p-12 lg:p-16 text-center overflow-hidden"
+          >
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="absolute top-0 right-0 w-64 h-64 bg-primary-600/30 rounded-full blur-3xl"
+            />
+            
+            <div className="relative z-10">
+              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
+                Ready to Grow Your Business?
+              </h2>
+              <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                Join businesses across Uganda using Swavelink to manage their sales, 
+                track inventory, and grow their revenue.
+              </p>
+              
+              <motion.button
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/login')}
+                className="group px-10 py-5 bg-primary-600 hover:bg-primary-700 text-white text-lg rounded-xl font-bold flex items-center gap-3 mx-auto shadow-2xl shadow-primary-600/50 transition-all"
+              >
+                Get Started
+                <Zap className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              </motion.button>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 px-6 lg:px-12 border-t border-white/10">
+        <div className="container mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-3">
+              <img src="/Swavelink.png" alt="Swavelink" className="h-8 w-8 object-contain" />
+              <div>
+                <div className="text-white font-bold">Swavelink</div>
+                <div className="text-sm text-gray-400">Sales Management System</div>
+              </div>
+            </div>
+            
+            <div className="text-gray-400 text-sm text-center md:text-right">
+              © 2026 Swavelink. All rights reserved.
+              <br />
+              Built with ❤️ in Uganda
+            </div>
           </div>
         </div>
       </footer>
