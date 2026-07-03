@@ -10,6 +10,7 @@ import {
 import { usersAPI, rolesAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import Pagination from '../../components/Pagination';
 
 const UserManagement = () => {
   const { user } = useAuth();
@@ -40,6 +41,8 @@ const UserManagement = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
 
   const [newUser, setNewUser] = useState({
     name: '',
@@ -724,7 +727,7 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {filteredUsers.map((userItem, index) => {
+                  {filteredUsers.slice((currentPage-1)*pageSize, currentPage*pageSize).map((userItem, index) => {
                     const StatusIcon = getAccountStatus(userItem).icon;
                     const statusColor = getAccountStatus(userItem).color;
                     const roleMeta = getRoleMeta(userItem.role);
@@ -932,26 +935,14 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
           )}
         </div>
 
-        {/* Pagination */}
-        {filteredUsers.length > 0 && (
-          <div className="mt-6 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              Showing <span className="font-medium">{filteredUsers.length}</span> of{' '}
-              <span className="font-medium">{users.length}</span> users
-            </p>
-            <div className="flex items-center space-x-2">
-              <button className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-all">
-                Previous
-              </button>
-              <button className="px-4 py-2 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600 transition-all">
-                1
-              </button>
-              <button className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-all">
-                Next
-              </button>
-            </div>
-          </div>
-        )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(filteredUsers.length / pageSize)}
+          totalItems={filteredUsers.length}
+          pageSize={pageSize}
+          onPageChange={(p) => setCurrentPage(p)}
+          onPageSizeChange={(s) => { setPageSize(s); setCurrentPage(1); }}
+        />
       </div>
 
       {/* User Details Modal - Enhanced */}
