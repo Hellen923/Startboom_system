@@ -15,6 +15,7 @@ import {
   ListTodo,
   UserPlus,
   AlertTriangle,
+  Package,
 } from 'lucide-react';
 
 const ICON_COLORS = {
@@ -68,6 +69,14 @@ export const getQuickActions = (role) => {
           state: { openCreate: true },
         },
         {
+          label: 'Add Product',
+          description: 'Add a new product to the global catalogue.',
+          icon: Package,
+          color: 'yellow',
+          path: '/admin/products',
+          state: { openCreate: true },
+        },
+        {
           label: 'Platform Overview',
           description: 'View cross-tenant metrics and health.',
           icon: BarChart3,
@@ -94,6 +103,14 @@ export const getQuickActions = (role) => {
           state: { openCreate: true },
         },
         {
+          label: 'Add Product',
+          description: 'Add a new product to the catalogue.',
+          icon: Package,
+          color: 'yellow',
+          path: '/admin/products',
+          state: { openCreate: true },
+        },
+        {
           label: 'View Reports',
           description: 'Open sales and performance dashboards.',
           icon: FileText,
@@ -111,7 +128,7 @@ export const getQuickActions = (role) => {
           label: 'Bulk Operations',
           description: 'Perform large updates across records.',
           icon: ArrowLeftRight,
-          color: 'yellow',
+          color: 'red',
           path: '/admin/bulk-operations',
         },
       ];

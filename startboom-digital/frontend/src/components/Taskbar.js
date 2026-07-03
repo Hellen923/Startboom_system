@@ -125,7 +125,7 @@ const Taskbar = ({
   };
 
   const calendarPath = role === 'agent' ? '/agent/schedules' : role === 'superadmin' ? '/superadmin' : '/admin/reports';
-  const whatsappPath = role === 'agent' ? '/agent/clients' : '/admin/users';
+  const whatsappPath = role === 'agent' ? '/agent/clients' : role === 'superadmin' ? '/admin/users' : '/agent/clients';
 
   return (
     <div className={`sticky top-0 z-30 -mx-3 sm:-mx-4 md:-mx-6 lg:-mx-8 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 pb-3 ${dm.taskbarShell}`}>
