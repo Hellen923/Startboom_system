@@ -12,6 +12,7 @@ import { clientsAPI, usersAPI } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import toast from "react-hot-toast";
+import Pagination from '../../components/Pagination';
 
 const LEAD_STATUSES = [
   "New",
@@ -56,6 +57,8 @@ export default function Leads() {
   const [viewMode, setViewMode] = useState("table");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [leadPage, setLeadPage] = useState(1);
+  const [leadPageSize, setLeadPageSize] = useState(20);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -532,7 +535,7 @@ export default function Leads() {
               </thead>
 
               <tbody>
-                {filteredLeads.map((lead) => (
+                {filteredLeads.slice((leadPage - 1) * leadPageSize, leadPage * leadPageSize).map((lead) => (
                   <tr
                     key={lead._id}
                     className="border-t border-slate-100"
@@ -655,10 +658,16 @@ export default function Leads() {
             </table>
 
             {!loading && filteredLeads.length === 0 && (
-              <div className="text-center py-16 text-slate-500">
-                No leads found.
-              </div>
+              <div className="text-center py-16 text-slate-500">No leads found.</div>
             )}
+            <Pagination
+              currentPage={leadPage}
+              totalPages={Math.ceil(filteredLeads.length / leadPageSize)}
+              totalItems={filteredLeads.length}
+              pageSize={leadPageSize}
+              onPageChange={setLeadPage}
+              onPageSizeChange={(s) => { setLeadPageSize(s); setLeadPage(1); }}
+            />
           </div>
         </div>
       )}

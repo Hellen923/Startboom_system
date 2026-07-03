@@ -305,7 +305,7 @@ const ScheduleList = ({ schedules, onEdit, onDelete, onComplete, loading }) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {schedules.map((schedule) => (
+            {paginated.map((schedule) => (
               <tr key={schedule._id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-4">
                   <div>
@@ -388,13 +388,19 @@ const ScheduleList = ({ schedules, onEdit, onDelete, onComplete, loading }) => {
       
       {schedules.length === 0 && (
         <div className="text-center py-12">
-          <div className="text-gray-400 mb-4">
-            <Calendar size={48} className="mx-auto" />
-          </div>
+          <div className="text-gray-400 mb-4"><Calendar size={48} className="mx-auto" /></div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No schedules found</h3>
           <p className="text-gray-500">Get started by creating your first schedule.</p>
         </div>
       )}
+      <Pagination
+        currentPage={page}
+        totalPages={Math.ceil(schedules.length / pageSize)}
+        totalItems={schedules.length}
+        pageSize={pageSize}
+        onPageChange={setPage}
+        onPageSizeChange={(s) => { setPageSize(s); setPage(1); }}
+      />
     </motion.div>
   );
 };

@@ -8,6 +8,7 @@ import {
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 import { issuesAPI, clientsAPI } from '../../services/api';
+import Pagination from '../../components/Pagination';
 
 const ISSUE_TYPES = ['Bug', 'Complaint', 'Feature Request', 'Billing', 'Technical', 'General'];
 const ISSUE_STATUSES = ['New', 'In Progress', 'Done'];
@@ -47,6 +48,8 @@ export default function Issues() {
   const [priorityFilter, setPriorityFilter] = useState('all');
   const [showModal, setShowModal] = useState(false);
   const [detailIssue, setDetailIssue] = useState(null);
+  const [issuePage, setIssuePage] = useState(1);
+  const [issuePageSize, setIssuePageSize] = useState(20);
   const [form, setForm] = useState({
     clientId: '', contactPerson: '', type: 'General',
     description: '', priority: 'Medium',
@@ -247,7 +250,7 @@ export default function Issues() {
                   </td>
                 </tr>
               ) : (
-                filtered.map(issue => {
+                filtered.slice((issuePage - 1) * issuePageSize, issuePage * issuePageSize).map(issue => {
                   const TypeIcon = typeMeta[issue.type]?.icon || AlertCircle;
                   return (
                     <tr key={issue._id} className="hover:bg-slate-50 transition-colors">
@@ -310,11 +313,19 @@ export default function Issues() {
         </div>
 
         <div className="px-6 py-3 border-t border-slate-100 text-xs text-slate-400 text-center">
-          Showing {filtered.length} of {issues.length} issues
+          Showing {Math.min(issuePage * issuePageSize, filtered.length)} of {filtered.length} issues
           {priorityFilter !== 'all' ? ` · Priority: ${priorityFilter}` : ''}
-          {typeFilter !== 'all'          ? ` · Type: ${typeFilter}`           : ''}
-          {statusFilter !== 'all'        ? ` · Status: ${statusFilter}`        : ''}
+          {typeFilter !== 'all' ? ` · Type: ${typeFilter}` : ''}
+          {statusFilter !== 'all' ? ` · Status: ${statusFilter}` : ''}
         </div>
+        <Pagination
+          currentPage={issuePage}
+          totalPages={Math.ceil(filtered.length / issuePageSize)}
+          totalItems={filtered.length}
+          pageSize={issuePageSize}
+          onPageChange={setIssuePage}
+          onPageSizeChange={(s) => { setIssuePageSize(s); setIssuePage(1); }}
+        />
       </div>
 
       {/* ── CREATE ISSUE MODAL ── */}
