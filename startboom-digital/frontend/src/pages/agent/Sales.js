@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { salesAPI, clientsAPI, productsAPI } from '../../services/api';
 import toast from 'react-hot-toast';
@@ -34,7 +35,9 @@ const Sales = () => {
   const [selectedSale, setSelectedSale] = useState(null);
   const [salesSearch, setSalesSearch] = useState('');
   const [salesPage, setSalesPage] = useState(1);
-  const [salesPageSize, setSalesPageSize] = useState(25);
+  const [salesPageSize, setSalesPageSize] = useState(20);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const [saleForm, setSaleForm] = useState({
     clientId: '',
@@ -53,7 +56,7 @@ const Sales = () => {
   const loadSales = async () => {
     try {
       setLoading(true);
-      const response = await salesAPI.getAll({ limit: 100 });
+      const response = await salesAPI.getAll({ limit: 1000 });
       setSales(response.data.sales || []);
     } catch (error) {
       console.error('Error loading sales:', error);
@@ -88,6 +91,24 @@ const Sales = () => {
   useEffect(() => {
     loadSales();
   }, []);
+
+  // Pre-fill form from a won deal navigation
+  useEffect(() => {
+    if (location?.state?.fromDeal) {
+      const { clientId, clientName, clientEmail, clientPhone, dealTitle } = location.state.fromDeal;
+      setSaleForm(prev => ({
+        ...prev,
+        clientId: clientId || '',
+        customerName: clientName || '',
+        customerEmail: clientEmail || '',
+        customerPhone: clientPhone || '',
+        notes: dealTitle ? `From deal: ${dealTitle}` : ''
+      }));
+      if (clientName) setClientSearchTerm(clientName);
+      setShowModal(true);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
 
   useEffect(() => {
     if (showModal) {
