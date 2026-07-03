@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+import Pagination from '../../components/Pagination';
 
 // ── Stock badge helper ───────────────────────────────────────────────────────
 const StockBadge = ({ qty, threshold }) => {
@@ -312,6 +313,8 @@ const Products = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [categories, setCategories] = useState([]);
+  const [prodPage, setProdPage] = useState(1);
+  const [prodPageSize, setProdPageSize] = useState(25);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -419,7 +422,7 @@ const Products = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {filteredProducts.map(p => (
+                {filteredProducts.slice((prodPage - 1) * prodPageSize, prodPage * prodPageSize).map(p => (
                   <tr key={p._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-5 py-3">
                       <div className="font-medium text-gray-900">{p.name}</div>
@@ -453,8 +456,16 @@ const Products = () => {
               </tbody>
             </table>
             <div className="px-5 py-3 border-t border-gray-100 text-xs text-gray-500">
-              Showing {filteredProducts.length} of {products.length} products
+              Showing {Math.min(prodPage * prodPageSize, filteredProducts.length)} of {filteredProducts.length} products
             </div>
+            <Pagination
+              currentPage={prodPage}
+              totalPages={Math.ceil(filteredProducts.length / prodPageSize)}
+              totalItems={filteredProducts.length}
+              pageSize={prodPageSize}
+              onPageChange={setProdPage}
+              onPageSizeChange={(s) => { setProdPageSize(s); setProdPage(1); }}
+            />
           </div>
         )}
       </div>

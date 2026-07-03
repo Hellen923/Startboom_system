@@ -11,6 +11,7 @@ import { clientsAPI, emailTemplatesAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext'; 
 import toast from 'react-hot-toast';
 import ClientRegistrationForm from './ClientRegistrationForm';
+import Pagination from '../../components/Pagination';
 
 const Clients = () => {
   const { user } = useAuth();
@@ -1143,33 +1144,13 @@ const Clients = () => {
         </div>
       </div>
 
-      {/* Pagination */}
-      {pagination.totalPages > 1 && (
-        <div className="flex justify-between items-center">
-          <div className="text-sm text-gray-600">
-            Showing {((pagination.page - 1) * 12) + 1} to {Math.min(pagination.page * 12, pagination.total)} of {pagination.total} clients
-          </div>
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
-              disabled={pagination.page === 1}
-              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-            >
-              Previous
-            </button>
-            <span className="text-sm text-gray-600">
-              Page {pagination.page} of {pagination.totalPages}
-            </span>
-            <button
-              onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
-              disabled={pagination.page === pagination.totalPages}
-              className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        currentPage={pagination.page}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.total}
+        pageSize={12}
+        onPageChange={(page) => setPagination(prev => ({ ...prev, page }))}
+      />
 
       {/* Send Email Modal */}
       {showEmailModal && emailClient && (

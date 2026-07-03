@@ -31,6 +31,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { dealsAPI, clientsAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import Pagination from '../../components/Pagination';
 
 const Deals = () => {
   const { user } = useAuth();
@@ -49,6 +50,8 @@ const Deals = () => {
     minValue: '',
     maxValue: ''
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
 
   // Filter deals for pipeline view (exclude won/lost)
   const pipelineDeals = deals.filter(deal => deal.stage !== 'won' && deal.stage !== 'lost');
@@ -500,7 +503,20 @@ const Deals = () => {
             </div>
           ) : (
             <>
-              <DealsTableView deals={displayDeals} onUpdateStage={handleUpdateDealStage} onDeleteDeal={handleDeleteDeal} formatUGX={formatUGX} />
+              <DealsTableView
+            deals={displayDeals.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+            onUpdateStage={handleUpdateDealStage}
+            onDeleteDeal={handleDeleteDeal}
+            formatUGX={formatUGX}
+          />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(displayDeals.length / pageSize)}
+            totalItems={displayDeals.length}
+            pageSize={pageSize}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(s) => { setPageSize(s); setCurrentPage(1); }}
+          />
             </>
           )}
         </>
