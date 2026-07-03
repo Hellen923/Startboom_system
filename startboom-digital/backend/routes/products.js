@@ -194,10 +194,11 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/products — admin/manager only
-router.post('/', requireRole(['admin', 'manager']), async (req, res) => {
+// POST /api/products — admin/manager/superadmin
+router.post('/', requireRole(['admin', 'manager', 'superadmin']), async (req, res) => {
   try {
-    const product = new Product({ ...req.body, tenant: req.tenantId, createdBy: req.user.userId });
+    const tenantId = req.tenantId || req.body.tenant || null;
+    const product = new Product({ ...req.body, tenant: tenantId, createdBy: req.user.userId });
     await product.save();
     await AuditLog.create({
       tenant: req.tenantId, user: req.user.userId, action: 'product.create',
@@ -211,8 +212,8 @@ router.post('/', requireRole(['admin', 'manager']), async (req, res) => {
   }
 });
 
-// PUT /api/products/:id — admin/manager only
-router.put('/:id', requireRole(['admin', 'manager']), async (req, res) => {
+// PUT /api/products/:id — admin/manager/superadmin
+router.put('/:id', requireRole(['admin', 'manager', 'superadmin']), async (req, res) => {
   try {
     const product = await Product.findOne({ _id: req.params.id, ...req.tenantQuery });
     if (!product) return res.status(404).json({ error: 'Product not found' });
@@ -230,8 +231,8 @@ router.put('/:id', requireRole(['admin', 'manager']), async (req, res) => {
   }
 });
 
-// DELETE /api/products/:id — soft delete, admin/manager only
-router.delete('/:id', requireRole(['admin', 'manager']), async (req, res) => {
+// DELETE /api/products/:id — soft delete, admin/manager/superadmin
+router.delete('/:id', requireRole(['admin', 'manager', 'superadmin']), async (req, res) => {
   try {
     const product = await Product.findOne({ _id: req.params.id, ...req.tenantQuery });
     if (!product) return res.status(404).json({ error: 'Product not found' });

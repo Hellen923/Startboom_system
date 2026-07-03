@@ -4,7 +4,8 @@ const productSchema = new mongoose.Schema({
   tenant: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tenant',
-    required: true,
+    required: false,
+    default: null,
     index: true
   },
   
