@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const Pagination = ({ currentPage, totalPages, totalItems, pageSize, onPageChange, onPageSizeChange, pageSizeOptions = [10, 25, 50, 100] }) => {
+const Pagination = ({ currentPage, totalPages, totalItems, pageSize, onPageChange, onPageSizeChange, pageSizeOptions = [10, 20, 50, 100] }) => {
   if (totalPages <= 1 && totalItems <= pageSizeOptions[0]) return null;
 
   const pages = [];

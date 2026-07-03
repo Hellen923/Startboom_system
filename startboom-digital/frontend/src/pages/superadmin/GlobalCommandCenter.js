@@ -35,6 +35,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useChartTheme } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
 import logo from '../../assets/logo.png';
+import Pagination from '../../components/Pagination';
 
 const formatNumber = (value) => new Intl.NumberFormat().format(Math.round(value || 0));
 const formatCurrency = (value) => new Intl.NumberFormat('en-US', {
@@ -99,6 +100,9 @@ const GlobalCommandCenter = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState({ totals: {}, companies: [], alerts: [], system: {} });
   const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [tenantPage, setTenantPage] = useState(1);
+  const [tenantPageSize, setTenantPageSize] = useState(20);
 
   const loadDashboard = async ({ silent = false } = {}) => {
     try {
@@ -123,13 +127,13 @@ const GlobalCommandCenter = () => {
 
   const filteredCompanies = useMemo(() => {
     const value = query.trim().toLowerCase();
-    if (!value) return companies;
     return companies.filter((company) => (
-      company.name?.toLowerCase().includes(value) ||
-      company.email?.toLowerCase().includes(value) ||
-      company.slug?.toLowerCase().includes(value)
+      (!value || company.name?.toLowerCase().includes(value) ||
+        company.email?.toLowerCase().includes(value) ||
+        company.slug?.toLowerCase().includes(value)) &&
+      (!statusFilter || company.status === statusFilter)
     ));
-  }, [companies, query]);
+  }, [companies, query, statusFilter]);
 
   const revenueChart = [...companies]
     .sort((a, b) => (b.sales?.revenue || 0) - (a.sales?.revenue || 0))
@@ -331,14 +335,27 @@ const GlobalCommandCenter = () => {
               <h2 className="font-bold text-gray-950">Tenant Snapshot</h2>
               <p className="mt-1 text-sm text-gray-500">Quick read-only monitoring. Use Tenant Management for actions.</p>
             </div>
-            <div className="relative w-full md:w-80">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search tenants..."
-                className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
-              />
+            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <input
+                  value={query}
+                  onChange={(e) => { setQuery(e.target.value); setTenantPage(1); }}
+                  placeholder="Search tenants..."
+                  className="w-full sm:w-64 rounded-lg border border-gray-300 py-2 pl-10 pr-3 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
+                />
+              </div>
+              <select
+                value={statusFilter}
+                onChange={(e) => { setStatusFilter(e.target.value); setTenantPage(1); }}
+                className="rounded-lg border border-gray-300 py-2 px-3 text-sm outline-none focus:border-primary-500"
+              >
+                <option value="">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="trial">Trial</option>
+                <option value="suspended">Suspended</option>
+                <option value="inactive">Inactive</option>
+              </select>
             </div>
           </div>
 
@@ -352,7 +369,7 @@ const GlobalCommandCenter = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {filteredCompanies.map((company) => (
+                {filteredCompanies.slice((tenantPage - 1) * tenantPageSize, tenantPage * tenantPageSize).map((company) => (
                   <tr key={company.id} className="hover:bg-gray-50">
                     <td className="px-4 py-4">
                       <p className="font-semibold text-gray-950">{company.name}</p>
@@ -367,7 +384,15 @@ const GlobalCommandCenter = () => {
                 ))}
               </tbody>
             </table>
-            {!filteredCompanies.length && <EmptyState title="No tenants found" text="Try another search term." />}
+            {!filteredCompanies.length && <EmptyState title="No tenants found" text="Try another search term or filter." />}
+            <Pagination
+              currentPage={tenantPage}
+              totalPages={Math.ceil(filteredCompanies.length / tenantPageSize)}
+              totalItems={filteredCompanies.length}
+              pageSize={tenantPageSize}
+              onPageChange={setTenantPage}
+              onPageSizeChange={(s) => { setTenantPageSize(s); setTenantPage(1); }}
+            />
           </div>
         </div>
       </div>

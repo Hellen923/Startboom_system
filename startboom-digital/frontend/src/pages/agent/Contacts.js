@@ -8,6 +8,7 @@ import {
 import { clientsAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import Pagination from '../../components/Pagination';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const avatar = (name = '') => name.charAt(0).toUpperCase() || '?';
@@ -35,6 +36,8 @@ export default function Contacts() {
   const [orgFilter, setOrgFilter]   = useState('');
   const [sortKey, setSortKey]       = useState('name');
   const [sortDir, setSortDir]       = useState('asc');
+  const [contactPage, setContactPage] = useState(1);
+  const [contactPageSize, setContactPageSize] = useState(20);
 
   // create modal
   const [showCreate, setShowCreate] = useState(false);
@@ -332,7 +335,7 @@ export default function Contacts() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {displayed.map(contact => (
+                {displayed.slice((contactPage - 1) * contactPageSize, contactPage * contactPageSize).map(contact => (
                   <tr key={contact._key} className="hover:bg-gray-50 transition-colors">
 
                     {/* Contact name + primary badge */}
@@ -417,8 +420,16 @@ export default function Contacts() {
               </tbody>
             </table>
             <div className="px-5 py-3 border-t border-gray-100 text-sm text-gray-500">
-              Showing {displayed.length} of {contacts.length} contacts
+              Showing {Math.min(contactPage * contactPageSize, displayed.length)} of {displayed.length} contacts
             </div>
+            <Pagination
+              currentPage={contactPage}
+              totalPages={Math.ceil(displayed.length / contactPageSize)}
+              totalItems={displayed.length}
+              pageSize={contactPageSize}
+              onPageChange={setContactPage}
+              onPageSizeChange={(s) => { setContactPageSize(s); setContactPage(1); }}
+            />
           </div>
         )}
       </div>
