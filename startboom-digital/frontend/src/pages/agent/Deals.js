@@ -14,8 +14,12 @@ import {
   FileText,
   X,
   Eye,
-  AlertCircle
+  AlertCircle,
+  CheckCircle,
+  ShoppingCart
 } from 'lucide-react';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import {
   ResponsiveContainer,
   BarChart,
@@ -51,7 +55,9 @@ const Deals = () => {
     maxValue: ''
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(25);
+  const [pageSize, setPageSize] = useState(20);
+  const [showWonModal, setShowWonModal] = useState(false);
+  const [wonDeal, setWonDeal] = useState(null);
 
   // Filter deals for pipeline view (exclude won/lost)
   const pipelineDeals = deals.filter(deal => deal.stage !== 'won' && deal.stage !== 'lost');
@@ -171,24 +177,74 @@ const Deals = () => {
 
   const handleUpdateDealStage = async (dealId, newStage) => {
     try {
-      // Optimistically update local state for immediate UI feedback
       setDeals(prevDeals =>
         prevDeals.map(deal =>
           deal._id === dealId ? { ...deal, stage: newStage } : deal
         )
       );
-
       await dealsAPI.updateStatus(dealId, newStage);
       toast.success('Deal updated successfully');
-
-      // Refresh data from server to ensure consistency
+      if (newStage === 'won') {
+        const deal = deals.find(d => d._id === dealId);
+        if (deal) { setWonDeal({ ...deal, stage: 'won' }); setShowWonModal(true); }
+      }
       loadDeals();
     } catch (err) {
       console.error('Error updating deal:', err);
       toast.error(err.response?.data?.message || 'Failed to update deal stage');
-      // Revert optimistic update on error
       loadDeals();
     }
+  };
+
+  const generateQuotePDF = (deal) => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+    doc.setFontSize(20);
+    doc.text('QUOTATION', pageWidth / 2, 20, { align: 'center' });
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text('Startboom Digital CRM', pageWidth / 2, 28, { align: 'center' });
+    doc.setFontSize(11);
+    doc.setTextColor(60);
+    doc.text(`Quote #: ${deal._id}`, 14, 45);
+    doc.text(`Date: ${new Date().toLocaleDateString('en-UG')}`, 14, 52);
+    doc.text(`Valid Until: ${deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString('en-UG') : 'TBD'}`, 14, 59);
+    doc.setFontSize(12);
+    doc.setTextColor(40);
+    doc.text('PREPARED FOR:', 14, 72);
+    doc.setFontSize(10);
+    doc.setTextColor(60);
+    doc.text(deal.client?.name || deal.client?.companyName || 'N/A', 14, 79);
+    if (deal.client?.email) doc.text(deal.client.email, 14, 86);
+    doc.autoTable({
+      startY: 100,
+      head: [['Description', 'Stage', 'Probability', 'Value (UGX)']],
+      body: [[
+        deal.title,
+        deal.stage,
+        `${STAGE_PROBABILITY[deal.stage] ?? deal.probability ?? 0}%`,
+        Number(deal.value || 0).toLocaleString('en-UG')
+      ]],
+      theme: 'striped',
+      headStyles: { fillColor: [255, 165, 0], textColor: [40, 40, 40] },
+      styles: { fontSize: 10 }
+    });
+    const finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(13);
+    doc.setFont(undefined, 'bold');
+    doc.text(`TOTAL: UGX ${Number(deal.value || 0).toLocaleString('en-UG')}`, pageWidth - 14, finalY, { align: 'right' });
+    if (deal.description) {
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'normal');
+      doc.setTextColor(80);
+      doc.text('Notes:', 14, finalY + 15);
+      doc.text(deal.description.substring(0, 200), 14, finalY + 22);
+    }
+    doc.setFontSize(9);
+    doc.setTextColor(120);
+    doc.text('This quotation is valid for 30 days from the date above.', pageWidth / 2, finalY + 40, { align: 'center' });
+    doc.save(`Quote-${deal.title.replace(/\s+/g, '-')}.pdf`);
+    toast.success('Quote PDF downloaded!');
   };
 
   const handleDeleteDeal = async (dealId) => {
@@ -507,6 +563,7 @@ const Deals = () => {
             deals={displayDeals.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
             onUpdateStage={handleUpdateDealStage}
             onDeleteDeal={handleDeleteDeal}
+            onGenerateQuote={generateQuotePDF}
             formatUGX={formatUGX}
           />
           <Pagination
@@ -555,7 +612,56 @@ const Deals = () => {
       )}
       {view === 'charts' && <DealsChartsView stats={calculatedStats} formatUGX={formatUGX} />}
 
-      {/* Create Deal Modal */}
+      {/* Won Deal → Record Sale Modal */}
+      {showWonModal && wonDeal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-xl shadow-lg max-w-md w-full p-6"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">Deal Won! 🎉</h2>
+                <p className="text-sm text-gray-500">{wonDeal.title}</p>
+              </div>
+            </div>
+            <p className="text-gray-700 mb-2">Value: <span className="font-semibold text-green-600">{formatUGX(wonDeal.value)}</span></p>
+            <p className="text-gray-700 mb-6">Client: <span className="font-semibold">{wonDeal.client?.name || wonDeal.client?.companyName || 'N/A'}</span></p>
+            <p className="text-sm text-gray-600 mb-6">Would you like to record a sale for this deal now?</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowWonModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              >
+                Later
+              </button>
+              <button
+                onClick={() => {
+                  setShowWonModal(false);
+                  navigate('/agent/sales', { state: { fromDeal: {
+                    clientId: wonDeal.client?._id,
+                    clientName: wonDeal.client?.name || wonDeal.client?.companyName,
+                    clientEmail: wonDeal.client?.email || '',
+                    clientPhone: wonDeal.client?.phone || '',
+                    dealTitle: wonDeal.title,
+                    dealValue: wonDeal.value
+                  }}});
+                }}
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center justify-center gap-2"
+              >
+                <ShoppingCart size={16} />
+                Record Sale
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Create Deal Modal */}}
       {showCreateModal && (
         <CreateDealModal 
           onClose={() => setShowCreateModal(false)}
@@ -570,7 +676,7 @@ const Deals = () => {
 };
 
 // Table View Component
-const DealsTableView = ({ deals, onUpdateStage, onDeleteDeal, formatUGX }) => {
+const DealsTableView = ({ deals, onUpdateStage, onDeleteDeal, onGenerateQuote, formatUGX }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
@@ -622,12 +728,22 @@ const DealsTableView = ({ deals, onUpdateStage, onDeleteDeal, formatUGX }) => {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <button
-                    onClick={() => onDeleteDeal(deal._id)}
-                    className="text-red-600 hover:text-red-900 text-sm"
-                  >
-                    Delete
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => onGenerateQuote(deal)}
+                      className="text-blue-600 hover:text-blue-800 text-sm flex items-center gap-1"
+                      title="Download Quote PDF"
+                    >
+                      <FileText size={15} />
+                      Quote
+                    </button>
+                    <button
+                      onClick={() => onDeleteDeal(deal._id)}
+                      className="text-red-600 hover:text-red-900 text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

@@ -6,9 +6,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Search, Plus, Mail, Phone, MessageCircle,
   LayoutGrid, Table as TableIcon, ArrowRightLeft,
-  Calendar, StickyNote, X, Send, Users,
+  Calendar, StickyNote, X, Send, Users, Briefcase,
 } from "lucide-react";
-import { clientsAPI, usersAPI } from "../../services/api";
+import { clientsAPI, usersAPI, dealsAPI } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import toast from "react-hot-toast";
@@ -351,7 +351,6 @@ export default function Leads() {
   };
 
   const handleStatusChange = async (leadId, newStatus) => {
-    // optimistic update
     setLeads((prev) =>
       prev.map((lead) =>
         lead._id === leadId
@@ -365,12 +364,37 @@ export default function Leads() {
         status: newStatus === 'Converted' ? 'active' : 'prospect',
       });
       if (newStatus === 'Converted') {
-        toast.success('Lead converted to active client!');
+        toast.success('Lead converted to active client! Create a deal to continue.');
       }
     } catch (error) {
       console.error('Error updating lead:', error);
       toast.error(error.response?.data?.message || 'Failed to update lead status');
-      fetchLeads(); // revert on error
+      fetchLeads();
+    }
+  };
+
+  const handleCreateDealFromLead = async (lead) => {
+    try {
+      // Ensure lead is at least active client first
+      if (lead.status === 'prospect') {
+        await clientsAPI.update(lead._id, { leadStatus: 'Converted', status: 'active' });
+        setLeads(prev => prev.map(l => l._id === lead._id ? { ...l, leadStatus: 'Converted', status: 'active' } : l));
+      }
+      const dealData = {
+        title: `Deal - ${lead.contactName || lead.name}`,
+        client: lead._id,
+        value: 0,
+        stage: 'qualification',
+        dealType: 'new',
+        probability: 25,
+        description: `Deal created from lead: ${lead.companyName || lead.company || ''}`,
+        agent: user?._id || user?.id,
+      };
+      await dealsAPI.create(dealData);
+      toast.success('Deal created! Redirecting to Deals...');
+      setTimeout(() => navigate('/agent/deals'), 800);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to create deal');
     }
   };
 
@@ -607,49 +631,41 @@ export default function Leads() {
                     </td>
 
                     <td className="px-6 py-5">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleCall(lead)}
-                          title="Call"
-                          className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        >
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button onClick={() => handleCall(lead)} title="Call"
+                          className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                           <Phone size={16} />
                         </button>
-                        <button
-                          onClick={() => handleOpenEmail(lead)}
-                          title="Email"
-                          className="p-1.5 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                        >
+                        <button onClick={() => handleOpenEmail(lead)} title="Email"
+                          className="p-1.5 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
                           <Mail size={16} />
                         </button>
-                        <button
-                          onClick={() => handleWhatsApp(lead)}
-                          title="WhatsApp"
-                          className="p-1.5 text-slate-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                        >
+                        <button onClick={() => handleWhatsApp(lead)} title="WhatsApp"
+                          className="p-1.5 text-slate-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors">
                           <MessageCircle size={16} />
                         </button>
-                        <button
-                          onClick={() => handleOpenNote(lead)}
-                          title="Add Note"
-                          className="p-1.5 text-slate-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors"
-                        >
+                        <button onClick={() => handleOpenNote(lead)} title="Add Note"
+                          className="p-1.5 text-slate-500 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors">
                           <StickyNote size={16} />
                         </button>
-                        <button
-                          onClick={() => handleEvent(lead)}
-                          title="Schedule Event"
-                          className="p-1.5 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-                        >
+                        <button onClick={() => handleEvent(lead)} title="Schedule Event"
+                          className="p-1.5 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors">
                           <Calendar size={16} />
                         </button>
-                        <button
-                          onClick={() => handleOpenForward(lead)}
-                          title="Forward to Agent"
-                          className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                        >
+                        <button onClick={() => handleOpenForward(lead)} title="Forward to Agent"
+                          className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
                           <ArrowRightLeft size={16} />
                         </button>
+                        {(lead.leadStatus === 'Qualified' || lead.leadStatus === 'Converted') && (
+                          <button
+                            onClick={() => handleCreateDealFromLead(lead)}
+                            title="Create Deal"
+                            className="p-1.5 text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors flex items-center gap-1 text-xs px-2"
+                          >
+                            <Briefcase size={14} />
+                            Deal
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
