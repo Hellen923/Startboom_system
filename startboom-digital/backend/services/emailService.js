@@ -411,7 +411,7 @@ const emailTemplates = {
             
             <div class="content">
               <h2>Hello ${name},</h2>
-              <p>We received a request to reset the password for your CRM account.</p>
+              <p>We received a request to reset the password for your Sales System account.</p>
               <p>Use the following One-Time Password (OTP) to reset your password:</p>
               
               <div class="otp-code">${otp}</div>

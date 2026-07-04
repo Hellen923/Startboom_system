@@ -14,6 +14,7 @@ import { usersAPI, reportsAPI, clientsAPI, dealsAPI, salesAPI } from '../../serv
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import Pagination from '../../components/Pagination';
 
 const Reports = () => {
   // Filter State
@@ -39,6 +40,10 @@ const Reports = () => {
     deals: { page: 1, limit: 10, total: 0 },
     agents: { page: 1, limit: 10, total: 0 }
   });
+
+  const handlePageSizeChange = (table, size) => {
+    setPagination(prev => ({ ...prev, [table]: { ...prev[table], limit: size, page: 1 } }));
+  };
 
   // Helper Date Functions
   const setPeriod = (period) => {
@@ -998,31 +1003,14 @@ const Reports = () => {
                 </tbody>
               </table>
             </div>
-            {/* Pagination for Sales */}
-            {pagination.sales.total > pagination.sales.limit && (
-              <div className="flex justify-between items-center px-4 py-3 border-t border-gray-200">
-                <div className="text-sm text-gray-700">
-                  Showing {((pagination.sales.page - 1) * pagination.sales.limit) + 1} to{' '}
-                  {Math.min(pagination.sales.page * pagination.sales.limit, pagination.sales.total)} of {pagination.sales.total} sales
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handlePageChange('sales', pagination.sales.page - 1)}
-                    disabled={pagination.sales.page === 1}
-                    className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={() => handlePageChange('sales', pagination.sales.page + 1)}
-                    disabled={pagination.sales.page * pagination.sales.limit >= pagination.sales.total}
-                    className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
+            <Pagination
+              currentPage={pagination.sales.page}
+              totalPages={Math.ceil(pagination.sales.total / pagination.sales.limit)}
+              totalItems={pagination.sales.total}
+              pageSize={pagination.sales.limit}
+              onPageChange={(p) => handlePageChange('sales', p)}
+              onPageSizeChange={(s) => handlePageSizeChange('sales', s)}
+            />
           </div>
 
           {/* Agents Performance Table */}
@@ -1136,31 +1124,14 @@ const Reports = () => {
                 </tbody>
               </table>
             </div>
-            {/* Pagination for Agents */}
-            {pagination.agents.total > pagination.agents.limit && (
-              <div className="flex justify-between items-center px-4 py-3 border-t border-gray-200">
-                <div className="text-sm text-gray-700">
-                  Showing {((pagination.agents.page - 1) * pagination.agents.limit) + 1} to{' '}
-                  {Math.min(pagination.agents.page * pagination.agents.limit, pagination.agents.total)} of {pagination.agents.total} agents
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handlePageChange('agents', pagination.agents.page - 1)}
-                    disabled={pagination.agents.page === 1}
-                    className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={() => handlePageChange('agents', pagination.agents.page + 1)}
-                    disabled={pagination.agents.page * pagination.agents.limit >= pagination.agents.total}
-                    className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
+            <Pagination
+              currentPage={pagination.agents.page}
+              totalPages={Math.ceil(pagination.agents.total / pagination.agents.limit)}
+              totalItems={pagination.agents.total}
+              pageSize={pagination.agents.limit}
+              onPageChange={(p) => handlePageChange('agents', p)}
+              onPageSizeChange={(s) => handlePageSizeChange('agents', s)}
+            />
           </div>
 
           {/* Deals Table */}
@@ -1213,31 +1184,14 @@ const Reports = () => {
                 </tbody>
               </table>
             </div>
-            {/* Pagination for Deals */}
-            {pagination.deals.total > pagination.deals.limit && (
-              <div className="flex justify-between items-center px-4 py-3 border-t border-gray-200">
-                <div className="text-sm text-gray-700">
-                  Showing {((pagination.deals.page - 1) * pagination.deals.limit) + 1} to{' '}
-                  {Math.min(pagination.deals.page * pagination.deals.limit, pagination.deals.total)} of {pagination.deals.total} deals
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handlePageChange('deals', pagination.deals.page - 1)}
-                    disabled={pagination.deals.page === 1}
-                    className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={() => handlePageChange('deals', pagination.deals.page + 1)}
-                    disabled={pagination.deals.page * pagination.deals.limit >= pagination.deals.total}
-                    className="px-3 py-1 text-sm border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
+            <Pagination
+              currentPage={pagination.deals.page}
+              totalPages={Math.ceil(pagination.deals.total / pagination.deals.limit)}
+              totalItems={pagination.deals.total}
+              pageSize={pagination.deals.limit}
+              onPageChange={(p) => handlePageChange('deals', p)}
+              onPageSizeChange={(s) => handlePageSizeChange('deals', s)}
+            />
           </div>
         </div>
       )}

@@ -1,8 +1,99 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Plus, Users, UserPlus, UserMinus, X, Search, PhoneCall, CheckCircle } from 'lucide-react';
+import { MapPin, Plus, Users, UserPlus, UserMinus, X, Search, CheckCircle, Map, List } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
+
+// Fix Leaflet default icon broken by webpack
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
+
+// Custom colored marker
+const makeIcon = (color) => L.divIcon({
+  className: '',
+  html: `<div style="width:28px;height:28px;background:${color};border:3px solid white;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>`,
+  iconSize: [28, 28],
+  iconAnchor: [14, 28],
+  popupAnchor: [0, -30],
+});
+
+const COLORS = ['#1795CC','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#84cc16'];
+
+// Fly to bounds when territories change
+const MapFlyTo = ({ territories }) => {
+  const map = useMap();
+  useEffect(() => {
+    const valid = territories.filter(t => t.location?.latitude && t.location?.longitude);
+    if (!valid.length) return;
+    if (valid.length === 1) {
+      map.flyTo([valid[0].location.latitude, valid[0].location.longitude], 10, { duration: 1 });
+    } else {
+      const bounds = valid.map(t => [t.location.latitude, t.location.longitude]);
+      map.flyToBounds(bounds, { padding: [40, 40], duration: 1 });
+    }
+  }, [territories, map]);
+  return null;
+};
+
+// Territory Map Component
+const TerritoryMap = ({ territories, onSelectTerritory, selectedId }) => {
+  const ugandaCenter = [1.3733, 32.2903];
+  const valid = territories.filter(t => t.location?.latitude && t.location?.longitude);
+
+  return (
+    <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm" style={{ height: 480 }}>
+      <MapContainer center={ugandaCenter} zoom={7} style={{ height: '100%', width: '100%' }} scrollWheelZoom={true}>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <MapFlyTo territories={valid} />
+        {valid.map((territory, idx) => {
+          const color = COLORS[idx % COLORS.length];
+          const activeAgents = (territory.assignedAgents || []).filter(a => a.isActive);
+          const isSelected = territory._id === selectedId;
+          return (
+            <React.Fragment key={territory._id}>
+              <Circle
+                center={[territory.location.latitude, territory.location.longitude]}
+                radius={isSelected ? 25000 : 18000}
+                pathOptions={{ color, fillColor: color, fillOpacity: isSelected ? 0.18 : 0.1, weight: isSelected ? 2.5 : 1.5 }}
+              />
+              <Marker
+                position={[territory.location.latitude, territory.location.longitude]}
+                icon={makeIcon(color)}
+                eventHandlers={{ click: () => onSelectTerritory(territory._id === selectedId ? null : territory._id) }}
+              >
+                <Popup>
+                  <div style={{ minWidth: 180 }}>
+                    <p style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{territory.name}</p>
+                    <p style={{ fontSize: 12, color: '#6B7280', marginBottom: 6 }}>{territory.location.displayName}</p>
+                    <div style={{ display: 'flex', gap: 12 }}>
+                      <span style={{ fontSize: 12 }}>👥 {activeAgents.length} agent{activeAgents.length !== 1 ? 's' : ''}</span>
+                      <span style={{ fontSize: 12 }}>📋 {territory.stats?.totalClients || 0} clients</span>
+                    </div>
+                    {activeAgents.length > 0 && (
+                      <div style={{ marginTop: 6, fontSize: 11, color: '#374151' }}>
+                        {activeAgents.slice(0, 3).map(a => <div key={String(a.user?._id || a.user)}>• {a.user?.name || 'Agent'}</div>)}
+                        {activeAgents.length > 3 && <div>+{activeAgents.length - 3} more</div>}
+                      </div>
+                    )}
+                  </div>
+                </Popup>
+              </Marker>
+            </React.Fragment>
+          );
+        })}
+      </MapContainer>
+    </div>
+  );
+};
 
 // ── Assign Agents Modal ───────────────────────────────────────────────────────
 const AssignAgentsModal = ({ territory, onClose, onUpdated }) => {
@@ -305,6 +396,8 @@ const Territories = () => {
   const [loading, setLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [manageTerritory, setManageTerritory] = useState(null);
+  const [viewMode, setViewMode] = useState('map'); // 'map' | 'grid'
+  const [selectedId, setSelectedId] = useState(null);
 
   const fetchTerritories = async () => {
     setLoading(true);
@@ -353,15 +446,126 @@ const Territories = () => {
 
       {/* Toolbar */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-600">{territories.length} territory areas defined</p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm text-gray-600">{territories.length} territory areas defined</p>
+          <div className="flex bg-gray-100 rounded-lg p-1 ml-3">
+            <button
+              onClick={() => setViewMode('map')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                viewMode === 'map' ? 'bg-white shadow-sm text-primary-600' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <Map className="w-4 h-4" /> Map
+            </button>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                viewMode === 'grid' ? 'bg-white shadow-sm text-primary-600' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <List className="w-4 h-4" /> Cards
+            </button>
+          </div>
+        </div>
         <button onClick={() => setShowCreateModal(true)}
           className="flex items-center gap-2 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium">
           <Plus className="w-4 h-4" /> Create Territory
         </button>
       </div>
 
-      {/* Grid */}
-      {loading ? (
+      {/* Map View */}
+      {viewMode === 'map' && loading && (
+        <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
+          <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-gray-500 mt-3">Loading territories...</p>
+        </div>
+      )}
+      {/* Map View */}
+      {viewMode === 'map' && !loading && territories.length > 0 && (
+        <div className="space-y-4">
+          <TerritoryMap
+            territories={territories}
+            onSelectTerritory={setSelectedId}
+            selectedId={selectedId}
+          />
+          {/* Selected territory detail */}
+          {selectedId && (() => {
+            const t = territories.find(x => x._id === selectedId);
+            if (!t) return null;
+            const activeAgents = (t.assignedAgents || []).filter(a => a.isActive);
+            return (
+              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-primary-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-lg">{t.name}</h3>
+                      <p className="text-sm text-gray-500">{t.location?.displayName}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => setManageTerritory(t)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium">
+                      <UserPlus className="w-4 h-4" /> Manage Agents
+                    </button>
+                    <button onClick={() => setSelectedId(null)} className="p-1.5 hover:bg-gray-100 rounded-lg">
+                      <X className="w-4 h-4 text-gray-500" />
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
+                  <div className="bg-gray-50 rounded-xl p-3 text-center">
+                    <p className="text-2xl font-bold text-primary-600">{activeAgents.length}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Agents</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3 text-center">
+                    <p className="text-2xl font-bold text-green-600">{t.stats?.totalClients || 0}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Clients</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3 text-center">
+                    <p className="text-2xl font-bold text-orange-500">{t.stats?.totalDeals || 0}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Deals</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3 text-center">
+                    <span className={`text-sm font-semibold px-2 py-1 rounded-full ${
+                      t.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                    }`}>{t.isActive ? 'Active' : 'Inactive'}</span>
+                    <p className="text-xs text-gray-500 mt-1">Status</p>
+                  </div>
+                </div>
+                {activeAgents.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Assigned Agents</p>
+                    <div className="flex flex-wrap gap-2">
+                      {activeAgents.map(a => (
+                        <div key={String(a.user?._id || a.user)} className="flex items-center gap-2 px-3 py-1.5 bg-primary-50 border border-primary-200 rounded-full">
+                          <div className="w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+                            {(a.user?.name || '?').charAt(0).toUpperCase()}
+                          </div>
+                          <span className="text-sm text-primary-700 font-medium">{a.user?.name || 'Agent'}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            );
+          })()}
+          {/* All territories mini list below map */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {territories.map(t => (
+              <TerritoryCard key={t._id} territory={t} onManageAgents={setManageTerritory} onUpdate={fetchTerritories} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Grid View */}
+      {(viewMode === 'grid' || territories.length === 0) && (
+      loading ? (
         <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
           <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-sm text-gray-500 mt-3">Loading territories...</p>
@@ -387,6 +591,7 @@ const Territories = () => {
             />
           ))}
         </div>
+      )
       )}
 
       {/* Modals */}

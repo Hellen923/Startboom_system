@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Leaflet map */
+@import 'leaflet/dist/leaflet.css';
+
 /* ============================================================
    SWAVELINK — GLOBAL THEME SYSTEM (CSS variable driven)
    ThemeContext.applyTheme() sets all --color-* tokens on :root.
