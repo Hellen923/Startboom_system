@@ -20,6 +20,7 @@ import {
 import { schedulesAPI, clientsAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import Pagination from '../../components/Pagination';
 
 // Schedule Filters Component
 const ScheduleFilters = ({ filters, onFiltersChange }) => {
@@ -228,6 +229,9 @@ const ScheduleCalendar = ({ schedules, onScheduleClick, onDateClick, focusDate =
 
 // Schedule List Component
 const ScheduleList = ({ schedules, onEdit, onDelete, onComplete, loading }) => {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const paginated = schedules.slice((page - 1) * pageSize, page * pageSize);
   const getStatusIcon = (status) => {
     switch (status) {
       case 'completed':
