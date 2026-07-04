@@ -78,6 +78,7 @@ export const clientsAPI = {
   addTask: (id, data) => api.post(`/clients/${id}/tasks`, data),
   sendEmail: (id, data) => api.post(`/clients/${id}/send-email`, data),
   getNotes: () => api.get('/clients/notes/my'),
+  exportPDF: (params) => api.get('/clients/export/pdf', { params, responseType: 'blob' }),
 };
 
 // Deals API

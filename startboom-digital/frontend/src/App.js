@@ -17,7 +17,8 @@ const Deals = lazy(() => import('./pages/agent/Deals'));
 const Schedules = lazy(() => import('./pages/agent/Schedules'));
 const Tasks = lazy(() => import('./pages/agent/Tasks'));
 const Issues = lazy(() => import('./pages/agent/Issues'));
-const SalesManagement = lazy(() => import('./pages/agent/SalesManagement'));
+const Sales = lazy(() => import('./pages/agent/Sales'));
+const GlobalCommandCenter = lazy(() => import('./pages/superadmin/GlobalCommandCenter'));
 const Notes = lazy(() => import('./pages/agent/Notes'));
 const UserManagement = lazy(() => import('./pages/admin/UserManagement'));
 const Reports = lazy(() => import('./pages/admin/Reports'));
@@ -120,6 +121,11 @@ function App() {
                     <TenantManagement />
                   </ProtectedRoute>
                 } />
+                <Route path="/superadmin/command-center" element={
+                  <ProtectedRoute allowedRoles={['superadmin']}>
+                    <GlobalCommandCenter />
+                  </ProtectedRoute>
+                } />
 
                 {/* Admin Routes */}
                 <Route path="/admin" element={
@@ -206,7 +212,7 @@ function App() {
                 } />
                 <Route path="/agent/sales" element={
                   <ProtectedRoute allowedRoles={['agent']}>
-                    <SalesManagement />
+                    <Sales />
                   </ProtectedRoute>
                 } />
                 <Route path="/agent/tasks" element={
