@@ -58,7 +58,7 @@ const SalesManagement = () => {
 
   const loadSales = async () => {
     try {
-      const response = await salesAPI.getAll({ limit: 200 });
+      const response = await salesAPI.getAll({ limit: 1000 });
       setSales(response.data.sales || []);
     } catch (error) {
       console.error('Error loading sales:', error);
@@ -70,8 +70,8 @@ const SalesManagement = () => {
     try {
       setLoadingClients(true);
       const [clientsRes, leadsRes] = await Promise.all([
-        clientsAPI.getAll({ limit: 200 }),
-        clientsAPI.getAll({ status: 'prospect', limit: 500 })
+        clientsAPI.getAll({ limit: 1000 }),
+        clientsAPI.getAll({ status: 'prospect', limit: 1000 })
       ]);
       
       const fetchedClients = clientsRes.data?.clients || clientsRes.data || [];
