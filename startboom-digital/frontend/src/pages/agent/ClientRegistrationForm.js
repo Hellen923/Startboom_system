@@ -235,13 +235,13 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
         
         return (
           <React.Fragment key={step.number}>
-            <div className="flex flex-col items-center">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 ${
+            <div className="flex flex-col items-center cursor-pointer" onClick={() => step.number < currentStep && setCurrentStep(step.number)}>
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                 isCompleted 
                   ? 'bg-green-500 border-green-500 text-white' 
                   : isCurrent 
-                    ? 'bg-orange-500 border-orange-500 text-white'
-                    : 'bg-gray-100 border-gray-300 text-gray-400'
+                    ? 'bg-primary-600 border-primary-600 text-white'
+                    : 'bg-gray-100 border-gray-300 text-gray-400 hover:border-primary-400'
               }`}>
                 {isCompleted ? (
                   <CheckCircle className="w-6 h-6" />
@@ -250,7 +250,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                 )}
               </div>
               <span className={`text-sm mt-2 font-medium ${
-                isCurrent ? 'text-orange-600' : 'text-gray-500'
+                isCurrent ? 'text-primary-600' : 'text-gray-500'
               }`}>
                 {step.title}
               </span>
@@ -286,7 +286,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[70vh]">
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-100px)]">
           <StepIndicator />
 
           <form onSubmit={handleSubmit}>
@@ -304,7 +304,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                     <select
                       value={formData.title}
                       onChange={(e) => handleInputChange('title', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     >
                       <option value="">Select Title</option>
                       <option value="Mr">Mr</option>
@@ -326,7 +326,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="text"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                      className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                      className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
                         errors.name ? 'border-red-300' : 'border-gray-300'
                       }`}
                       placeholder="Enter full name"
@@ -344,7 +344,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                     <select
                       value={formData.gender}
                       onChange={(e) => handleInputChange('gender', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     >
                       <option value="">Select Gender</option>
                       <option value="male">Male</option>
@@ -362,7 +362,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="email"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                      className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
                         errors.email ? 'border-red-300' : 'border-gray-300'
                       }`}
                       placeholder="email@example.com"
@@ -380,7 +380,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 ${
+                      className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
                         errors.phone ? 'border-red-300' : 'border-gray-300'
                       }`}
                       placeholder="+256 7XX XXX XXX"
@@ -409,7 +409,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="text"
                       value={formData.company}
                       onChange={(e) => handleInputChange('company', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       placeholder="Company name"
                     />
                   </div>
@@ -422,7 +422,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="text"
                       value={formData.position}
                       onChange={(e) => handleInputChange('position', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       placeholder="Position title"
                     />
                   </div>
@@ -434,7 +434,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                     <select
                       value={formData.industry}
                       onChange={(e) => handleInputChange('industry', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     >
                       <option value="">Select Sector</option>
                       <option value="IT">IT & Technology</option>
@@ -464,7 +464,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                     <select
                       value={formData.region}
                       onChange={(e) => handleInputChange('region', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     >
                       <option value="">Select Region</option>
                       <option value="Central">Central</option>
@@ -490,7 +490,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="text"
                       value={formData.address}
                       onChange={(e) => handleInputChange('address', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       placeholder="Street address"
                     />
                   </div>
@@ -503,7 +503,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="text"
                       value={formData.city}
                       onChange={(e) => handleInputChange('city', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       placeholder="City"
                     />
                   </div>
@@ -516,7 +516,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="text"
                       value={formData.state}
                       onChange={(e) => handleInputChange('state', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       placeholder="State or province"
                     />
                   </div>
@@ -529,7 +529,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="text"
                       value={formData.postalCode}
                       onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       placeholder="Postal code"
                     />
                   </div>
@@ -542,7 +542,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="text"
                       value={formData.country}
                       onChange={(e) => handleInputChange('country', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                       placeholder="Country"
                     />
                   </div>
@@ -560,28 +560,28 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       placeholder="Contact Name"
                       value={newContact.name}
                       onChange={(e) => setNewContact(prev => ({ ...prev, name: e.target.value }))}
-                      className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     />
                     <input
                       type="text"
                       placeholder="Position"
                       value={newContact.position}
                       onChange={(e) => setNewContact(prev => ({ ...prev, position: e.target.value }))}
-                      className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     />
                     <input
                       type="email"
                       placeholder="Email"
                       value={newContact.email}
                       onChange={(e) => setNewContact(prev => ({ ...prev, email: e.target.value }))}
-                      className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     />
                     <input
                       type="tel"
                       placeholder="Phone"
                       value={newContact.phone}
                       onChange={(e) => setNewContact(prev => ({ ...prev, phone: e.target.value }))}
-                      className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     />
                     <div className="md:col-span-2 flex items-center space-x-4">
                       <label className="flex items-center space-x-2">
@@ -589,7 +589,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                           type="checkbox"
                           checked={newContact.isPrimary}
                           onChange={(e) => setNewContact(prev => ({ ...prev, isPrimary: e.target.checked }))}
-                          className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                          className="rounded border-gray-300 text-primary-500 focus:ring-primary-500"
                         />
                         <span className="text-sm text-gray-700">Primary Contact</span>
                       </label>
@@ -597,7 +597,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                         type="button"
                         onClick={handleAddContact}
                         disabled={!newContact.name.trim()}
-                        className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="bg-primary-600 text-white px-4 py-2 rounded hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         Add Contact
                       </button>
@@ -646,7 +646,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                     <select
                       value={formData.status}
                       onChange={(e) => handleInputChange('status', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     >
                       <option value="prospect">Prospect</option>
                       <option value="active">Active</option>
@@ -662,7 +662,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                     <select
                       value={formData.priority}
                       onChange={(e) => handleInputChange('priority', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
@@ -713,7 +713,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       onChange={(e) => setNewTag(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                       placeholder="Add a tag"
-                      className="flex-1 p-2 border border-gray-300 rounded focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      className="flex-1 p-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     />
                     <button
                       type="button"
@@ -733,7 +733,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                     value={formData.notes}
                     onChange={(e) => handleInputChange('notes', e.target.value)}
                     rows="4"
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     placeholder="Add any additional notes about the client..."
                   />
                 </div>
@@ -749,7 +749,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                         type="text"
                         value={formData.emergencyContact.name}
                         onChange={(e) => handleInputChange('emergencyContact.name', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Full name"
                       />
                     </div>
@@ -761,7 +761,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                         type="text"
                         value={formData.emergencyContact.relationship}
                         onChange={(e) => handleInputChange('emergencyContact.relationship', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="e.g., Spouse, Parent"
                       />
                     </div>
@@ -773,7 +773,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                         type="tel"
                         value={formData.emergencyContact.phone}
                         onChange={(e) => handleInputChange('emergencyContact.phone', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                         placeholder="Phone number"
                       />
                     </div>
@@ -803,7 +803,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading ? (
                     <div className="flex items-center space-x-2">
@@ -826,3 +826,4 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
 };
 
 export default ClientRegistrationForm;
+
