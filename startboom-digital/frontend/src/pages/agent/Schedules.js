@@ -40,14 +40,14 @@ const ScheduleFilters = ({ filters, onFiltersChange }) => {
           placeholder="Search schedules..."
           value={filters.search}
           onChange={(e) => handleFilterChange('search', e.target.value)}
-          className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 w-64"
+          className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 w-64"
         />
       </div>
 
       <select
         value={filters.type}
         onChange={(e) => handleFilterChange('type', e.target.value)}
-        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
       >
         <option value="">All Types</option>
         <option value="meeting">Meetings</option>
@@ -59,7 +59,7 @@ const ScheduleFilters = ({ filters, onFiltersChange }) => {
       <select
         value={filters.status}
         onChange={(e) => handleFilterChange('status', e.target.value)}
-        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
       >
         <option value="">All Status</option>
         <option value="scheduled">Scheduled</option>
@@ -136,7 +136,7 @@ const ScheduleCalendar = ({ schedules, onScheduleClick, onDateClick, focusDate =
           onClick={() => handleDateClick(date)}
           className={`p-2 border min-h-24 cursor-pointer transition-colors ${
             isSelected
-              ? 'bg-orange-500 text-white border-orange-500'
+              ? 'bg-primary-500 text-white border-primary-500'
               : isToday
               ? 'bg-blue-50 border-blue-300'
               : 'border-gray-200 hover:bg-gray-50'
@@ -145,7 +145,7 @@ const ScheduleCalendar = ({ schedules, onScheduleClick, onDateClick, focusDate =
           <div className="flex justify-between items-center mb-1">
             <span className={`text-sm font-medium ${
               date.toDateString() === new Date().toDateString() 
-                ? 'bg-orange-500 text-white rounded-full w-6 h-6 flex items-center justify-center'
+                ? 'bg-primary-500 text-white rounded-full w-6 h-6 flex items-center justify-center'
                 : 'text-gray-900'
             }`}>
               {i}
@@ -201,7 +201,7 @@ const ScheduleCalendar = ({ schedules, onScheduleClick, onDateClick, focusDate =
             </button>
             <button 
               onClick={() => setCurrentDate(new Date())}
-              className="text-sm text-orange-500 hover:text-orange-600 font-medium"
+              className="text-sm text-primary-500 hover:text-primary-600 font-medium"
             >
               Today
             </button>
@@ -239,7 +239,7 @@ const ScheduleList = ({ schedules, onEdit, onDelete, onComplete, loading }) => {
       case 'cancelled':
         return <div className="w-3 h-3 bg-red-500 rounded-full" />;
       default:
-        return <Clock size={16} className="text-orange-500" />;
+        return <Clock size={16} className="text-primary-500" />;
     }
   };
 
@@ -259,7 +259,7 @@ const ScheduleList = ({ schedules, onEdit, onDelete, onComplete, loading }) => {
   const getPriorityBadge = (priority) => {
     const styles = {
       low: 'bg-green-100 text-green-800',
-      medium: 'bg-orange-100 text-orange-800',
+      medium: 'bg-primary-100 text-primary-800',
       high: 'bg-red-100 text-red-800'
     };
     return (
@@ -272,7 +272,7 @@ const ScheduleList = ({ schedules, onEdit, onDelete, onComplete, loading }) => {
   if (loading) {
     return (
       <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
         <p className="text-gray-600 mt-2">Loading schedules...</p>
       </div>
     );
@@ -556,7 +556,7 @@ const ScheduleForm = ({ onClose, onSubmit, schedule, isEdit = false, clients = [
                 required
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
                 placeholder="Meeting title"
               />
             </div>
@@ -569,7 +569,7 @@ const ScheduleForm = ({ onClose, onSubmit, schedule, isEdit = false, clients = [
                 required
                 value={formData.client}
                 onChange={(e) => setFormData(prev => ({ ...prev, client: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               >
                 <option value="">Select client</option>
                 {clients.map(client => (
@@ -597,7 +597,7 @@ const ScheduleForm = ({ onClose, onSubmit, schedule, isEdit = false, clients = [
                     try { onDateSelect(val); } catch (err) {}
                   }
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               />
             </div>
             
@@ -611,7 +611,7 @@ const ScheduleForm = ({ onClose, onSubmit, schedule, isEdit = false, clients = [
                 min="1"
                 value={formData.duration}
                 onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) || 60 }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               />
             </div>
           </div>
@@ -625,7 +625,7 @@ const ScheduleForm = ({ onClose, onSubmit, schedule, isEdit = false, clients = [
                 required
                 value={formData.type}
                 onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               >
                 <option value="meeting">Meeting</option>
                 <option value="call">Call</option>
@@ -656,7 +656,7 @@ const ScheduleForm = ({ onClose, onSubmit, schedule, isEdit = false, clients = [
                     return updated;
                   });
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               >
                 <option value="in-person">In Person</option>
                 <option value="google-meet">Google Meet</option>
@@ -674,7 +674,7 @@ const ScheduleForm = ({ onClose, onSubmit, schedule, isEdit = false, clients = [
               required={formData.mode === 'in-person'}
               value={formData.location}
               onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               placeholder="Enter physical address"
             />
           </div>
@@ -701,7 +701,7 @@ const ScheduleForm = ({ onClose, onSubmit, schedule, isEdit = false, clients = [
               rows={3}
               value={formData.agenda}
               onChange={(e) => setFormData(prev => ({ ...prev, agenda: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               placeholder="Meeting agenda and topics to discuss"
             />
           </div>
@@ -718,7 +718,7 @@ const ScheduleForm = ({ onClose, onSubmit, schedule, isEdit = false, clients = [
                   onClick={() => handleReminderToggle(reminder)}
                   className={`px-3 py-2 rounded-lg text-sm border transition-colors ${
                     formData.reminders.includes(reminder)
-                      ? 'bg-orange-500 text-white border-orange-500'
+                      ? 'bg-primary-500 text-white border-primary-500'
                       : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                   }`}
                 >
@@ -743,7 +743,7 @@ const ScheduleForm = ({ onClose, onSubmit, schedule, isEdit = false, clients = [
                       ? priority === 'high' 
                         ? 'bg-red-500 text-white border-red-500'
                         : priority === 'medium'
-                        ? 'bg-orange-500 text-white border-orange-500'
+                        ? 'bg-primary-500 text-white border-primary-500'
                         : 'bg-green-500 text-white border-green-500'
                       : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                   }`}
@@ -762,7 +762,7 @@ const ScheduleForm = ({ onClose, onSubmit, schedule, isEdit = false, clients = [
               rows={3}
               value={formData.notes}
               onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               placeholder="Any additional notes or preparation required"
             />
           </div>
@@ -777,7 +777,7 @@ const ScheduleForm = ({ onClose, onSubmit, schedule, isEdit = false, clients = [
             </button>
             <button
               type="submit"
-              className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
+              className="px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors font-medium"
             >
               {isEdit ? 'Update Schedule' : 'Create Schedule'}
             </button>
@@ -958,7 +958,7 @@ const Schedules = () => {
     setShowForm(true);
   };
 
-  const StatCard = ({ icon: Icon, label, value, color = 'orange' }) => (
+  const StatCard = ({ icon: Icon, label, value, color = 'primary' }) => (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -1008,7 +1008,7 @@ const Schedules = () => {
         </button>
         <button 
           onClick={() => setShowForm(true)}
-          className="flex items-center space-x-2 bg-orange-500 text-white rounded-lg px-4 py-2 hover:bg-orange-600 transition-colors font-medium"
+          className="flex items-center space-x-2 bg-primary-500 text-white rounded-lg px-4 py-2 hover:bg-primary-600 transition-colors font-medium"
         >
           <Plus size={18} />
           <span>New Schedule</span>
@@ -1022,7 +1022,7 @@ const Schedules = () => {
             onClick={() => setView('calendar')}
             className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors font-medium ${
               view === 'calendar' 
-                ? 'bg-orange-500 text-white' 
+                ? 'bg-primary-500 text-white' 
                 : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
@@ -1033,7 +1033,7 @@ const Schedules = () => {
             onClick={() => setView('list')}
             className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors font-medium ${
               view === 'list' 
-                ? 'bg-orange-500 text-white' 
+                ? 'bg-primary-500 text-white' 
                 : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
