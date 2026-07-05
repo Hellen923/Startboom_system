@@ -283,7 +283,7 @@ const SalesManagement = () => {
             resetForm();
             setShowSaleModal(true);
           }}
-          className="flex items-center space-x-2 bg-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-sm"
+          className="flex items-center space-x-2 bg-primary-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary-600 transition-colors shadow-sm"
         >
           <Plus className="w-5 h-5" />
           <span>New Sale</span>
@@ -333,7 +333,7 @@ const SalesManagement = () => {
                     <td className="px-6 py-4 text-sm font-medium text-green-600">
                       {formatCurrency(calculateTotalPaid(sale))}
                     </td>
-                    <td className="px-6 py-4 text-sm font-medium text-orange-600">
+                    <td className="px-6 py-4 text-sm font-medium text-primary-600">
                       {formatCurrency(calculateBalance(sale))}
                     </td>
                     <td className="px-6 py-4">
@@ -376,7 +376,7 @@ const SalesManagement = () => {
               <h2 className="text-2xl font-bold">
                 {editingSale ? 'Edit Sale' : 'Create New Sale'}
               </h2>
-              <button onClick={() => { setShowSaleModal(false); resetForm(); }} className="hover:bg-orange-700 p-2 rounded-lg">
+              <button onClick={() => { setShowSaleModal(false); resetForm(); }} className="hover:bg-primary-700 p-2 rounded-lg">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -396,7 +396,7 @@ const SalesManagement = () => {
                       setShowClientDropdown(true);
                     }}
                     onFocus={() => setShowClientDropdown(true)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                   {showClientDropdown && (
                     <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-y-auto">
@@ -411,7 +411,7 @@ const SalesManagement = () => {
                           <div
                             key={client._id}
                             onClick={() => handleSelectClient(client)}
-                            className="px-4 py-3 hover:bg-orange-50 cursor-pointer border-b last:border-b-0"
+                            className="px-4 py-3 hover:bg-primary-50 cursor-pointer border-b last:border-b-0"
                           >
                             <p className="font-medium text-gray-900">{client.name}</p>
                             <p className="text-sm text-gray-600">{client.email}</p>
@@ -436,7 +436,7 @@ const SalesManagement = () => {
                       setShowLeadDropdown(true);
                     }}
                     onFocus={() => setShowLeadDropdown(true)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                   {showLeadDropdown && (
                     <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-y-auto">
@@ -449,7 +449,7 @@ const SalesManagement = () => {
                           <div
                             key={lead._id}
                             onClick={() => handleSelectLead(lead)}
-                            className="px-4 py-3 hover:bg-orange-50 cursor-pointer border-b last:border-b-0"
+                            className="px-4 py-3 hover:bg-primary-50 cursor-pointer border-b last:border-b-0"
                           >
                             <p className="font-medium text-gray-900">{lead.contactName || lead.name}</p>
                             <p className="text-sm text-gray-600">{lead.companyName || lead.company}</p>
@@ -469,7 +469,7 @@ const SalesManagement = () => {
                     type="email"
                     value={saleForm.customerEmail}
                     onChange={(e) => setSaleForm({ ...saleForm, customerEmail: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -478,7 +478,7 @@ const SalesManagement = () => {
                     type="tel"
                     value={saleForm.customerPhone}
                     onChange={(e) => setSaleForm({ ...saleForm, customerPhone: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -487,7 +487,7 @@ const SalesManagement = () => {
                     type="date"
                     value={saleForm.saleDate}
                     onChange={(e) => setSaleForm({ ...saleForm, saleDate: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     required
                   />
                 </div>
@@ -498,7 +498,7 @@ const SalesManagement = () => {
                     value={saleForm.saleAmount}
                     onChange={(e) => setSaleForm({ ...saleForm, saleAmount: e.target.value })}
                     placeholder="0"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     required
                   />
                 </div>
@@ -512,7 +512,7 @@ const SalesManagement = () => {
                   onChange={(e) => setSaleForm({ ...saleForm, notes: e.target.value })}
                   placeholder="Add notes about this sale..."
                   rows="3"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
               </div>
               </div>
@@ -520,7 +520,7 @@ const SalesManagement = () => {
               <div className="flex-shrink-0 flex gap-4 p-6 border-t bg-gray-50">
                 <button
                   type="submit"
-                  className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-semibold transition-colors"
+                  className="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-lg font-semibold transition-colors"
                 >
                   {editingSale ? 'Update Sale' : 'Create Sale'}
                 </button>
@@ -547,7 +547,7 @@ const SalesManagement = () => {
           >
             <div className="sticky top-0 brand-header text-white p-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold">Sale Details</h2>
-              <button onClick={() => setShowDetailsModal(false)} className="hover:bg-orange-700 p-2 rounded-lg">
+              <button onClick={() => setShowDetailsModal(false)} className="hover:bg-primary-700 p-2 rounded-lg">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -580,7 +580,7 @@ const SalesManagement = () => {
               <div className="space-y-2 bg-gray-50 p-4 rounded-lg">
                 <div className="border-t pt-2 flex justify-between">
                   <span className="font-semibold text-gray-900">Total:</span>
-                  <span className="font-bold text-lg text-orange-600">{formatCurrency(selectedSaleForDetails.finalAmount)}</span>
+                  <span className="font-bold text-lg text-primary-600">{formatCurrency(selectedSaleForDetails.finalAmount)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Paid:</span>
@@ -588,7 +588,7 @@ const SalesManagement = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Balance:</span>
-                  <span className="font-semibold text-orange-600">{formatCurrency(calculateBalance(selectedSaleForDetails))}</span>
+                  <span className="font-semibold text-primary-600">{formatCurrency(calculateBalance(selectedSaleForDetails))}</span>
                 </div>
               </div>
 
@@ -642,7 +642,7 @@ const SalesManagement = () => {
           >
             <div className="brand-header text-white p-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold">Record Payment</h2>
-              <button onClick={() => setShowPaymentModal(false)} className="hover:bg-orange-700 p-2 rounded-lg">
+              <button onClick={() => setShowPaymentModal(false)} className="hover:bg-primary-700 p-2 rounded-lg">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -652,7 +652,7 @@ const SalesManagement = () => {
                 <p className="text-sm text-gray-600">Customer: <span className="font-semibold text-gray-900">{selectedSaleForPayment.customerName}</span></p>
                 <p className="text-sm text-gray-600">Total: <span className="font-semibold text-gray-900">{formatCurrency(selectedSaleForPayment.finalAmount)}</span></p>
                 <p className="text-sm text-gray-600">Already Paid: <span className="font-semibold text-green-600">{formatCurrency(calculateTotalPaid(selectedSaleForPayment))}</span></p>
-                <p className="text-sm text-gray-600">Balance: <span className="font-semibold text-orange-600">{formatCurrency(calculateBalance(selectedSaleForPayment))}</span></p>
+                <p className="text-sm text-gray-600">Balance: <span className="font-semibold text-primary-600">{formatCurrency(calculateBalance(selectedSaleForPayment))}</span></p>
               </div>
 
               <form onSubmit={handleRecordPayment} className="space-y-4">
@@ -663,7 +663,7 @@ const SalesManagement = () => {
                     value={paymentForm.amount}
                     onChange={(e) => setPaymentForm({ ...paymentForm, amount: e.target.value })}
                     placeholder="0"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     required
                   />
                 </div>
@@ -674,7 +674,7 @@ const SalesManagement = () => {
                     type="date"
                     value={paymentForm.paymentDate}
                     onChange={(e) => setPaymentForm({ ...paymentForm, paymentDate: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     required
                   />
                 </div>
@@ -686,14 +686,14 @@ const SalesManagement = () => {
                     onChange={(e) => setPaymentForm({ ...paymentForm, notes: e.target.value })}
                     placeholder="Add notes about this payment..."
                     rows="2"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                 </div>
 
                 <div className="flex gap-4 pt-4 border-t">
                   <button
                     type="submit"
-                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-lg font-semibold transition-colors"
+                    className="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-2 rounded-lg font-semibold transition-colors"
                   >
                     Record Payment
                   </button>

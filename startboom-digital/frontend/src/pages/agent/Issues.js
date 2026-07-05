@@ -16,7 +16,7 @@ const ISSUE_PRIORITIES = ['Low', 'Medium', 'Critical'];
 
 const typeMeta = {
   Bug:             { icon: Bug,         color: 'bg-red-100 text-red-700' },
-  Complaint:       { icon: MessageSquare, color: 'bg-orange-100 text-orange-700' },
+  Complaint:       { icon: MessageSquare, color: 'bg-primary-100 text-primary-700' },
   'Feature Request':{ icon: HelpCircle,   color: 'bg-blue-100 text-blue-700' },
   Billing:         { icon: CreditCard,   color: 'bg-amber-100 text-amber-700' },
   Technical:       { icon: Wrench,       color: 'bg-purple-100 text-purple-700' },
@@ -172,7 +172,7 @@ export default function Issues() {
         <button onClick={exportToPDF} className="flex items-center gap-2 px-4 py-2.5 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 transition font-medium text-sm">
           <Printer size={16} /> Export PDF
         </button>
-        <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-orange-400 hover:bg-orange-500 text-white px-5 py-2.5 rounded-xl transition">
+        <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-primary-500 hover:bg-primary-500 text-white px-5 py-2.5 rounded-xl transition">
           <Plus size={18} /> New Issue
         </button>
       </div>
@@ -184,7 +184,7 @@ export default function Issues() {
           { label: 'New',          value: stats.newCount, color: 'text-red-600' },
           { label: 'In Progress',  value: stats.progress, color: 'text-blue-600' },
           { label: 'Resolved',     value: stats.done,     color: 'text-green-600' },
-          { label: 'Critical',     value: stats.critical, color: 'text-orange-600' },
+          { label: 'Critical',     value: stats.critical, color: 'text-primary-600' },
         ].map(k => (
           <div key={k.label} className="bg-white rounded-2xl shadow-sm p-5">
             <p className="text-sm text-slate-500">{k.label}</p>

@@ -18,7 +18,7 @@ const statusMeta = {
   in_progress:{ label: 'In Progress', color: 'bg-blue-100 text-blue-700',   icon: AlertTriangle },
   completed: { label: 'Completed',  color: 'bg-green-100 text-green-700',  icon: CheckSquare },
   waiting:   { label: 'Waiting',    color: 'bg-yellow-100 text-yellow-700', icon: Clock },
-  deferred:  { label: 'Deferred',   color: 'bg-orange-100 text-orange-700', icon: AlertCircle },
+  deferred:  { label: 'Deferred',   color: 'bg-primary-100 text-primary-700', icon: AlertCircle },
 };
 
 const priorityMeta = {
@@ -157,7 +157,7 @@ export default function Tasks() {
     <div className="p-6 space-y-6">
       {/* Quick Add Button */}
       <div className="flex justify-end">
-        <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-orange-400 hover:bg-orange-500 text-white px-5 py-3 rounded-xl transition-all">
+        <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-primary-500 hover:bg-primary-500 text-white px-5 py-3 rounded-xl transition-all">
           <Plus size={18} /> Create Task
         </button>
       </div>
@@ -428,7 +428,7 @@ export default function Tasks() {
                   Cancel
                 </button>
                 <button type="submit"
-                  className="px-6 py-3 rounded-xl bg-orange-400 hover:bg-orange-500 text-white transition">
+                  className="px-6 py-3 rounded-xl bg-primary-500 hover:bg-primary-500 text-white transition">
                   Create Task
                 </button>
               </div>

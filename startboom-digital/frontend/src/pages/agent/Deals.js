@@ -352,7 +352,7 @@ const Deals = () => {
       <div className="flex justify-end">
         <button 
           onClick={() => setShowCreateModal(true)}
-          className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors flex items-center gap-2"
+          className="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2"
         >
           <Plus size={20} />
           Create New Deal
@@ -384,7 +384,7 @@ const Deals = () => {
           className="bg-white rounded-xl shadow-sm p-6"
         >
           <h3 className="text-lg font-semibold text-gray-900">Total Value</h3>
-          <p className="text-2xl font-bold text-orange-500">
+          <p className="text-2xl font-bold text-primary-600">
             {formatUGX(calculatedStats.totalStats?.totalValue || 0)}
           </p>
           <p className="text-xs text-gray-500 mt-1">All deals</p>
@@ -455,7 +455,7 @@ const Deals = () => {
                 placeholder="Search deals..."
                 value={filters.search}
                 onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
 
@@ -463,7 +463,7 @@ const Deals = () => {
             <select
               value={filters.stage}
               onChange={(e) => setFilters(prev => ({ ...prev, stage: e.target.value }))}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             >
               <option value="">All Stages</option>
               <option value="lead">Lead</option>
@@ -481,7 +481,7 @@ const Deals = () => {
                 placeholder="Min UGX"
                 value={filters.minValue}
                 onChange={(e) => setFilters(prev => ({ ...prev, minValue: e.target.value }))}
-                className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm"
+                className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
               />
               <span className="text-gray-500">-</span>
               <input
@@ -489,7 +489,7 @@ const Deals = () => {
                 placeholder="Max UGX"
                 value={filters.maxValue}
                 onChange={(e) => setFilters(prev => ({ ...prev, maxValue: e.target.value }))}
-                className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm"
+                className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
               />
             </div>
           </div>
@@ -507,19 +507,19 @@ const Deals = () => {
 
             <button
               onClick={() => setView('table')}
-              className={`p-2 rounded-lg ${view === 'table' ? 'bg-orange-100 text-orange-500' : 'text-gray-500'}`}
+              className={`p-2 rounded-lg ${view === 'table' ? 'bg-primary-100 text-primary-600' : 'text-gray-500'}`}
             >
               <Table size={20} />
             </button>
             <button
               onClick={() => setView('kanban')}
-              className={`p-2 rounded-lg ${view === 'kanban' ? 'bg-orange-100 text-orange-500' : 'text-gray-500'}`}
+              className={`p-2 rounded-lg ${view === 'kanban' ? 'bg-primary-100 text-primary-600' : 'text-gray-500'}`}
             >
               <Kanban size={20} />
             </button>
             <button
               onClick={() => setView('charts')}
-              className={`p-2 rounded-lg ${view === 'charts' ? 'bg-orange-100 text-orange-500' : 'text-gray-500'}`}
+              className={`p-2 rounded-lg ${view === 'charts' ? 'bg-primary-100 text-primary-600' : 'text-gray-500'}`}
             >
               <BarChart3 size={20} />
             </button>
@@ -551,7 +551,7 @@ const Deals = () => {
               {(filters.search || filters.stage || filters.minValue || filters.maxValue) && (
                 <button
                   onClick={() => setFilters({ search: '', stage: '', minValue: '', maxValue: '' })}
-                  className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+                  className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
                 >
                   Clear Filters
                 </button>
@@ -600,7 +600,7 @@ const Deals = () => {
             {(filters.search || filters.stage || filters.minValue || filters.maxValue) && (
               <button
                 onClick={() => setFilters({ search: '', stage: '', minValue: '', maxValue: '' })}
-                className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+                className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
               >
                 Clear Filters
               </button>
@@ -706,7 +706,7 @@ const DealsTableView = ({ deals, onUpdateStage, onDeleteDeal, onGenerateQuote, f
                   <select
                     value={deal.stage}
                     onChange={(e) => onUpdateStage(deal._id, e.target.value)}
-                    className="text-xs font-medium px-2 py-1 rounded border border-gray-300 focus:ring-2 focus:ring-orange-500"
+                    className="text-xs font-medium px-2 py-1 rounded border border-gray-300 focus:ring-2 focus:ring-primary-500"
                   >
                     <option value="lead">Lead</option>
                     <option value="qualification">Qualification</option>
@@ -791,7 +791,7 @@ const DealsKanbanView = ({ deals, onUpdateStage, formatUGX }) => {
                             ref={dragProvided.innerRef}
                             {...dragProvided.draggableProps}
                             {...dragProvided.dragHandleProps}
-                            className={`bg-white rounded-lg p-3 shadow-sm border border-gray-100 ${snapshot.isDragging ? 'ring-2 ring-orange-300 shadow-lg' : ''}`}
+                            className={`bg-white rounded-lg p-3 shadow-sm border border-gray-100 ${snapshot.isDragging ? 'ring-2 ring-primary-300 shadow-lg' : ''}`}
                           >
                             <p className="font-medium text-sm text-gray-900">{deal.title}</p>
                             <p className="text-xs text-gray-600 mt-1">{formatUGX(deal.value)}</p>
@@ -866,7 +866,7 @@ const DealsChartsView = ({ stats, formatUGX }) => {
                   <XAxis dataKey="stage" fontSize={12} />
                   <YAxis fontSize={12} />
                   <ReTooltip formatter={(value) => formatUGX(value)} />
-                  <Bar dataKey="value" fill="#ff7a45" />
+                  <Bar dataKey="value" fill="#1795CC" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -996,7 +996,7 @@ const CreateDealModal = ({ onClose, onSubmit, clients, onClientSearch, error }) 
                 required
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Enter deal title"
               />
             </div>
@@ -1016,7 +1016,7 @@ const CreateDealModal = ({ onClose, onSubmit, clients, onClientSearch, error }) 
                   const val = parseInt(e.target.value, 10);
                   setFormData(prev => ({ ...prev, value: Number.isNaN(val) ? '' : Math.max(0, val) }));
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Enter amount in UGX"
               />
             </div>
@@ -1036,7 +1036,7 @@ const CreateDealModal = ({ onClose, onSubmit, clients, onClientSearch, error }) 
                     setShowClientDropdown(true);
                   }}
                   onFocus={() => setShowClientDropdown(true)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Search for client..."
                 />
                 
@@ -1082,7 +1082,7 @@ const CreateDealModal = ({ onClose, onSubmit, clients, onClientSearch, error }) 
                     probability: STAGE_PROBABILITY[stage] ?? prev.probability
                   }));
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               >
                 <option value="lead">Lead</option>
                 <option value="qualification">Qualification</option>
@@ -1099,7 +1099,7 @@ const CreateDealModal = ({ onClose, onSubmit, clients, onClientSearch, error }) 
               <select
                 value={formData.dealType}
                 onChange={(e) => setFormData(prev => ({ ...prev, dealType: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               >
                 <option value="new">New Business</option>
                 <option value="existing">Existing Client</option>
@@ -1117,7 +1117,7 @@ const CreateDealModal = ({ onClose, onSubmit, clients, onClientSearch, error }) 
                 </div>
                 <div className="flex-1 bg-gray-200 rounded-full h-2">
                   <div
-                    className="bg-orange-500 h-2 rounded-full transition-all duration-300"
+                    className="bg-primary-600 h-2 rounded-full transition-all duration-300"
                     style={{ width: `${formData.probability}%` }}
                   />
                 </div>
@@ -1134,7 +1134,7 @@ const CreateDealModal = ({ onClose, onSubmit, clients, onClientSearch, error }) 
                 type="date"
                 value={formData.expectedCloseDate}
                 onChange={(e) => setFormData(prev => ({ ...prev, expectedCloseDate: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
           </div>
@@ -1148,7 +1148,7 @@ const CreateDealModal = ({ onClose, onSubmit, clients, onClientSearch, error }) 
               rows={4}
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               placeholder="Describe the deal..."
             />
           </div>
@@ -1163,7 +1163,7 @@ const CreateDealModal = ({ onClose, onSubmit, clients, onClientSearch, error }) 
             </button>
             <button
               type="submit"
-              className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+              className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
             >
               Create Deal
             </button>
@@ -1175,3 +1175,4 @@ const CreateDealModal = ({ onClose, onSubmit, clients, onClientSearch, error }) 
 };
 
 export default Deals;
+
