@@ -1132,7 +1132,7 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden"
+              className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden max-h-[90vh]"
             >
               <div className="px-6 py-4 brand-header">
                 <h3 className="text-lg font-semibold text-white">
@@ -1145,7 +1145,7 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
                 </p>
               </div>
               
-              <form onSubmit={handleAddUser} className="p-6 space-y-5">
+              <form onSubmit={handleAddUser} className="p-6 space-y-5 overflow-y-auto">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Full Name <span className="text-red-500">*</span>
@@ -1702,3 +1702,4 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
  };
 
 export default UserManagement;
+

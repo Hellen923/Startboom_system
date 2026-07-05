@@ -671,7 +671,7 @@ const Deals = () => {
         </div>
       )}
 
-      {/* Create Deal Modal */}}
+      {/* Create Deal Modal */}
       {showCreateModal && (
         <CreateDealModal 
           onClose={() => setShowCreateModal(false)}

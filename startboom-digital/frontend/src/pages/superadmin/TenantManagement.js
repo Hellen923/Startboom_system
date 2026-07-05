@@ -132,7 +132,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center space-x-3">
             <div className="brand-header p-2 rounded-xl">
-              <img src={logo} alt="Logo" className="w-6 h-6 object-contain" />
+            <img src="/Swavelink.png" alt="Swavelink" className="w-6 h-6 object-contain" />
             </div>
             <h2 className="text-lg font-bold text-gray-900">Create New Organization</h2>
           </div>
