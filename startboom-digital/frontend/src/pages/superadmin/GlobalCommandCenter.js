@@ -187,7 +187,7 @@ const GlobalCommandCenter = () => {
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex items-center gap-4">
             <div className="rounded-lg bg-primary-500 p-3">
-              <img src={logo} alt="Logo" className="h-8 w-8 object-contain" />
+              <img src="/Swavelink.png" alt="Swavelink" className="h-8 w-8 object-contain" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-950 md:text-3xl">Super Admin Overview</h1>

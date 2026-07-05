@@ -660,7 +660,7 @@ export default function Leads() {
                           <button
                             onClick={() => handleCreateDealFromLead(lead)}
                             title="Create Deal"
-                            className="p-1.5 text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors flex items-center gap-1 text-xs px-2"
+                            className="p-1.5 text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors flex items-center gap-1 text-xs px-2"
                           >
                             <Briefcase size={14} />
                             Deal
@@ -1125,3 +1125,4 @@ export default function Leads() {
     </div>
   );
 }
+
