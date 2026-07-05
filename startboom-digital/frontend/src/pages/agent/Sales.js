@@ -36,6 +36,9 @@ const Sales = () => {
   const [salesSearch, setSalesSearch] = useState('');
   const [salesPage, setSalesPage] = useState(1);
   const [salesPageSize, setSalesPageSize] = useState(20);
+  const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [quickAddForm, setQuickAddForm] = useState({ name: '', email: '', phone: '' });
+  const [quickAddSaving, setQuickAddSaving] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -140,6 +143,33 @@ const Sales = () => {
     });
     setClientSearchTerm(client.name);
     setShowClientDropdown(false);
+  };
+
+  const handleQuickAddClient = async (e) => {
+    e.preventDefault();
+    if (!quickAddForm.name.trim()) { toast.error('Name is required'); return; }
+    if (!quickAddForm.phone.trim()) { toast.error('Phone is required'); return; }
+    setQuickAddSaving(true);
+    try {
+      const res = await clientsAPI.create({
+        name: quickAddForm.name.trim(),
+        email: quickAddForm.email.trim() || undefined,
+        phone: quickAddForm.phone.trim(),
+        status: 'active',
+        priority: 'medium'
+      });
+      const newClient = res.data?.client || res.data;
+      setClients(prev => [newClient, ...prev]);
+      setFilteredClients(prev => [newClient, ...prev]);
+      handleClientSelect(newClient);
+      setShowQuickAdd(false);
+      setQuickAddForm({ name: '', email: '', phone: '' });
+      toast.success(`${newClient.name} added and selected!`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to create client');
+    } finally {
+      setQuickAddSaving(false);
+    }
   };
 
   const handleProductSelect = (index, product) => {
@@ -491,7 +521,53 @@ const Sales = () => {
               <form onSubmit={handleSubmit} className="p-6 space-y-6">
                 {/* Client Selection */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Select Client *</label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-medium text-gray-700">Select Client *</label>
+                    <button
+                      type="button"
+                      onClick={() => { setShowQuickAdd(v => !v); setShowClientDropdown(false); }}
+                      className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                    >
+                      {showQuickAdd ? '− Cancel' : '+ New Walk-in Client'}
+                    </button>
+                  </div>
+
+                  {showQuickAdd && (
+                    <form onSubmit={handleQuickAddClient} className="border border-primary-200 bg-primary-50 rounded-lg p-4 space-y-3">
+                      <p className="text-xs font-semibold text-primary-700">Quick-add a new client</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input
+                          type="text"
+                          placeholder="Full Name *"
+                          value={quickAddForm.name}
+                          onChange={e => setQuickAddForm(p => ({ ...p, name: e.target.value }))}
+                          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Phone *"
+                          value={quickAddForm.phone}
+                          onChange={e => setQuickAddForm(p => ({ ...p, phone: e.target.value }))}
+                          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                        />
+                        <input
+                          type="email"
+                          placeholder="Email (optional)"
+                          value={quickAddForm.email}
+                          onChange={e => setQuickAddForm(p => ({ ...p, email: e.target.value }))}
+                          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={quickAddSaving}
+                        className="w-full py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+                      >
+                        {quickAddSaving ? 'Adding...' : 'Add & Select Client'}
+                      </button>
+                    </form>
+                  )}
+
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
