@@ -200,10 +200,7 @@ router.post('/', requireRole(['admin', 'manager', 'superadmin']), async (req, re
     const tenantId = req.tenantId || req.body.tenant || null;
     const product = new Product({ ...req.body, tenant: tenantId, createdBy: req.user.userId });
     await product.save();
-    await AuditLog.create({
-      tenant: req.tenantId, user: req.user.userId, action: 'product.create',
-      resource: 'Product', resourceId: product._id, details: { name: product.name, sku: product.sku }
-    });
+    try { await AuditLog.create({ tenant: req.tenantId, user: req.user.userId, action: 'product.create', resource: 'Product', resourceId: product._id, details: { name: product.name, sku: product.sku } }); } catch (e) { /* non-critical */ }
     res.status(201).json({ product });
   } catch (error) {
     if (error.code === 11000) return res.status(400).json({ error: 'Product SKU already exists' });
@@ -220,10 +217,7 @@ router.put('/:id', requireRole(['admin', 'manager', 'superadmin']), async (req, 
     Object.assign(product, req.body);
     product.updatedBy = req.user.userId;
     await product.save();
-    await AuditLog.create({
-      tenant: req.tenantId, user: req.user.userId, action: 'product.update',
-      resource: 'Product', resourceId: product._id, details: { name: product.name }
-    });
+    try { await AuditLog.create({ tenant: req.tenantId, user: req.user.userId, action: 'product.update', resource: 'Product', resourceId: product._id, details: { name: product.name } }); } catch (e) { /* non-critical */ }
     res.json({ product });
   } catch (error) {
     console.error('Error updating product:', error);
@@ -239,10 +233,7 @@ router.delete('/:id', requireRole(['admin', 'manager', 'superadmin']), async (re
     product.isActive = false;
     product.updatedBy = req.user.userId;
     await product.save();
-    await AuditLog.create({
-      tenant: req.tenantId, user: req.user.userId, action: 'product.delete',
-      resource: 'Product', resourceId: product._id, details: { name: product.name }
-    });
+    try { await AuditLog.create({ tenant: req.tenantId, user: req.user.userId, action: 'product.delete', resource: 'Product', resourceId: product._id, details: { name: product.name } }); } catch (e) { /* non-critical */ }
     res.json({ message: 'Product deleted successfully' });
   } catch (error) {
     console.error('Error deleting product:', error);

@@ -37,6 +37,16 @@ import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import Pagination from '../../components/Pagination';
 
+// Auto-calculate probability from stage per spec
+const STAGE_PROBABILITY = {
+  lead: 10,
+  qualification: 25,
+  proposal: 50,
+  negotiation: 75,
+  won: 100,
+  lost: 0,
+};
+
 const Deals = () => {
   const { user } = useAuth();
   const location = useLocation();
@@ -902,16 +912,6 @@ const DealsChartsView = ({ stats, formatUGX }) => {
 };
 
 // Create Deal Modal Component
-// Auto-calculate probability from stage per spec
-const STAGE_PROBABILITY = {
-  lead: 10,
-  qualification: 25,
-  proposal: 50,
-  negotiation: 75,
-  won: 100,
-  lost: 0,
-};
-
 const CreateDealModal = ({ onClose, onSubmit, clients, onClientSearch, error }) => {
   const { user } = useAuth();
   const [formData, setFormData] = useState({
