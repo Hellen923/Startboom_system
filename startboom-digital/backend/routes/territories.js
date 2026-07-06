@@ -169,20 +169,27 @@ router.post('/:id/assign-agent', requireRole(['admin', 'manager']), async (req, 
   try {
     const { userId } = req.body;
     if (!userId) return res.status(400).json({ error: 'User ID required' });
+    
+    // Search for user within the same tenant
     const user = await User.findOne({ _id: userId, tenant: req.tenantId });
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (!user) return res.status(404).json({ error: 'User not found in your organization' });
+    
     const territory = await Territory.findOne({ _id: req.params.id, ...req.tenantQuery });
     if (!territory) return res.status(404).json({ error: 'Territory not found' });
+    
     await territory.addAgent(userId);
     await AuditLog.create({
-      tenant: req.tenantId, user: req.user.userId, action: 'territory.assign_agent',
-      resource: 'Territory', resourceId: territory._id,
+      tenant: req.tenantId, 
+      user: req.user.userId, 
+      action: 'territory.assign_agent',
+      resource: 'Territory', 
+      resourceId: territory._id,
       details: { territory: territory.name, assignedUser: user.name }
     });
     res.json({ message: 'Agent assigned successfully', territory });
   } catch (error) {
     console.error('Error assigning agent:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', details: error.message });
   }
 });
 
@@ -191,17 +198,23 @@ router.post('/:id/remove-agent', requireRole(['admin', 'manager']), async (req, 
   try {
     const { userId } = req.body;
     if (!userId) return res.status(400).json({ error: 'User ID required' });
+    
     const territory = await Territory.findOne({ _id: req.params.id, ...req.tenantQuery });
     if (!territory) return res.status(404).json({ error: 'Territory not found' });
+    
     await territory.removeAgent(userId);
     await AuditLog.create({
-      tenant: req.tenantId, user: req.user.userId, action: 'territory.remove_agent',
-      resource: 'Territory', resourceId: territory._id, details: { territory: territory.name }
+      tenant: req.tenantId, 
+      user: req.user.userId, 
+      action: 'territory.remove_agent',
+      resource: 'Territory', 
+      resourceId: territory._id, 
+      details: { territory: territory.name }
     });
     res.json({ message: 'Agent removed successfully', territory });
   } catch (error) {
     console.error('Error removing agent:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', details: error.message });
   }
 });
 
