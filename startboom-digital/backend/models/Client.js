@@ -247,10 +247,14 @@ const clientSchema = new mongoose.Schema({
 // Add indexes for faster queries
 clientSchema.index({ agent: 1 }); // Fast agent lookups
 clientSchema.index({ email: 1 }); // Fast email lookups
+clientSchema.index({ phone: 1 }); // Fast phone lookups
 clientSchema.index({ status: 1 }); // Fast status filtering
 clientSchema.index({ createdAt: -1 }); // Fast date-based sorting
 clientSchema.index({ tenant: 1 }); // Fast tenant-based filtering
 clientSchema.index({ tenant: 1, agent: 1 }); // Compound index for tenant + agent queries
+// Text indexes for search functionality
+clientSchema.index({ name: 'text', email: 'text', company: 'text' }); // Text search
+clientSchema.index({ name: 1, email: 1, phone: 1, company: 1 }); // Multi-field search
 
 // Activity tracking methods
 clientSchema.methods.updateActivity = function(purchaseAmount = 0) {
