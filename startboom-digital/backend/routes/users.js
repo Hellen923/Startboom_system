@@ -20,14 +20,22 @@ const router = express.Router();
 // Get all users (admin only, tenant-scoped)
 router.get('/', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), async (req, res) => {
   try {
+    const { role, limit } = req.query;
+    
     // Build query with tenant filtering
     const query = addTenantFilter(req, {});
+    
+    // Apply role filter if provided
+    if (role) {
+      query.role = role;
+    }
 
     // Get users with tenant filtering
     const users = await User.find(query)
       .select('-password -otp')
       .populate('tenant', 'name slug')
       .lean()
+      .limit(limit ? parseInt(limit) : 1000)
       .sort({ createdAt: -1 });
 
       res.json(users);
