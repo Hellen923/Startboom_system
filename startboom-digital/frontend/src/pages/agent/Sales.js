@@ -426,48 +426,45 @@ const Sales = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Sales Management</h1>
-              <p className="text-gray-600 mt-2">Track sales performance and revenue results</p>
+    <div className="p-6 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Sales</h1>
+          <p className="text-gray-600 mt-1">Track sales performance and revenue results</p>
+        </div>
+        <button
+          onClick={() => setShowModal(true)}
+          className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors shadow-sm"
+        >
+          <Plus size={20} />
+          New Sale
+        </button>
+      </div>
+
+      {/* Sales List Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-xl shadow-sm border border-gray-100"
+      >
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex-1">
+              <h2 className="text-xl font-semibold text-gray-900">Recent Sales</h2>
+              <p className="text-sm text-gray-500 mt-1">View and manage all sales transactions</p>
             </div>
-            <button
-              onClick={() => setShowModal(true)}
-              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors shadow-sm hover:shadow-md"
-            >
-              <Plus size={20} />
-              New Sale
-            </button>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                value={salesSearch}
+                onChange={e => { setSalesSearch(e.target.value); setSalesPage(1); }}
+                placeholder="Search by customer, email..."
+                className="pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full sm:w-72"
+              />
+            </div>
           </div>
         </div>
-
-        {/* Sales List Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl shadow-sm border border-gray-200"
-        >
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              <div className="flex-1">
-                <h2 className="text-xl font-semibold text-gray-900">Recent Sales</h2>
-                <p className="text-sm text-gray-500 mt-1">View and manage all sales transactions</p>
-              </div>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  value={salesSearch}
-                  onChange={e => { setSalesSearch(e.target.value); setSalesPage(1); }}
-                  placeholder="Search by customer, email..."
-                  className="pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full sm:w-72"
-                />
-              </div>
-            </div>
-          </div>
           {loading ? (
             <div className="p-16 text-center">
               <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-primary-200 border-t-primary-600"></div>
@@ -589,8 +586,7 @@ const Sales = () => {
             })()}
           </div>
         )}
-        </motion.div>
-      </div>
+      </motion.div>
 
       {/* New Sale Modal */}
       <AnimatePresence>
@@ -600,9 +596,9 @@ const Sales = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+              className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
             >
-              <div className="sticky top-0 bg-gradient-to-r from-primary-600 to-blue-600 text-white p-6 flex justify-between items-center z-10 rounded-t-2xl">
+              <div className="sticky top-0 bg-primary-600 text-white p-6 flex justify-between items-center z-10 rounded-t-2xl">
                 <div>
                   <h2 className="text-2xl font-bold">Create New Sale</h2>
                   <p className="text-primary-100 text-sm mt-1">Record a sales transaction</p>
