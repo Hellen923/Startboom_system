@@ -1132,9 +1132,9 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden max-h-[90vh]"
+              className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden"
             >
-              <div className="px-6 py-4 brand-header">
+              <div className="px-6 py-4 brand-header flex-shrink-0">
                 <h3 className="text-lg font-semibold text-white">
                   {isSuperAdmin ? 'Register Platform Role' : 'Register New Agent'}
                 </h3>
@@ -1145,7 +1145,8 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
                 </p>
               </div>
               
-              <form onSubmit={handleAddUser} className="p-6 space-y-5 overflow-y-auto">
+              <form onSubmit={handleAddUser} className="flex flex-col flex-1 overflow-hidden">
+                <div className="p-6 space-y-5 overflow-y-auto flex-1">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Full Name <span className="text-red-500">*</span>
@@ -1291,15 +1292,16 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                     <option value="International">International</option>
                   </select>
                 </div>
+                </div>
 
-                <div className="flex space-x-3 pt-4">
+                <div className="flex space-x-3 pt-4 px-6 pb-6 border-t border-gray-100 bg-gray-50 flex-shrink-0">
                   <button
                     type="button"
                     onClick={() => {
                       setShowAddModal(false);
                       setFormErrors({});
                     }}
-                    className="flex-1 py-3 px-4 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-all"
+                    className="flex-1 py-3 px-4 border border-gray-200 rounded-xl text-gray-700 hover:bg-white transition-all"
                     disabled={formLoading}
                   >
                     Cancel
