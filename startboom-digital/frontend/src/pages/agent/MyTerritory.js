@@ -21,7 +21,13 @@ const MyTerritory = () => {
       setTeamates(response.data.teammates || []);
     } catch (error) {
       console.error('Error loading territory:', error);
-      toast.error('Failed to load territory information');
+      // Only show error if it's not a 404 (no territory assigned)
+      if (error.response?.status !== 404) {
+        toast.error('Failed to load territory information');
+      }
+      // If 404, just set territory to null (handled by the UI below)
+      setTerritory(null);
+      setTeamates([]);
     } finally {
       setLoading(false);
     }
