@@ -235,7 +235,10 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
         
         return (
           <React.Fragment key={step.number}>
-            <div className="flex flex-col items-center cursor-pointer" onClick={() => step.number < currentStep && setCurrentStep(step.number)}>
+            <div 
+              className="flex flex-col items-center cursor-pointer hover:opacity-80 transition-opacity" 
+              onClick={() => setCurrentStep(step.number)}
+            >
               <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                 isCompleted 
                   ? 'bg-green-500 border-green-500 text-white' 
