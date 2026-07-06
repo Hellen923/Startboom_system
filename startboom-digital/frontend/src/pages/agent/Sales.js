@@ -8,7 +8,8 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import {
   Plus, ShoppingCart, Search, X, CheckCircle, CreditCard, ListTodo,
-  Calendar, Clock, AlertCircle, Package, Download, Trash2, AlertTriangle
+  Calendar, Clock, AlertCircle, Package, Download, Trash2, AlertTriangle,
+  RefreshCw, User
 } from 'lucide-react';
 import Pagination from '../../components/Pagination';
 
@@ -29,6 +30,7 @@ const Sales = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [loadingProducts, setLoadingProducts] = useState(false);
+  const [loadingClients, setLoadingClients] = useState(false);
   const [clientSearchTerm, setClientSearchTerm] = useState('');
   const [showClientDropdown, setShowClientDropdown] = useState(false);
   const [filteredClients, setFilteredClients] = useState([]);
@@ -72,14 +74,18 @@ const Sales = () => {
   const loadClientsAndProducts = async () => {
     try {
       setLoadingProducts(true);
+      setLoadingClients(true);
       const [clientsRes, productsRes] = await Promise.all([
-        clientsAPI.getAll({ limit: 500 }),
+        clientsAPI.getAll({ limit: 1000 }), // Increased limit to get more clients
         productsAPI.getAll({ limit: 1000, isActive: true })
       ]);
       
       const fetchedClients = clientsRes.data?.clients || clientsRes.data || [];
-      setClients(fetchedClients.filter(c => c.status !== 'prospect'));
-      setFilteredClients(fetchedClients.filter(c => c.status !== 'prospect'));
+      // Include ALL clients (active, vip, inactive) but exclude prospects
+      const activeClients = fetchedClients.filter(c => c.status !== 'prospect');
+      console.log('Loaded clients:', activeClients.length); // Debug log
+      setClients(activeClients);
+      setFilteredClients(activeClients);
       
       const fetchedProducts = productsRes.data?.products || productsRes.data || [];
       setProducts(fetchedProducts);
@@ -88,6 +94,26 @@ const Sales = () => {
       toast.error('Failed to load clients/products');
     } finally {
       setLoadingProducts(false);
+      setLoadingClients(false);
+    }
+  };
+
+  // Function to refresh clients list
+  const refreshClients = async () => {
+    try {
+      setLoadingClients(true);
+      const clientsRes = await clientsAPI.getAll({ limit: 1000 });
+      const fetchedClients = clientsRes.data?.clients || clientsRes.data || [];
+      const activeClients = fetchedClients.filter(c => c.status !== 'prospect');
+      console.log('Refreshed clients:', activeClients.length); // Debug log
+      setClients(activeClients);
+      setFilteredClients(activeClients);
+      toast.success('Clients list refreshed');
+    } catch (error) {
+      console.error('Error refreshing clients:', error);
+      toast.error('Failed to refresh clients');
+    } finally {
+      setLoadingClients(false);
     }
   };
 
@@ -149,24 +175,42 @@ const Sales = () => {
     e.preventDefault();
     if (!quickAddForm.name.trim()) { toast.error('Name is required'); return; }
     if (!quickAddForm.phone.trim()) { toast.error('Phone is required'); return; }
+    
+    // Generate a temporary email if not provided
+    const email = quickAddForm.email.trim() || `${quickAddForm.phone.trim()}@walkin.temp`;
+    
     setQuickAddSaving(true);
     try {
       const res = await clientsAPI.create({
         name: quickAddForm.name.trim(),
-        email: quickAddForm.email.trim() || undefined,
+        email: email,
         phone: quickAddForm.phone.trim(),
         status: 'active',
         priority: 'medium'
       });
       const newClient = res.data?.client || res.data;
+      
+      // Add to beginning of both arrays
       setClients(prev => [newClient, ...prev]);
       setFilteredClients(prev => [newClient, ...prev]);
+      
+      // Auto-select the new client
       handleClientSelect(newClient);
+      
+      // Close the quick add form but keep the dropdown visible
       setShowQuickAdd(false);
       setQuickAddForm({ name: '', email: '', phone: '' });
-      toast.success(`${newClient.name} added and selected!`);
+      
+      toast.success(`✅ ${newClient.name} added and selected!`);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to create client');
+      const errorMsg = err.response?.data?.message || 'Failed to create client';
+      if (errorMsg.includes('email') || errorMsg.includes('Email')) {
+        toast.error('A client with this email already exists');
+      } else if (errorMsg.includes('phone') || errorMsg.includes('Phone')) {
+        toast.error('A client with this phone number already exists');
+      } else {
+        toast.error(errorMsg);
+      }
     } finally {
       setQuickAddSaving(false);
     }
@@ -382,60 +426,82 @@ const Sales = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Sales</h1>
-          <p className="text-gray-600 mt-1">Record and manage sales transactions</p>
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Sales Management</h1>
+              <p className="text-gray-600 mt-2">Track sales performance and revenue results</p>
+            </div>
+            <button
+              onClick={() => setShowModal(true)}
+              className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors shadow-sm hover:shadow-md"
+            >
+              <Plus size={20} />
+              New Sale
+            </button>
+          </div>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 font-medium transition-colors shadow-sm"
-        >
-          <Plus size={20} />
-          New Sale
-        </button>
-      </div>
 
-      {/* Sales List */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center gap-3">
-          <h2 className="text-xl font-semibold text-gray-900 flex-1">Recent Sales</h2>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              value={salesSearch}
-              onChange={e => { setSalesSearch(e.target.value); setSalesPage(1); }}
-              placeholder="Search by customer, email..."
-              className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-64"
-            />
+        {/* Sales List Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-xl shadow-sm border border-gray-200"
+        >
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex-1">
+                <h2 className="text-xl font-semibold text-gray-900">Recent Sales</h2>
+                <p className="text-sm text-gray-500 mt-1">View and manage all sales transactions</p>
+              </div>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  value={salesSearch}
+                  onChange={e => { setSalesSearch(e.target.value); setSalesPage(1); }}
+                  placeholder="Search by customer, email..."
+                  className="pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full sm:w-72"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        {loading ? (
-          <div className="p-12 text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-            <p className="mt-2 text-gray-600">Loading sales...</p>
-          </div>
-        ) : sales.length === 0 ? (
-          <div className="text-center py-12">
-            <ShoppingCart className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No sales yet</h3>
-            <p className="mt-1 text-sm text-gray-500">Get started by creating your first sale</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="table-header">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+          {loading ? (
+            <div className="p-16 text-center">
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-primary-200 border-t-primary-600"></div>
+              <p className="mt-4 text-gray-600 font-medium">Loading sales...</p>
+            </div>
+          ) : sales.length === 0 ? (
+            <div className="text-center py-16 px-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                <ShoppingCart className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No sales yet</h3>
+              <p className="text-gray-500 mb-6">Get started by creating your first sale</p>
+              <button
+                onClick={() => setShowModal(true)}
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
+              >
+                <Plus size={18} />
+                Create First Sale
+              </button>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Customer</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Items</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Amount</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Payment</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-100">
                 {(() => {
                   const filtered = sales.filter(s =>
                     !salesSearch ||
@@ -446,31 +512,55 @@ const Sales = () => {
                   return (
                     <>
                       {paginated.map((sale) => (
-                        <tr key={sale._id} className="hover:bg-gray-50">
+                        <motion.tr 
+                          key={sale._id} 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="hover:bg-gray-50 transition-colors"
+                        >
                           <td className="px-6 py-4">
-                            <div className="text-sm font-medium text-gray-900">{sale.customerName}</div>
-                            {sale.customerEmail && <div className="text-sm text-gray-500">{sale.customerEmail}</div>}
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+                                <User className="w-5 h-5 text-primary-600" />
+                              </div>
+                              <div>
+                                <div className="text-sm font-semibold text-gray-900">{sale.customerName}</div>
+                                {sale.customerEmail && <div className="text-xs text-gray-500">{sale.customerEmail}</div>}
+                                {sale.customerPhone && <div className="text-xs text-gray-500">{sale.customerPhone}</div>}
+                              </div>
+                            </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-900">{sale.items?.length || 0} item(s)</td>
-                          <td className="px-6 py-4 text-sm font-semibold text-gray-900">{formatCurrency(sale.finalAmount || 0)}</td>
                           <td className="px-6 py-4">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              {PAYMENT_METHODS.find(p => p.value === sale.paymentMethod)?.icon} {PAYMENT_METHODS.find(p => p.value === sale.paymentMethod)?.label || sale.paymentMethod}
+                            <div className="flex items-center gap-2">
+                              <Package className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm font-medium text-gray-900">{sale.items?.length || 0} item(s)</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="text-base font-bold text-gray-900">{formatCurrency(sale.finalAmount || 0)}</span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                              <span>{PAYMENT_METHODS.find(p => p.value === sale.paymentMethod)?.icon}</span>
+                              <span>{PAYMENT_METHODS.find(p => p.value === sale.paymentMethod)?.label || sale.paymentMethod}</span>
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-500">
-                            {new Date(sale.saleDate || sale.createdAt).toLocaleDateString('en-UG', { year: 'numeric', month: 'short', day: 'numeric' })}
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                              <Calendar className="w-4 h-4" />
+                              {new Date(sale.saleDate || sale.createdAt).toLocaleDateString('en-UG', { year: 'numeric', month: 'short', day: 'numeric' })}
+                            </div>
                           </td>
                           <td className="px-6 py-4">
                             <button
                               onClick={() => generateReceipt(sale)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium transition-colors"
+                              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-sm font-medium transition-all hover:shadow-sm"
                             >
                               <Download size={16} />
                               Receipt
                             </button>
                           </td>
-                        </tr>
+                        </motion.tr>
                       ))}
                       {paginated.length === 0 && (
                         <tr><td colSpan="6" className="px-6 py-8 text-center text-gray-500 text-sm">No sales match your search</td></tr>
@@ -499,6 +589,7 @@ const Sales = () => {
             })()}
           </div>
         )}
+        </motion.div>
       </div>
 
       {/* New Sale Modal */}
@@ -509,11 +600,17 @@ const Sales = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+              className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
             >
-              <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center z-10">
-                <h2 className="text-2xl font-bold text-gray-900">Create New Sale</h2>
-                <button onClick={handleModalClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <div className="sticky top-0 bg-gradient-to-r from-primary-600 to-blue-600 text-white p-6 flex justify-between items-center z-10 rounded-t-2xl">
+                <div>
+                  <h2 className="text-2xl font-bold">Create New Sale</h2>
+                  <p className="text-primary-100 text-sm mt-1">Record a sales transaction</p>
+                </div>
+                <button 
+                  onClick={handleModalClose} 
+                  className="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-lg transition-colors"
+                >
                   <X size={24} />
                 </button>
               </div>
@@ -522,88 +619,162 @@ const Sales = () => {
                 {/* Client Selection */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="block text-sm font-medium text-gray-700">Select Client *</label>
-                    <button
-                      type="button"
-                      onClick={() => { setShowQuickAdd(v => !v); setShowClientDropdown(false); }}
-                      className="text-sm text-primary-600 hover:text-primary-700 font-medium"
-                    >
-                      {showQuickAdd ? '− Cancel' : '+ New Walk-in Client'}
-                    </button>
+                    <label className="block text-sm font-semibold text-gray-700">Select Client *</label>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={refreshClients}
+                        disabled={loadingClients}
+                        className="text-sm text-gray-600 hover:text-gray-800 font-medium flex items-center gap-1 px-2 py-1 hover:bg-gray-100 rounded transition-colors"
+                        title="Refresh clients list"
+                      >
+                        <RefreshCw size={14} className={loadingClients ? 'animate-spin' : ''} />
+                        Refresh
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setShowQuickAdd(v => !v); setShowClientDropdown(false); }}
+                        className="text-sm text-primary-600 hover:text-primary-700 font-semibold"
+                      >
+                        {showQuickAdd ? '✕ Cancel' : '+ New Walk-in Client'}
+                      </button>
+                    </div>
                   </div>
 
                   {showQuickAdd && (
-                    <form onSubmit={handleQuickAddClient} className="border border-primary-200 bg-primary-50 rounded-lg p-4 space-y-3">
-                      <p className="text-xs font-semibold text-primary-700">Quick-add a new client</p>
+                    <motion.form
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      onSubmit={handleQuickAddClient}
+                      className="border-2 border-primary-200 bg-gradient-to-br from-primary-50 to-blue-50 rounded-lg p-4 space-y-3"
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+                          <User className="w-4 h-4 text-primary-600" />
+                        </div>
+                        <p className="text-sm font-bold text-primary-800">Quick Add Walk-in Client</p>
+                      </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <input
                           type="text"
                           placeholder="Full Name *"
                           value={quickAddForm.name}
                           onChange={e => setQuickAddForm(p => ({ ...p, name: e.target.value }))}
-                          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                          className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          required
                         />
                         <input
-                          type="text"
-                          placeholder="Phone *"
+                          type="tel"
+                          placeholder="Phone Number *"
                           value={quickAddForm.phone}
                           onChange={e => setQuickAddForm(p => ({ ...p, phone: e.target.value }))}
-                          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                          className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                          required
                         />
                         <input
                           type="email"
                           placeholder="Email (optional)"
                           value={quickAddForm.email}
                           onChange={e => setQuickAddForm(p => ({ ...p, email: e.target.value }))}
-                          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+                          className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         />
                       </div>
                       <button
                         type="submit"
                         disabled={quickAddSaving}
-                        className="w-full py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+                        className="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                       >
-                        {quickAddSaving ? 'Adding...' : 'Add & Select Client'}
+                        {quickAddSaving ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Adding Client...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle size={16} />
+                            Add & Select Client
+                          </>
+                        )}
                       </button>
-                    </form>
+                    </motion.form>
                   )}
 
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                      type="text"
-                      value={clientSearchTerm}
-                      onChange={(e) => {
-                        setClientSearchTerm(e.target.value);
-                        setShowClientDropdown(true);
-                      }}
-                      onFocus={() => setShowClientDropdown(true)}
-                      placeholder="Search clients..."
-                      className={`w-full pl-10 pr-10 py-2.5 border rounded-lg focus:ring-2 focus:ring-primary-500 ${
-                        saleForm.clientId ? 'border-green-300 bg-green-50' : 'border-gray-300'
-                      }`}
-                      required
-                    />
-                    {saleForm.clientId && <CheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-green-600" />}
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <input
+                        type="text"
+                        value={clientSearchTerm}
+                        onChange={(e) => {
+                          setClientSearchTerm(e.target.value);
+                          setShowClientDropdown(true);
+                        }}
+                        onFocus={() => setShowClientDropdown(true)}
+                        placeholder="Search clients by name, email, phone, or company..."
+                        className={`w-full pl-10 pr-10 py-3 border-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all ${
+                          saleForm.clientId 
+                            ? 'border-green-400 bg-green-50 text-green-900' 
+                            : 'border-gray-300 bg-white'
+                        }`}
+                        required
+                      />
+                      {saleForm.clientId && (
+                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+                          <CheckCircle className="w-5 h-5 text-green-600" />
+                        </div>
+                      )}
+                    </div>
 
                     {showClientDropdown && (
                       <>
-                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-y-auto">
-                          {loadingProducts ? (
-                            <div className="px-4 py-3 text-sm text-gray-500">Loading clients...</div>
+                        <div className="absolute z-50 w-full mt-2 bg-white border-2 border-gray-300 rounded-lg shadow-xl max-h-72 overflow-y-auto">
+                          {loadingClients ? (
+                            <div className="px-4 py-6 text-center">
+                              <div className="inline-block w-6 h-6 border-3 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
+                              <p className="text-sm text-gray-500 mt-2">Loading clients...</p>
+                            </div>
                           ) : filteredClients.length === 0 ? (
-                            <div className="px-4 py-3 text-sm text-gray-500">No clients found</div>
+                            <div className="px-4 py-6 text-center">
+                              <AlertCircle className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                              <p className="text-sm font-medium text-gray-700">No clients found</p>
+                              <p className="text-xs text-gray-500 mt-1">Try searching with different keywords or add a new walk-in client</p>
+                            </div>
                           ) : (
-                            filteredClients.map((client) => (
-                              <div
-                                key={client._id}
-                                onClick={() => handleClientSelect(client)}
-                                className="px-4 py-3 hover:bg-primary-50 cursor-pointer border-b last:border-b-0"
-                              >
-                                <div className="font-medium text-gray-900">{client.name}</div>
-                                <div className="text-sm text-gray-600">{client.email} • {client.phone}</div>
+                            <>
+                              <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
+                                <p className="text-xs font-semibold text-gray-600">
+                                  {filteredClients.length} client{filteredClients.length !== 1 ? 's' : ''} found
+                                </p>
                               </div>
-                            ))
+                              {filteredClients.map((client) => (
+                                <div
+                                  key={client._id}
+                                  onClick={() => handleClientSelect(client)}
+                                  className="px-4 py-3 hover:bg-primary-50 cursor-pointer border-b last:border-b-0 transition-colors"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-blue-500 flex items-center justify-center text-white font-bold">
+                                      {client.name?.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className="font-semibold text-gray-900">{client.name}</div>
+                                      <div className="text-sm text-gray-600 flex items-center gap-2">
+                                        {client.email && <span>{client.email}</span>}
+                                        {client.email && client.phone && <span>•</span>}
+                                        {client.phone && <span>{client.phone}</span>}
+                                      </div>
+                                      {client.company && (
+                                        <div className="text-xs text-gray-500 mt-0.5">{client.company}</div>
+                                      )}
+                                    </div>
+                                    {saleForm.clientId === client._id && (
+                                      <CheckCircle className="w-5 h-5 text-green-600" />
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </>
                           )}
                         </div>
                         <div className="fixed inset-0 z-40" onClick={() => setShowClientDropdown(false)} />
