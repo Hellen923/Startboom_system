@@ -98,6 +98,31 @@ const saleSchema = new mongoose.Schema({
     ref: 'Tenant',
     required: [true, 'Tenant is required']
   },
+  
+  // Access Control Fields (NEW)
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    index: true
+  },
+  
+  department: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Department',
+    index: true
+  },
+  
+  team: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Team',
+    index: true
+  },
+  
+  branch: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Branch',
+    index: true
+  },
   client: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Client'
