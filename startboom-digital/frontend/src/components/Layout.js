@@ -21,6 +21,7 @@ import {
    AlertTriangle,
    Package,
    MapPin,
+   Brain,
  } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { notificationsAPI } from '../services/api';
@@ -99,6 +100,7 @@ const Layout = ({ children }) => {
         { path: '/admin', icon: PieChart, label: 'Dashboard', description: 'Your organization summary with quick access to key metrics.' },
         { path: '/admin/users', icon: UserPlus, label: 'User Management', description: 'Manage users, roles, and permissions for your team.' },
         { path: '/predictive-analytics', icon: Zap, label: 'Predictive Analytics', description: 'Use AI insights to make smarter decisions and forecasts.' },
+        { path: '/admin/intelligence', icon: Brain, label: 'Business Intelligence', description: 'Proactive alerts and insights for your business.' },
       ],
     },
     {
