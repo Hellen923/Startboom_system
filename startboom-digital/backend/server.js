@@ -40,6 +40,7 @@ import activityRoutes from './routes/activities.js';
 import forecastRoutes from './routes/forecasts.js';
 import branchRoutes from './routes/branches.js';
 import intelligenceRoutes from './routes/intelligence.js';
+import workflowRoutes from './routes/workflows.js';
 import { testEmailConfig } from './services/emailService.js';
 import { startTaskReminderJob } from './jobs/taskReminderJob.js';
 import { startScheduledExportJob } from './jobs/scheduledExportJob.js';
@@ -174,6 +175,7 @@ app.use('/api/activities', activityRoutes);
 app.use('/api/forecasts', forecastRoutes);
 app.use('/api/branches', branchRoutes);
 app.use('/api/intelligence', intelligenceRoutes);
+app.use('/api/workflows', workflowRoutes);
 
 // Lightweight health/version endpoints for deployed debugging
 app.get('/api/health', (req, res) => {
