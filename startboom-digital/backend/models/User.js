@@ -145,11 +145,35 @@ const userSchema = new mongoose.Schema({
     default: null // null for superadmin users
   },
 
-  // Department & Region (configurable per company)
+  // Department & Team (NEW: ObjectId references)
   department: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Department',
+    default: null,
+    index: true
+  },
+  
+  team: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Team',
+    default: null,
+    index: true
+  },
+  
+  // Branch/Office location (ObjectId reference)
+  branch: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Branch',
+    default: null,
+    index: true
+  },
+  
+  // Legacy department field (keeping for backward compatibility)
+  departmentLegacy: {
     type: String,
     default: ''
   },
+  
   // Commission & target tracking
   commissionRate: {
     type: Number,
@@ -161,9 +185,16 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  
   region: {
     type: String,
     default: ''
+  },
+  
+  // Last login tracking
+  lastLogin: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true
@@ -176,8 +207,14 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
+// Indexes for performance
 userSchema.index({ tenant: 1, role: 1, isActive: 1 });
 userSchema.index({ tenant: 1, createdAt: -1 });
 userSchema.index({ status: 1 });
+userSchema.index({ tenant: 1, department: 1 });
+userSchema.index({ tenant: 1, team: 1 });
+userSchema.index({ tenant: 1, branch: 1 });
+userSchema.index({ tenant: 1, department: 1, team: 1 });
+userSchema.index({ tenant: 1, branch: 1, department: 1 });
 
 export default mongoose.model('User', userSchema);
