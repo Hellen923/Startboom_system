@@ -1,13 +1,13 @@
 // Intelligence Dashboard - Proactive Business Intelligence
 import React, { useState, useEffect } from 'react';
 import { 
-  ExclamationTriangleIcon, 
-  ClockIcon, 
-  ChartBarIcon,
-  UserGroupIcon,
-  DocumentTextIcon,
-  ArrowTrendingUpIcon
-} from '@heroicons/react/24/outline';
+  AlertTriangle, 
+  Clock, 
+  BarChart3,
+  Users,
+  FileText,
+  TrendingUp
+} from 'lucide-react';
 import { intelligenceApi } from '../../services/enterpriseApi';
 import PROFESSIONAL_COLORS, { getStatusColor } from '../../utils/professionalColors';
 import { useTheme } from '../../context/ThemeContext';
@@ -48,7 +48,7 @@ const Intelligence = () => {
     {
       title: 'Stale Clients',
       count: summary.staleClientsCount,
-      icon: UserGroupIcon,
+      icon: Users,
       color: PROFESSIONAL_COLORS.warning.main,
       gradient: PROFESSIONAL_COLORS.gradients.orange,
       description: 'Clients not contacted recently',
@@ -57,7 +57,7 @@ const Intelligence = () => {
     {
       title: 'Stuck Deals',
       count: summary.stuckDealsCount,
-      icon: ClockIcon,
+      icon: Clock,
       color: PROFESSIONAL_COLORS.danger.main,
       gradient: PROFESSIONAL_COLORS.gradients.pink,
       description: 'Deals stagnant in pipeline',
@@ -66,7 +66,7 @@ const Intelligence = () => {
     {
       title: 'Overdue Follow-ups',
       count: summary.overdueFollowUpsCount,
-      icon: ExclamationTriangleIcon,
+      icon: AlertTriangle,
       color: PROFESSIONAL_COLORS.danger.main,
       gradient: PROFESSIONAL_COLORS.gradients.orange,
       description: 'Tasks past due date',
@@ -75,7 +75,7 @@ const Intelligence = () => {
     {
       title: 'Goals at Risk',
       count: summary.goalsAtRisk,
-      icon: ChartBarIcon,
+      icon: BarChart3,
       color: PROFESSIONAL_COLORS.warning.main,
       gradient: PROFESSIONAL_COLORS.gradients.teal,
       description: 'Goals unlikely to be met',
@@ -84,7 +84,7 @@ const Intelligence = () => {
     {
       title: 'Deals Closing Soon',
       count: summary.dealsClosingSoonCount,
-      icon: ArrowTrendingUpIcon,
+      icon: TrendingUp,
       color: PROFESSIONAL_COLORS.success.main,
       gradient: PROFESSIONAL_COLORS.gradients.green,
       description: 'Deals closing in 7 days',
@@ -93,7 +93,7 @@ const Intelligence = () => {
     {
       title: 'Inactive Users',
       count: summary.lowActivityUsersCount,
-      icon: DocumentTextIcon,
+      icon: FileText,
       color: PROFESSIONAL_COLORS.info.main,
       gradient: PROFESSIONAL_COLORS.gradients.blue,
       description: 'Users with low activity',
@@ -118,7 +118,7 @@ const Intelligence = () => {
         <div className="mb-6 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <ExclamationTriangleIcon className="w-10 h-10" />
+              <AlertTriangle className="w-10 h-10" />
               <div>
                 <h2 className="text-xl font-bold">
                   {summary.criticalAlerts} Critical Alert{summary.criticalAlerts !== 1 && 's'}
