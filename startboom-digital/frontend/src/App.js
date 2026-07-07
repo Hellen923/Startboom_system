@@ -38,6 +38,9 @@ const ChangePassword = lazy(() => import('./pages/ChangePassword'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 
+// Enterprise Features
+const Intelligence = lazy(() => import('./pages/admin/Intelligence'));
+
 // Minimal loading component
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -171,6 +174,11 @@ function App() {
                 <Route path="/admin/targets" element={
                   <ProtectedRoute allowedRoles={['admin', 'manager']}>
                     <Targets />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/intelligence" element={
+                  <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                    <Intelligence />
                   </ProtectedRoute>
                 } />
 
