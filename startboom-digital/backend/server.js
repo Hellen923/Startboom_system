@@ -31,6 +31,15 @@ import { issueRoutes } from './routes/issues.js';
 import productRoutes from './routes/products.js';
 import territoryRoutes from './routes/territories.js';
 import analyticsRoutes from './routes/analytics.js';
+import departmentRoutes from './routes/departments.js';
+import teamRoutes from './routes/teams.js';
+import pipelineRoutes from './routes/pipelines.js';
+import customFieldRoutes from './routes/customFields.js';
+import goalRoutes from './routes/goals.js';
+import activityRoutes from './routes/activities.js';
+import forecastRoutes from './routes/forecasts.js';
+import branchRoutes from './routes/branches.js';
+import intelligenceRoutes from './routes/intelligence.js';
 import { testEmailConfig } from './services/emailService.js';
 import { startTaskReminderJob } from './jobs/taskReminderJob.js';
 import { startScheduledExportJob } from './jobs/scheduledExportJob.js';
@@ -156,6 +165,15 @@ app.use('/api/issues', issueRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/territories', territoryRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/departments', departmentRoutes);
+app.use('/api/teams', teamRoutes);
+app.use('/api/pipelines', pipelineRoutes);
+app.use('/api/custom-fields', customFieldRoutes);
+app.use('/api/goals', goalRoutes);
+app.use('/api/activities', activityRoutes);
+app.use('/api/forecasts', forecastRoutes);
+app.use('/api/branches', branchRoutes);
+app.use('/api/intelligence', intelligenceRoutes);
 
 // Lightweight health/version endpoints for deployed debugging
 app.get('/api/health', (req, res) => {
