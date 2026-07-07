@@ -78,6 +78,77 @@ const tenantSchema = new mongoose.Schema({
       apiAccess: { type: Boolean, default: false },
       customBranding: { type: Boolean, default: false },
       bulkOperations: { type: Boolean, default: false }
+    },
+    
+    // Module Control (Enable/Disable features per tenant)
+    modules: {
+      type: Map,
+      of: {
+        enabled: { type: Boolean, default: true },
+        icon: { type: String, default: 'Box' }
+      },
+      default: {
+        // Core CRM
+        clients: { enabled: true, icon: 'Users' },
+        deals: { enabled: true, icon: 'TrendingUp' },
+        sales: { enabled: true, icon: 'ShoppingCart' },
+        products: { enabled: true, icon: 'Package' },
+        territories: { enabled: true, icon: 'Map' },
+        meetings: { enabled: true, icon: 'Calendar' },
+        schedules: { enabled: true, icon: 'Clock' },
+        analytics: { enabled: true, icon: 'BarChart' },
+        reports: { enabled: true, icon: 'FileText' },
+        dashboards: { enabled: true, icon: 'LayoutDashboard' },
+        
+        // Premium modules (disabled by default)
+        finance: { enabled: false, icon: 'DollarSign' },
+        invoices: { enabled: false, icon: 'Receipt' },
+        payments: { enabled: false, icon: 'CreditCard' },
+        expenses: { enabled: false, icon: 'Wallet' },
+        hr: { enabled: false, icon: 'Users' },
+        employees: { enabled: false, icon: 'UserCheck' },
+        payroll: { enabled: false, icon: 'Banknote' },
+        recruitment: { enabled: false, icon: 'UserPlus' },
+        marketing: { enabled: false, icon: 'Megaphone' },
+        campaigns: { enabled: false, icon: 'Target' },
+        emails: { enabled: false, icon: 'Mail' },
+        support: { enabled: false, icon: 'Headphones' },
+        tickets: { enabled: false, icon: 'Ticket' },
+        knowledgeBase: { enabled: false, icon: 'Book' },
+        inventory: { enabled: false, icon: 'Warehouse' },
+        warehouses: { enabled: false, icon: 'Building' },
+        stock: { enabled: false, icon: 'Boxes' },
+        projects: { enabled: false, icon: 'Folder' },
+        tasks: { enabled: false, icon: 'CheckSquare' },
+        timesheets: { enabled: false, icon: 'Timer' },
+        users: { enabled: true, icon: 'Users' },
+        settings: { enabled: true, icon: 'Settings' },
+        auditLogs: { enabled: true, icon: 'FileCheck' }
+      }
+    },
+    
+    // Entity Terminology (for customization)
+    entityLabels: {
+      client: { 
+        singular: { type: String, default: 'Client' }, 
+        plural: { type: String, default: 'Clients' } 
+      },
+      deal: { 
+        singular: { type: String, default: 'Deal' }, 
+        plural: { type: String, default: 'Deals' } 
+      },
+      sale: { 
+        singular: { type: String, default: 'Sale' }, 
+        plural: { type: String, default: 'Sales' } 
+      },
+      product: { 
+        singular: { type: String, default: 'Product' }, 
+        plural: { type: String, default: 'Products' } 
+      },
+      meeting: { 
+        singular: { type: String, default: 'Meeting' }, 
+        plural: { type: String, default: 'Meetings' } 
+      }
     }
   },
   
