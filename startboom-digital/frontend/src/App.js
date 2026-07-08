@@ -44,6 +44,7 @@ const Departments = lazy(() => import('./pages/admin/Departments'));
 const Goals = lazy(() => import('./pages/admin/Goals'));
 const Activities = lazy(() => import('./pages/admin/Activities'));
 const Branches = lazy(() => import('./pages/admin/Branches'));
+const Pipelines = lazy(() => import('./pages/admin/Pipelines'));
 
 // Minimal loading component
 const PageLoader = () => (
@@ -203,6 +204,11 @@ function App() {
                 <Route path="/admin/branches" element={
                   <ProtectedRoute allowedRoles={['admin', 'manager']}>
                     <Branches />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/pipelines" element={
+                  <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                    <Pipelines />
                   </ProtectedRoute>
                 } />
 
