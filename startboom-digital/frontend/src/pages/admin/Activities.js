@@ -1,20 +1,21 @@
-// Activities & Gamification - Battle Card and Leaderboard
+// Activities & Leaderboard - Track team performance and gamification
 import React, { useState, useEffect } from 'react';
 import { 
+  Activity, 
   Trophy, 
-  Zap, 
   TrendingUp,
   Phone,
   Mail,
   Calendar,
-  UserCheck,
-  Target,
+  Users,
   Award,
-  Medal,
-  Crown,
+  Target,
   Star,
+  Zap,
+  Clock,
   Filter,
-  Users
+  Plus,
+  Medal
 } from 'lucide-react';
 import { activityApi } from '../../services/enterpriseApi';
 import PROFESSIONAL_COLORS from '../../utils/professionalColors';
@@ -27,333 +28,385 @@ const Activities = () => {
   const isDark = theme.mode === 'dark';
   
   const [loading, setLoading] = useState(true);
-  const [battleCard, setBattleCard] = useState([]);
-  const [timeframe, setTimeframe] = useState('week'); // week, month, quarter, year
-  const [filterType, setFilterType] = useState('all'); // all, calls, emails, meetings, etc.
+  const [activeTab, setActiveTab] = useState('overview');
+  const [activities, setActivities] = useState([]);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [myStats, setMyStats] = useState(null);
+  const [battleCard, setBattleCard] = useState(null);
+  const [timeRange, setTimeRange] = useState('week');
 
   useEffect(() => {
-    fetchBattleCard();
-  }, [timeframe, filterType]);
+    fetchData();
+  }, [timeRange]);
 
-  const fetchBattleCard = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const params = { timeframe };
-      if (filterType !== 'all') params.activityType = filterType;
+      const params = { timeRange };
+
+      const [activitiesRes, myStatsRes, battleCardRes] = await Promise.all([
+        activityApi.getAll(params),
+        activityApi.getMyStats(params),
+        activityApi.getBattleCard(params)
+      ]);
       
-      const response = await activityApi.getBattleCard(params);
-      setBattleCard(response.data.battleCard || []);
+      setActivities(activitiesRes.data.activities || []);
+      setMyStats(myStatsRes.data.stats || {});
+      setBattleCard(battleCardRes.data.battleCard || {});
+      setLeaderboard(battleCardRes.data.battleCard?.leaderboard || []);
     } catch (error) {
-      console.error('Error fetching battle card:', error);
-      toast.error('Failed to load leaderboard');
+      console.error('Error fetching activities:', error);
+      toast.error('Failed to load activities');
     } finally {
       setLoading(false);
     }
   };
 
-  const getRankIcon = (rank) => {
-    switch (rank) {
-      case 1: return Crown;
-      case 2: return Trophy;
-      case 3: return Medal;
-      default: return Award;
+  const getActivityIcon = (type) => {
+    switch (type) {
+      case 'call':
+        return <Phone className="w-4 h-4" />;
+      case 'email':
+        return <Mail className="w-4 h-4" />;
+      case 'meeting':
+      case 'demo':
+        return <Calendar className="w-4 h-4" />;
+      case 'deal_created':
+      case 'deal_moved':
+        return <TrendingUp className="w-4 h-4" />;
+      default:
+        return <Activity className="w-4 h-4" />;
     }
   };
 
-  const getRankColor = (rank) => {
-    switch (rank) {
-      case 1: return '#FFD700'; // Gold
-      case 2: return '#C0C0C0'; // Silver
-      case 3: return '#CD7F32'; // Bronze
-      default: return PROFESSIONAL_COLORS.gray[400];
-    }
+  const getRankMedal = (rank) => {
+    if (rank === 1) return <Medal className="w-6 h-6 text-yellow-500" />;
+    if (rank === 2) return <Medal className="w-6 h-6 text-gray-400" />;
+    if (rank === 3) return <Medal className="w-6 h-6 text-amber-600" />;
+    return <span className="text-lg font-bold text-gray-500">#{rank}</span>;
   };
 
   if (loading) return <LoadingSpinner />;
 
+
   return (
     <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-gray-50'}`}>
       {/* Header */}
-      <div className="mb-8">
-        <h1 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          Performance Battle Card
-        </h1>
-        <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-          Real-time leaderboard showing top performers and activity scores
-        </p>
-      </div>
-
-      {/* Filters */}
-      <div className={`rounded-xl p-6 mb-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
-        <div className="flex items-center space-x-4">
-          <Filter className="w-5 h-5 text-gray-400" />
-          <div className="flex-1 flex flex-wrap gap-3">
-            <select
-              value={timeframe}
-              onChange={(e) => setTimeframe(e.target.value)}
-              className={`px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
-            >
-              <option value="week">This Week</option>
-              <option value="month">This Month</option>
-              <option value="quarter">This Quarter</option>
-              <option value="year">This Year</option>
-            </select>
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className={`px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
-            >
-              <option value="all">All Activities</option>
-              <option value="call">Calls Only</option>
-              <option value="email">Emails Only</option>
-              <option value="meeting">Meetings Only</option>
-              <option value="demo">Demos Only</option>
-              <option value="deal_created">Deals Created</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Top 3 Podium */}
-      {battleCard.length >= 3 && (
-        <div className="grid grid-cols-3 gap-6 mb-8">
-          {/* 2nd Place */}
-          <PodiumCard
-            user={battleCard[1]}
-            rank={2}
-            isDark={isDark}
-          />
-          {/* 1st Place */}
-          <PodiumCard
-            user={battleCard[0]}
-            rank={1}
-            isDark={isDark}
-          />
-          {/* 3rd Place */}
-          <PodiumCard
-            user={battleCard[2]}
-            rank={3}
-            isDark={isDark}
-          />
-        </div>
-      )}
-      {/* Full Leaderboard */}
-      <div className={`rounded-xl ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg overflow-hidden`}>
-        <div className="p-6 border-b" style={{ borderColor: isDark ? '#334155' : '#E5E7EB' }}>
-          <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            Full Leaderboard
-          </h2>
-        </div>
-        
-        {battleCard.length === 0 ? (
-          <div className="text-center py-12">
-            <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-            <h3 className={`text-xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              No Activity Data
-            </h3>
-            <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              No activities recorded for the selected period
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className={isDark ? 'bg-[#334155]' : 'bg-gray-50'}>
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">Rank</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">Agent</th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider">Score</th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider">Activities</th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider">Calls</th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider">Emails</th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider">Meetings</th>
-                  <th className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider">Deals</th>
-                </tr>
-              </thead>
-              <tbody>
-                {battleCard.map((user, index) => (
-                  <LeaderboardRow
-                    key={user.userId || index}
-                    user={user}
-                    rank={index + 1}
-                    isDark={isDark}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// Podium Card Component
-const PodiumCard = ({ user, rank, isDark }) => {
-  const RankIcon = getRankIcon(rank);
-  const rankColor = getRankColor(rank);
-  const heightClass = rank === 1 ? 'h-64' : rank === 2 ? 'h-56' : 'h-48';
-  const orderClass = rank === 1 ? 'order-2' : rank === 2 ? 'order-1' : 'order-3';
-
-  return (
-    <div className={`${orderClass} flex flex-col items-center`}>
-      {/* Rank Icon */}
-      <div 
-        className="p-4 rounded-full mb-4 shadow-lg"
-        style={{ backgroundColor: `${rankColor}20` }}
-      >
-        <RankIcon className="w-8 h-8" style={{ color: rankColor }} />
-      </div>
-
-      {/* User Card */}
-      <div 
-        className={`w-full rounded-xl p-6 text-center ${heightClass} flex flex-col justify-between ${
-          isDark ? 'bg-[#1E293B]' : 'bg-white'
-        } shadow-lg border-2`}
-        style={{ borderColor: rankColor }}
-      >
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <div 
-            className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold text-xl"
-            style={{ backgroundColor: rankColor }}
-          >
-            {(user.userName || 'U').charAt(0).toUpperCase()}
-          </div>
-          <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-1`}>
-            {user.userName || 'Unknown'}
-          </h3>
-          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-            {user.teamName || 'No Team'}
+          <h1 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            Activities & Leaderboard
+          </h1>
+          <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+            Track team performance and celebrate top performers
           </p>
         </div>
+        <div className="flex items-center space-x-3">
+          <select
+            value={timeRange}
+            onChange={(e) => setTimeRange(e.target.value)}
+            className={`px-4 py-2 rounded-lg ${isDark ? 'bg-[#1E293B] text-white' : 'bg-white'} border ${isDark ? 'border-gray-700' : 'border-gray-300'}`}
+          >
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="quarter">This Quarter</option>
+            <option value="year">This Year</option>
+          </select>
+        </div>
+      </div>
 
-        <div>
-          <div className="flex items-center justify-center space-x-2 mb-2">
-            <Star className="w-5 h-5" style={{ color: rankColor }} />
-            <span className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              {user.totalScore || 0}
-            </span>
+      {/* My Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <StatCard
+          title="Total Activities"
+          value={myStats?.totalActivities || 0}
+          icon={Activity}
+          gradient={PROFESSIONAL_COLORS.gradients.blue}
+          isDark={isDark}
+        />
+        <StatCard
+          title="Activity Score"
+          value={myStats?.totalScore || 0}
+          icon={Star}
+          gradient={PROFESSIONAL_COLORS.gradients.purple}
+          isDark={isDark}
+        />
+        <StatCard
+          title="High Value"
+          value={myStats?.highValueCount || 0}
+          icon={Zap}
+          gradient={PROFESSIONAL_COLORS.gradients.orange}
+          isDark={isDark}
+        />
+        <StatCard
+          title="My Rank"
+          value={`#${myStats?.rank || '-'}`}
+          icon={Trophy}
+          gradient={PROFESSIONAL_COLORS.gradients.green}
+          isDark={isDark}
+        />
+      </div>
+
+      {/* Tabs */}
+      <div className={`rounded-xl ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
+        <div className={`border-b ${isDark ? 'border-gray-700' : 'border-gray-200'} p-4`}>
+          <div className="flex space-x-4 overflow-x-auto">
+            {['overview', 'leaderboard', 'activities', 'breakdown'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`
+                  px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all
+                  ${activeTab === tab
+                    ? 'bg-indigo-600 text-white'
+                    : isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                  }
+                `}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
           </div>
-          <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Activity Score</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div>
-            <p className={`font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              {user.activityCount || 0}
-            </p>
-            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Activities</p>
-          </div>
-          <div>
-            <p className={`font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              {user.breakdown?.deal_created || 0}
-            </p>
-            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Deals</p>
-          </div>
+        <div className="p-6">
+          {activeTab === 'overview' && <OverviewTab myStats={myStats} isDark={isDark} />}
+          {activeTab === 'leaderboard' && <LeaderboardTab leaderboard={leaderboard} getRankMedal={getRankMedal} isDark={isDark} />}
+          {activeTab === 'activities' && <ActivitiesTab activities={activities} getActivityIcon={getActivityIcon} isDark={isDark} />}
+          {activeTab === 'breakdown' && <BreakdownTab myStats={myStats} isDark={isDark} />}
         </div>
       </div>
     </div>
   );
 };
 
-// Leaderboard Row Component
-const LeaderboardRow = ({ user, rank, isDark }) => {
-  const RankIcon = getRankIcon(rank);
-  const rankColor = getRankColor(rank);
-  const isTopThree = rank <= 3;
+
+// Stat Card Component
+const StatCard = ({ title, value, icon: Icon, gradient, isDark }) => (
+  <div
+    className="rounded-xl p-6"
+    style={{
+      background: isDark ? gradient : 'white',
+      border: isDark ? 'none' : '1px solid #E5E7EB'
+    }}
+  >
+    <div className="flex items-center justify-between mb-3">
+      <div className={`p-2 rounded-lg ${isDark ? 'bg-white/10' : 'bg-gray-100'}`}>
+        <Icon className="w-5 h-5" style={{ color: isDark ? 'white' : PROFESSIONAL_COLORS.primary.main }} />
+      </div>
+    </div>
+    <p className={`text-sm mb-1 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{title}</p>
+    <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{value}</p>
+  </div>
+);
+
+// Overview Tab
+const OverviewTab = ({ myStats, isDark }) => (
+  <div className="space-y-6">
+    <div>
+      <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+        My Performance Overview
+      </h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <MetricBox label="Calls" value={myStats?.breakdown?.call || 0} isDark={isDark} icon={Phone} />
+        <MetricBox label="Emails" value={myStats?.breakdown?.email || 0} isDark={isDark} icon={Mail} />
+        <MetricBox label="Meetings" value={myStats?.breakdown?.meeting || 0} isDark={isDark} icon={Calendar} />
+        <MetricBox label="Demos" value={myStats?.breakdown?.demo || 0} isDark={isDark} icon={Target} />
+        <MetricBox label="Follow-ups" value={myStats?.breakdown?.follow_up || 0} isDark={isDark} icon={Clock} />
+        <MetricBox label="Proposals" value={myStats?.breakdown?.proposal_sent || 0} isDark={isDark} icon={TrendingUp} />
+        <MetricBox label="Total Hours" value={((myStats?.totalDuration || 0) / 60).toFixed(1)} isDark={isDark} icon={Clock} />
+        <MetricBox label="Avg Score" value={myStats?.avgScore?.toFixed(1) || 0} isDark={isDark} icon={Star} />
+      </div>
+    </div>
+  </div>
+);
+
+
+// Leaderboard Tab
+const LeaderboardTab = ({ leaderboard, getRankMedal, isDark }) => (
+  <div>
+    <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+      Top Performers
+    </h2>
+    <div className="space-y-3">
+      {leaderboard.map((user, index) => (
+        <div
+          key={user._id}
+          className={`
+            p-4 rounded-lg flex items-center justify-between
+            ${isDark ? 'bg-[#334155]' : 'bg-gray-50'}
+            ${index < 3 ? 'border-2' : ''}
+            ${index === 0 ? 'border-yellow-500' : ''}
+            ${index === 1 ? 'border-gray-400' : ''}
+            ${index === 2 ? 'border-amber-600' : ''}
+          `}
+        >
+          <div className="flex items-center space-x-4">
+            <div className="w-12 flex items-center justify-center">
+              {getRankMedal(index + 1)}
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white`}
+                style={{ background: PROFESSIONAL_COLORS.gradients.blue }}>
+                {user.name?.charAt(0) || 'U'}
+              </div>
+              <div>
+                <p className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {user.name}
+                </p>
+                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {user.email}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center space-x-6">
+            <div className="text-right">
+              <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Activities</p>
+              <p className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                {user.activityCount}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Score</p>
+              <p className={`text-2xl font-bold`} style={{ color: PROFESSIONAL_COLORS.warning.main }}>
+                {user.totalScore}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+
+// Activities Tab
+const ActivitiesTab = ({ activities, getActivityIcon, isDark }) => (
+  <div>
+    <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+      Recent Activities
+    </h2>
+    <div className="space-y-3">
+      {activities.length === 0 ? (
+        <div className="text-center py-12">
+          <Activity className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+          <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>No activities yet</p>
+        </div>
+      ) : (
+        activities.map(activity => (
+          <div
+            key={activity._id}
+            className={`p-4 rounded-lg ${isDark ? 'bg-[#334155]' : 'bg-gray-50'}`}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-start space-x-3 flex-1">
+                <div 
+                  className="p-2 rounded-lg"
+                  style={{ backgroundColor: `${PROFESSIONAL_COLORS.primary.main}20` }}
+                >
+                  {getActivityIcon(activity.type)}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      {activity.title}
+                    </h3>
+                    {activity.isHighValue && (
+                      <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs rounded-full font-semibold flex items-center space-x-1">
+                        <Zap className="w-3 h-3" />
+                        <span>High Value</span>
+                      </span>
+                    )}
+                  </div>
+                  {activity.description && (
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-2`}>
+                      {activity.description}
+                    </p>
+                  )}
+                  <div className="flex items-center space-x-4 text-xs">
+                    <span className={`px-2 py-1 rounded ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
+                      {activity.type?.replace('_', ' ').toUpperCase()}
+                    </span>
+                    <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+                      {activity.user?.name}
+                    </span>
+                    <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+                      {new Date(activity.completedAt).toLocaleString()}
+                    </span>
+                    {activity.duration > 0 && (
+                      <span className={isDark ? 'text-gray-400' : 'text-gray-600'}>
+                        {activity.duration} min
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Score</p>
+                <p className={`text-xl font-bold`} style={{ color: PROFESSIONAL_COLORS.success.main }}>
+                  {activity.score}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  </div>
+);
+
+
+// Breakdown Tab
+const BreakdownTab = ({ myStats, isDark }) => {
+  const breakdown = myStats?.breakdown || {};
+  const total = Object.values(breakdown).reduce((sum, val) => sum + val, 0);
 
   return (
-    <tr 
-      className={`border-b ${isDark ? 'border-gray-700' : 'border-gray-200'} ${
-        isDark ? 'hover:bg-[#334155]' : 'hover:bg-gray-50'
-      } transition`}
-      style={isTopThree ? { backgroundColor: isDark ? `${rankColor}15` : `${rankColor}10` } : {}}
-    >
-      <td className="px-6 py-4">
-        <div className="flex items-center space-x-3">
-          <div 
-            className="p-2 rounded-lg"
-            style={{ backgroundColor: `${rankColor}20` }}
-          >
-            <RankIcon className="w-4 h-4" style={{ color: rankColor }} />
-          </div>
-          <span className={`font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            #{rank}
-          </span>
-        </div>
-      </td>
-      <td className="px-6 py-4">
-        <div className="flex items-center space-x-3">
-          <div 
-            className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-            style={{ backgroundColor: rankColor }}
-          >
-            {(user.userName || 'U').charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <p className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              {user.userName || 'Unknown'}
-            </p>
-            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-              {user.teamName || 'No Team'}
-            </p>
-          </div>
-        </div>
-      </td>
-      <td className="px-6 py-4 text-center">
-        <div className="flex items-center justify-center space-x-1">
-          <Star className="w-4 h-4" style={{ color: PROFESSIONAL_COLORS.warning.main }} />
-          <span className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            {user.totalScore || 0}
-          </span>
-        </div>
-      </td>
-      <td className="px-6 py-4 text-center">
-        <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          {user.activityCount || 0}
-        </span>
-      </td>
-      <td className="px-6 py-4 text-center">
-        <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          {user.breakdown?.call || 0}
-        </span>
-      </td>
-      <td className="px-6 py-4 text-center">
-        <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          {user.breakdown?.email || 0}
-        </span>
-      </td>
-      <td className="px-6 py-4 text-center">
-        <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          {user.breakdown?.meeting || 0}
-        </span>
-      </td>
-      <td className="px-6 py-4 text-center">
-        <span className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          {user.breakdown?.deal_created || 0}
-        </span>
-      </td>
-    </tr>
+    <div>
+      <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+        Activity Breakdown
+      </h2>
+      <div className="space-y-4">
+        {Object.entries(breakdown).map(([type, count]) => {
+          const percentage = total > 0 ? (count / total) * 100 : 0;
+          return (
+            <div key={type}>
+              <div className="flex items-center justify-between mb-2">
+                <span className={`font-medium capitalize ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                  {type.replace('_', ' ')}
+                </span>
+                <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {count} ({percentage.toFixed(1)}%)
+                </span>
+              </div>
+              <div className={`w-full h-3 rounded-full ${isDark ? 'bg-[#334155]' : 'bg-gray-200'} overflow-hidden`}>
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{
+                    width: `${percentage}%`,
+                    background: PROFESSIONAL_COLORS.gradients.blue
+                  }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
-// Helper functions (defined outside component)
-const getRankIcon = (rank) => {
-  switch (rank) {
-    case 1: return Crown;
-    case 2: return Trophy;
-    case 3: return Medal;
-    default: return Award;
-  }
-};
-
-const getRankColor = (rank) => {
-  switch (rank) {
-    case 1: return '#FFD700'; // Gold
-    case 2: return '#C0C0C0'; // Silver
-    case 3: return '#CD7F32'; // Bronze
-    default: return PROFESSIONAL_COLORS.gray[400];
-  }
-};
+// Metric Box Component
+const MetricBox = ({ label, value, isDark, icon: Icon }) => (
+  <div className={`p-4 rounded-lg ${isDark ? 'bg-[#334155]' : 'bg-white border border-gray-200'}`}>
+    <div className="flex items-center justify-between mb-2">
+      <Icon className="w-5 h-5 text-indigo-600" />
+    </div>
+    <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{label}</p>
+    <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{value}</p>
+  </div>
+);
 
 export default Activities;
