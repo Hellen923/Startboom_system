@@ -102,6 +102,7 @@ const Layout = ({ children }) => {
         { path: '/admin', icon: PieChart, label: 'Dashboard', description: 'Your organization summary with quick access to key metrics.' },
         { path: '/admin/users', icon: UserPlus, label: 'User Management', description: 'Manage users, roles, and permissions for your team.' },
         { path: '/admin/departments', icon: Layers, label: 'Departments & Teams', description: 'Organize your company structure and manage teams.' },
+        { path: '/admin/branches', icon: Building2, label: 'Branch Locations', description: 'Manage multi-location offices and hierarchical structure.' },
         { path: '/admin/goals', icon: Target, label: 'Goals & Targets', description: 'Set and track progress on individual, team, and company goals.' },
         { path: '/admin/activities', icon: Trophy, label: 'Performance Battle Card', description: 'Real-time leaderboard showing top performers and gamification.' },
         { path: '/predictive-analytics', icon: Zap, label: 'Predictive Analytics', description: 'Use AI insights to make smarter decisions and forecasts.' },
