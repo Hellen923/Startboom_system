@@ -45,6 +45,10 @@ const Goals = lazy(() => import('./pages/admin/Goals'));
 const Activities = lazy(() => import('./pages/admin/Activities'));
 const Branches = lazy(() => import('./pages/admin/Branches'));
 const Pipelines = lazy(() => import('./pages/admin/Pipelines'));
+const CustomFields = lazy(() => import('./pages/admin/CustomFields'));
+const Workflows = lazy(() => import('./pages/admin/Workflows'));
+const Forecasts = lazy(() => import('./pages/admin/Forecasts'));
+const CustomReports = lazy(() => import('./pages/admin/CustomReports'));
 
 // Minimal loading component
 const PageLoader = () => (
@@ -209,6 +213,26 @@ function App() {
                 <Route path="/admin/pipelines" element={
                   <ProtectedRoute allowedRoles={['admin', 'manager']}>
                     <Pipelines />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/custom-fields" element={
+                  <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                    <CustomFields />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/workflows" element={
+                  <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                    <Workflows />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/forecasts" element={
+                  <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                    <Forecasts />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/custom-reports" element={
+                  <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                    <CustomReports />
                   </ProtectedRoute>
                 } />
 
