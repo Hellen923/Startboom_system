@@ -31,6 +31,7 @@ import {
  } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { notificationsAPI } from '../services/api';
+import { generateNavigation } from '../utils/navigationBuilder';
 import NotificationCenter from './NotificationCenter';
 import ProfileModal from './ProfileModal';
 import LogoutModal from './LogoutModal';
@@ -44,12 +45,21 @@ const Layout = ({ children }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [navSections, setNavSections] = useState([]);
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
   const isAdmin = user?.role === 'admin' || user?.role === 'manager';
   const isSuperAdmin = user?.role === 'superadmin';
+  
+  // Generate dynamic navigation based on user role and permissions
+  useEffect(() => {
+    if (user) {
+      const navigation = generateNavigation(user);
+      setNavSections(navigation);
+    }
+  }, [user]);
   // Load unread notifications for all authenticated roles
   useEffect(() => {
     loadUnreadNotifications();
@@ -165,7 +175,7 @@ const agentNavSections = [
     },
  ];
 
-  const navSections = isSuperAdmin ? superAdminNavSections : isAdmin ? adminNavSections : agentNavSections;
+  // Dynamic navigation is now set in useEffect above, remove the static assignment
   const navItems = navSections.flatMap(section => section.items);
   const roleTitle = isSuperAdmin ? 'Platform Admin' : isAdmin ? 'Tenant Admin' : 'Sales Agent';
   const roleSubtitle = isSuperAdmin ? 'Platform Control' : isAdmin ? 'Company Control' : 'Sales Workspace';
