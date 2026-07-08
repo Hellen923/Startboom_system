@@ -101,6 +101,36 @@ const permissionSchema = new mongoose.Schema({
     // Example: { maxDealValue: 100000, canApproveUpTo: 50000 }
   },
   
+  // Field-Level Permissions (which fields can this role see/edit)
+  fieldPermissions: {
+    // Which fields are visible to this role
+    visibleFields: {
+      type: [String],
+      default: [] // Empty = all fields visible, otherwise only listed fields
+    },
+    // Which fields can be edited by this role
+    editableFields: {
+      type: [String],
+      default: [] // Empty = all visible fields editable, otherwise only listed fields
+    },
+    // Which fields are completely hidden (sensitive data)
+    hiddenFields: {
+      type: [String],
+      default: [] // Fields that should never be shown to this role
+    }
+    /* Example usage:
+      For 'clients' module, Finance role:
+      visibleFields: ['name', 'email', 'phone', 'payment_history', 'invoices', 'credit_limit']
+      editableFields: ['payment_history', 'credit_limit']
+      hiddenFields: ['internal_sales_notes', 'agent_commission']
+      
+      For 'clients' module, Sales Agent role:
+      visibleFields: ['name', 'email', 'phone', 'notes', 'activity_history']
+      editableFields: ['name', 'email', 'phone', 'notes']
+      hiddenFields: ['payment_history', 'credit_limit', 'account_balance']
+    */
+  },
+  
   isActive: {
     type: Boolean,
     default: true
@@ -128,6 +158,70 @@ const permissionSchema = new mongoose.Schema({
 permissionSchema.index({ tenant: 1, role: 1, module: 1 }, { unique: true });
 permissionSchema.index({ tenant: 1, department: 1, role: 1 });
 permissionSchema.index({ isActive: 1 });
+
+// Method to check if field is visible
+permissionSchema.methods.canViewField = function(fieldName) {
+  // If hiddenFields contains this field, it's never visible
+  if (this.fieldPermissions.hiddenFields.includes(fieldName)) {
+    return false;
+  }
+  
+  // If visibleFields is empty, all non-hidden fields are visible
+  if (this.fieldPermissions.visibleFields.length === 0) {
+    return true;
+  }
+  
+  // Otherwise, field must be in visibleFields list
+  return this.fieldPermissions.visibleFields.includes(fieldName);
+};
+
+// Method to check if field is editable
+permissionSchema.methods.canEditField = function(fieldName) {
+  // Can't edit if can't view
+  if (!this.canViewField(fieldName)) {
+    return false;
+  }
+  
+  // If editableFields is empty, all visible fields are editable (if user has edit permission)
+  if (this.fieldPermissions.editableFields.length === 0) {
+    return this.actions.edit;
+  }
+  
+  // Otherwise, field must be in editableFields list
+  return this.fieldPermissions.editableFields.includes(fieldName) && this.actions.edit;
+};
+
+// Method to filter object fields based on permissions
+permissionSchema.methods.filterFields = function(object, mode = 'view') {
+  if (!object) return object;
+  
+  const filtered = { ...object };
+  
+  // Remove hidden fields
+  this.fieldPermissions.hiddenFields.forEach(field => {
+    delete filtered[field];
+  });
+  
+  // If mode is 'view', check visible fields
+  if (mode === 'view' && this.fieldPermissions.visibleFields.length > 0) {
+    Object.keys(filtered).forEach(key => {
+      if (!this.fieldPermissions.visibleFields.includes(key)) {
+        delete filtered[key];
+      }
+    });
+  }
+  
+  // If mode is 'edit', check editable fields
+  if (mode === 'edit' && this.fieldPermissions.editableFields.length > 0) {
+    Object.keys(filtered).forEach(key => {
+      if (!this.fieldPermissions.editableFields.includes(key)) {
+        delete filtered[key];
+      }
+    });
+  }
+  
+  return filtered;
+};
 
 // Method to check if action is allowed
 permissionSchema.methods.can = function(action) {
