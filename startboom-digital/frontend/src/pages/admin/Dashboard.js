@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Users, TrendingUp, DollarSign, Target, Download, FileText } from 'lucide-react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
-import DonutChart, { StageValueChart, ORANGE_GRADIENT_COLORS } from '../../components/charts/DonutChart';
+import DonutChart, { StageValueChart } from '../../components/charts/DonutChart';
 import { useAuth } from '../../context/AuthContext';
-import { useChartTheme } from '../../utils/chartTheme';
+import { useChartTheme, getChartPalette } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
 import { dealsAPI, salesAPI, clientsAPI, usersAPI, tenantsAPI } from '../../services/api';
 import OnboardingWizard from '../../components/OnboardingWizard';
 import DashboardQuickActions from '../../components/DashboardQuickActions';
 import toast from 'react-hot-toast';
+
 const PERIODS = ['daily', 'weekly', 'monthly', 'yearly'];
+
+// Enterprise Chart Colors - NEVER all gold
+const ENTERPRISE_COLORS = getChartPalette();
 
 const StatCard = ({ icon: Icon, title, value }) => (
   <div className={`stat-card hover:shadow-md transition-shadow ${dm.card}`}>
@@ -455,7 +459,7 @@ const AdminDashboard = () => {
               <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
               <Legend wrapperStyle={{ color: legend }} />
               {agentsList.map((agent, idx) => (
-                <Bar key={agent._id} dataKey={agent._id} name={agent.name} fill={ORANGE_GRADIENT_COLORS[idx % ORANGE_GRADIENT_COLORS.length]} />
+                <Bar key={agent._id} dataKey={agent._id} name={agent.name} fill={ENTERPRISE_COLORS[idx % ENTERPRISE_COLORS.length]} />
               ))}
             </BarChart>
           </ResponsiveContainer>
@@ -475,7 +479,7 @@ const AdminDashboard = () => {
               <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
               <Legend wrapperStyle={{ color: legend }} />
               {agentsList.map((agent, idx) => (
-                <Bar key={agent._id} dataKey={agent._id} name={agent.name} fill={ORANGE_GRADIENT_COLORS[idx % ORANGE_GRADIENT_COLORS.length]} />
+                <Bar key={agent._id} dataKey={agent._id} name={agent.name} fill={ENTERPRISE_COLORS[idx % ENTERPRISE_COLORS.length]} />
               ))}
             </BarChart>
           </ResponsiveContainer>
@@ -512,7 +516,7 @@ const AdminDashboard = () => {
                 <XAxis dataKey="month" stroke={axis} />
                 <YAxis stroke={axis} allowDecimals={false} />
                 <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-                <Bar dataKey="sales" fill="#FFD700" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="sales" fill="#D89A00" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -528,7 +532,7 @@ const AdminDashboard = () => {
               <Tooltip formatter={(value) => `${value}%`} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
               <Legend wrapperStyle={{ color: legend }} />
               {agentsList.map((agent, idx) => (
-                <Line key={agent._id} type="monotone" dataKey={agent._id} name={agent.name} stroke={ORANGE_GRADIENT_COLORS[idx % ORANGE_GRADIENT_COLORS.length]} strokeWidth={2} dot={{ r: 3 }} />
+                <Line key={agent._id} type="monotone" dataKey={agent._id} name={agent.name} stroke={ENTERPRISE_COLORS[idx % ENTERPRISE_COLORS.length]} strokeWidth={2} dot={{ r: 3 }} />
               ))}
             </LineChart>
           </ResponsiveContainer>

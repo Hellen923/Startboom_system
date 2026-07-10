@@ -223,30 +223,75 @@ export const ANIMATIONS = {
 };
 
 /**
- * CHART COLORS - Enterprise Specification
- * NEVER use all honey gold - use curated palette
+ * HONEYPOT ANALYTICS PALETTE - Official Data Visualization Colors
+ * 
+ * DESIGN PHILOSOPHY:
+ * Enterprise software fails when they use one brand color everywhere.
+ * HoneyPot uses SEMANTIC colors (data type = specific color) for clarity.
+ * 
+ * GOLDEN RULE: Only use Honey Gold (#D89A00) for:
+ * ✓ Revenue and financial metrics
+ * ✓ Money-related data
+ * ✓ Primary success indicators
+ * ✓ Goal achievements
+ * ✗ NEVER for all chart bars/lines
+ * 
+ * BENEFITS:
+ * - Users instantly recognize what data they're looking at
+ * - Charts remain readable with multiple data series
+ * - Gold becomes MEANINGFUL (associated with value/success)
+ * - Platform feels polished and professional
+ * 
+ * USAGE: Import from chartTheme.js (ANALYTICS_PALETTE)
+ * This is documented here for reference only.
  */
 export const CHART_COLORS = {
-  // Core Metrics
-  revenue: '#D89A00',      // Honey Amber
-  forecast: '#64748B',     // Slate Blue
-  users: '#0EA5E9',        // Sky Blue
-  activities: '#10B981',   // Sage Green
-  profit: '#059669',       // Emerald
-  expenses: '#D97706',     // Copper
-  alerts: '#F97316',       // Coral
-  goals: '#8B5CF6',        // Purple
+  // Financial Metrics (Honey Gold - BRAND SIGNATURE)
+  revenue: '#D89A00',        // Honey Amber - Reserve for money/revenue only
+  revenueHover: '#C18400',   // Darker honey for interactions
   
-  // Multi-series palette (never all gold)
+  // Sales & Commercial
+  sales: '#4F6BED',          // Slate Blue - Professional, trustworthy
+  customers: '#10B981',      // Emerald - Growth, healthy customer base
+  
+  // Forecasting & Predictions
+  forecast: '#38BDF8',       // Sky Blue - Future-looking, optimistic
+  target: '#94A3B8',         // Slate Grey - Baseline comparisons
+  
+  // Performance & Analytics
+  performance: '#8B5CF6',    // Violet - High-level analytics
+  activities: '#6366F1',     // Indigo - Neutral operational data
+  
+  // Costs & Resources
+  expenses: '#B87333',       // Copper - Cost without looking alarming
+  
+  // Alerts & Attention
+  alerts: '#E76F51',         // Coral - Attention without harsh red
+  
+  // Goals & Progress
+  goals: '#5B8A72',          // Sage Green - Calm progress and targets
+  
+  // Deal Pipeline Stages (gentle progression toward money)
+  pipeline: {
+    lead: '#38BDF8',         // Sky Blue - Early stage
+    qualified: '#4F6BED',    // Slate Blue - Moving forward
+    proposal: '#6366F1',     // Indigo - Deepening engagement
+    negotiation: '#D89A00',  // Honey Amber - Close to money
+    won: '#10B981',          // Emerald - Success
+    lost: '#E76F51',         // Coral - Lost (softer than harsh red)
+  },
+  
+  // Multi-series palette (for agent comparisons, regions, etc.)
+  // ORDERED: Primary series → Secondary → ... → Honey Gold (reserve for top performer)
   palette: [
-    '#D89A00', // Honey Amber
-    '#64748B', // Slate Blue
-    '#0EA5E9', // Sky Blue
-    '#10B981', // Sage Green
-    '#8B5CF6', // Purple
-    '#F97316', // Coral
-    '#059669', // Emerald
-    '#D97706', // Copper
+    '#4F6BED',  // Slate Blue (primary)
+    '#10B981',  // Emerald (secondary)
+    '#8B5CF6',  // Violet
+    '#38BDF8',  // Sky Blue
+    '#E76F51',  // Coral
+    '#5B8A72',  // Sage Green
+    '#B87333',  // Copper
+    '#D89A00',  // Honey Amber (use last - for top performer highlight)
   ],
   
   // Chart UI elements

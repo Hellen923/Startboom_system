@@ -32,7 +32,7 @@ import {
 import toast from 'react-hot-toast';
 import { tenantsAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import { useChartTheme } from '../../utils/chartTheme';
+import { useChartTheme, ANALYTICS_PALETTE } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
 import potLogo from '../../assets/pot logo.png';
 import Pagination from '../../components/Pagination';
@@ -270,7 +270,7 @@ const GlobalCommandCenter = () => {
                 <XAxis type="number" tickFormatter={(value) => `$${Math.round(value / 1000)}k`} stroke={axis} />
                 <YAxis dataKey="name" type="category" width={130} tickLine={false} axisLine={false} stroke={axis} />
                 <Tooltip formatter={(value) => formatCurrency(value)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-                <Bar dataKey="revenue" fill="#FFD700" radius={[0, 6, 6, 0]} />
+                <Bar dataKey="revenue" fill={ANALYTICS_PALETTE.revenue} radius={[0, 6, 6, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
