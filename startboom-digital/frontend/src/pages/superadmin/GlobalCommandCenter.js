@@ -34,7 +34,7 @@ import { tenantsAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useChartTheme } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
-import logo from '../../assets/logo.png';
+import potLogo from '../../assets/pot logo.png';
 import Pagination from '../../components/Pagination';
 
 const formatNumber = (value) => new Intl.NumberFormat().format(Math.round(value || 0));

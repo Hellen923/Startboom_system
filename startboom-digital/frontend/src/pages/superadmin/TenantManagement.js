@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Building2, Plus, Search, CheckCircle, XCircle, Clock, Edit, Eye, X, Trash2, Users, MapPin } from 'lucide-react';
 import { tenantsAPI } from '../../services/api';
 import toast from 'react-hot-toast';
-import logo from '../../assets/logo.png';
+import potLogo from '../../assets/pot logo.png';
 
 const StatusBadge = ({ status }) => {
   const styles = {
