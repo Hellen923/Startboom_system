@@ -3,35 +3,37 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 import { useChartTheme } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
 
-// HoneyPot Premium Chart Colors - NO bright greens or neon colors
-const HONEYPOT_COLORS = [
-  '#D99A00',  // Honey Gold
-  '#F59E0B',  // Burnt Orange
-  '#3B82F6',  // Slate Blue
-  '#4F8A5B',  // Sage Green
-  '#06B6D4',  // Teal
-  '#8B5CF6',  // Deep Plum
-  '#EC4899',  // Pink
-  '#10B981',  // Emerald
+// Enterprise Chart Colors - NEVER use all honey gold
+// Strategic variety for readability and professionalism
+const ENTERPRISE_COLORS = [
+  '#D89A00',  // Honey Amber (use sparingly - revenue/primary only)
+  '#64748B',  // Slate Blue
+  '#0EA5E9',  // Sky Blue
+  '#10B981',  // Sage Green
+  '#8B5CF6',  // Purple
+  '#F97316',  // Coral
+  '#059669',  // Emerald
+  '#D97706',  // Copper
 ];
 
-// Export for backward compatibility (renamed from ORANGE_GRADIENT_COLORS)
-export const ORANGE_GRADIENT_COLORS = HONEYPOT_COLORS;
+// Export for backward compatibility
+export const ORANGE_GRADIENT_COLORS = ENTERPRISE_COLORS;
 
-// Status-specific colors (muted, professional)
+// Status-specific colors (enterprise specification)
 const STATUS_COLORS = {
-  won: '#4F8A5B',      // Sage Green
-  lost: '#C0392B',     // Warm Red
-  pending: '#D99A00',  // Honey Gold
-  active: '#4F8A5B',   // Sage Green
-  completed: '#4F8A5B', // Sage Green
-  overdue: '#C0392B',  // Warm Red
-  cash: '#D99A00',     // Honey Gold
-  credit: '#F59E0B',   // Burnt Orange
+  won: '#10B981',      // Sage Green (success)
+  lost: '#EF4444',     // Red (danger)
+  pending: '#F59E0B',  // Amber (warning)
+  open: '#0EA5E9',     // Sky Blue
+  active: '#10B981',   // Sage Green
+  completed: '#10B981', // Sage Green
+  overdue: '#EF4444',  // Red
+  cash: '#D89A00',     // Honey Gold
+  credit: '#64748B',   // Slate
 };
 
 const DonutChart = ({
-  data = [], title, subtitle, colors = HONEYPOT_COLORS, height = 300,
+  data = [], title, subtitle, colors = ENTERPRISE_COLORS, height = 300,
   innerRadius = 60, outerRadius = 100, showPercentage = true, showLegend = true,
   showTooltip = true, labelFormatter, tooltipFormatter, centerContent,
   emptyMessage = 'No data available',
@@ -75,11 +77,11 @@ const DonutChart = ({
       {!hasData ? (
         <div className={`flex items-center justify-center text-sm ${dm.textMuted}`} style={{ height }}>
           <div className="text-center">
-            <svg className="w-16 h-16 mx-auto mb-2 opacity-20" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-12 h-12 mx-auto mb-3 opacity-30" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
               <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
             </svg>
-            <p>{emptyMessage}</p>
+            <p className="text-sm">{emptyMessage}</p>
           </div>
         </div>
       ) : (
@@ -152,7 +154,7 @@ export const TaskStatusChart = ({ data, ...props }) => (
 
 export const StageValueChart = ({ data, formatCurrency, ...props }) => (
   <DonutChart data={data} title="Deal Stages by Value"
-    colors={HONEYPOT_COLORS}
+    colors={ENTERPRISE_COLORS}
     tooltipFormatter={formatCurrency} {...props} />
 );
 
@@ -178,7 +180,7 @@ export const TopAgentsChart = ({ data, formatCurrency, title = "Top Agents by Wo
     .map((agent, index) => ({ 
       ...agent, 
       rank: index + 1, 
-      color: HONEYPOT_COLORS[index % HONEYPOT_COLORS.length] 
+      color: ENTERPRISE_COLORS[index % ENTERPRISE_COLORS.length] 
     }));
 
   return (
