@@ -49,6 +49,8 @@ const CustomFields = lazy(() => import('./pages/admin/CustomFields'));
 const Workflows = lazy(() => import('./pages/admin/Workflows'));
 const Forecasts = lazy(() => import('./pages/admin/Forecasts'));
 const CustomReports = lazy(() => import('./pages/admin/CustomReports'));
+const PermissionManager = lazy(() => import('./pages/admin/PermissionManager'));
+const TenantSettings = lazy(() => import('./pages/admin/TenantSettings'));
 
 // Minimal loading component
 const PageLoader = () => (
@@ -233,6 +235,16 @@ function App() {
                 <Route path="/admin/custom-reports" element={
                   <ProtectedRoute allowedRoles={['admin', 'manager']}>
                     <CustomReports />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/permissions" element={
+                  <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                    <PermissionManager />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/tenant-settings" element={
+                  <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                    <TenantSettings />
                   </ProtectedRoute>
                 } />
 
