@@ -60,16 +60,16 @@ const KPICard = ({ icon: Icon, title, value, subtitle, iconBg, iconColor }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className={`stat-card hover:shadow-md transition-shadow ${dm.card}`}
+    className="bg-white dark:bg-[#1E293B] rounded-2xl p-6 shadow-[0_8px_30px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_40px_rgba(15,23,42,0.08)] transition-shadow duration-200"
   >
     <div className="flex items-center justify-between">
       <div className="flex-1">
-        <p className={`text-sm font-medium ${dm.textSecondary}`}>{title}</p>
-        <p className={`text-2xl font-bold mt-2 ${dm.textPrimary}`}>{value}</p>
-        {subtitle && <p className={`text-xs mt-1 ${dm.textMuted}`}>{subtitle}</p>}
+        <p className="text-xs font-medium uppercase tracking-wide text-[#64748B] dark:text-[#94A3B8] mb-2">{title}</p>
+        <p className="text-3xl font-bold text-[#0F172A] dark:text-[#F8FAFC]">{value}</p>
+        {subtitle && <p className="text-sm mt-2 text-[#64748B] dark:text-[#94A3B8]">{subtitle}</p>}
       </div>
-      <div className={`p-3 rounded-full ${iconBg}`}>
-        <Icon className={`w-6 h-6 ${iconColor}`} />
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${iconBg}`}>
+        <Icon className={`w-6 h-6 ${iconColor}`} strokeWidth={2} />
       </div>
     </div>
   </motion.div>
@@ -320,17 +320,21 @@ return (
       */}
       {/* ── Charts Row 1: Monthly Sales + Deal Status ── */}
       <div className="chart-grid">
-        <div className="chart-panel">
-          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Monthly Sales Revenue</h3>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={monthlySalesData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-              <XAxis dataKey="month" stroke={axis} />
-              <YAxis stroke={axis} />
-              <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-              <Bar dataKey="sales" fill="var(--primary-color)" radius={[4,4,0,0]} name="Sales" />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] overflow-hidden">
+          <div className="px-6 py-5 border-b border-[#F1F5F9] dark:border-[#334155]">
+            <h3 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">Monthly Sales Revenue</h3>
+          </div>
+          <div className="p-6">
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={monthlySalesData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                <XAxis dataKey="month" stroke={axis} style={{ fontSize: '12px' }} />
+                <YAxis stroke={axis} style={{ fontSize: '12px' }} />
+                <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+                <Bar dataKey="sales" fill="#D89A00" radius={[4,4,0,0]} name="Sales" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         <DealStatusChart data={dealStatusData} height={260} />
@@ -338,30 +342,38 @@ return (
 
       {/* ── Charts Row 2: Revenue Over Time + Pipeline Value ── */}
       <div className="chart-grid">
-        <div className="chart-panel">
-          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Revenue Over Time</h3>
-          <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={revenueOverTimeData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-              <XAxis dataKey="month" stroke={axis} />
-              <YAxis stroke={axis} />
-              <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-        <Area type="monotone" dataKey="revenue" stroke="var(--primary-color)" fill="rgba(23,149,204,0.1)" strokeWidth={2} name="Revenue" />
-            </AreaChart>
-          </ResponsiveContainer>
+        <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] overflow-hidden">
+          <div className="px-6 py-5 border-b border-[#F1F5F9] dark:border-[#334155]">
+            <h3 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">Revenue Over Time</h3>
+          </div>
+          <div className="p-6">
+            <ResponsiveContainer width="100%" height={260}>
+              <AreaChart data={revenueOverTimeData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                <XAxis dataKey="month" stroke={axis} style={{ fontSize: '12px' }} />
+                <YAxis stroke={axis} style={{ fontSize: '12px' }} />
+                <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+                <Area type="monotone" dataKey="revenue" stroke="#D89A00" fill="rgba(216,154,0,0.1)" strokeWidth={2} name="Revenue" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
-        <div className="chart-panel">
-          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Pipeline Value by Stage</h3>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={pipelineValueData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-              <XAxis dataKey="stage" stroke={axis} />
-              <YAxis stroke={axis} />
-              <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-              <Bar dataKey="value" fill="var(--primary-color)" radius={[4,4,0,0]} name="Value" />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] overflow-hidden">
+          <div className="px-6 py-5 border-b border-[#F1F5F9] dark:border-[#334155]">
+            <h3 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">Pipeline Value by Stage</h3>
+          </div>
+          <div className="p-6">
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={pipelineValueData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
+                <XAxis dataKey="stage" stroke={axis} style={{ fontSize: '12px' }} />
+                <YAxis stroke={axis} style={{ fontSize: '12px' }} />
+                <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+                <Bar dataKey="value" fill="#64748B" radius={[4,4,0,0]} name="Value" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 
@@ -382,15 +394,15 @@ title="Follow-up Task Status"
       </div>
 
       {/* My Clients Table */}
-      <div className={`rounded-xl shadow-sm border ${dm.card}`}>
-        <div className={`p-5 border-b ${dm.border}`}>
+      <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] overflow-hidden">
+        <div className="px-6 py-5 border-b border-[#F1F5F9] dark:border-[#334155]">
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-            <h2 className={`text-lg font-semibold flex-1 ${dm.textPrimary}`}>My Clients</h2>
+            <h2 className="text-lg font-bold flex-1 text-[#0F172A] dark:text-[#F8FAFC]">My Clients</h2>
             {/* Status filter */}
             <select
               value={tableStatus}
               onChange={e => { setTableStatus(e.target.value); setTablePage(1); }}
-              className={`px-3 py-2 rounded-lg text-sm ${dm.input}`}
+              className="h-12 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC] text-sm focus:outline-none focus:border-[#D89A00] focus:ring-[3px] focus:ring-[rgba(216,154,0,0.1)]"
             >
               <option value="">All Status</option>
               <option value="prospect">Prospect (Lead)</option>
@@ -403,38 +415,38 @@ title="Follow-up Task Status"
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="table-header">
+            <thead className="bg-[#F8FAFC] dark:bg-[#0F172A] border-b border-[#F1F5F9] dark:border-[#1E293B]">
               <tr>
-                <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('name')}>
+                <th className="px-4 py-3 text-left font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('name')}>
                   Client <SortIcon col="name" />
                 </th>
-                <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('company')}>
+                <th className="px-4 py-3 text-left font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('company')}>
                   Company <SortIcon col="company" />
                 </th>
-                <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">
+                <th className="px-4 py-3 text-left font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase text-xs tracking-wider">
                   Contact
                 </th>
-                <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('status')}>
+                <th className="px-4 py-3 text-left font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('status')}>
                   Status <SortIcon col="status" />
                 </th>
-                <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('priority')}>
+                <th className="px-4 py-3 text-left font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('priority')}>
                   Priority <SortIcon col="priority" />
                 </th>
-                <th className="px-5 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">
+                <th className="px-4 py-3 text-left font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase text-xs tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-[#F1F5F9] dark:divide-[#1E293B]">
               {tableLoading ? (
                 <tr>
-                  <td colSpan="6" className="px-5 py-10 text-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-500 mx-auto" />
+                  <td colSpan="6" className="px-4 py-10 text-center">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#D89A00] mx-auto" />
                   </td>
                 </tr>
               ) : clients.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-5 py-10 text-center text-gray-500">
+                  <td colSpan="6" className="px-4 py-10 text-center text-[#64748B] dark:text-[#94A3B8]">
                     {tableSearch || tableStatus ? 'No clients match your search' : 'No clients yet'}
                   </td>
                 </tr>
@@ -443,37 +455,37 @@ title="Follow-up Task Status"
                   const statusStyle = STATUS_STYLES[client.status] || STATUS_STYLES.inactive;
                   const StatusIcon  = statusStyle.icon;
                   return (
-                    <tr key={client._id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-5 py-3">
+                    <tr key={client._id} className="hover:bg-[#F8FAFC] dark:hover:bg-[#0F172A] transition-colors duration-150">
+                      <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            <span className="text-primary-600 font-semibold text-xs">
+                          <div className="w-10 h-10 bg-[rgba(216,154,0,0.1)] dark:bg-[rgba(216,154,0,0.2)] rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-[#D89A00] font-semibold text-sm">
                               {client.name?.charAt(0).toUpperCase()}
                             </span>
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900">{client.name}</p>
-                            <p className="text-xs text-gray-500">{client.position || '—'}</p>
+                            <p className="font-medium text-[#0F172A] dark:text-[#F8FAFC]">{client.name}</p>
+                            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5">{client.position || '—'}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-3 text-gray-700">{client.company || '—'}</td>
-                      <td className="px-5 py-3">
-                        <p className="text-gray-700">{client.phone}</p>
-                        <p className="text-xs text-gray-500">{client.email}</p>
+                      <td className="px-4 py-4 text-[#475569] dark:text-[#CBD5E1]">{client.company || '—'}</td>
+                      <td className="px-4 py-4">
+                        <p className="text-[#0F172A] dark:text-[#F8FAFC]">{client.phone}</p>
+                        <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5">{client.email}</p>
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-4 py-4">
                         <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusStyle.bg}`}>
                           <StatusIcon className="w-3 h-3" />
                           {client.status === 'prospect' ? 'Lead' : client.status?.charAt(0).toUpperCase() + client.status?.slice(1)}
                         </span>
                       </td>
-                      <td className="px-5 py-3">
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${PRIORITY_STYLES[client.priority] || 'bg-gray-100 text-gray-700'}`}>
+                      <td className="px-4 py-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${PRIORITY_STYLES[client.priority] || 'bg-[#F1F5F9] dark:bg-[#334155] text-[#475569] dark:text-[#CBD5E1]'}`}>
                           {client.priority?.charAt(0).toUpperCase() + client.priority?.slice(1)}
                         </span>
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-4 py-4">
                         <div className="flex items-center gap-1">
                           {client.phone && (
                             <button
