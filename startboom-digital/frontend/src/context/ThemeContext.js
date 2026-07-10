@@ -3,103 +3,103 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 const ThemeContext = createContext();
 
 export const ACCENT_PRESETS = [
-  { id: 'honeypot', label: 'HoneyPot Gold', color: '#D99A00' },
-  { id: 'sage',     label: 'Sage Green',    color: '#4F8A5B' },
-  { id: 'amber',    label: 'Burnt Amber',   color: '#F59E0B' },
-  { id: 'slate',    label: 'Slate Blue',    color: '#3B82F6' },
-  { id: 'plum',     label: 'Deep Plum',     color: '#8B5CF6' },
+  { id: 'honeypot', label: 'HoneyPot Gold', color: '#D89A00' },
+  { id: 'sage',     label: 'Sage Green',    color: '#10B981' },
+  { id: 'slate',    label: 'Slate Blue',    color: '#64748B' },
+  { id: 'sky',      label: 'Sky Blue',      color: '#0EA5E9' },
+  { id: 'purple',   label: 'Deep Purple',   color: '#8B5CF6' },
   { id: 'teal',     label: 'Teal',          color: '#06B6D4' },
 ];
 
 const DEFAULT_THEME = {
   mode: 'light',
-  primaryColor: '#D99A00',  // HoneyPot Gold
+  primaryColor: '#D89A00',  // HoneyPot Gold (Enterprise Spec)
   accentPreset: 'honeypot',
 };
 
 /** Full light/dark token sets — applied to :root via applyTheme() */
 const THEME_TOKENS = {
   light: {
-    // HoneyPot Premium: Cream backgrounds, charcoal text, restrained honey gold
-    '--workspace-bg':          '#FFFDF7',  // Soft cream
-    '--color-bg-page':         '#FFFDF7',  // Soft cream
+    // Enterprise Specification: Soft off-white backgrounds, slate text, strategic honey gold
+    '--workspace-bg':          '#F8FAFC',  // Soft Off-white
+    '--color-bg-page':         '#F8FAFC',  // Soft Off-white
     '--color-bg-card':         '#FFFFFF',  // Pure white cards
     '--color-bg-surface':      '#FFFFFF',
-    '--color-bg-elevated':     '#F5F3EF',  // Subtle gray-cream
+    '--color-bg-elevated':     '#FAFBFC',  // Subtle elevated surface
     '--color-bg-input':        '#FFFFFF',
-    '--color-bg-input-subtle': '#F5F3EF',
-    '--color-bg-row-hover':    '#FFF9E6',  // Light honey tint
-    '--color-bg-hover':        '#F5F3EF',
-    '--color-bg-muted':        '#F5F3EF',
-    '--color-bg-icon-btn':     '#F5F3EF',
-    '--color-border':          '#E8E3D5',  // Warm border
-    '--color-border-strong':   '#D1D5DB',
-    '--color-border-subtle':   '#F5F3EF',
-    '--color-text-primary':    '#2D2A26',  // Dark charcoal (never pure black)
-    '--color-text-secondary':  '#6B6B6B',  // Slate gray
-    '--color-text-muted':      '#9CA3AF',
-    '--color-text-placeholder':'#9CA3AF',
-    '--color-chart-grid':      '#E8E3D5',
-    '--color-chart-axis':      '#9CA3AF',
+    '--color-bg-input-subtle': '#FAFBFC',
+    '--color-bg-row-hover':    '#F8FAFC',  // Subtle hover
+    '--color-bg-hover':        '#F1F5F9',
+    '--color-bg-muted':        '#F1F5F9',
+    '--color-bg-icon-btn':     '#F1F5F9',
+    '--color-border':          '#E2E8F0',  // Enterprise border
+    '--color-border-strong':   '#CBD5E1',
+    '--color-border-subtle':   '#F1F5F9',
+    '--color-text-primary':    '#0F172A',  // Deep slate
+    '--color-text-secondary':  '#475569',  // Slate gray
+    '--color-text-muted':      '#64748B',
+    '--color-text-placeholder':'#94A3B8',
+    '--color-chart-grid':      'rgba(226,232,240,0.5)',
+    '--color-chart-axis':      '#94A3B8',
     '--color-tooltip-bg':      '#FFFFFF',
-    '--color-tooltip-border':  '#E8E3D5',
-    '--color-tooltip-label':   '#6B6B6B',
-    '--color-tooltip-value':   '#2D2A26',
-    '--color-overlay':         'rgba(45, 42, 38, 0.6)',
-    '--color-shadow':          'rgba(45, 42, 38, 0.08)',
-    '--color-shadow-strong':   'rgba(45, 42, 38, 0.15)',
-    '--color-accent-surface':  '#FFF9E6',  // Light honey
-    '--color-scrollbar':       '#E8E3D5',
-    '--color-tab-inactive':    '#F5F3EF',
+    '--color-tooltip-border':  '#E2E8F0',
+    '--color-tooltip-label':   '#64748B',
+    '--color-tooltip-value':   '#0F172A',
+    '--color-overlay':         'rgba(15, 23, 42, 0.6)',
+    '--color-shadow':          'rgba(15, 23, 42, 0.06)',
+    '--color-shadow-strong':   'rgba(15, 23, 42, 0.12)',
+    '--color-accent-surface':  'rgba(216, 154, 0, 0.08)',  // Subtle honey tint
+    '--color-scrollbar':       '#CBD5E1',
+    '--color-tab-inactive':    '#F1F5F9',
     '--color-tab-active-bg':   '#FFFFFF',
     '--brand-header-text':     '#FFFFFF',
-    '--brand-header-solid':    '#B7791F',  // Deep Amber
-    '--sidebar-bg':            'linear-gradient(180deg, #2D2A26 0%, #2D2A26 70%, rgba(217, 154, 0, 0.12) 100%)',  // Very subtle gold hint
-    '--sidebar-border':        'rgba(232, 227, 213, 0.1)',
-    '--sidebar-nav-active':    'rgba(217, 154, 0, 0.2)',
-    '--sidebar-nav-hover':     'rgba(217, 154, 0, 0.1)',
-    '--sidebar-section-label': 'rgba(232, 227, 213, 0.5)',  // More transparent
+    '--brand-header-solid':    '#B87900',  // Honey hover state
+    '--sidebar-bg':            'linear-gradient(180deg, #182233 0%, #0F172A 100%)',  // Deep Slate (Enterprise Spec)
+    '--sidebar-border':        'rgba(255, 255, 255, 0.08)',
+    '--sidebar-nav-active':    'rgba(216, 154, 0, 0.15)',  // Honey gold tint
+    '--sidebar-nav-hover':     'rgba(216, 154, 0, 0.08)',
+    '--sidebar-section-label': 'rgba(255, 255, 255, 0.5)',
   },
   dark: {
-    // Dark mode: Keep honey gold accent, dark slate backgrounds
-    '--workspace-bg':          '#0F172A',
+    // Dark mode: Enterprise slate backgrounds, strategic honey gold accent
+    '--workspace-bg':          '#0F172A',  // Deep slate
     '--color-bg-page':         '#0F172A',
     '--color-bg-card':         '#1E293B',
-    '--color-bg-surface':      '#334155',
+    '--color-bg-surface':      '#1E293B',
     '--color-bg-elevated':     '#334155',
-    '--color-bg-input':        '#2A2D3E',
-    '--color-bg-input-subtle': '#2A2D3E',
-    '--color-bg-row-hover':    '#334155',
-    '--color-bg-hover':        '#475569',
-    '--color-bg-muted':        '#2A2D3E',
+    '--color-bg-input':        '#1E293B',
+    '--color-bg-input-subtle': '#1E293B',
+    '--color-bg-row-hover':    '#0F172A',
+    '--color-bg-hover':        '#334155',
+    '--color-bg-muted':        '#334155',
     '--color-bg-icon-btn':     'rgba(255,255,255,0.05)',
     '--color-border':          '#334155',
     '--color-border-strong':   '#475569',
-    '--color-border-subtle':   '#334155',
+    '--color-border-subtle':   '#1E293B',
     '--color-text-primary':    '#F8FAFC',
     '--color-text-secondary':  '#CBD5E1',
     '--color-text-muted':      '#94A3B8',
-    '--color-text-placeholder':'#94A3B8',
-    '--color-chart-grid':      '#334155',
-    '--color-chart-axis':      '#94A3B8',
+    '--color-text-placeholder':'#64748B',
+    '--color-chart-grid':      'rgba(51,65,85,0.5)',
+    '--color-chart-axis':      '#64748B',
     '--color-tooltip-bg':      '#1E293B',
     '--color-tooltip-border':  '#334155',
-    '--color-tooltip-label':   '#CBD5E1',
+    '--color-tooltip-label':   '#94A3B8',
     '--color-tooltip-value':   '#F8FAFC',
-    '--color-overlay':         'rgba(0,0,0,0.65)',
+    '--color-overlay':         'rgba(0,0,0,0.7)',
     '--color-shadow':          'rgba(0,0,0,0.4)',
     '--color-shadow-strong':   'rgba(0,0,0,0.6)',
-    '--color-accent-surface':  'rgba(217, 154, 0, 0.1)',  // Subtle honey
+    '--color-accent-surface':  'rgba(216, 154, 0, 0.1)',  // Subtle honey
     '--color-scrollbar':       '#334155',
-    '--color-tab-inactive':    '#2A2D3E',
+    '--color-tab-inactive':    '#334155',
     '--color-tab-active-bg':   '#1E293B',
     '--brand-header-text':     '#FFFFFF',
-    '--brand-header-solid':    '#B7791F',  // Deep Amber
-    '--sidebar-bg':            'linear-gradient(180deg, #1E293B 0%, rgba(217, 154, 0, 0.3) 100%)',  // Dark slate to gold tint
+    '--brand-header-solid':    '#B87900',  // Honey hover
+    '--sidebar-bg':            'linear-gradient(180deg, #182233 0%, #0F172A 100%)',  // Deep Slate (Enterprise Spec)
     '--sidebar-border':        '#334155',
-    '--sidebar-nav-active':    'rgba(217, 154, 0, 0.25)',  // Honey gold tint
-    '--sidebar-nav-hover':     'rgba(217, 154, 0, 0.15)',
-    '--sidebar-section-label': '#94A3B8',
+    '--sidebar-nav-active':    'rgba(216, 154, 0, 0.2)',  // Honey gold tint
+    '--sidebar-nav-hover':     'rgba(216, 154, 0, 0.1)',
+    '--sidebar-section-label': 'rgba(255, 255, 255, 0.5)',
   },
 };
 
