@@ -92,23 +92,23 @@ const DataTable = ({
   };
 
   return (
-    <div className={`${TABLE_STYLES.container} ${className}`}>
+    <div className={`overflow-hidden rounded-2xl bg-white dark:bg-[#1E293B] shadow-[0_8px_30px_rgba(15,23,42,0.06)] ${className}`}>
       <div className="overflow-x-auto">
-        <table className={TABLE_STYLES.table}>
+        <table className="w-full">
           {/* Table Header */}
-          <thead className={TABLE_STYLES.thead}>
+          <thead className="bg-[#F8FAFC] dark:bg-[#0F172A] border-b border-[#F1F5F9] dark:border-[#1E293B]">
             <tr>
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className={`${TABLE_STYLES.th} ${sortable && column.sortable !== false ? 'cursor-pointer select-none' : ''}`}
+                  className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8] ${sortable && column.sortable !== false ? 'cursor-pointer select-none' : ''}`}
                   onClick={() => sortable && column.sortable !== false && handleSort(column.key)}
                   style={{ width: column.width }}
                 >
                   <div className="flex items-center space-x-2">
                     <span>{column.label}</span>
                     {sortable && column.sortable !== false && (
-                      <span className="text-gray-400">
+                      <span className="text-[#94A3B8]">
                         {sortConfig.key === column.key ? (
                           sortConfig.direction === 'asc' ? (
                             <ChevronUp className="w-4 h-4" />
@@ -116,24 +116,24 @@ const DataTable = ({
                             <ChevronDown className="w-4 h-4" />
                           )
                         ) : (
-                          <ChevronsUpDown className="w-4 h-4" />
+                          <ChevronsUpDown className="w-4 h-4 opacity-40" />
                         )}
                       </span>
                     )}
                   </div>
                 </th>
               ))}
-              {actions && <th className={TABLE_STYLES.th} style={{ width: '60px' }}></th>}
+              {actions && <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8]" style={{ width: '60px' }}></th>}
             </tr>
           </thead>
 
           {/* Table Body */}
-          <tbody className={TABLE_STYLES.tbody}>
+          <tbody className="divide-y divide-[#F1F5F9] dark:divide-[#1E293B]">
             {sortedData.length === 0 ? (
               <tr>
                 <td
                   colSpan={columns.length + (actions ? 1 : 0)}
-                  className="px-6 py-12 text-center text-gray-500 dark:text-gray-400"
+                  className="px-6 py-12 text-center text-[#64748B] dark:text-[#94A3B8] text-sm"
                 >
                   No data available
                 </td>
@@ -143,8 +143,8 @@ const DataTable = ({
                 <tr
                   key={row.id || rowIndex}
                   className={`
-                    ${TABLE_STYLES.tr}
-                    ${hoverable ? 'hover:bg-gray-50 dark:hover:bg-[#334155]' : ''}
+                    transition-colors duration-150
+                    ${hoverable ? 'hover:bg-[#F8FAFC] dark:hover:bg-[#0F172A]' : ''}
                     ${onRowClick ? 'cursor-pointer' : ''}
                   `}
                   onClick={() => onRowClick && onRowClick(row)}
@@ -152,7 +152,7 @@ const DataTable = ({
                   {columns.map((column) => (
                     <td
                       key={`${row.id || rowIndex}-${column.key}`}
-                      className={TABLE_STYLES.td}
+                      className="px-4 py-4 text-sm text-[#0F172A] dark:text-[#F8FAFC]"
                       style={{ width: column.width }}
                     >
                       {renderCell(column, row)}
@@ -161,16 +161,16 @@ const DataTable = ({
                   
                   {/* Row Actions */}
                   {actions && (
-                    <td className={TABLE_STYLES.td}>
+                    <td className="px-4 py-4 text-sm">
                       <div className="relative">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setActiveRowMenu(activeRowMenu === rowIndex ? null : rowIndex);
                           }}
-                          className={`p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition`}
+                          className="p-2 rounded-lg hover:bg-[#F1F5F9] dark:hover:bg-[#334155] transition-colors duration-150"
                         >
-                          <MoreVertical className="w-4 h-4" />
+                          <MoreVertical className="w-4 h-4 text-[#64748B] dark:text-[#94A3B8]" />
                         </button>
                         
                         {/* Dropdown Menu */}
@@ -180,10 +180,7 @@ const DataTable = ({
                               className="fixed inset-0 z-10"
                               onClick={() => setActiveRowMenu(null)}
                             ></div>
-                            <div className={`
-                              absolute right-0 mt-2 w-48 rounded-lg shadow-lg z-20 py-1
-                              ${isDark ? 'bg-[#1E293B] border border-gray-700' : 'bg-white border border-gray-200'}
-                            `}>
+                            <div className="absolute right-0 mt-2 w-48 rounded-xl shadow-[0_8px_30px_rgba(15,23,42,0.12)] z-20 py-1 bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155]">
                               {actions.map((action, actionIndex) => (
                                 <button
                                   key={actionIndex}
@@ -193,9 +190,9 @@ const DataTable = ({
                                     setActiveRowMenu(null);
                                   }}
                                   className={`
-                                    w-full px-4 py-2 text-left text-sm flex items-center space-x-2
-                                    ${isDark ? 'hover:bg-[#334155] text-gray-300' : 'hover:bg-gray-50 text-gray-700'}
-                                    ${action.danger ? 'text-red-600 dark:text-red-400' : ''}
+                                    w-full px-4 py-2.5 text-left text-sm flex items-center space-x-2 transition-colors duration-150
+                                    ${isDark ? 'hover:bg-[#0F172A] text-[#CBD5E1]' : 'hover:bg-[#F8FAFC] text-[#475569]'}
+                                    ${action.danger ? 'text-[#EF4444] dark:text-[#FCA5A5]' : ''}
                                   `}
                                 >
                                   {action.icon && <action.icon className="w-4 h-4" />}

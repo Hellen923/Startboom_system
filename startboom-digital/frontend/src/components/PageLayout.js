@@ -74,7 +74,8 @@ export const PageHeader = ({
 };
 
 /**
- * Card Component - Standardized card layout
+ * Card Component - Enterprise Specification
+ * 16px radius, enterprise shadow (0 8px 30px rgba(15,23,42,.06))
  */
 export const Card = ({ 
   children, 
@@ -87,10 +88,10 @@ export const Card = ({
   
   return (
     <div className={`
-      rounded-xl shadow-sm overflow-hidden
+      rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] overflow-hidden
       ${isDark ? 'bg-[#1E293B]' : 'bg-white'}
       ${padding ? 'p-6' : ''}
-      ${hover ? 'hover:shadow-md transition-shadow duration-200' : ''}
+      ${hover ? 'hover:shadow-[0_12px_40px_rgba(15,23,42,0.08)] transition-shadow duration-200' : ''}
       ${className}
     `}>
       {children}
@@ -99,7 +100,7 @@ export const Card = ({
 };
 
 /**
- * Card Header - Standardized card header with title and actions
+ * Card Header - Enterprise Specification
  */
 export const CardHeader = ({ 
   title, 
@@ -113,22 +114,22 @@ export const CardHeader = ({
   
   return (
     <div className={`
-      px-6 py-4 border-b flex items-center justify-between
-      ${isDark ? 'border-gray-700' : 'border-gray-200'}
+      px-6 py-5 border-b flex items-center justify-between
+      ${isDark ? 'border-[#334155] bg-[#0F172A]' : 'border-[#F1F5F9] bg-[#FAFBFC]'}
       ${className}
     `}>
       <div className="flex items-center space-x-3">
         {Icon && (
-          <div className={`p-2 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-100'}`}>
-            <Icon className="w-5 h-5" />
+          <div className={`p-2 rounded-xl ${isDark ? 'bg-[#334155]' : 'bg-[#F1F5F9]'}`}>
+            <Icon className="w-5 h-5 text-[#D89A00]" />
           </div>
         )}
         <div>
-          <h3 className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <h3 className={`text-lg font-bold ${isDark ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}`}>
             {title}
           </h3>
           {subtitle && (
-            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} mt-0.5`}>
+            <p className={`text-sm ${isDark ? 'text-[#94A3B8]' : 'text-[#64748B]'} mt-0.5`}>
               {subtitle}
             </p>
           )}
@@ -188,7 +189,8 @@ export const StatsGrid = ({ children, columns = 4, className = '' }) => {
 };
 
 /**
- * Stat Card - Consistent stat display
+ * Stat Card - Enterprise Specification
+ * 16px radius, enterprise shadow, strategic Honey Gold for icons
  */
 export const StatCard = ({ 
   icon: Icon, 
@@ -196,16 +198,16 @@ export const StatCard = ({
   value, 
   change, 
   changeType = 'neutral',
-  iconBg = 'bg-blue-500',
+  iconBg = 'bg-[#D89A00]',
   className = '' 
 }) => {
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
   
   const changeColors = {
-    positive: 'text-green-600 dark:text-green-400',
-    negative: 'text-red-600 dark:text-red-400',
-    neutral: 'text-gray-600 dark:text-gray-400',
+    positive: 'text-[#10B981] dark:text-[#86EFAC]',
+    negative: 'text-[#EF4444] dark:text-[#FCA5A5]',
+    neutral: 'text-[#64748B] dark:text-[#94A3B8]',
   };
   
   return (
@@ -213,14 +215,14 @@ export const StatCard = ({
       <div className="flex items-start justify-between">
         <div className="flex-1">
           {Icon && (
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${iconBg}`}>
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${iconBg}`}>
               <Icon className="w-6 h-6 text-white" strokeWidth={2} />
             </div>
           )}
-          <p className={`text-xs font-medium uppercase tracking-wide mb-2 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`text-xs font-medium uppercase tracking-wide mb-2 ${isDark ? 'text-[#94A3B8]' : 'text-[#64748B]'}`}>
             {label}
           </p>
-          <p className={`text-3xl font-bold mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <p className={`text-3xl font-bold mb-1 ${isDark ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}`}>
             {value}
           </p>
           {change && (
