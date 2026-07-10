@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import potLogo from '../assets/pot logo.png';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -65,7 +66,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Form */}
-      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-white dark:bg-[#1A1D27]">
+      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-[#FFFDF7]">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -74,20 +75,20 @@ const Login = () => {
         >
           {/* Header */}
           <div className="text-center lg:text-left">
-            <div className="flex items-center justify-center lg:justify-start space-x-3 mb-8">
-              <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-2 rounded-xl flex items-center justify-center">
-                <img src="/Swavelink.png" alt="Logo" className="w-8 h-8 object-contain" />
+            <div className="flex items-center justify-center lg:justify-start space-x-4 mb-8">
+              <div className="w-16 h-16 flex items-center justify-center">
+                <img src={potLogo} alt="HoneyPot Logo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Swavelink</h1>
-                <p className="text-sm text-primary-600 font-medium">Sales Management</p>
+                <h1 className="text-2xl font-bold text-[#2D2A26]">HoneyPot</h1>
+                <p className="text-sm text-[#D99A00] font-medium">CRM & Sales Platform</p>
               </div>
             </div>
 
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            <h2 className="text-3xl font-bold text-[#2D2A26] mb-2">
               Welcome back
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-8">
+            <p className="text-[#6B6B6B] mb-8">
               Sign in to your account to continue
             </p>
           </div>
@@ -96,7 +97,7 @@ const Login = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-[#2D2A26] mb-2">
                 Email Address
               </label>
               <div className="relative">
@@ -108,7 +109,7 @@ const Login = () => {
                   name="email"
                   type="email"
                   required
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-[#3A3D52] dark:bg-[#2A2D3E] dark:text-gray-100 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                  className="block w-full pl-10 pr-3 py-3 border border-[#E8E3D5] bg-white text-[#2D2A26] rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D99A00] focus:border-[#D99A00] transition-colors duration-200"
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
@@ -119,12 +120,12 @@ const Login = () => {
             {/* Password Field */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label htmlFor="password" className="block text-sm font-medium text-[#2D2A26]">
                   Password
                 </label>
                 <button
                   type="button"
-                  className="text-sm text-primary-600 hover:text-primary-500 font-medium"
+                  className="text-sm text-[#D99A00] hover:text-[#B7791F] font-medium"
                   onClick={() => navigate('/forgot-password')}
                 >
                   Forgot password?
@@ -139,7 +140,7 @@ const Login = () => {
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
-                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-[#3A3D52] dark:bg-[#2A2D3E] dark:text-gray-100 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                  className="block w-full pl-10 pr-10 py-3 border border-[#E8E3D5] bg-white text-[#2D2A26] rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D99A00] focus:border-[#D99A00] transition-colors duration-200"
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleChange}
@@ -164,7 +165,7 @@ const Login = () => {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white py-3 px-4 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+              className="w-full bg-gradient-to-r from-[#D99A00] to-[#B7791F] text-white py-3 px-4 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-[#D99A00] focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -179,9 +180,9 @@ const Login = () => {
 
           {/* Help Text */}
           <div className="mt-8 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#6B6B6B]">
               Need help?{' '}
-              <a href="mailto:support@swavelink.com" className="text-primary-600 hover:text-primary-500 font-medium">
+              <a href="mailto:support@honeypot.com" className="text-[#D99A00] hover:text-[#B7791F] font-medium">
                 Contact support
               </a>
             </p>
@@ -190,7 +191,7 @@ const Login = () => {
       </div>
 
       {/* Right Side - Illustration */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-primary-500 to-primary-600">
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#D99A00] via-[#B7791F] to-[#2D2A26]">
         <div className="flex-1 flex items-center justify-center p-12">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -199,29 +200,31 @@ const Login = () => {
             className="text-center text-white"
           >
             <div className="mb-8">
-              <img src="/Swavelink.png" alt="Logo" className="w-24 h-24 mx-auto mb-6 opacity-90 object-contain" />
-              <h3 className="text-4xl font-bold mb-4">Swavelink</h3>
-              <p className="text-primary-100 text-lg max-w-md mx-auto">
+              <div className="w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                <img src={potLogo} alt="HoneyPot Logo" className="w-full h-full object-contain opacity-90" />
+              </div>
+              <h3 className="text-4xl font-bold mb-4">HoneyPot</h3>
+              <p className="text-white/90 text-lg max-w-md mx-auto">
                 Streamline your sales process, manage clients efficiently, and boost your team's performance with our powerful sales management solution.
               </p>
             </div>
 
             {/* Features List */}
             <div className="space-y-4 mt-12 max-w-xs mx-auto">
-              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-15 backdrop-blur-sm rounded-xl p-4">
-                <div className="w-3 h-3 bg-secondary-500 rounded-full"></div>
+              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4">
+                <div className="w-3 h-3 bg-white rounded-full"></div>
                 <span className="text-white font-semibold text-lg">Product Management</span>
               </div>
-              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-15 backdrop-blur-sm rounded-xl p-4">
-                <div className="w-3 h-3 bg-secondary-500 rounded-full"></div>
+              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4">
+                <div className="w-3 h-3 bg-white rounded-full"></div>
                 <span className="text-white font-semibold text-lg">Territory Mapping</span>
               </div>
-              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-15 backdrop-blur-sm rounded-xl p-4">
-                <div className="w-3 h-3 bg-secondary-500 rounded-full"></div>
+              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4">
+                <div className="w-3 h-3 bg-white rounded-full"></div>
                 <span className="text-white font-semibold text-lg">Team Performance</span>
               </div>
-              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-15 backdrop-blur-sm rounded-xl p-4">
-                <div className="w-3 h-3 bg-secondary-500 rounded-full"></div>
+              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4">
+                <div className="w-3 h-3 bg-white rounded-full"></div>
                 <span className="text-white font-semibold text-lg">Sales Analytics</span>
               </div>
             </div>
