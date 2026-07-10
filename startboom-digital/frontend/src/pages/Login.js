@@ -66,7 +66,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Form */}
-      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-[#FFFDF7]">
+      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-[#FAFAF8]">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -80,15 +80,15 @@ const Login = () => {
                 <img src={potLogo} alt="HoneyPot Logo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-[#2D2A26]">HoneyPot</h1>
+                <h1 className="text-2xl font-bold text-[#1F2937]">HoneyPot</h1>
                 <p className="text-sm text-[#D99A00] font-medium">CRM & Sales Platform</p>
               </div>
             </div>
 
-            <h2 className="text-3xl font-bold text-[#2D2A26] mb-2">
+            <h2 className="text-3xl font-bold text-[#1F2937] mb-2">
               Welcome back
             </h2>
-            <p className="text-[#6B6B6B] mb-8">
+            <p className="text-[#6B7280] mb-8">
               Sign in to your account to continue
             </p>
           </div>
@@ -97,7 +97,7 @@ const Login = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#2D2A26] mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-[#1F2937] mb-2">
                 Email Address
               </label>
               <div className="relative">
@@ -109,7 +109,7 @@ const Login = () => {
                   name="email"
                   type="email"
                   required
-                  className="block w-full pl-10 pr-3 py-3 border border-[#E8E3D5] bg-white text-[#2D2A26] rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D99A00] focus:border-[#D99A00] transition-colors duration-200"
+                  className="block w-full pl-10 pr-3 py-3 border border-[#E5E7EB] bg-white text-[#1F2937] rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D99A00] focus:border-[#D99A00] transition-colors duration-200"
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
@@ -120,7 +120,7 @@ const Login = () => {
             {/* Password Field */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="block text-sm font-medium text-[#2D2A26]">
+                <label htmlFor="password" className="block text-sm font-medium text-[#1F2937]">
                   Password
                 </label>
                 <button
@@ -140,7 +140,7 @@ const Login = () => {
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
-                  className="block w-full pl-10 pr-10 py-3 border border-[#E8E3D5] bg-white text-[#2D2A26] rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D99A00] focus:border-[#D99A00] transition-colors duration-200"
+                  className="block w-full pl-10 pr-10 py-3 border border-[#E5E7EB] bg-white text-[#1F2937] rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D99A00] focus:border-[#D99A00] transition-colors duration-200"
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleChange}
@@ -180,7 +180,7 @@ const Login = () => {
 
           {/* Help Text */}
           <div className="mt-8 text-center">
-            <p className="text-sm text-[#6B6B6B]">
+            <p className="text-sm text-[#6B7280]">
               Need help?{' '}
               <a href="mailto:support@honeypot.com" className="text-[#D99A00] hover:text-[#B7791F] font-medium">
                 Contact support
@@ -191,40 +191,43 @@ const Login = () => {
       </div>
 
       {/* Right Side - Illustration */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#D99A00] via-[#B7791F] to-[#2D2A26]">
-        <div className="flex-1 flex items-center justify-center p-12">
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#1F2937] via-[#374151] to-[#111827]">
+        <div className="flex-1 flex items-center justify-center p-12 relative">
+          {/* Subtle honey accent overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#D99A00]/5"></div>
+          
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-center text-white"
+            className="text-center text-white relative z-10"
           >
             <div className="mb-8">
               <div className="w-24 h-24 mx-auto mb-6 flex items-center justify-center">
                 <img src={potLogo} alt="HoneyPot Logo" className="w-full h-full object-contain opacity-90" />
               </div>
               <h3 className="text-4xl font-bold mb-4">HoneyPot</h3>
-              <p className="text-white/90 text-lg max-w-md mx-auto">
+              <p className="text-gray-300 text-lg max-w-md mx-auto">
                 Streamline your sales process, manage clients efficiently, and boost your team's performance with our powerful sales management solution.
               </p>
             </div>
 
             {/* Features List */}
             <div className="space-y-4 mt-12 max-w-xs mx-auto">
-              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4">
-                <div className="w-3 h-3 bg-white rounded-full"></div>
+              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="w-3 h-3 bg-[#D99A00] rounded-full"></div>
                 <span className="text-white font-semibold text-lg">Product Management</span>
               </div>
-              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4">
-                <div className="w-3 h-3 bg-white rounded-full"></div>
+              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="w-3 h-3 bg-[#D99A00] rounded-full"></div>
                 <span className="text-white font-semibold text-lg">Territory Mapping</span>
               </div>
-              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4">
-                <div className="w-3 h-3 bg-white rounded-full"></div>
+              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="w-3 h-3 bg-[#D99A00] rounded-full"></div>
                 <span className="text-white font-semibold text-lg">Team Performance</span>
               </div>
-              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4">
-                <div className="w-3 h-3 bg-white rounded-full"></div>
+              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="w-3 h-3 bg-[#D99A00] rounded-full"></div>
                 <span className="text-white font-semibold text-lg">Sales Analytics</span>
               </div>
             </div>

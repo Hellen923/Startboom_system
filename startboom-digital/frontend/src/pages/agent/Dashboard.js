@@ -10,7 +10,7 @@ import {
   LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, BarChart, Bar, Legend,
-  AreaChart, Area, ComposedChart
+  AreaChart, Area, ComposedChart, Cell
 } from 'recharts';
 import DonutChart, { DealStatusChart, PaymentMethodChart, TaskStatusChart } from '../../components/charts/DonutChart';
 import { performanceAPI, dealsAPI, clientsAPI, salesAPI } from '../../services/api';
@@ -19,7 +19,7 @@ import toast from 'react-hot-toast';
 import DashboardQuickActions from '../../components/DashboardQuickActions';
 import Leaderboard from '../../components/Leaderboard';
 import TargetProgress from '../../components/TargetProgress';
-import { useChartTheme } from '../../utils/chartTheme';
+import { useChartTheme, ANALYTICS_PALETTE } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
 const exportToCSV = (data, headers, filename) => {
   const csv = [headers, ...data].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
@@ -206,12 +206,18 @@ const AgentDashboard = () => {
       });
       setRevenueOverTimeData(monthNames.map((m, i) => ({ month: m, revenue: revMap.get(i) || 0 })));
 
-      // Pipeline value by stage bar
-      const stages = ['lead','qualification','proposal','negotiation'];
-      setPipelineValueData(stages.map(stage => ({
-        stage: stage.charAt(0).toUpperCase() + stage.slice(1),
-        value: allDeals.filter(d => d.stage === stage).reduce((sum, d) => sum + (Number(d.value) || 0), 0),
-        count: allDeals.filter(d => d.stage === stage).length,
+      // Pipeline value by stage bar (semantic colors - progression toward money)
+      const stageConfig = [
+        { key: 'lead', label: 'Lead', color: ANALYTICS_PALETTE.lead },
+        { key: 'qualification', label: 'Qualification', color: ANALYTICS_PALETTE.qualified },
+        { key: 'proposal', label: 'Proposal', color: ANALYTICS_PALETTE.proposal },
+        { key: 'negotiation', label: 'Negotiation', color: ANALYTICS_PALETTE.negotiation },
+      ];
+      setPipelineValueData(stageConfig.map(({ key, label, color }) => ({
+        stage: label,
+        value: allDeals.filter(d => d.stage === key).reduce((sum, d) => sum + (Number(d.value) || 0), 0),
+        count: allDeals.filter(d => d.stage === key).length,
+        fill: color, // Semantic color for this stage
       })));
 
       // Follow-up status
@@ -370,7 +376,11 @@ return (
                 <XAxis dataKey="stage" stroke={axis} style={{ fontSize: '12px' }} />
                 <YAxis stroke={axis} style={{ fontSize: '12px' }} />
                 <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-                <Bar dataKey="value" fill="#64748B" radius={[4,4,0,0]} name="Value" />
+                <Bar dataKey="value" radius={[4,4,0,0]} name="Value">
+                  {pipelineValueData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>

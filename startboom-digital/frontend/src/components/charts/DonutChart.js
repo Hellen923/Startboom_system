@@ -1,35 +1,26 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { useChartTheme } from '../../utils/chartTheme';
+import { useChartTheme, ANALYTICS_PALETTE } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
 
-// Enterprise Chart Colors - NEVER use all honey gold
-// Strategic variety for readability and professionalism
-const ENTERPRISE_COLORS = [
-  '#D89A00',  // Honey Amber (use sparingly - revenue/primary only)
-  '#64748B',  // Slate Blue
-  '#0EA5E9',  // Sky Blue
-  '#10B981',  // Sage Green
-  '#8B5CF6',  // Purple
-  '#F97316',  // Coral
-  '#059669',  // Emerald
-  '#D97706',  // Copper
-];
+// HoneyPot Analytics Palette - Multi-series colors
+// NEVER all gold - each series gets unique semantic color
+const ENTERPRISE_COLORS = ANALYTICS_PALETTE.series;
 
 // Export for backward compatibility
 export const ORANGE_GRADIENT_COLORS = ENTERPRISE_COLORS;
 
-// Status-specific colors (enterprise specification)
+// Status-specific colors (semantic - from Analytics Palette)
 const STATUS_COLORS = {
-  won: '#10B981',      // Sage Green (success)
-  lost: '#EF4444',     // Red (danger)
-  pending: '#F59E0B',  // Amber (warning)
-  open: '#0EA5E9',     // Sky Blue
-  active: '#10B981',   // Sage Green
-  completed: '#10B981', // Sage Green
-  overdue: '#EF4444',  // Red
-  cash: '#D89A00',     // Honey Gold
-  credit: '#64748B',   // Slate
+  won: ANALYTICS_PALETTE.won,           // Emerald (success)
+  lost: ANALYTICS_PALETTE.lost,         // Coral (softer than harsh red)
+  pending: ANALYTICS_PALETTE.warning,   // Amber (warning)
+  open: ANALYTICS_PALETTE.forecast,     // Sky Blue (future-looking)
+  active: ANALYTICS_PALETTE.success,    // Emerald (active)
+  completed: ANALYTICS_PALETTE.success, // Emerald (done)
+  overdue: ANALYTICS_PALETTE.error,     // Red (error)
+  cash: ANALYTICS_PALETTE.revenue,      // Honey Gold (money)
+  credit: ANALYTICS_PALETTE.neutral,    // Slate (neutral)
 };
 
 const DonutChart = ({
