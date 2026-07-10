@@ -3,101 +3,103 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 const ThemeContext = createContext();
 
 export const ACCENT_PRESETS = [
-  { id: 'swavelink', label: 'Swavelink Blue', color: '#1795CC' },
-  { id: 'gold',      label: 'Gold',           color: '#F59E0B' },
-  { id: 'emerald',   label: 'Emerald',        color: '#059669' },
-  { id: 'violet',    label: 'Violet',         color: '#7C3AED' },
-  { id: 'rose',      label: 'Rose',           color: '#E11D48' },
-  { id: 'slate',     label: 'Slate',          color: '#475569' },
+  { id: 'honeypot', label: 'HoneyPot Gold', color: '#D99A00' },
+  { id: 'sage',     label: 'Sage Green',    color: '#4F8A5B' },
+  { id: 'amber',    label: 'Burnt Amber',   color: '#F59E0B' },
+  { id: 'slate',    label: 'Slate Blue',    color: '#3B82F6' },
+  { id: 'plum',     label: 'Deep Plum',     color: '#8B5CF6' },
+  { id: 'teal',     label: 'Teal',          color: '#06B6D4' },
 ];
 
 const DEFAULT_THEME = {
   mode: 'light',
-  primaryColor: '#1795CC',
-  accentPreset: 'swavelink',
+  primaryColor: '#D99A00',  // HoneyPot Gold
+  accentPreset: 'honeypot',
 };
 
 /** Full light/dark token sets — applied to :root via applyTheme() */
 const THEME_TOKENS = {
   light: {
-    '--workspace-bg':          '#F8FAFC',
-    '--color-bg-page':         '#F8FAFC',
-    '--color-bg-card':         '#FFFFFF',
+    // HoneyPot Premium: Cream backgrounds, charcoal text, restrained honey gold
+    '--workspace-bg':          '#FFFDF7',  // Soft cream
+    '--color-bg-page':         '#FFFDF7',  // Soft cream
+    '--color-bg-card':         '#FFFFFF',  // Pure white cards
     '--color-bg-surface':      '#FFFFFF',
-    '--color-bg-elevated':     '#F9FAFB',
+    '--color-bg-elevated':     '#F5F3EF',  // Subtle gray-cream
     '--color-bg-input':        '#FFFFFF',
-    '--color-bg-input-subtle': '#F9FAFB',
-    '--color-bg-row-hover':    '#EFF6FF',
-    '--color-bg-hover':        '#F3F4F6',
-    '--color-bg-muted':        '#F3F4F6',
-    '--color-bg-icon-btn':     '#F3F4F6',
-    '--color-border':          '#E5E7EB',
+    '--color-bg-input-subtle': '#F5F3EF',
+    '--color-bg-row-hover':    '#FFF9E6',  // Light honey tint
+    '--color-bg-hover':        '#F5F3EF',
+    '--color-bg-muted':        '#F5F3EF',
+    '--color-bg-icon-btn':     '#F5F3EF',
+    '--color-border':          '#E8E3D5',  // Warm border
     '--color-border-strong':   '#D1D5DB',
-    '--color-border-subtle':   '#F3F4F6',
-    '--color-text-primary':    '#111827',
-    '--color-text-secondary':  '#374151',
-    '--color-text-muted':      '#6B7280',
+    '--color-border-subtle':   '#F5F3EF',
+    '--color-text-primary':    '#2D2A26',  // Dark charcoal (never pure black)
+    '--color-text-secondary':  '#6B6B6B',  // Slate gray
+    '--color-text-muted':      '#9CA3AF',
     '--color-text-placeholder':'#9CA3AF',
-    '--color-chart-grid':      '#E5E7EB',
+    '--color-chart-grid':      '#E8E3D5',
     '--color-chart-axis':      '#9CA3AF',
     '--color-tooltip-bg':      '#FFFFFF',
-    '--color-tooltip-border':  '#E5E7EB',
-    '--color-tooltip-label':   '#6B7280',
-    '--color-tooltip-value':   '#111827',
-    '--color-overlay':         'rgba(0,0,0,0.5)',
-    '--color-shadow':          'rgba(0,0,0,0.06)',
-    '--color-shadow-strong':   'rgba(0,0,0,0.12)',
-    '--color-accent-surface':  '#EFF6FF',
-    '--color-scrollbar':       '#CBD5E1',
-    '--color-tab-inactive':    '#F3F4F6',
+    '--color-tooltip-border':  '#E8E3D5',
+    '--color-tooltip-label':   '#6B6B6B',
+    '--color-tooltip-value':   '#2D2A26',
+    '--color-overlay':         'rgba(45, 42, 38, 0.6)',
+    '--color-shadow':          'rgba(45, 42, 38, 0.08)',
+    '--color-shadow-strong':   'rgba(45, 42, 38, 0.15)',
+    '--color-accent-surface':  '#FFF9E6',  // Light honey
+    '--color-scrollbar':       '#E8E3D5',
+    '--color-tab-inactive':    '#F5F3EF',
     '--color-tab-active-bg':   '#FFFFFF',
     '--brand-header-text':     '#FFFFFF',
-    '--brand-header-solid':    '#0D5B80',
-    '--sidebar-bg':            'linear-gradient(180deg, #1795CC 0%, #1178A6 55%, #0D5B80 100%)',
-    '--sidebar-border':        'rgba(255,255,255,0.15)',
-    '--sidebar-nav-active':    'rgba(255,255,255,0.22)',
-    '--sidebar-nav-hover':     'rgba(255,255,255,0.12)',
-    '--sidebar-section-label': 'rgba(255,255,255,0.65)',
+    '--brand-header-solid':    '#B7791F',  // Deep Amber
+    '--sidebar-bg':            'linear-gradient(180deg, #2D2A26 0%, #2D2A26 70%, rgba(217, 154, 0, 0.12) 100%)',  // Very subtle gold hint
+    '--sidebar-border':        'rgba(232, 227, 213, 0.1)',
+    '--sidebar-nav-active':    'rgba(217, 154, 0, 0.2)',
+    '--sidebar-nav-hover':     'rgba(217, 154, 0, 0.1)',
+    '--sidebar-section-label': 'rgba(232, 227, 213, 0.5)',  // More transparent
   },
   dark: {
-    '--workspace-bg':          '#0F1117',
-    '--color-bg-page':         '#0F1117',
-    '--color-bg-card':         '#1A1D27',
-    '--color-bg-surface':      '#222536',
-    '--color-bg-elevated':     '#222536',
+    // Dark mode: Keep honey gold accent, dark slate backgrounds
+    '--workspace-bg':          '#0F172A',
+    '--color-bg-page':         '#0F172A',
+    '--color-bg-card':         '#1E293B',
+    '--color-bg-surface':      '#334155',
+    '--color-bg-elevated':     '#334155',
     '--color-bg-input':        '#2A2D3E',
     '--color-bg-input-subtle': '#2A2D3E',
-    '--color-bg-row-hover':    '#222536',
-    '--color-bg-hover':        '#3A3D52',
+    '--color-bg-row-hover':    '#334155',
+    '--color-bg-hover':        '#475569',
     '--color-bg-muted':        '#2A2D3E',
     '--color-bg-icon-btn':     'rgba(255,255,255,0.05)',
-    '--color-border':          '#3A3D52',
-    '--color-border-strong':   '#4A4D66',
-    '--color-border-subtle':   '#3A3D52',
-    '--color-text-primary':    '#FFFFFF',
-    '--color-text-secondary':  '#A0AEC0',
-    '--color-text-muted':      '#6B7280',
-    '--color-text-placeholder':'#6B7280',
-    '--color-chart-grid':      '#3A3D52',
-    '--color-chart-axis':      '#6B7280',
-    '--color-tooltip-bg':      '#222536',
-    '--color-tooltip-border':  '#3A3D52',
-    '--color-tooltip-label':   '#A0AEC0',
-    '--color-tooltip-value':   '#FFFFFF',
+    '--color-border':          '#334155',
+    '--color-border-strong':   '#475569',
+    '--color-border-subtle':   '#334155',
+    '--color-text-primary':    '#F8FAFC',
+    '--color-text-secondary':  '#CBD5E1',
+    '--color-text-muted':      '#94A3B8',
+    '--color-text-placeholder':'#94A3B8',
+    '--color-chart-grid':      '#334155',
+    '--color-chart-axis':      '#94A3B8',
+    '--color-tooltip-bg':      '#1E293B',
+    '--color-tooltip-border':  '#334155',
+    '--color-tooltip-label':   '#CBD5E1',
+    '--color-tooltip-value':   '#F8FAFC',
     '--color-overlay':         'rgba(0,0,0,0.65)',
     '--color-shadow':          'rgba(0,0,0,0.4)',
     '--color-shadow-strong':   'rgba(0,0,0,0.6)',
-    '--color-accent-surface':  '#193A52',
-    '--color-scrollbar':       '#3A3D52',
+    '--color-accent-surface':  'rgba(217, 154, 0, 0.1)',  // Subtle honey
+    '--color-scrollbar':       '#334155',
     '--color-tab-inactive':    '#2A2D3E',
-    '--color-tab-active-bg':   '#1A1D27',
+    '--color-tab-active-bg':   '#1E293B',
     '--brand-header-text':     '#FFFFFF',
-    '--brand-header-solid':    '#0D5B80',
-    '--sidebar-bg':            'linear-gradient(180deg, #0F1117 0%, #1A1D27 60%, #0F1117 100%)',
-    '--sidebar-border':        '#3A3D52',
-    '--sidebar-nav-active':    '#193A52',
-    '--sidebar-nav-hover':     '#222536',
-    '--sidebar-section-label': '#6B7280',
+    '--brand-header-solid':    '#B7791F',  // Deep Amber
+    '--sidebar-bg':            'linear-gradient(180deg, #1E293B 0%, rgba(217, 154, 0, 0.3) 100%)',  // Dark slate to gold tint
+    '--sidebar-border':        '#334155',
+    '--sidebar-nav-active':    'rgba(217, 154, 0, 0.25)',  // Honey gold tint
+    '--sidebar-nav-hover':     'rgba(217, 154, 0, 0.15)',
+    '--sidebar-section-label': '#94A3B8',
   },
 };
 
@@ -141,11 +143,12 @@ export const ThemeProvider = ({ children }) => {
     root.style.setProperty('--gradient-to', gradientTo);
 
     if (mode === 'light') {
+      // HoneyPot: Restrained honey gold gradient for buttons/headers only
       const gradient = `linear-gradient(to right, ${primary}, ${gradientTo})`;
-      const sidebarGradient = `linear-gradient(180deg, ${primary} 0%, ${gradientTo} 55%, ${shiftColor(primary, -35)} 100%)`;
       root.style.setProperty('--brand-header-bg', gradient);
       root.style.setProperty('--btn-brand-bg', gradient);
-      root.style.setProperty('--sidebar-bg', sidebarGradient);
+      // Sidebar is solid charcoal (already set in tokens)
+      root.style.setProperty('--sidebar-bg', tokens['--sidebar-bg']);
     } else {
       root.style.setProperty('--brand-header-bg', tokens['--brand-header-solid']);
       root.style.setProperty('--btn-brand-bg', tokens['--brand-header-solid']);
@@ -168,7 +171,7 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('swavelink_theme');
+      const saved = localStorage.getItem('honeypot_theme');
       const parsed = saved ? JSON.parse(saved) : DEFAULT_THEME;
       const merged = { ...DEFAULT_THEME, ...parsed };
       setTheme(merged);
@@ -181,7 +184,7 @@ export const ThemeProvider = ({ children }) => {
   const updateTheme = (partial) => {
     const next = { ...theme, ...partial };
     setTheme(next);
-    localStorage.setItem('swavelink_theme', JSON.stringify(next));
+    localStorage.setItem('honeypot_theme', JSON.stringify(next));
     applyTheme(next);
   };
 
