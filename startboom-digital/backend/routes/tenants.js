@@ -989,4 +989,167 @@ router.get('/:id/stats', requireSuperAdmin, async (req, res) => {
   }
 });
 
+// GET /api/tenant/settings - Get current tenant settings
+router.get('/settings', async (req, res) => {
+  try {
+    if (req.isSuperAdmin) {
+      return res.status(400).json({ message: 'Super admin does not have tenant settings' });
+    }
+
+    const tenant = await Tenant.findById(req.tenantId)
+      .select('name industry email phone website address branding settings modules')
+      .lean();
+
+    if (!tenant) {
+      return res.status(404).json({ message: 'Tenant not found' });
+    }
+
+    res.json({ tenant });
+  } catch (error) {
+    console.error('Error fetching tenant settings:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// PUT /api/tenant/settings - Update tenant settings
+router.put('/settings', async (req, res) => {
+  try {
+    if (req.isSuperAdmin) {
+      return res.status(400).json({ message: 'Super admin does not have tenant settings' });
+    }
+
+    // Check admin permission
+    if (req.user.role !== 'admin' && req.user.role !== 'manager') {
+      return res.status(403).json({ message: 'Insufficient permissions' });
+    }
+
+    const {
+      companyName,
+      industry,
+      email,
+      phone,
+      website,
+      address,
+      branding,
+      settings
+    } = req.body;
+
+    const update = {};
+
+    // Company information
+    if (companyName !== undefined) update.name = companyName;
+    if (industry !== undefined) update.industry = industry;
+    if (email !== undefined) update.email = email;
+    if (phone !== undefined) update.phone = phone;
+    if (website !== undefined) update.website = website;
+    if (address !== undefined) update.address = address;
+
+    // Branding
+    if (branding) {
+      if (branding.primaryColor) update['branding.primaryColor'] = branding.primaryColor;
+      if (branding.secondaryColor) update['branding.secondaryColor'] = branding.secondaryColor;
+      if (branding.logo !== undefined) update['branding.logo'] = branding.logo;
+    }
+
+    // Settings
+    if (settings) {
+      if (settings.currency) update['settings.currency'] = settings.currency;
+      if (settings.timezone) update['settings.timezone'] = settings.timezone;
+      if (settings.dateFormat) update['settings.dateFormat'] = settings.dateFormat;
+      if (settings.fiscalYearStart) update['settings.fiscalYearStart'] = settings.fiscalYearStart;
+      if (settings.language) update['settings.language'] = settings.language;
+    }
+
+    const tenant = await Tenant.findByIdAndUpdate(
+      req.tenantId,
+      { $set: update },
+      { new: true, runValidators: true }
+    ).select('name industry email phone website address branding settings modules');
+
+    if (!tenant) {
+      return res.status(404).json({ message: 'Tenant not found' });
+    }
+
+    // Create audit log
+    await AuditLog.create({
+      action: 'UPDATE_TENANT',
+      description: 'Tenant settings updated',
+      user: req.user.userId,
+      userName: req.user.name || '',
+      userEmail: req.user.email || '',
+      userRole: req.user.role,
+      tenant: req.tenantId,
+      entityType: 'Tenant',
+      entityId: req.tenantId,
+      status: 'success',
+      metadata: { fieldsUpdated: Object.keys(update) }
+    });
+
+    res.json({ 
+      message: 'Settings updated successfully',
+      tenant 
+    });
+  } catch (error) {
+    console.error('Error updating tenant settings:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// PATCH /api/tenant/modules/:moduleId - Toggle module status
+router.patch('/modules/:moduleId', async (req, res) => {
+  try {
+    if (req.isSuperAdmin) {
+      return res.status(400).json({ message: 'Super admin does not have tenant modules' });
+    }
+
+    // Check admin permission
+    if (req.user.role !== 'admin' && req.user.role !== 'manager') {
+      return res.status(403).json({ message: 'Insufficient permissions' });
+    }
+
+    const { moduleId } = req.params;
+    const { enabled } = req.body;
+
+    if (typeof enabled !== 'boolean') {
+      return res.status(400).json({ message: 'Enabled parameter must be a boolean' });
+    }
+
+    const update = {};
+    update[`modules.${moduleId}`] = enabled;
+
+    const tenant = await Tenant.findByIdAndUpdate(
+      req.tenantId,
+      { $set: update },
+      { new: true, runValidators: true }
+    ).select('modules');
+
+    if (!tenant) {
+      return res.status(404).json({ message: 'Tenant not found' });
+    }
+
+    // Create audit log
+    await AuditLog.create({
+      action: 'UPDATE_TENANT',
+      description: `Module ${moduleId} ${enabled ? 'enabled' : 'disabled'}`,
+      user: req.user.userId,
+      userName: req.user.name || '',
+      userEmail: req.user.email || '',
+      userRole: req.user.role,
+      tenant: req.tenantId,
+      entityType: 'Tenant',
+      entityId: req.tenantId,
+      status: 'success',
+      metadata: { moduleId, enabled }
+    });
+
+    res.json({ 
+      message: `Module ${enabled ? 'enabled' : 'disabled'} successfully`,
+      modules: tenant.modules
+    });
+  } catch (error) {
+    console.error('Error updating module status:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 export { router as tenantRoutes };
