@@ -31,6 +31,19 @@ const tenantSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+
+  // Industry
+  industry: {
+    type: String,
+    default: ''
+  },
+
+  // Website
+  website: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   
   // Company Address
   address: {
@@ -54,20 +67,46 @@ const tenantSchema = new mongoose.Schema({
     ref: 'Subscription',
     default: null
   },
+
+  // Branding (separate from settings for easier access)
+  branding: {
+    logo: { type: String, default: null },
+    primaryColor: { type: String, default: '#4F46E5' }, // Indigo default
+    secondaryColor: { type: String, default: '#10B981' } // Green default
+  },
+
+  // Modules (enable/disable features)
+  modules: {
+    type: Map,
+    of: Boolean,
+    default: {
+      sales: true,
+      deals: true,
+      products: true,
+      finance: true,
+      hr: true,
+      projects: true,
+      support: true,
+      inventory: true,
+      marketing: true,
+      analytics: true
+    }
+  },
   
   // Customization Settings
   settings: {
-    // Branding
-    logo: { type: String, default: null },
-    primaryColor: { type: String, default: '#f97316' }, // Orange default
-    secondaryColor: { type: String, default: '#1f2937' }, // Gray default
-    customDomain: { type: String, default: '' }, // e.g. xtreative.crm.com
-    
     // Localization
     timezone: { type: String, default: 'UTC' },
     currency: { type: String, default: 'USD' },
     language: { type: String, default: 'en' },
     dateFormat: { type: String, default: 'MM/DD/YYYY' },
+    fiscalYearStart: { type: String, default: '01-01' }, // MM-DD format
+    
+    // Legacy branding (kept for backward compatibility, prefer root-level branding)
+    logo: { type: String, default: null },
+    primaryColor: { type: String, default: '#f97316' }, // Orange default
+    secondaryColor: { type: String, default: '#1f2937' }, // Gray default
+    customDomain: { type: String, default: '' }, // e.g. xtreative.crm.com
     
     // Feature Flags (can be overridden by subscription)
     features: {
