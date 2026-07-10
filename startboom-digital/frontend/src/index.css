@@ -6,80 +6,81 @@
 @import 'leaflet/dist/leaflet.css';
 
 /* ============================================================
-   HONEYPOT CRM — PREMIUM COLOR SYSTEM
+   HONEYPOT CRM — ENTERPRISE DESIGN SYSTEM
    "Sweeten Every Sale" - Where every opportunity finds its value
    ThemeContext.applyTheme() sets all --color-* tokens on :root.
+   Enterprise Spec: #F8FAFC backgrounds, #182233 sidebar, #D89A00 accent
    ============================================================ */
 
-/* ---------- HoneyPot Brand Colors ---------- */
+/* ---------- Enterprise Brand Colors ---------- */
 :root {
-  /* Primary Brand (Honey Gold - use sparingly for accents) */
-  --primary-color: #D99A00;
-  --primary-hover: #B7791F;
-  --primary-ring: rgba(217, 154, 0, 0.25);
+  /* Honey Gold - Strategic Accent (Enterprise Specification) */
+  --primary-color: #D89A00;
+  --primary-hover: #B87900;
+  --primary-ring: rgba(216, 154, 0, 0.1);
   
-  /* Neutral Base (Premium Feel) */
-  --workspace-bg: #FFFDF7;
-  --color-bg-page: #FFFDF7;
+  /* Workspace - Enterprise Soft Off-white */
+  --workspace-bg: #F8FAFC;
+  --color-bg-page: #F8FAFC;
   --color-bg-card: #FFFFFF;
   --color-bg-surface: #FFFFFF;
-  --color-bg-elevated: #F5F3EF;
+  --color-bg-elevated: #FAFBFC;
   --color-bg-input: #FFFFFF;
-  --color-bg-input-subtle: #F5F3EF;
-  --color-bg-row-hover: #FFF9E6;
-  --color-bg-hover: #F5F3EF;
-  --color-bg-muted: #F5F3EF;
-  --color-bg-icon-btn: #F5F3EF;
+  --color-bg-input-subtle: #FAFBFC;
+  --color-bg-row-hover: #F8FAFC;
+  --color-bg-hover: #F1F5F9;
+  --color-bg-muted: #F1F5F9;
+  --color-bg-icon-btn: #F1F5F9;
   
-  /* Borders */
-  --color-border: #E8E3D5;
-  --color-border-strong: #D1D5DB;
-  --color-border-subtle: #F5F3EF;
+  /* Borders - Enterprise Slate */
+  --color-border: #E2E8F0;
+  --color-border-strong: #CBD5E1;
+  --color-border-subtle: #F1F5F9;
   
-  /* Text (Charcoal - Never Pure Black) */
-  --color-text-primary: #2D2A26;
-  --color-text-secondary: #6B6B6B;
-  --color-text-muted: #9CA3AF;
-  --color-text-placeholder: #9CA3AF;
+  /* Text - Enterprise Slate */
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748B;
+  --color-text-placeholder: #94A3B8;
   
-  /* Charts */
-  --color-chart-grid: #E8E3D5;
-  --color-chart-axis: #9CA3AF;
+  /* Charts - Enterprise Specification */
+  --color-chart-grid: rgba(226, 232, 240, 0.5);
+  --color-chart-axis: #94A3B8;
   
   /* Tooltips */
   --color-tooltip-bg: #FFFFFF;
-  --color-tooltip-border: #E8E3D5;
-  --color-tooltip-label: #6B6B6B;
-  --color-tooltip-value: #2D2A26;
+  --color-tooltip-border: #E2E8F0;
+  --color-tooltip-label: #64748B;
+  --color-tooltip-value: #0F172A;
   
   /* System Colors */
-  --color-overlay: rgba(45, 42, 38, 0.6);
-  --color-shadow: rgba(45, 42, 38, 0.08);
-  --color-shadow-strong: rgba(45, 42, 38, 0.15);
-  --color-accent-surface: #FFF9E6;
-  --color-scrollbar: #E8E3D5;
-  --color-tab-inactive: #F5F3EF;
+  --color-overlay: rgba(15, 23, 42, 0.6);
+  --color-shadow: rgba(15, 23, 42, 0.06);
+  --color-shadow-strong: rgba(15, 23, 42, 0.12);
+  --color-accent-surface: rgba(216, 154, 0, 0.08);
+  --color-scrollbar: #CBD5E1;
+  --color-tab-inactive: #F1F5F9;
   --color-tab-active-bg: #FFFFFF;
   
-  /* Brand Gradients (Restrained Gold) */
-  --brand-header-bg: linear-gradient(135deg, #D99A00 0%, #B7791F 100%);
-  --btn-brand-bg: linear-gradient(135deg, #D99A00 0%, #B7791F 100%);
+  /* Brand Gradients (Honey Gold) */
+  --brand-header-bg: linear-gradient(135deg, #D89A00 0%, #B87900 100%);
+  --btn-brand-bg: linear-gradient(135deg, #D89A00 0%, #B87900 100%);
   --brand-header-text: #FFFFFF;
-  --brand-header-solid: #B7791F;
-  --gradient-from: #D99A00;
-  --gradient-to: #B7791F;
+  --brand-header-solid: #B87900;
+  --gradient-from: #D89A00;
+  --gradient-to: #B87900;
   
-  /* Sidebar (Restrained - Supports Content) */
-  --sidebar-bg: linear-gradient(180deg, #2D2A26 0%, #2D2A26 70%, rgba(217, 154, 0, 0.12) 100%);
-  --sidebar-border: rgba(232, 227, 213, 0.1);
-  --sidebar-nav-active: rgba(217, 154, 0, 0.2);
-  --sidebar-nav-hover: rgba(217, 154, 0, 0.1);
-  --sidebar-section-label: rgba(232, 227, 213, 0.5);
+  /* Sidebar - Enterprise Deep Slate (#182233) */
+  --sidebar-bg: linear-gradient(180deg, #182233 0%, #0F172A 100%);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-nav-active: rgba(216, 154, 0, 0.15);
+  --sidebar-nav-hover: rgba(216, 154, 0, 0.08);
+  --sidebar-section-label: rgba(255, 255, 255, 0.5);
   
-  /* Status Colors (Muted, Professional) */
-  --color-success: #4F8A5B;
-  --color-danger: #C0392B;
-  --color-warning: #D99A00;
+  /* Status Colors - Enterprise Specification */
+  --color-success: #10B981;
+  --color-danger: #EF4444;
+  --color-warning: #F59E0B;
   --color-info: #3B82F6;
 }
 
@@ -213,75 +214,126 @@ textarea:focus-visible {
 }
 
 /* ============================================================
-   CARDS
+   CARDS — Enterprise Specification
+   16px radius, enterprise shadow (0 8px 30px rgba(15,23,42,.06))
    ============================================================ */
 .card {
   background-color: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px var(--color-shadow);
-  transition: box-shadow 0.15s ease, background-color 0.2s ease;
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 8px 30px var(--color-shadow);
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
 }
 .card:hover {
-  box-shadow: 0 4px 12px var(--color-shadow-strong);
-  background-color: var(--color-bg-elevated);
+  box-shadow: 0 12px 40px var(--color-shadow-strong);
 }
 
 /* ============================================================
-   TABLES — global catch-all for unstyled table markup
+   TABLES — Enterprise Specification
+   Consistent header style, reduced padding, hover effects
    ============================================================ */
 .table-header {
-  background-color: var(--color-bg-elevated);
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text-muted);
+  background-color: #F8FAFC;
+  border-bottom: 1px solid #F1F5F9;
+  color: #64748B;
+}
+.dark .table-header {
+  background-color: #0F172A;
+  border-bottom: 1px solid #1E293B;
+  color: #94A3B8;
 }
 
 .table-header th {
-  color: var(--color-text-muted);
-}
-
-.table-row {
-  border-bottom: 1px solid var(--color-border-subtle);
-  color: var(--color-text-primary);
-  transition: background-color 0.1s ease;
-}
-.table-row:hover { background-color: var(--color-bg-row-hover); }
-
-table thead th {
-  background-color: var(--color-bg-elevated);
-  color: var(--color-text-muted);
-  border-bottom: 1px solid var(--color-border);
+  color: #64748B;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.75rem 1.25rem;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
 }
-table tbody tr {
-  border-bottom: 1px solid var(--color-border-subtle);
-  color: var(--color-text-primary);
+.dark .table-header th {
+  color: #94A3B8;
 }
-table tbody tr:hover { background-color: var(--color-bg-row-hover); }
-table tbody td { color: var(--color-text-primary); }
 
-/* Table headers never use brand gradient — sidebar/modals only */
+.table-row {
+  border-bottom: 1px solid #F1F5F9;
+  color: var(--color-text-primary);
+  transition: background-color 0.15s ease;
+}
+.table-row:hover { 
+  background-color: #F8FAFC;
+}
+.dark .table-row {
+  border-bottom: 1px solid #1E293B;
+}
+.dark .table-row:hover {
+  background-color: #0F172A;
+}
+
+table thead th {
+  background-color: #F8FAFC;
+  color: #64748B;
+  border-bottom: 1px solid #F1F5F9;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+}
+.dark table thead th {
+  background-color: #0F172A;
+  color: #94A3B8;
+  border-bottom: 1px solid #1E293B;
+}
+
+table tbody tr {
+  border-bottom: 1px solid #F1F5F9;
+  color: var(--color-text-primary);
+  transition: background-color 0.15s ease;
+}
+table tbody tr:hover { background-color: #F8FAFC; }
+table tbody td { 
+  color: var(--color-text-primary); 
+  padding: 1rem;
+}
+.dark table tbody tr {
+  border-bottom: 1px solid #1E293B;
+}
+.dark table tbody tr:hover { background-color: #0F172A; }
+
+/* Table headers never use brand gradient — keep neutral */
 table thead,
 table thead th,
 thead.table-header,
 thead.table-header th,
 .unified-table thead,
 .unified-table thead th {
-  background-color: var(--color-bg-elevated) !important;
-  color: var(--color-text-muted) !important;
+  background-color: #F8FAFC !important;
+  color: #64748B !important;
+}
+.dark table thead,
+.dark table thead th,
+.dark thead.table-header,
+.dark thead.table-header th,
+.dark .unified-table thead,
+.dark .unified-table thead th {
+  background-color: #0F172A !important;
+  color: #94A3B8 !important;
 }
 table thead th,
 thead.table-header th,
 .unified-table thead th {
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid #F1F5F9;
+}
+.dark table thead th,
+.dark thead.table-header th,
+.dark .unified-table thead th {
+  border-bottom: 1px solid #1E293B;
 }
 
 /* ============================================================
-   INPUTS & SELECTS — global catch-all
+   INPUTS & SELECTS — Enterprise Specification
+   48px height, 12px radius, Honey Gold focus ring
    ============================================================ */
 .form-input,
 input[type="text"]:not([class*="bg-"]),
@@ -291,18 +343,26 @@ input[type="number"]:not([class*="bg-"]),
 input[type="search"]:not([class*="bg-"]),
 input[type="tel"]:not([class*="bg-"]),
 input[type="url"]:not([class*="bg-"]),
-select:not([class*="bg-"]),
-textarea:not([class*="bg-"]) {
+select:not([class*="bg-"]) {
+  height: 48px;
+  padding: 0 1rem;
   background-color: var(--color-bg-input);
-  border: 1px solid var(--color-border-strong);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
   color: var(--color-text-primary);
-}
-.form-input {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border-radius: 8px;
   font-size: 0.875rem;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+  transition: all 0.15s ease-out;
+}
+textarea:not([class*="bg-"]) {
+  min-height: 120px;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-bg-input);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  transition: all 0.15s ease-out;
+  resize: vertical;
 }
 .form-input::placeholder,
 input::placeholder,
@@ -326,25 +386,28 @@ textarea:focus {
 
 label {
   color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
 }
 
 /* ============================================================
-   BUTTONS — Restrained Honey Gold (HoneyPot Premium)
+   BUTTONS — Enterprise Specification
+   48px height, 12px radius, Honey Gold accent
    ============================================================ */
 .btn-primary {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-  padding: 0.625rem 1.5rem;
+  height: 48px; padding: 0 1.5rem;
   background: var(--btn-brand-bg);
   color: #FFFFFF;
   border: none; border-radius: 0.75rem;
   font-size: 0.875rem; font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(217, 154, 0, 0.25);
+  transition: all 0.15s ease-out;
+  box-shadow: 0 2px 8px rgba(216, 154, 0, 0.2);
 }
 .btn-primary:hover { 
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(217, 154, 0, 0.35); 
+  box-shadow: 0 4px 12px rgba(216, 154, 0, 0.3); 
 }
 .btn-primary:disabled { 
   opacity: 0.5; 
@@ -354,19 +417,18 @@ label {
 
 .btn-secondary {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-  padding: 0.625rem 1.5rem;
+  height: 48px; padding: 0 1.5rem;
   background-color: var(--color-bg-card);
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
   border: 1px solid var(--color-border); 
   border-radius: 0.75rem;
   font-size: 0.875rem; font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease-out;
 }
 .btn-secondary:hover {
   background-color: var(--color-bg-elevated);
   border-color: var(--color-border-strong);
-  transform: translateY(-1px);
 }
 
 /* ============================================================
@@ -531,30 +593,31 @@ label {
 .chart-panel-body { padding: 1.5rem; }
 
 /* ============================================================
-   UNIFIED DESIGN SYSTEM — HoneyPot Premium
-   Restrained honey gold accent, used sparingly
+   UNIFIED DESIGN SYSTEM — Enterprise Specification
+   Strategic use of Honey Gold, 16px radius cards, enterprise shadows
    ============================================================ */
 .brand-header {
   background: var(--brand-header-bg);
   color: var(--brand-header-text);
+  border-radius: 0.75rem;
 }
 .brand-header h1, .brand-header h2, .brand-header h3,
 .brand-header p, .brand-header span { color: inherit; }
 
 .btn-brand {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-  padding: 0.625rem 1.5rem;
+  height: 48px; padding: 0 1.5rem;
   background: var(--btn-brand-bg);
   color: #FFFFFF;
   border: none; border-radius: 0.75rem;
   font-size: 0.875rem; font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(217, 154, 0, 0.25);
+  transition: all 0.15s ease-out;
+  box-shadow: 0 2px 8px rgba(216, 154, 0, 0.2);
 }
 .btn-brand:hover { 
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(217, 154, 0, 0.35);
+  box-shadow: 0 4px 12px rgba(216, 154, 0, 0.3);
 }
 .btn-brand:disabled { 
   opacity: 0.5; 
@@ -564,29 +627,38 @@ label {
 
 .unified-card {
   background-color: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border: none;
+  border-radius: 1rem;
   overflow: hidden;
-  box-shadow: 0 1px 3px var(--color-shadow);
+  box-shadow: 0 8px 30px var(--color-shadow);
   color: var(--color-text-primary);
 }
 .unified-card-header {
   background-color: var(--color-bg-elevated);
   color: var(--color-text-primary);
-  border-bottom: 1px solid var(--color-border);
-  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+  padding: 1.25rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
 }
 .unified-card-header h2,
-.unified-card-header h3 { font-weight: 600; font-size: 1.125rem; margin: 0; color: var(--color-text-primary); }
-.unified-card-header p { font-size: 0.875rem; color: var(--color-text-muted); margin: 0.125rem 0 0; }
+.unified-card-header h3 { 
+  font-weight: 600; 
+  font-size: 1.125rem; 
+  margin: 0; 
+  color: var(--color-text-primary); 
+}
+.unified-card-header p { 
+  font-size: 0.875rem; 
+  color: var(--color-text-muted); 
+  margin: 0.125rem 0 0; 
+}
 .unified-card-body { padding: 1.5rem; }
 .unified-card-footer {
   padding: 1rem 1.5rem;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-border-subtle);
   background-color: var(--color-bg-elevated);
   display: flex;
   align-items: center;
@@ -596,28 +668,37 @@ label {
 
 .unified-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
 .unified-table thead {
-  background-color: var(--color-bg-elevated);
-  border-bottom: 1px solid var(--color-border);
+  background-color: #F8FAFC;
+  border-bottom: 1px solid #F1F5F9;
+}
+.dark .unified-table thead {
+  background-color: #0F172A;
+  border-bottom: 1px solid #1E293B;
 }
 .unified-table thead th {
-  padding: 0.75rem 1.25rem;
+  padding: 0.75rem 1rem;
   text-align: left;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-text-muted);
-  background-color: var(--color-bg-elevated);
+  letter-spacing: 0.05em;
+  color: #64748B;
   border: none;
-  border-bottom: 1px solid var(--color-border);
+}
+.dark .unified-table thead th {
+  color: #94A3B8;
 }
 .unified-table tbody tr {
-  border-bottom: 1px solid var(--color-border-subtle);
-  transition: background-color 0.1s ease;
+  border-bottom: 1px solid #F1F5F9;
+  transition: background-color 0.15s ease;
 }
-.unified-table tbody tr:hover { background-color: var(--color-bg-row-hover); }
+.dark .unified-table tbody tr {
+  border-bottom: 1px solid #1E293B;
+}
+.unified-table tbody tr:hover { background-color: #F8FAFC; }
+.dark .unified-table tbody tr:hover { background-color: #0F172A; }
 .unified-table tbody td {
-  padding: 0.875rem 1.25rem;
+  padding: 1rem;
   color: var(--color-text-primary);
 }
 
