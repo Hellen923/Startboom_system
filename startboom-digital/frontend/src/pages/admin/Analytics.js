@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Users, Target, Award } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { useChartTheme } from '../../utils/chartTheme';
+import { useChartTheme, ANALYTICS_PALETTE } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
 import api from '../../services/api';
 import toast from 'react-hot-toast';
@@ -236,7 +236,7 @@ const ClientActivityChart = ({ data }) => {
           <XAxis dataKey="name" stroke={axis} />
           <YAxis stroke={axis} />
           <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-          <Bar dataKey="value" fill="#FFD700" />
+          <Bar dataKey="value" fill={ANALYTICS_PALETTE.revenue} />
         </BarChart>
       </ResponsiveContainer>
     </div>

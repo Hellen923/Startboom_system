@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 import { usersAPI, reportsAPI, clientsAPI, dealsAPI, salesAPI } from '../../services/api';
 import toast from 'react-hot-toast';
+import { ANALYTICS_PALETTE } from '../../utils/chartTheme';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import Pagination from '../../components/Pagination';
@@ -709,9 +710,9 @@ const Reports = () => {
                       yAxisId="left" 
                       type="monotone" 
                       dataKey="cashAmount" 
-                      stroke="#FFD700" 
+                      stroke={ANALYTICS_PALETTE.profit} 
                       strokeWidth={2.5}
-                      dot={{ fill: '#FFD700', r: 4 }}
+                      dot={{ fill: ANALYTICS_PALETTE.profit, r: 4 }}
                       name="Cash Amount (UGX)"
                     />
                     <Line 
@@ -782,7 +783,7 @@ const Reports = () => {
                     <XAxis type="number" tick={{ fontSize: 11 }} />
                     <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={90} />
                     <Tooltip />
-                    <Bar dataKey="value" fill="#FFD700" radius={[0, 8, 8, 0]} />
+                    <Bar dataKey="value" fill={ANALYTICS_PALETTE.revenue} radius={[0, 8, 8, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

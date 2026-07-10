@@ -3,7 +3,7 @@ import { Users, TrendingUp, DollarSign, Target, Download, FileText } from 'lucid
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import DonutChart, { StageValueChart } from '../../components/charts/DonutChart';
 import { useAuth } from '../../context/AuthContext';
-import { useChartTheme, getChartPalette } from '../../utils/chartTheme';
+import { useChartTheme, getChartPalette, ANALYTICS_PALETTE } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
 import { dealsAPI, salesAPI, clientsAPI, usersAPI, tenantsAPI } from '../../services/api';
 import OnboardingWizard from '../../components/OnboardingWizard';
@@ -516,7 +516,7 @@ const AdminDashboard = () => {
                 <XAxis dataKey="month" stroke={axis} />
                 <YAxis stroke={axis} allowDecimals={false} />
                 <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-                <Bar dataKey="sales" fill="#D89A00" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="sales" fill={ANALYTICS_PALETTE.revenue} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
