@@ -3,7 +3,7 @@ import { TrendingUp, Users, Target, AlertTriangle, BarChart3, PieChart, Activity
 import { LineChart, Line, BarChart, Bar, PieChart as RechartsPieChart, Cell, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 // import { predictiveAnalyticsAPI } from '../../services/api';
 import toast from 'react-hot-toast';
-import { useChartTheme } from '../utils/chartTheme';
+import { useChartTheme, ANALYTICS_PALETTE } from '../utils/chartTheme';
 import dm from '../utils/darkModeClasses';
 
 // Mock API for development
@@ -275,7 +275,7 @@ const PredictiveAnalytics = () => {
                 <XAxis dataKey="monthName" stroke={axis} />
                 <YAxis tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} stroke={axis} />
                 <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Predicted Revenue']} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-                <Line type="monotone" dataKey="predictedRevenue" stroke="#FFD700" strokeWidth={3} />
+                <Line type="monotone" dataKey="predictedRevenue" stroke={ANALYTICS_PALETTE.forecast} strokeWidth={3} />
               </LineChart>
             </ResponsiveContainer>
           </div>

@@ -23,7 +23,7 @@ import {
 } from 'recharts';
 import DonutChart, { DealStatusChart, PaymentMethodChart, TaskStatusChart, TopAgentsChart } from '../components/charts/DonutChart';
 import { useAuth } from '../context/AuthContext';
-import { useChartTheme } from '../utils/chartTheme';
+import { useChartTheme, ANALYTICS_PALETTE } from '../utils/chartTheme';
 import dm from '../utils/darkModeClasses';
 import DashboardQuickActions from '../components/DashboardQuickActions';
 import { performanceAPI, dealsAPI, clientsAPI, salesAPI, usersAPI } from '../services/api';
@@ -341,7 +341,7 @@ const Dashboard = () => {
                   <XAxis dataKey="month" {...axisProps} />
                   <YAxis {...axisProps} />
                   <Tooltip formatter={v => formatUSD(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} cursor={{ fill: isDark ? '#2A2D3E' : '#fef3c7' }} />
-                  <Bar dataKey="revenue" fill="#FFD700" radius={[4,4,0,0]} name="Revenue" />
+                  <Bar dataKey="revenue" fill={ANALYTICS_PALETTE.revenue} radius={[4,4,0,0]} name="Revenue" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -356,7 +356,7 @@ const Dashboard = () => {
                   <XAxis dataKey="stage" {...axisProps} />
                   <YAxis {...axisProps} />
                   <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} cursor={{ fill: isDark ? '#2A2D3E' : '#fef3c7' }} />
-                  <Bar dataKey="value" fill="#FFD700" radius={[4,4,0,0]} name="Pipeline Value" />
+                  <Bar dataKey="value" fill={ANALYTICS_PALETTE.revenue} radius={[4,4,0,0]} name="Pipeline Value" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -403,7 +403,7 @@ const Dashboard = () => {
                   <XAxis dataKey="month" {...axisProps} />
                   <YAxis {...axisProps} />
                   <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} cursor={{ fill: isDark ? '#2A2D3E' : '#fef3c7' }} />
-                  <Bar dataKey="sales" fill="#FFD700" radius={[4,4,0,0]} name="Sales" />
+                  <Bar dataKey="sales" fill={ANALYTICS_PALETTE.revenue} radius={[4,4,0,0]} name="Sales" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -420,7 +420,7 @@ const Dashboard = () => {
                   <XAxis dataKey="month" {...axisProps} />
                   <YAxis {...axisProps} />
                   <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-                  <Area type="monotone" dataKey="revenue" stroke="#FFD700" fill={isDark ? '#2A2D1A' : '#FFFEF5'} strokeWidth={2} name="Revenue" />
+                  <Area type="monotone" dataKey="revenue" stroke={ANALYTICS_PALETTE.revenue} fill={isDark ? '#2A2D3E' : `${ANALYTICS_PALETTE.revenue}1A`} strokeWidth={2} name="Revenue" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -433,7 +433,7 @@ const Dashboard = () => {
                   <XAxis dataKey="stage" {...axisProps} />
                   <YAxis {...axisProps} />
                   <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} cursor={{ fill: isDark ? '#2A2D3E' : '#fef3c7' }} />
-                  <Bar dataKey="value" fill="#FFD700" radius={[4,4,0,0]} name="Pipeline Value" />
+                  <Bar dataKey="value" fill={ANALYTICS_PALETTE.revenue} radius={[4,4,0,0]} name="Pipeline Value" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
