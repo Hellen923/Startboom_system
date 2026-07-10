@@ -5,6 +5,7 @@ import {
   Users, BarChart3, Calendar, ShoppingCart, TrendingUp, Shield, ArrowRight,
   CheckCircle, Star, Zap, Target, DollarSign, LineChart
 } from 'lucide-react';
+import potLogo from '../assets/pot logo.png';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-[#1F1D1A] via-[#2D2A26] to-[#1F1D1A]">
       
       {/* Hero Section */}
       <section className="relative pt-20 pb-20 px-6 lg:px-12 overflow-hidden">
@@ -69,7 +70,7 @@ const LandingPage = () => {
             rotate: [0, 90, 0],
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary-600/20 rounded-full blur-3xl"
+          className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#D99A00]/20 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
@@ -77,7 +78,7 @@ const LandingPage = () => {
             rotate: [90, 0, 90],
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-3xl"
+          className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F59E0B]/20 rounded-full blur-3xl"
         />
 
         <div className="container mx-auto relative z-10">
@@ -90,12 +91,18 @@ const LandingPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="flex items-center gap-3 mb-8"
+                className="flex items-center gap-6 mb-8"
               >
-                <img src="/Swavelink.png" alt="Swavelink" className="h-16 w-16 object-contain" />
+                <div className="h-32 w-32 lg:h-40 lg:w-40 flex items-center justify-center">
+                  <img 
+                    src={potLogo} 
+                    alt="HoneyPot" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-white">Swavelink</h1>
-                  <p className="text-sm text-primary-400">Sales Management System</p>
+                  <h1 className="text-4xl lg:text-5xl font-bold text-white">HoneyPot</h1>
+                  <p className="text-lg lg:text-xl text-[#D99A00] font-medium">CRM & Sales Platform</p>
                 </div>
               </motion.div>
 
@@ -105,10 +112,10 @@ const LandingPage = () => {
                 transition={{ duration: 0.7, delay: 0.1 }}
                 className="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight"
               >
-                Grow Your Sales,
+                Sweeten Every Sale,
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-yellow-300">
-                  Track Everything
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D99A00] to-[#F59E0B]">
+                  Grow Every Day
                 </span>
               </motion.h1>
 
@@ -118,8 +125,8 @@ const LandingPage = () => {
                 transition={{ duration: 0.7, delay: 0.2 }}
                 className="text-xl text-gray-300 mb-8 leading-relaxed"
               >
-                Complete sales management system built for small businesses in Uganda. 
-                Manage leads, track inventory, record sales, and grow your team.
+                Where every opportunity finds its value. Complete CRM and sales management 
+                platform built for growing businesses. Manage leads, track deals, and turn prospects into loyal customers.
               </motion.p>
 
               <motion.div
@@ -131,7 +138,7 @@ const LandingPage = () => {
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate('/login')}
-                  className="group px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-2xl shadow-primary-600/50 transition-all"
+                  className="group px-8 py-4 bg-gradient-to-r from-[#D99A00] to-[#B7791F] hover:from-[#B7791F] hover:to-[#D99A00] text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-2xl shadow-[#D99A00]/50 transition-all"
                 >
                   Get Started
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -147,7 +154,7 @@ const LandingPage = () => {
               className="relative"
             >
               {/* Glow effect */}
-              <div className="absolute inset-0 bg-primary-600/20 rounded-3xl blur-3xl" />
+              <div className="absolute inset-0 bg-[#D99A00]/20 rounded-3xl blur-3xl" />
               
               <div className="relative grid grid-cols-2 gap-4">
                 {features.slice(0, 4).map((feature, index) => (
@@ -159,8 +166,8 @@ const LandingPage = () => {
                     whileHover={{ y: -8, scale: 1.02 }}
                     className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all group"
                   >
-                    <div className="w-12 h-12 bg-primary-600/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary-600/30 transition-colors">
-                      <feature.icon className="w-6 h-6 text-primary-400" />
+                    <div className="w-12 h-12 bg-[#D99A00]/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#D99A00]/30 transition-colors">
+                      <feature.icon className="w-6 h-6 text-[#D99A00]" />
                     </div>
                     <h3 className="text-white font-bold mb-2">{feature.title}</h3>
                     <p className="text-sm text-gray-400">{feature.description}</p>
@@ -185,7 +192,7 @@ const LandingPage = () => {
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <div className="text-4xl lg:text-5xl font-bold text-primary-400 mb-2">{stat.value}</div>
+                <div className="text-4xl lg:text-5xl font-bold text-[#D99A00] mb-2">{stat.value}</div>
                 <div className="text-gray-400">{stat.label}</div>
               </motion.div>
             ))}
@@ -204,7 +211,7 @@ const LandingPage = () => {
           >
             <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
               Everything You Need to
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-yellow-300"> Manage Sales</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D99A00] to-[#F59E0B]"> Manage Sales</span>
             </h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
               From lead generation to commission tracking, we've got you covered
@@ -220,10 +227,10 @@ const LandingPage = () => {
                 transition={{ delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -8 }}
-                className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 hover:border-primary-600/50 transition-all group"
+                className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 hover:border-[#D99A00]/50 transition-all group"
               >
-                <div className="w-14 h-14 bg-primary-600/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary-600/30 group-hover:scale-110 transition-all">
-                  <feature.icon className="w-7 h-7 text-primary-400" />
+                <div className="w-14 h-14 bg-[#D99A00]/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#D99A00]/30 group-hover:scale-110 transition-all">
+                  <feature.icon className="w-7 h-7 text-[#D99A00]" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
                 <p className="text-gray-400 leading-relaxed">{feature.description}</p>
@@ -234,7 +241,7 @@ const LandingPage = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 px-6 lg:px-12 bg-gradient-to-br from-primary-600/10 to-transparent">
+      <section className="py-20 px-6 lg:px-12 bg-gradient-to-br from-[#D99A00]/10 to-transparent">
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -243,11 +250,11 @@ const LandingPage = () => {
               viewport={{ once: true }}
             >
               <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-                Why Choose Swavelink?
+                Why Choose HoneyPot?
               </h2>
               <p className="text-xl text-gray-300 mb-8">
-                Built specifically for Ugandan businesses with local payment methods, 
-                real-time stock tracking, and complete sales automation.
+                Built for modern businesses with powerful CRM features, 
+                real-time analytics, and complete sales automation that helps you close more deals.
               </p>
               
               <div className="space-y-4">
@@ -260,8 +267,8 @@ const LandingPage = () => {
                     viewport={{ once: true }}
                     className="flex items-center gap-3"
                   >
-                    <div className="flex-shrink-0 w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-4 h-4 text-green-400" />
+                    <div className="flex-shrink-0 w-6 h-6 bg-[#D99A00]/20 rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 text-[#D99A00]" />
                     </div>
                     <span className="text-gray-300">{benefit}</span>
                   </motion.div>
@@ -275,7 +282,7 @@ const LandingPage = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="absolute inset-0 bg-primary-600/30 rounded-3xl blur-3xl" />
+              <div className="absolute inset-0 bg-[#D99A00]/30 rounded-3xl blur-3xl" />
               <div className="relative backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8">
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
@@ -283,21 +290,21 @@ const LandingPage = () => {
                       <div className="text-3xl font-bold text-white mb-1">1,000+</div>
                       <div className="text-gray-400">Sales Recorded</div>
                     </div>
-                    <LineChart className="w-12 h-12 text-primary-400" />
+                    <LineChart className="w-12 h-12 text-[#D99A00]" />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="text-3xl font-bold text-white mb-1">50+</div>
                       <div className="text-gray-400">Active Agents</div>
                     </div>
-                    <Users className="w-12 h-12 text-blue-400" />
+                    <Users className="w-12 h-12 text-[#F59E0B]" />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="text-3xl font-bold text-white mb-1">UGX 50M+</div>
                       <div className="text-gray-400">Revenue Tracked</div>
                     </div>
-                    <DollarSign className="w-12 h-12 text-green-400" />
+                    <DollarSign className="w-12 h-12 text-[#4F8A5B]" />
                   </div>
                 </div>
               </div>
@@ -313,12 +320,12 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative backdrop-blur-xl bg-gradient-to-r from-primary-600/20 to-blue-600/20 border border-white/20 rounded-3xl p-12 lg:p-16 text-center overflow-hidden"
+            className="relative backdrop-blur-xl bg-gradient-to-r from-[#D99A00]/20 to-[#F59E0B]/20 border border-white/20 rounded-3xl p-12 lg:p-16 text-center overflow-hidden"
           >
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute top-0 right-0 w-64 h-64 bg-primary-600/30 rounded-full blur-3xl"
+              className="absolute top-0 right-0 w-64 h-64 bg-[#D99A00]/30 rounded-full blur-3xl"
             />
             
             <div className="relative z-10">
@@ -326,15 +333,15 @@ const LandingPage = () => {
                 Ready to Grow Your Business?
               </h2>
               <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                Join businesses across Uganda using Swavelink to manage their sales, 
-                track inventory, and grow their revenue.
+                Join businesses using HoneyPot to manage their sales pipeline, 
+                nurture customer relationships, and grow their revenue.
               </p>
               
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/login')}
-                className="group px-10 py-5 bg-primary-600 hover:bg-primary-700 text-white text-lg rounded-xl font-bold flex items-center gap-3 mx-auto shadow-2xl shadow-primary-600/50 transition-all"
+                className="group px-10 py-5 bg-gradient-to-r from-[#D99A00] to-[#B7791F] hover:from-[#B7791F] hover:to-[#D99A00] text-white text-lg rounded-xl font-bold flex items-center gap-3 mx-auto shadow-2xl shadow-[#D99A00]/50 transition-all"
               >
                 Get Started
                 <Zap className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -349,17 +356,23 @@ const LandingPage = () => {
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
-              <img src="/Swavelink.png" alt="Swavelink" className="h-8 w-8 object-contain" />
+              <div className="h-10 w-10 flex items-center justify-center">
+                <img 
+                  src={potLogo} 
+                  alt="HoneyPot" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
               <div>
-                <div className="text-white font-bold">Swavelink</div>
-                <div className="text-sm text-gray-400">Sales Management System</div>
+                <div className="text-white font-bold">HoneyPot</div>
+                <div className="text-sm text-gray-400">CRM & Sales Platform</div>
               </div>
             </div>
             
             <div className="text-gray-400 text-sm text-center md:text-right">
-              © 2026 Swavelink. All rights reserved.
+              © 2026 HoneyPot. All rights reserved.
               <br />
-              Built with ❤️ in Uganda
+              Sweeten Every Sale
             </div>
           </div>
         </div>
