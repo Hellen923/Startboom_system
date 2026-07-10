@@ -28,6 +28,8 @@ import {
    Sliders,
    FileText,
    BarChart3,
+   Shield,
+   Building,
  } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { notificationsAPI } from '../services/api';
@@ -37,6 +39,7 @@ import ProfileModal from './ProfileModal';
 import LogoutModal from './LogoutModal';
 import QuickActionModal from './QuickActionModal';
 import Taskbar from './Taskbar';
+import sidebarLogo from '../assets/sidebar.png';
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -140,6 +143,8 @@ const Layout = ({ children }) => {
       title: 'Operations',
       items: [
         { path: '/admin/bulk-operations', icon: ArrowLeftRight, label: 'Bulk Operations', description: 'Execute bulk tasks quickly and efficiently.' },
+        { path: '/admin/permissions', icon: Shield, label: 'Permission Manager', description: 'Configure role-based access control and data visibility.' },
+        { path: '/admin/tenant-settings', icon: Building, label: 'Tenant Settings', description: 'Configure company profile, branding, and modules.' },
         { path: '/admin/settings', icon: Settings, label: 'Settings', description: 'Update account preferences and system settings.' },
       ],
     },
@@ -221,17 +226,17 @@ const agentNavSections = [
 
   const SidebarHeader = () => (
     <div className="flex items-center justify-between px-6 py-6 border-b sidebar-divider backdrop-blur-sm">
-      <div className="flex items-center space-x-4 min-w-0">
-        <div className="w-16 h-16 rounded-2xl bg-white/15 flex items-center justify-center shadow-lg shrink-0 border border-white/25">
-              <img
-            src={user?.tenant?.logo || user?.tenant?.settings?.logo || '/Swavelink.png'}
-            alt="Logo"
-            className="w-9 h-9 object-contain"
+      <div className="flex items-center space-x-3 min-w-0">
+        <div className="w-12 h-12 flex items-center justify-center shrink-0">
+          <img 
+            src={sidebarLogo} 
+            alt="HoneyPot" 
+            className="w-full h-full object-contain"
           />
         </div>
         <div className="min-w-0">
-          <h2 className="text-xl font-bold text-white leading-tight truncate">{roleTitle}</h2>
-          <p className="text-xs font-semibold tracking-wider uppercase text-white/75 mt-1">{roleSubtitle}</p>
+          <h2 className="text-lg font-bold text-white leading-tight truncate">HoneyPot</h2>
+          <p className="text-xs font-semibold tracking-wider uppercase text-white/75 mt-0.5">Platform Control</p>
         </div>
       </div>
     </div>
@@ -342,7 +347,7 @@ const agentNavSections = [
             <div className="dashboard-page">
               <div className="space-y-1">
                 <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{activeNavItem.label}</h1>
-                <p className="text-sm text-[var(--color-text-muted)] max-w-3xl">{activeNavItem.description || 'Welcome to Swavelink — your central workspace.'}</p>
+                <p className="text-sm text-[var(--color-text-muted)] max-w-3xl">{activeNavItem.description || 'Welcome to HoneyPot CRM — where every opportunity finds its value.'}</p>
               </div>
               {children}
             </div>
