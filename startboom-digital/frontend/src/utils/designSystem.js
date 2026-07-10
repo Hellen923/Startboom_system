@@ -223,76 +223,71 @@ export const ANIMATIONS = {
 };
 
 /**
- * HONEYPOT ANALYTICS PALETTE - Official Data Visualization Colors
+ * HONEYPOT ANALYTICS PALETTE - Professional Enterprise Data Visualization
  * 
  * DESIGN PHILOSOPHY:
- * Enterprise software fails when they use one brand color everywhere.
- * HoneyPot uses SEMANTIC colors (data type = specific color) for clarity.
+ * "HoneyPot = premium business platform" NOT "HoneyPot = yellow everywhere"
  * 
- * GOLDEN RULE: Only use Honey Gold (#D89A00) for:
- * ✓ Revenue and financial metrics
- * ✓ Money-related data
- * ✓ Primary success indicators
- * ✓ Goal achievements
- * ✗ NEVER for all chart bars/lines
+ * Gold is the SIGNATURE ACCENT for buttons, highlights, active navigation, branding.
+ * Charts should feel INTELLIGENT and REFINED, not colorful.
  * 
- * BENEFITS:
- * - Users instantly recognize what data they're looking at
- * - Charts remain readable with multiple data series
- * - Gold becomes MEANINGFUL (associated with value/success)
- * - Platform feels polished and professional
+ * CORE PRINCIPLE: Remove bright yellow from charts.
+ * Different metrics = Different semantic colors (like Stripe, Linear, Notion, Attio, HubSpot)
  * 
  * USAGE: Import from chartTheme.js (ANALYTICS_PALETTE)
  * This is documented here for reference only.
  */
 export const CHART_COLORS = {
-  // Financial Metrics (Honey Gold - BRAND SIGNATURE)
-  revenue: '#D89A00',        // Honey Amber - Reserve for money/revenue only
-  revenueHover: '#C18400',   // Darker honey for interactions
+  // === PRIMARY DATA METRICS (Professional Blues & Greens - NO YELLOW) ===
+  revenue: '#4F6BED',        // Slate Blue - Professional (NOT gold)
+  profit: '#10B981',         // Emerald - Success, growth
+  sales: '#4F6BED',          // Slate Blue - Matches revenue
   
   // Sales & Commercial
-  sales: '#4F6BED',          // Slate Blue - Professional, trustworthy
-  customers: '#10B981',      // Emerald - Growth, healthy customer base
+  customers: '#38BDF8',      // Sky Blue - User-focused metrics
+  users: '#38BDF8',          // Sky Blue - Customer data
   
   // Forecasting & Predictions
-  forecast: '#38BDF8',       // Sky Blue - Future-looking, optimistic
-  target: '#94A3B8',         // Slate Grey - Baseline comparisons
+  forecast: '#6366F1',       // Indigo - Future intelligence
+  target: '#94A3B8',         // Slate Grey - Baselines
   
   // Performance & Analytics
   performance: '#8B5CF6',    // Violet - High-level analytics
-  activities: '#6366F1',     // Indigo - Neutral operational data
+  activities: '#6366F1',     // Indigo - Operational data
+  goals: '#8B5CF6',          // Violet - Productivity
   
   // Costs & Resources
-  expenses: '#B87333',       // Copper - Cost without looking alarming
+  expenses: '#B87333',       // Copper - Cost without alarm
   
   // Alerts & Attention
-  alerts: '#E76F51',         // Coral - Attention without harsh red
+  alerts: '#E76F51',         // Coral Red - Softer attention
   
-  // Goals & Progress
-  goals: '#5B8A72',          // Sage Green - Calm progress and targets
-  
-  // Deal Pipeline Stages (gentle progression toward money)
+  // Deal Pipeline Stages (gentle color progression - NO bright yellow)
   pipeline: {
-    lead: '#38BDF8',         // Sky Blue - Early stage
+    lead: '#38BDF8',         // Sky Blue - Early exploration
     qualified: '#4F6BED',    // Slate Blue - Moving forward
     proposal: '#6366F1',     // Indigo - Deepening engagement
-    negotiation: '#D89A00',  // Honey Amber - Close to money
+    negotiation: '#F59E0B',  // Amber - Critical stage (NOT honey gold)
     won: '#10B981',          // Emerald - Success
-    lost: '#E76F51',         // Coral - Lost (softer than harsh red)
+    lost: '#E76F51',         // Coral - Lost (softer red)
   },
   
-  // Multi-series palette (for agent comparisons, regions, etc.)
-  // ORDERED: Primary series → Secondary → ... → Honey Gold (reserve for top performer)
+  // Multi-series palette (agent comparisons, regions - NO BRIGHT YELLOW)
+  // Ordered for visual harmony and enterprise feel
   palette: [
     '#4F6BED',  // Slate Blue (primary)
     '#10B981',  // Emerald (secondary)
-    '#8B5CF6',  // Violet
     '#38BDF8',  // Sky Blue
-    '#E76F51',  // Coral
+    '#8B5CF6',  // Violet
+    '#6366F1',  // Indigo
     '#5B8A72',  // Sage Green
     '#B87333',  // Copper
-    '#D89A00',  // Honey Amber (use last - for top performer highlight)
+    '#E76F51',  // Coral
   ],
+  
+  // === BRAND ACCENT (Use SPARINGLY - only KPI highlights, NOT charts) ===
+  brandAccent: '#D89A00',    // Honey Gold - ONLY for brand moments
+  brandHover: '#B87900',     // Darker honey for interactions
   
   // Chart UI elements
   grid: 'rgba(226,232,240,0.5)',

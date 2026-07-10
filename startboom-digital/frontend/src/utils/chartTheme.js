@@ -4,72 +4,88 @@
 import { useTheme } from '../context/ThemeContext';
 
 /** 
- * HoneyPot Analytics Palette - Official Data Visualization Colors
+ * HoneyPot Analytics Palette - Professional Enterprise Data Visualization
  * 
- * PHILOSOPHY: Enterprise software fails when they use one brand color everywhere.
- * This palette uses SEMANTIC colors (data type = specific color) for clarity.
+ * DESIGN PHILOSOPHY:
+ * "HoneyPot = premium business platform" NOT "HoneyPot = yellow everywhere"
  * 
- * RULE: Only use Honey Gold (#D89A00) for:
- * - Revenue
- * - Money/Financial metrics
- * - Primary success indicators
- * - Goal achievements
+ * Gold is the SIGNATURE ACCENT for:
+ * ✓ Buttons, highlights, active navigation, branding
+ * ✗ NOT for dominating charts and analytics
  * 
- * Everything else uses colors chosen for readability and psychological meaning.
+ * CORE PRINCIPLE: Different metrics = Different semantic colors
+ * This makes charts instantly readable and feels like Stripe, Linear, Notion, Attio, HubSpot.
+ * 
+ * THE RULE: Honey Gold is REMOVED from most charts.
+ * Charts should feel intelligent and refined, not colorful.
  */
 export const ANALYTICS_PALETTE = {
-  // Financial (Honey Gold - BRAND SIGNATURE)
-  revenue: '#D89A00',        // Honey Amber - Your signature. Reserve for money.
-  revenueHover: '#C18400',   // Darker honey for hover states
+  // === PRIMARY DATA METRICS (Professional Blues & Greens) ===
   
-  // Sales & Commercial
-  sales: '#4F6BED',          // Slate Blue - Professional, trustworthy
-  customers: '#10B981',      // Emerald - Growth, healthy customer base
+  // Revenue & Financial Performance
+  revenue: '#4F6BED',        // Slate Blue - Professional, trustworthy (NOT gold)
+  profit: '#10B981',         // Emerald - Growth, success
   
-  // Forecasting & Predictions
-  forecast: '#38BDF8',       // Sky Blue - Future-looking, optimistic
-  target: '#94A3B8',         // Slate Grey - Baseline comparisons
+  // Sales & Commercial Activity  
+  sales: '#4F6BED',          // Slate Blue - Matches revenue for consistency
+  deals: '#4F6BED',          // Slate Blue - Professional data
+  
+  // Customers & Users
+  customers: '#38BDF8',      // Sky Blue - User-focused, optimistic
+  users: '#38BDF8',          // Sky Blue - Customer metrics
   
   // Performance & Analytics
   performance: '#8B5CF6',    // Violet - High-level analytics
-  activities: '#6366F1',     // Indigo - Neutral operational data
+  activities: '#6366F1',     // Indigo - Operational data
   
-  // Costs & Resources
-  expenses: '#B87333',       // Copper - Cost without looking alarming
+  // === FORECASTING & PREDICTIONS ===
+  forecast: '#6366F1',       // Indigo - Future-looking intelligence
+  target: '#94A3B8',         // Slate Grey - Baseline comparisons
   
-  // Alerts & Attention
-  alerts: '#E76F51',         // Coral - Attention without harsh red
+  // === GOALS & PROGRESS ===
+  goals: '#8B5CF6',          // Violet - Productivity & achievements
+  productivity: '#8B5CF6',   // Violet - Performance tracking
   
-  // Goals & Progress
-  goals: '#5B8A72',          // Sage Green - Calm progress and targets
+  // === COSTS & RESOURCES ===
+  expenses: '#B87333',       // Copper - Cost without alarm
   
-  // Deal Pipeline Stages (gentle progression)
-  lead: '#38BDF8',           // Sky Blue - Early stage
+  // === ALERTS & CRITICAL STATUS ===
+  alerts: '#E76F51',         // Coral Red - Attention (softer than harsh red)
+  warnings: '#E76F51',       // Coral Red - Issues
+  
+  // === DEAL PIPELINE STAGES (Gentle color progression) ===
+  lead: '#38BDF8',           // Sky Blue - Early stage, exploration
   qualified: '#4F6BED',      // Slate Blue - Moving forward
   proposal: '#6366F1',       // Indigo - Deepening engagement
-  negotiation: '#D89A00',    // Honey Amber - Close to money
-  won: '#10B981',            // Emerald - Success
+  negotiation: '#F59E0B',    // Amber - Critical stage (NOT honey gold)
+  won: '#10B981',            // Emerald - Success, completed
   lost: '#E76F51',           // Coral - Lost (softer than harsh red)
   
-  // Status colors (semantic)
-  success: '#10B981',        // Emerald
-  warning: '#F59E0B',        // Amber
-  error: '#EF4444',          // Red (only for real errors)
-  info: '#38BDF8',           // Sky Blue
-  neutral: '#94A3B8',        // Slate Grey
+  // === STATUS INDICATORS (Semantic colors) ===
+  success: '#10B981',        // Emerald - Completed, won, active
+  active: '#4F6BED',         // Slate Blue - In progress (NOT yellow)
+  pending: '#F59E0B',        // Amber - Awaiting action
+  error: '#EF4444',          // Red - Real errors only
+  info: '#38BDF8',           // Sky Blue - Informational
+  neutral: '#94A3B8',        // Slate Grey - Inactive, baseline
+  inactive: '#94A3B8',       // Slate Grey - Disabled state
   
-  // Multi-series palette (for agent comparisons, etc.)
-  // Each agent/region gets a unique color - NEVER all gold
+  // === MULTI-SERIES PALETTE (Agent comparisons, regional data) ===
+  // Ordered by visual harmony - NO bright yellow
   series: [
-    '#4F6BED',  // Slate Blue (primary series)
-    '#10B981',  // Emerald (secondary series)
-    '#8B5CF6',  // Violet
+    '#4F6BED',  // Slate Blue (primary)
+    '#10B981',  // Emerald (secondary) 
     '#38BDF8',  // Sky Blue
-    '#E76F51',  // Coral
+    '#8B5CF6',  // Violet
+    '#6366F1',  // Indigo
     '#5B8A72',  // Sage Green
     '#B87333',  // Copper
-    '#D89A00',  // Honey Amber (use last - reserve for top performer)
+    '#E76F51',  // Coral
   ],
+  
+  // === BRAND ACCENT (Use SPARINGLY - only for KPI highlights, not charts) ===
+  brandAccent: '#D89A00',    // Honey Gold - ONLY for brand moments
+  brandHover: '#B87900',     // Darker honey for interactions
 };
 
 /** 
@@ -171,7 +187,7 @@ export const getChartPalette = () => ANALYTICS_PALETTE.series;
  * Get specific chart color by metric name (semantic mapping)
  * 
  * RETURNS: The correct semantic color for any data type
- * DEFAULT: Returns revenue color (Honey Gold) if metric not found
+ * DEFAULT: Returns Slate Blue (professional data color) if metric not found
  */
 export const getMetricColor = (metric, isDark = false) => {
   const colors = getChartColors(isDark);
@@ -179,51 +195,52 @@ export const getMetricColor = (metric, isDark = false) => {
   // Normalize metric name
   const normalized = metric?.toLowerCase().trim();
   
-  // Financial metrics → Honey Gold
+  // Revenue & Financial → Slate Blue (NOT gold - data should feel professional)
   if (['revenue', 'money', 'income', 'earnings', 'payment'].includes(normalized)) {
     return colors.revenue;
   }
   
-  // Sales metrics → Slate Blue
+  // Sales & Deals → Slate Blue (professional data)
   if (['sales', 'deals', 'transactions'].includes(normalized)) {
     return colors.sales;
   }
   
-  // Customer metrics → Emerald
+  // Customer & User metrics → Sky Blue
   if (['customers', 'clients', 'users'].includes(normalized)) {
     return colors.customers;
   }
   
-  // Forecast metrics → Sky Blue
+  // Forecast & Predictions → Indigo
   if (['forecast', 'projection', 'estimate', 'predicted'].includes(normalized)) {
     return colors.forecast;
   }
   
-  // Performance metrics → Violet
+  // Performance & Analytics → Violet
   if (['performance', 'efficiency', 'productivity'].includes(normalized)) {
     return colors.performance;
   }
   
-  // Activity metrics → Indigo
+  // Activity & Operations → Indigo
   if (['activities', 'actions', 'tasks', 'events'].includes(normalized)) {
     return colors.activities;
   }
   
-  // Cost metrics → Copper
+  // Costs & Expenses → Copper
   if (['expenses', 'costs', 'spending'].includes(normalized)) {
     return colors.expenses;
   }
   
-  // Goals → Sage Green
+  // Goals & Targets → Violet
   if (['goals', 'targets', 'objectives'].includes(normalized)) {
     return colors.goals;
   }
   
-  // Alerts → Coral
+  // Alerts & Warnings → Coral Red
   if (['alerts', 'warnings', 'issues'].includes(normalized)) {
     return colors.alerts;
   }
   
+  // Default: Slate Blue (professional, never yellow)
   return colors[metric] || colors.revenue;
 };
 

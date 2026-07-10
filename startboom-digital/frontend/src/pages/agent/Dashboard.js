@@ -337,7 +337,7 @@ return (
                 <XAxis dataKey="month" stroke={axis} style={{ fontSize: '12px' }} />
                 <YAxis stroke={axis} style={{ fontSize: '12px' }} />
                 <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-                <Bar dataKey="sales" fill="#D89A00" radius={[4,4,0,0]} name="Sales" />
+                <Bar dataKey="sales" fill={ANALYTICS_PALETTE.revenue} radius={[4,4,0,0]} name="Sales" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -359,7 +359,7 @@ return (
                 <XAxis dataKey="month" stroke={axis} style={{ fontSize: '12px' }} />
                 <YAxis stroke={axis} style={{ fontSize: '12px' }} />
                 <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-                <Area type="monotone" dataKey="revenue" stroke="#D89A00" fill="rgba(216,154,0,0.1)" strokeWidth={2} name="Revenue" />
+                <Area type="monotone" dataKey="revenue" stroke={ANALYTICS_PALETTE.revenue} fill={`${ANALYTICS_PALETTE.revenue}1A`} strokeWidth={2} name="Revenue" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
