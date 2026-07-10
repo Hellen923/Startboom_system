@@ -14,12 +14,12 @@ export const ORANGE_GRADIENT_COLORS = ENTERPRISE_COLORS;
 const STATUS_COLORS = {
   won: ANALYTICS_PALETTE.won,           // Emerald (success)
   lost: ANALYTICS_PALETTE.lost,         // Coral (softer than harsh red)
-  pending: ANALYTICS_PALETTE.warning,   // Amber (warning)
-  open: ANALYTICS_PALETTE.forecast,     // Sky Blue (future-looking)
-  active: ANALYTICS_PALETTE.success,    // Emerald (active)
+  pending: ANALYTICS_PALETTE.pending,   // Amber (warning)
+  open: ANALYTICS_PALETTE.active,       // Slate Blue (in progress - NOT yellow)
+  active: ANALYTICS_PALETTE.active,     // Slate Blue (NOT yellow/gold)
   completed: ANALYTICS_PALETTE.success, // Emerald (done)
   overdue: ANALYTICS_PALETTE.error,     // Red (error)
-  cash: ANALYTICS_PALETTE.revenue,      // Honey Gold (money)
+  cash: ANALYTICS_PALETTE.profit,       // Emerald (money received)
   credit: ANALYTICS_PALETTE.neutral,    // Slate (neutral)
 };
 
