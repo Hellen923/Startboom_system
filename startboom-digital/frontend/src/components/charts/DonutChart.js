@@ -3,16 +3,35 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 import { useChartTheme } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
 
-const DEFAULT_COLORS = [
-  '#10b981', '#ef4444', '#f59e0b', '#3b82f6', '#FFD700', '#8b5cf6',
+// HoneyPot Premium Chart Colors - NO bright greens or neon colors
+const HONEYPOT_COLORS = [
+  '#D99A00',  // Honey Gold
+  '#F59E0B',  // Burnt Orange
+  '#3B82F6',  // Slate Blue
+  '#4F8A5B',  // Sage Green
+  '#06B6D4',  // Teal
+  '#8B5CF6',  // Deep Plum
+  '#EC4899',  // Pink
+  '#10B981',  // Emerald
 ];
 
-export const ORANGE_GRADIENT_COLORS = [
-  '#FFD700', '#FFF166', '#E6C200', '#10b981', '#3b82f6', '#8b5cf6', '#FFF9CC', '#FFFCE6',
-];
+// Export for backward compatibility (renamed from ORANGE_GRADIENT_COLORS)
+export const ORANGE_GRADIENT_COLORS = HONEYPOT_COLORS;
+
+// Status-specific colors (muted, professional)
+const STATUS_COLORS = {
+  won: '#4F8A5B',      // Sage Green
+  lost: '#C0392B',     // Warm Red
+  pending: '#D99A00',  // Honey Gold
+  active: '#4F8A5B',   // Sage Green
+  completed: '#4F8A5B', // Sage Green
+  overdue: '#C0392B',  // Warm Red
+  cash: '#D99A00',     // Honey Gold
+  credit: '#F59E0B',   // Burnt Orange
+};
 
 const DonutChart = ({
-  data = [], title, subtitle, colors = DEFAULT_COLORS, height = 300,
+  data = [], title, subtitle, colors = HONEYPOT_COLORS, height = 300,
   innerRadius = 60, outerRadius = 100, showPercentage = true, showLegend = true,
   showTooltip = true, labelFormatter, tooltipFormatter, centerContent,
   emptyMessage = 'No data available',
@@ -100,7 +119,7 @@ export default DonutChart;
 
 export const DealStatusChart = ({ data, ...props }) => (
   <DonutChart data={data} title="Deal Outcomes" subtitle="Closed wins, closed losses, and open pipeline counts"
-    colors={['#10b981', '#ef4444', '#f59e0b']}
+    colors={[STATUS_COLORS.won, STATUS_COLORS.lost, STATUS_COLORS.pending]}
     labelFormatter={({ name, value }) => `${name}: ${value}`}
     tooltipFormatter={(value) => `${value.toLocaleString()} deal${value === 1 ? '' : 's'}`}
     centerContent={(total) => (
@@ -113,7 +132,8 @@ export const DealStatusChart = ({ data, ...props }) => (
 );
 
 export const PaymentMethodChart = ({ data, formatCurrency, ...props }) => (
-  <DonutChart data={data} title="Payment Methods" colors={['#FFD700', '#FFF166']}
+  <DonutChart data={data} title="Payment Methods" 
+    colors={[STATUS_COLORS.cash, STATUS_COLORS.credit]}
     tooltipFormatter={formatCurrency}
     labelFormatter={({ name, value }) => `${name}: ${formatCurrency ? formatCurrency(value) : value}`}
     {...props} />
@@ -132,7 +152,7 @@ export const TaskStatusChart = ({ data, ...props }) => (
 
 export const StageValueChart = ({ data, formatCurrency, ...props }) => (
   <DonutChart data={data} title="Deal Stages by Value"
-    colors={['#E6C200', '#f59e0b', '#FFD700', '#10b981', '#22c55e', '#ef4444']}
+    colors={HONEYPOT_COLORS}
     tooltipFormatter={formatCurrency} {...props} />
 );
 
@@ -155,7 +175,11 @@ export const TopAgentsChart = ({ data, formatCurrency, title = "Top Agents by Wo
   }
 
   const topAgents = [...data].sort((a, b) => b.value - a.value).slice(0, 6)
-    .map((agent, index) => ({ ...agent, rank: index + 1, color: ORANGE_GRADIENT_COLORS[index % ORANGE_GRADIENT_COLORS.length] }));
+    .map((agent, index) => ({ 
+      ...agent, 
+      rank: index + 1, 
+      color: HONEYPOT_COLORS[index % HONEYPOT_COLORS.length] 
+    }));
 
   return (
     <div className={`rounded-xl shadow-sm p-6 ${dm.card}`}>
