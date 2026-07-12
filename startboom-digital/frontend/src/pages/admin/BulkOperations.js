@@ -172,7 +172,7 @@ const BulkOperations = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D89A00]"></div>
       </div>
     );
   }
@@ -202,7 +202,7 @@ const BulkOperations = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center space-x-2 py-4 px-4 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                     activeTab === tab.id
-                      ? 'border-orange-500 text-orange-600'
+                      ? 'border-[#D89A00] text-[#D89A00]'
                       : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
                 >
@@ -230,7 +230,7 @@ const BulkOperations = () => {
                   <select
                     value={fromAgent}
                     onChange={e => setFromAgent(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D89A00]"
                   >
                     <option value="">Select agent</option>
                     {agents.map(a => (
@@ -246,7 +246,7 @@ const BulkOperations = () => {
                   <select
                     value={toAgent}
                     onChange={e => setToAgent(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D89A00]"
                   >
                     <option value="">Select agent</option>
                     {agents.filter(a => a._id !== fromAgent).map(a => (
@@ -260,7 +260,7 @@ const BulkOperations = () => {
                   <select
                     value={transferType}
                     onChange={e => setTransferType(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D89A00]"
                   >
                     <option value="both">Clients & Deals</option>
                     <option value="clients">Clients Only</option>
@@ -284,7 +284,7 @@ const BulkOperations = () => {
               <button
                 onClick={handleTransfer}
                 disabled={processing || !fromAgent || !toAgent}
-                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2.5 rounded-xl font-medium transition-colors disabled:opacity-50 flex items-center space-x-2"
+                className="bg-[#D89A00] hover:bg-[#B87900] text-white px-6 py-2.5 rounded-xl font-medium transition-colors disabled:opacity-50 flex items-center space-x-2"
               >
                 <ArrowLeftRight className="w-4 h-4" />
                 <span>{processing ? 'Transferring...' : 'Transfer Records'}</span>
@@ -308,8 +308,8 @@ const BulkOperations = () => {
                     <div key={agent._id} className="bg-gray-50 rounded-xl p-4">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                            <span className="text-orange-600 font-bold text-xs">{index + 1}</span>
+                          <div className="w-8 h-8 bg-[#FEF3C7] rounded-full flex items-center justify-center">
+                            <span className="text-[#D89A00] font-bold text-xs">{index + 1}</span>
                           </div>
                           <div>
                             <p className="font-medium text-gray-900">{agent.name}</p>
@@ -323,7 +323,7 @@ const BulkOperations = () => {
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
-                          className={`h-2 rounded-full ${percentage > 75 ? 'bg-red-500' : percentage > 50 ? 'bg-orange-500' : 'bg-green-500'}`}
+                          className={`h-2 rounded-full ${percentage > 75 ? 'bg-red-500' : percentage > 50 ? 'bg-[#D89A00]' : 'bg-green-500'}`}
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
@@ -355,7 +355,7 @@ const BulkOperations = () => {
                   <select
                     value={newClientStatus}
                     onChange={e => setNewClientStatus(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D89A00]"
                   >
                     <option value="prospect">Prospect</option>
                     <option value="active">Active</option>
@@ -365,7 +365,7 @@ const BulkOperations = () => {
                   <button
                     onClick={handleBulkClientStatus}
                     disabled={processing || selectedClients.length === 0}
-                    className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50"
+                    className="bg-[#D89A00] hover:bg-[#B87900] text-white px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50"
                   >
                     {processing ? 'Updating...' : `Update ${selectedClients.length} Clients`}
                   </button>
@@ -379,7 +379,7 @@ const BulkOperations = () => {
                   placeholder="Search clients..."
                   value={clientSearch}
                   onChange={e => setClientSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D89A00]"
                 />
               </div>
 
@@ -388,7 +388,7 @@ const BulkOperations = () => {
                   type="checkbox"
                   checked={selectedClients.length === filteredClients.length && filteredClients.length > 0}
                   onChange={e => setSelectedClients(e.target.checked ? filteredClients.map(c => c._id) : [])}
-                  className="rounded border-gray-300 text-orange-500"
+                  className="rounded border-gray-300 text-[#D89A00]"
                 />
                 <span className="text-sm text-gray-600">Select all ({filteredClients.length})</span>
               </div>
@@ -402,17 +402,17 @@ const BulkOperations = () => {
                       onChange={e => setSelectedClients(prev =>
                         e.target.checked ? [...prev, client._id] : prev.filter(id => id !== client._id)
                       )}
-                      className="rounded border-gray-300 text-orange-500"
+                      className="rounded border-gray-300 text-[#D89A00]"
                     />
                     <div className="flex-1">
                       <p className="font-medium text-gray-900 text-sm">{client.name}</p>
                       <p className="text-xs text-gray-500">{client.email}</p>
                     </div>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                      client.status === 'vip' ? 'bg-purple-100 text-purple-700' :
+                      client.status === 'vip' ? 'bg-[#FEF3C7] text-[#B87900]' :
                       client.status === 'active' ? 'bg-green-100 text-green-700' :
                       client.status === 'inactive' ? 'bg-gray-100 text-gray-600' :
-                      'bg-blue-100 text-blue-700'
+                      'bg-[#FEF3C7] text-[#D89A00]'
                     }`}>
                       {client.status}
                     </span>
@@ -437,7 +437,7 @@ const BulkOperations = () => {
                   <select
                     value={newDealStage}
                     onChange={e => setNewDealStage(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D89A00]"
                   >
                     <option value="lead">Lead</option>
                     <option value="qualification">Qualification</option>
@@ -449,7 +449,7 @@ const BulkOperations = () => {
                   <button
                     onClick={handleBulkDealStage}
                     disabled={processing || selectedDeals.length === 0}
-                    className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50"
+                    className="bg-[#D89A00] hover:bg-[#B87900] text-white px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50"
                   >
                     {processing ? 'Updating...' : `Update ${selectedDeals.length} Deals`}
                   </button>
@@ -463,7 +463,7 @@ const BulkOperations = () => {
                   placeholder="Search deals..."
                   value={dealSearch}
                   onChange={e => setDealSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D89A00]"
                 />
               </div>
 
@@ -472,7 +472,7 @@ const BulkOperations = () => {
                   type="checkbox"
                   checked={selectedDeals.length === filteredDeals.length && filteredDeals.length > 0}
                   onChange={e => setSelectedDeals(e.target.checked ? filteredDeals.map(d => d._id) : [])}
-                  className="rounded border-gray-300 text-orange-500"
+                  className="rounded border-gray-300 text-[#D89A00]"
                 />
                 <span className="text-sm text-gray-600">Select all ({filteredDeals.length})</span>
               </div>
@@ -486,7 +486,7 @@ const BulkOperations = () => {
                       onChange={e => setSelectedDeals(prev =>
                         e.target.checked ? [...prev, deal._id] : prev.filter(id => id !== deal._id)
                       )}
-                      className="rounded border-gray-300 text-orange-500"
+                      className="rounded border-gray-300 text-[#D89A00]"
                     />
                     <div className="flex-1">
                       <p className="font-medium text-gray-900 text-sm">{deal.title}</p>
@@ -495,7 +495,7 @@ const BulkOperations = () => {
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                       deal.stage === 'won' ? 'bg-green-100 text-green-700' :
                       deal.stage === 'lost' ? 'bg-red-100 text-red-700' :
-                      'bg-orange-100 text-orange-700'
+                      'bg-[#FEF3C7] text-orange-700'
                     }`}>
                       {deal.stage}
                     </span>
