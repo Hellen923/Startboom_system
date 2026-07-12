@@ -21,68 +21,40 @@ const STEPS = [
 
 const MODULE_GROUPS = [
   {
-    group: 'Core CRM',
+    group: 'CRM Core',
     modules: [
-      { id: 'clients',     label: 'Clients',     desc: 'Manage your customer base' },
-      { id: 'deals',       label: 'Deals',       desc: 'Track sales pipeline' },
-      { id: 'sales',       label: 'Sales',       desc: 'Record completed sales' },
-      { id: 'products',    label: 'Products',    desc: 'Product catalog & inventory' },
-      { id: 'territories', label: 'Territories', desc: 'Agent location assignments' },
-      { id: 'meetings',    label: 'Meetings',    desc: 'Schedule & track meetings' },
-      { id: 'schedules',   label: 'Schedules',   desc: 'Tasks & reminders' },
-      { id: 'dashboards',  label: 'Dashboards',  desc: 'Custom dashboard views' },
-      { id: 'analytics',   label: 'Analytics',   desc: 'Performance insights' },
-      { id: 'reports',     label: 'Reports',     desc: 'Export & custom reports' },
+      { id: 'clients',     label: 'Clients & Organizations', desc: 'Manage customers, leads and client relationships' },
+      { id: 'deals',       label: 'Sales Pipeline',          desc: 'Track deals from open to won/lost' },
+      { id: 'sales',       label: 'Sales Records',           desc: 'Record and track completed sales' },
+      { id: 'products',    label: 'Product Catalogue',       desc: 'Browse products and pricing to quote clients' },
+      { id: 'territories', label: 'Territories',             desc: 'Assign agents to districts and coverage areas' },
     ]
   },
   {
-    group: 'Finance',
+    group: 'Productivity',
     modules: [
-      { id: 'finance',   label: 'Finance',   desc: 'Financial overview' },
-      { id: 'invoices',  label: 'Invoices',  desc: 'Create & send invoices' },
-      { id: 'payments',  label: 'Payments',  desc: 'Track payments received' },
-      { id: 'expenses',  label: 'Expenses',  desc: 'Manage business expenses' },
+      { id: 'schedules',   label: 'Schedules & Calendar',    desc: 'Meetings, calendar events and reminders' },
+      { id: 'tasks',       label: 'Tasks',                   desc: 'Daily task tracking and assignment' },
+      { id: 'issues',      label: 'Issues & Support',        desc: 'Log and manage client issues or complaints' },
     ]
   },
   {
-    group: 'HR & People',
+    group: 'Analytics & Reporting',
     modules: [
-      { id: 'hr',          label: 'HR',          desc: 'Human resources management' },
-      { id: 'employees',   label: 'Employees',   desc: 'Employee records' },
-      { id: 'payroll',     label: 'Payroll',     desc: 'Payroll processing' },
-      { id: 'recruitment', label: 'Recruitment', desc: 'Hiring & onboarding' },
+      { id: 'analytics',   label: 'Analytics',               desc: 'Conversion rates, revenue trends, agent performance' },
+      { id: 'reports',     label: 'Reports',                 desc: 'Export reports to PDF/CSV' },
+      { id: 'forecasts',   label: 'Revenue Forecasts',       desc: 'Pipeline-based revenue predictions' },
+      { id: 'activities',  label: 'Performance Battle Card', desc: 'Real-time agent leaderboard and rankings' },
     ]
   },
   {
-    group: 'Marketing',
+    group: 'Admin Tools',
     modules: [
-      { id: 'marketing',  label: 'Marketing',  desc: 'Marketing overview' },
-      { id: 'campaigns',  label: 'Campaigns',  desc: 'Run marketing campaigns' },
-      { id: 'emails',     label: 'Email Blasts', desc: 'Bulk email sending' },
-    ]
-  },
-  {
-    group: 'Support',
-    modules: [
-      { id: 'support',       label: 'Support',        desc: 'Customer support hub' },
-      { id: 'tickets',       label: 'Tickets',        desc: 'Issue & ticket tracking' },
-      { id: 'knowledgeBase', label: 'Knowledge Base', desc: 'Internal documentation' },
-    ]
-  },
-  {
-    group: 'Inventory',
-    modules: [
-      { id: 'inventory',   label: 'Inventory',   desc: 'Stock & warehouse management' },
-      { id: 'warehouses',  label: 'Warehouses',  desc: 'Manage warehouse locations' },
-      { id: 'stock',       label: 'Stock',       desc: 'Stock levels & alerts' },
-    ]
-  },
-  {
-    group: 'Projects',
-    modules: [
-      { id: 'projects',    label: 'Projects',    desc: 'Project management' },
-      { id: 'tasks',       label: 'Tasks',       desc: 'Task tracking & assignment' },
-      { id: 'timesheets',  label: 'Timesheets',  desc: 'Time tracking' },
+      { id: 'goals',       label: 'Goals & Targets',         desc: 'Set monthly/quarterly targets per agent or team' },
+      { id: 'pipelines',   label: 'Pipeline Builder',        desc: 'Customize deal stages for your industry' },
+      { id: 'workflows',   label: 'Workflow Automation',     desc: 'Automate repetitive tasks and assignments' },
+      { id: 'departments', label: 'Departments & Teams',     desc: 'Organize users into departments and teams' },
+      { id: 'branches',    label: 'Branch Locations',        desc: 'Manage multiple office branches' },
     ]
   },
 ];
