@@ -79,6 +79,7 @@ const Taskbar = ({
   const role = user?.role || 'agent';
   const searchConfig = getSearchConfig(role);
   const firstName = user?.name?.split(' ')[0] || 'there';
+  const companyName = user?.tenant?.name || null;
   const isDark = theme.mode === 'dark';
 
   useEffect(() => {
@@ -150,6 +151,11 @@ const Taskbar = ({
             <p className={`text-sm sm:text-base font-semibold truncate ${dm.textPrimary}`}>
               Welcome back, {firstName}
             </p>
+            {companyName && (
+              <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold" style={{ backgroundColor: 'var(--primary-color)', color: '#1E293B' }}>
+                {companyName}
+              </span>
+            )}
           </div>
 
           <form onSubmit={handleSearch} className="flex-1 min-w-0">
