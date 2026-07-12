@@ -1,7 +1,7 @@
 {
-  "name": "swavelink-sales-backend",
+  "name": "honeypot-crm-backend",
   "version": "1.0.0",
-  "description": "Swavelink Sales Management System - Backend API",
+  "description": "HoneyPot CRM - Backend API",
   "type": "module",
   "scripts": {
     "dev": "nodemon server.js",
