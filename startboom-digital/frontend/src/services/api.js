@@ -176,6 +176,7 @@ export const tenantsAPI = {
   // Onboarding
   getOnboarding: () => api.get('/tenants/onboarding'),
   saveOnboarding: (data) => api.patch('/tenants/onboarding', data),
+  updateModule: (moduleId, enabled) => api.patch(`/tenants/modules/${moduleId}`, { enabled }),
 };
 
 // Audit Logs API

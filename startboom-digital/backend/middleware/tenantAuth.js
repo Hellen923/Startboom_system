@@ -58,8 +58,8 @@ export const tenantAuth = async (req, res, next) => {
       });
     }
 
-    // Handle platform roles without tenant restrictions
-    if (user.role === 'superadmin' || user.role === 'manager') {
+    // Handle superadmin without tenant restrictions
+    if (user.role === 'superadmin') {
       req.user = {
         userId: user._id,
         email: user.email,
@@ -68,13 +68,13 @@ export const tenantAuth = async (req, res, next) => {
         name: user.name
       };
       req.tenant = null;
-      req.isSuperAdmin = user.role === 'superadmin';
-      req.isPlatformManager = user.role === 'manager';
-      req.tenantQuery = {}; // Super admin sees all data
+      req.isSuperAdmin = true;
+      req.isPlatformManager = false;
+      req.tenantQuery = {};
       req.canAddUsers = () => true;
       req.canAddClients = () => true;
       req.canAddDeals = () => true;
-      req.updateTenantUsage = async () => {}; // No-op for super admin
+      req.updateTenantUsage = async () => {};
       return next();
     }
 
