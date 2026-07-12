@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Building2, Plus, Search, CheckCircle, XCircle, Clock, Edit, Eye, X, Trash2, Users, MapPin } from 'lucide-react';
 import { tenantsAPI } from '../../services/api';
 import toast from 'react-hot-toast';
-import potLogo from '../../assets/pot logo.png';
+import sidebarLogo from '../../assets/sidebar.png';
+import { FORM_STYLES, BUTTON_STYLES } from '../../utils/designSystem';
 
 const StatusBadge = ({ status }) => {
   const styles = {
@@ -117,7 +118,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
 
           <button
             onClick={onClose}
-            className="w-full bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-xl font-medium transition-colors"
+            className={`${BUTTON_STYLES.primary} w-full`}
           >
             Done
           </button>
@@ -132,7 +133,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center space-x-3">
             <div className="brand-header p-2 rounded-xl">
-            <img src="/Swavelink.png" alt="Swavelink" className="w-6 h-6 object-contain" />
+            <img src={sidebarLogo} alt="HoneyPot" className="w-6 h-6 object-contain" />
             </div>
             <h2 className="text-lg font-bold text-gray-900">Create New Organization</h2>
           </div>
@@ -160,7 +161,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
                   type="text"
                   value={form.name}
                   onChange={e => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className={FORM_STYLES.input}
                   placeholder="e.g. Xtreative Ltd"
                 />
               </div>
@@ -170,7 +171,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
                   type="email"
                   value={form.email}
                   onChange={e => setForm({ ...form, email: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className={FORM_STYLES.input}
                   placeholder="admin@company.com"
                 />
               </div>
@@ -179,7 +180,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
                 <select
                   value={form.sector}
                   onChange={e => setForm({ ...form, sector: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className={FORM_STYLES.select}
                 >
                   <option value="">Select sector…</option>
                   <option value="IT">IT / Technology</option>
@@ -202,7 +203,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
                   type="text"
                   value={form.phone}
                   onChange={e => setForm({ ...form, phone: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className={FORM_STYLES.input}
                   placeholder="+256 200 000 000"
                 />
               </div>
@@ -216,28 +217,28 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
                     type="text"
                     value={form.addressStreet}
                     onChange={e => setForm({ ...form, addressStreet: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className={FORM_STYLES.input}
                     placeholder="Street address"
                   />
                   <input
                     type="text"
                     value={form.addressCity}
                     onChange={e => setForm({ ...form, addressCity: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className={FORM_STYLES.input}
                     placeholder="City"
                   />
                   <input
                     type="text"
                     value={form.addressState}
                     onChange={e => setForm({ ...form, addressState: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className={FORM_STYLES.input}
                     placeholder="State / Region"
                   />
                   <input
                     type="text"
                     value={form.addressCountry}
                     onChange={e => setForm({ ...form, addressCountry: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className={FORM_STYLES.input}
                     placeholder="Country"
                   />
                 </div>
@@ -253,7 +254,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
                   type="text"
                   value={form.adminName}
                   onChange={e => setForm({ ...form, adminName: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className={FORM_STYLES.input}
                   placeholder="e.g. John Doe"
                 />
               </div>
@@ -263,7 +264,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
                   type="text"
                   value={form.adminPhone}
                   onChange={e => setForm({ ...form, adminPhone: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className={FORM_STYLES.input}
                   placeholder="+256 700 000 000"
                 />
               </div>
@@ -272,7 +273,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
                 <select
                   value={form.subscriptionPlan}
                   onChange={e => setForm({ ...form, subscriptionPlan: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className={FORM_STYLES.select}
                 >
                   <option value="starter">Starter - Free</option>
                   <option value="professional">Professional</option>
@@ -294,7 +295,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
               <button
                 type="button"
                 onClick={() => setCurrentStep(0)}
-                className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-medium transition-colors"
+                className={`${BUTTON_STYLES.secondary} flex-1`}
               >
                 Previous
               </button>
