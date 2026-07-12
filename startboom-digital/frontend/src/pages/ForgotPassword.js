@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { Mail, ArrowLeft, Send, Lock } from 'lucide-react';
 import { authAPI } from '../services/api';
+import sidebarLogo from '../assets/sidebar.png';
+import { BUTTON_STYLES, FORM_STYLES } from '../utils/designSystem';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -26,16 +28,16 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div className="min-h-screen flex bg-white dark:bg-[#0F1117]">
-            <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-white dark:bg-[#1A1D27]">
+        <div className="min-h-screen flex bg-[var(--color-bg-page)]">
+            <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-[var(--color-bg-page)]">
                 <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="mx-auto w-full max-w-sm lg:max-w-md">
                     <div className="text-center lg:text-left mb-10">
                         <Link to="/login" className="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 mb-6 transition-colors">
                             <ArrowLeft className="w-4 h-4 mr-2" />Back to Login
                         </Link>
                         <div className="flex items-center justify-center lg:justify-start space-x-3 mb-6">
-                            <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-2 rounded-xl flex items-center justify-center">
-                                <img src="/Swavelink.png" alt="Logo" className="w-8 h-8 object-contain" />
+                            <div className="bg-[var(--color-bg-card)] p-2 rounded-xl flex items-center justify-center border border-[var(--color-border)]">
+                                <img src={sidebarLogo} alt="HoneyPot" className="w-8 h-8 object-contain" />
                             </div>
                         </div>
                         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Forgot Password?</h2>
@@ -69,12 +71,12 @@ const ForgotPassword = () => {
                                         <Mail className="h-5 w-5 text-gray-400" />
                                     </div>
                                     <input id="email" name="email" type="email" required
-                                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-[#3A3D52] dark:bg-[#2A2D3E] dark:text-gray-100 rounded-xl placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200"
+                                        className={`${FORM_STYLES.input} pl-10 pr-3`}
                                         placeholder="Enter your registered email" value={email} onChange={(e) => setEmail(e.target.value)} />
                                 </div>
                             </div>
                             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit" disabled={loading}
-                                className="w-full bg-gradient-to-r from-primary-500 to-primary-600 text-white py-3 px-4 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl">
+                                className={`${BUTTON_STYLES.primary} w-full`}>
                                 {loading ? (
                                     <div className="flex items-center justify-center space-x-2">
                                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -90,7 +92,7 @@ const ForgotPassword = () => {
                     )}
                 </motion.div>
             </div>
-            <div className="hidden lg:flex flex-1 bg-gradient-to-br from-primary-500 to-primary-600">
+            <div className="hidden lg:flex flex-1 bg-[linear-gradient(135deg,_#182233_0%,_#0f172a_100%)]">
                 <div className="flex-1 flex items-center justify-center p-12 text-white text-center">
                     <div className="max-w-md">
                         <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-8 backdrop-blur-sm">
