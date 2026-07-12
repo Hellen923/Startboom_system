@@ -97,8 +97,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const mongoOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 30000, // 30 seconds
-  socketTimeoutMS: 45000, // 45 seconds
+  serverSelectionTimeoutMS: 30000,
+  socketTimeoutMS: 45000,
+  maxPoolSize: 50,
+  minPoolSize: 5,
 };
 
 // Validate MongoDB URI
