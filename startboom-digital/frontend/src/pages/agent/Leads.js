@@ -416,7 +416,7 @@ export default function Leads() {
       <div className="flex justify-end">
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-5 py-3 rounded-xl transition-all"
+          className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-5 py-3 rounded-xl transition-all shadow-sm"
         >
           <Plus size={18} />
           Create Lead

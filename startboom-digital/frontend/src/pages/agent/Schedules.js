@@ -1008,7 +1008,7 @@ const Schedules = () => {
         </button>
         <button 
           onClick={() => setShowForm(true)}
-          className="flex items-center space-x-2 bg-primary-500 text-white rounded-lg px-4 py-2 hover:bg-primary-600 transition-colors font-medium"
+          className="flex items-center space-x-2 bg-primary-600 text-white rounded-lg px-4 py-2 hover:bg-primary-700 transition-colors font-medium shadow-sm"
         >
           <Plus size={18} />
           <span>New Schedule</span>
@@ -1022,7 +1022,7 @@ const Schedules = () => {
             onClick={() => setView('calendar')}
             className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors font-medium ${
               view === 'calendar' 
-                ? 'bg-primary-500 text-white' 
+                ? 'bg-primary-600 text-white' 
                 : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
@@ -1033,7 +1033,7 @@ const Schedules = () => {
             onClick={() => setView('list')}
             className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors font-medium ${
               view === 'list' 
-                ? 'bg-primary-500 text-white' 
+                ? 'bg-primary-600 text-white' 
                 : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
