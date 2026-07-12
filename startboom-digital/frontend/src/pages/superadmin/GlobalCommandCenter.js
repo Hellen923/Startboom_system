@@ -34,7 +34,7 @@ import { tenantsAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useChartTheme, ANALYTICS_PALETTE } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
-import potLogo from '../../assets/pot logo.png';
+import sidebarLogo from '../../assets/sidebar.png';
 import Pagination from '../../components/Pagination';
 
 const formatNumber = (value) => new Intl.NumberFormat().format(Math.round(value || 0));
@@ -187,7 +187,7 @@ const GlobalCommandCenter = () => {
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex items-center gap-4">
             <div className="rounded-lg bg-primary-500 p-3">
-              <img src="/Swavelink.png" alt="Swavelink" className="h-8 w-8 object-contain" />
+              <img src={sidebarLogo} alt="HoneyPot" className="h-8 w-8 object-contain" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-950 md:text-3xl">Super Admin Overview</h1>
@@ -214,7 +214,7 @@ const GlobalCommandCenter = () => {
             </button>
             <button
               onClick={() => navigate('/superadmin/tenants')}
-              className="inline-flex items-center gap-2 rounded-lg bg-primary-500 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-600"
+              className="btn-primary"
             >
               Tenant Management
               <ArrowRight className="h-4 w-4" />
@@ -342,13 +342,13 @@ const GlobalCommandCenter = () => {
                   value={query}
                   onChange={(e) => { setQuery(e.target.value); setTenantPage(1); }}
                   placeholder="Search tenants..."
-                  className="w-full sm:w-64 rounded-lg border border-gray-300 py-2 pl-10 pr-3 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
+                  className="w-full sm:w-64 form-input pl-10 pr-3"
                 />
               </div>
               <select
                 value={statusFilter}
                 onChange={(e) => { setStatusFilter(e.target.value); setTenantPage(1); }}
-                className="rounded-lg border border-gray-300 py-2 px-3 text-sm outline-none focus:border-primary-500"
+                className="form-input px-3"
               >
                 <option value="">All Statuses</option>
                 <option value="active">Active</option>
