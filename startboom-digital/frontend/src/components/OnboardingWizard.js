@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Building2, Palette, Globe, Users, UserPlus, CheckCircle,
-  ArrowRight, ArrowLeft, X, Upload, Loader2, Sparkles
+  ArrowRight, ArrowLeft, X, Upload, Loader2, Sparkles, LayoutGrid
 } from 'lucide-react';
 import { tenantsAPI, usersAPI, clientsAPI, uploadAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -10,12 +10,25 @@ import toast from 'react-hot-toast';
 
 // ─── Step definitions ─────────────────────────────────────────────────────────
 const STEPS = [
-  { id: 'welcome',      label: 'Welcome',      icon: Sparkles  },
-  { id: 'branding',     label: 'Branding',     icon: Palette   },
-  { id: 'localization', label: 'Localization', icon: Globe     },
-  { id: 'team',         label: 'Team',         icon: Users     },
-  { id: 'client',       label: 'First Client', icon: UserPlus  },
+  { id: 'welcome',      label: 'Welcome',      icon: Sparkles    },
+  { id: 'branding',     label: 'Branding',     icon: Palette     },
+  { id: 'localization', label: 'Localization', icon: Globe       },
+  { id: 'modules',      label: 'Modules',      icon: LayoutGrid  },
+  { id: 'team',         label: 'Team',         icon: Users       },
+  { id: 'client',       label: 'First Client', icon: UserPlus    },
   { id: 'done',         label: 'Done',         icon: CheckCircle },
+];
+
+const ALL_MODULES = [
+  { id: 'clients',    label: 'Clients',    desc: 'Manage your customer base' },
+  { id: 'deals',      label: 'Deals',      desc: 'Track sales pipeline' },
+  { id: 'sales',      label: 'Sales',      desc: 'Record completed sales' },
+  { id: 'products',   label: 'Products',   desc: 'Product catalog & inventory' },
+  { id: 'territories',label: 'Territories',desc: 'Agent location assignments' },
+  { id: 'meetings',   label: 'Meetings',   desc: 'Schedule & track meetings' },
+  { id: 'schedules',  label: 'Schedules',  desc: 'Tasks & reminders' },
+  { id: 'analytics',  label: 'Analytics',  desc: 'Performance insights' },
+  { id: 'reports',    label: 'Reports',    desc: 'Export & custom reports' },
 ];
 
 const CURRENCIES = ['UGX','USD','EUR','GBP','KES','TZS','RWF','NGN','GHS','ZAR'];
@@ -239,6 +252,41 @@ const StepLocalization = ({ data, onChange }) => (
           </button>
         ))}
       </div>
+    </div>
+  </div>
+);
+
+// ─── Step: Modules ───────────────────────────────────────────────────────────
+const StepModules = ({ enabled, onToggle }) => (
+  <div className="space-y-6">
+    <div>
+      <h2 className="text-xl font-bold text-gray-900">Choose your modules</h2>
+      <p className="text-gray-500 text-sm mt-1">Enable only what your business needs. You can change this anytime in Settings.</p>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {ALL_MODULES.map(mod => {
+        const isOn = enabled[mod.id] !== false;
+        return (
+          <button
+            key={mod.id}
+            type="button"
+            onClick={() => onToggle(mod.id, !isOn)}
+            className={`flex items-start gap-3 p-3 rounded-xl border-2 text-left transition-all ${
+              isOn ? 'border-primary-500 bg-primary-50' : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}
+          >
+            <div className={`w-5 h-5 mt-0.5 rounded flex-shrink-0 border-2 flex items-center justify-center ${
+              isOn ? 'bg-primary-500 border-primary-500' : 'border-gray-300'
+            }`}>
+              {isOn && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+            </div>
+            <div>
+              <p className={`text-sm font-medium ${isOn ? 'text-primary-700' : 'text-gray-700'}`}>{mod.label}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{mod.desc}</p>
+            </div>
+          </button>
+        );
+      })}
     </div>
   </div>
 );
@@ -498,6 +546,11 @@ const OnboardingWizard = ({ onComplete }) => {
     branding: false, localization: false, team: false, client: false
   });
 
+  // Modules state — all on by default
+  const [modules, setModules] = useState(
+    Object.fromEntries(ALL_MODULES.map(m => [m.id, true]))
+  );
+
   // Branding state
   const [branding, setBranding] = useState({
     companyName:  user?.tenant?.name || '',
@@ -540,6 +593,17 @@ const OnboardingWizard = ({ onComplete }) => {
     };
     load();
   }, []);
+
+  const handleModuleToggle = async (moduleId, value) => {
+    setModules(prev => ({ ...prev, [moduleId]: value }));
+    try {
+      await tenantsAPI.updateModule(moduleId, value);
+    } catch {
+      // revert on failure
+      setModules(prev => ({ ...prev, [moduleId]: !value }));
+      toast.error('Failed to update module');
+    }
+  };
 
   const saveStep = async (step, completed, extraData = {}) => {
     try {
@@ -671,6 +735,9 @@ const OnboardingWizard = ({ onComplete }) => {
                   data={localization}
                   onChange={(k, v) => setLocalization(prev => ({ ...prev, [k]: v }))}
                 />
+              )}
+              {stepId === 'modules' && (
+                <StepModules enabled={modules} onToggle={handleModuleToggle} />
               )}
               {stepId === 'team' && (
                 <StepTeam onAgentCreated={() => setStepsCompleted(p => ({ ...p, team: true }))} />
