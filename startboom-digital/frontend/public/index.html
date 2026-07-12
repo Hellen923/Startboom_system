@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="CRM System" />
-    <link rel="icon" type="image/png" href="%PUBLIC_URL%/Swavelink.png" />
-    <title>Swavelink</title>
+    <link rel="icon" type="image/png" href="%PUBLIC_URL%/honeypot-icon.png" />
+    <title>HoneyPot CRM</title>
     <!-- Dark mode flash prevention: apply saved theme BEFORE first paint -->
     <script>
       (function () {
         try {
-          var saved = localStorage.getItem('swavelink_theme');
+          var saved = localStorage.getItem('honeypot_theme');
           var theme = saved ? JSON.parse(saved) : {};
           if (theme.mode === 'dark') {
             document.documentElement.classList.add('dark');
