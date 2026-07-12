@@ -114,10 +114,11 @@ router.post('/', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), ch
     let emailSent = false;
     let emailError = null;
     try {
+      const tenant = req.tenantId ? await Tenant.findById(req.tenantId).select('name').lean() : null;
       const emailResult = await sendEmail(
         normalizedEmail,
         'agentWelcome',
-        { name, email, otp }
+        { name, email, otp, companyName: tenant?.name || 'HoneyPot CRM' }
       );
       emailSent = emailResult.success;
       emailError = emailResult.error || null;
