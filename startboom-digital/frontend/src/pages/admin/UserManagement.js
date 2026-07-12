@@ -430,8 +430,8 @@ const UserManagement = () => {
   const getRoleMeta = (role) => {
     const roles = {
       superadmin: { label: 'Super Admin', badge: 'bg-red-100 text-red-700', iconBg: 'bg-red-100', icon: Shield, iconColor: 'text-red-600' },
-      manager: { label: 'Manager', badge: 'bg-blue-100 text-blue-700', iconBg: 'bg-blue-100', icon: Shield, iconColor: 'text-blue-600' },
-      admin: { label: 'Administrator', badge: 'bg-purple-100 text-purple-700', iconBg: 'bg-purple-100', icon: Shield, iconColor: 'text-purple-600' },
+      manager: { label: 'Manager', badge: 'bg-[#FEF3C7] text-[#D89A00]', iconBg: 'bg-[#FEF3C7]', icon: Shield, iconColor: 'text-[#D89A00]' },
+      admin: { label: 'Administrator', badge: 'bg-[#FEF3C7] text-[#B87900]', iconBg: 'bg-[#FEF3C7]', icon: Shield, iconColor: 'text-[#B87900]' },
       agent: { label: 'Sales Agent', badge: 'bg-primary-100 text-primary-700', iconBg: 'bg-primary-100', icon: User, iconColor: 'text-primary-600' }
     };
     return roles[role] || roles.agent;
@@ -464,11 +464,17 @@ const UserManagement = () => {
 
 return (
     <div className="min-h-screen py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full">
         {/* Header Section */}
         <div className="mb-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center space-x-3">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">User Management</h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400 max-w-2xl">
+                Manage platform users, search users quickly, and take action with a consistent enterprise-grade interface.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -488,7 +494,7 @@ return (
                     setNewUser({ name: '', email: '', phone: '', role: isSuperAdmin ? 'manager' : 'agent' });
                     setShowAddModal(true);
                   }}
-                  className="btn-brand text-white px-6 py-2.5 rounded-xl flex items-center space-x-2 hover:opacity-90 transition-all shadow-lg shadow-primary-500/25 font-semibold"
+                  className="btn-brand text-white px-6 py-2.5 rounded-xl flex items-center space-x-2 hover:opacity-90 transition-all shadow-lg shadow-[color:var(--primary-color)]/25 font-semibold"
                 >
                   <UserPlus className="w-5 h-5" />
                   <span>{isSuperAdmin ? 'Register Platform Role' : 'Add New Agent'}</span>
@@ -499,7 +505,7 @@ return (
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-4 mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -522,15 +528,15 @@ return (
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45 }}
-              className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
+              className="modern-card glass-effect rounded-xl shadow-md p-6 border border-white/10 hover:shadow-lg transition-all"
             >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Managers</p>
-                  <p className="text-2xl font-bold text-blue-600">{stats.managers}</p>
+                  <p className="text-2xl font-bold text-[#D89A00]">{stats.managers}</p>
                 </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-[#FEF3C7] rounded-xl flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-[#D89A00]" />
                 </div>
               </div>
             </motion.div>
@@ -579,10 +585,10 @@ return (
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500 mb-1">Admins</p>
-                <p className="text-2xl font-bold text-purple-600">{stats.admins}</p>
+                <p className="text-2xl font-bold text-[#B87900]">{stats.admins}</p>
               </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                <Shield className="w-6 h-6 text-purple-600" />
+              <div className="w-12 h-12 bg-[#FEF3C7] rounded-xl flex items-center justify-center">
+                <Shield className="w-6 h-6 text-[#B87900]" />
               </div>
             </div>
           </motion.div>
@@ -606,35 +612,37 @@ return (
         </div>
 
         {/* Search and Filters */}
-        <div className="modern-card glass-effect rounded-xl shadow-md border border-white/10 p-6 mb-6"
->
-          <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-            <div className="flex-1 relative">
+        <div className="mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex-1 min-w-0 relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search by name, email, or phone..."
-                className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                className="w-full h-14 pl-14 pr-4 rounded-2xl border border-gray-200 bg-white text-sm text-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            
-            <div className="flex items-center space-x-3">
+
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={() => setShowFilters(!showFilters)}
-className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
-                           showFilters 
-                             ? 'bg-primary-50 text-primary-600 border-primary-200' 
-                             : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
-                         } border`}
+                className={`h-12 px-4 rounded-xl flex items-center space-x-2 transition-all ${
+                  showFilters
+                    ? 'bg-primary-50 text-primary-600 border-primary-200'
+                    : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
+                } border`}
               >
                 <Filter className="w-4 h-4" />
                 <span>Filters</span>
                 <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
               </button>
-              
-              <button className="px-4 py-3 bg-gray-50 text-gray-600 rounded-xl flex items-center space-x-2 hover:bg-gray-100 transition-all border border-gray-200" onClick={handleExportCSV}>
+
+              <button
+                className="h-12 px-4 bg-gray-50 text-gray-600 rounded-xl flex items-center space-x-2 hover:bg-gray-100 transition-all border border-gray-200"
+                onClick={handleExportCSV}
+              >
                 <Download className="w-4 h-4" />
                 <span>Export</span>
               </button>
@@ -712,11 +720,10 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
         </div>
 
         {/* Users Grid/Table */}
-        <div className="modern-card glass-effect rounded-xl shadow-md border border-white/10 overflow-hidden">
-          {filteredUsers.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="table-header">
+        {filteredUsers.length > 0 ? (
+          <div className="mb-8 overflow-x-auto">
+            <table className="w-full min-w-[760px]">
+              <thead className="table-header">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Contact</th>
@@ -824,7 +831,7 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
                                       e.stopPropagation();
                                       handleResendOTP(userItem._id, userItem.name);
                                     }}
-                                    className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all"
+                                    className="p-2 text-gray-400 hover:text-[#D89A00] hover:bg-[#FEF3C7] rounded-lg transition-all"
                                     title="Resend OTP"
                                   >
                                     <RefreshCw className="w-4 h-4" />
@@ -839,7 +846,7 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
                                       e.stopPropagation();
                                       openTargetModal(userItem);
                                     }}
-                                    className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all"
+                                    className="p-2 text-gray-400 hover:text-[#D89A00] hover:bg-[#FEF3C7] rounded-lg transition-all"
                                     title="Set Targets"
                                   >
                                     <TrendingUp className="w-4 h-4" />
@@ -853,7 +860,7 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
                                 e.stopPropagation();
                                 handleEditClick(userItem);
                               }}
-                              className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all"
+                              className="p-2 text-gray-400 hover:text-[#D89A00] hover:bg-[#FEF3C7] rounded-lg transition-all"
                               title="Edit User"
                             >
                               <Edit className="w-4 h-4" />
@@ -925,7 +932,7 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
                     setNewUser({ name: '', email: '', phone: '', role: isSuperAdmin ? 'manager' : 'agent' });
                     setShowAddModal(true);
                   }}
-                  className="btn-brand text-white px-6 py-3 rounded-xl inline-flex items-center space-x-2 hover:opacity-90 shadow-lg shadow-primary-500/25"
+                  className="btn-brand text-white px-6 py-3 rounded-xl inline-flex items-center space-x-2 hover:opacity-90 shadow-lg shadow-[color:var(--primary-color)]/25"
                 >
                   <UserPlus className="w-5 h-5" />
                   <span>{isSuperAdmin ? 'Register First Platform Role' : 'Register First Agent'}</span>
@@ -933,7 +940,6 @@ className={`px-4 py-3 rounded-xl flex items-center space-x-2 transition-all ${
               )}
             </div>
           )}
-        </div>
 
         <Pagination
           currentPage={currentPage}
@@ -1367,7 +1373,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
               <div className="mt-6">
                 <button
                   onClick={() => setShowSuccessModal(false)}
-                  className="w-full py-3 btn-brand text-white rounded-xl hover:opacity-90 transition-all shadow-lg shadow-primary-500/25"
+                  className="w-full py-3 btn-brand text-white rounded-xl hover:opacity-90 transition-all shadow-lg shadow-[color:var(--primary-color)]/25"
                 >
                   Done
                 </button>
@@ -1389,7 +1395,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
             >
               <div className="px-6 py-4 brand-header">
                 <h3 className="text-lg font-semibold text-white">Edit User</h3>
-                <p className="text-blue-100 text-sm mt-1">Update user information</p>
+                <p className="text-[#FEF3C7] text-sm mt-1">Update user information</p>
               </div>
               
               <form onSubmit={handleUpdateUser} className="p-6 space-y-4">
@@ -1398,7 +1404,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   <input
                     value={editUser.name}
                     onChange={(e) => setEditUser({ ...editUser, name: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all"
                   />
                 </div>
                 
@@ -1407,7 +1413,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   <input
                     value={editUser.phone || ''}
                     onChange={(e) => setEditUser({ ...editUser, phone: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all"
                   />
                 </div>
                 
@@ -1417,7 +1423,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                     <select
                       value={editUser.department}
                       onChange={(e) => setEditUser({ ...editUser, department: e.target.value, customDepartment: e.target.value === 'Others' ? editUser.customDepartment : '' })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all"
                     >
                       <option value="">Select Department</option>
                       <option value="HR">HR</option>
@@ -1428,7 +1434,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                     {editUser.department === 'Others' && (
                       <input
                         type="text"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all mt-2"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all mt-2"
                         placeholder="Enter department name"
                         value={editUser.customDepartment || ''}
                         onChange={(e) => setEditUser({ ...editUser, customDepartment: e.target.value })}
@@ -1441,7 +1447,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                    <select
                      value={editUser.region || ''}
                      onChange={(e) => setEditUser({ ...editUser, region: e.target.value })}
-                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all"
                    >
                      <option value="">Select Region</option>
                      <option value="Central">Central</option>
@@ -1464,7 +1470,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                    <select
                      value={editUser.role}
                      onChange={(e) => setEditUser({ ...editUser, role: e.target.value })}
-                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all"
                    >
                      <option value="admin">Administrator</option>
                      <option value="manager">Manager</option>
@@ -1480,7 +1486,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                      <select
                        value={editUser.customRole || ''}
                        onChange={(e) => setEditUser({ ...editUser, customRole: e.target.value })}
-                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all"
                      >
                        <option value="">Default Permissions</option>
                        {customRoles.map(role => (
@@ -1496,7 +1502,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                       type="checkbox"
                       checked={editUser.isActive !== false}
                       onChange={(e) => setEditUser({ ...editUser, isActive: e.target.checked })}
-                      className="w-4 h-4 text-blue-500 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-[var(--primary-color)] rounded focus:ring-[var(--primary-color)]"
                     />
                     <span className="text-sm text-gray-700">Active</span>
                   </label>
@@ -1505,7 +1511,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                     <select
                       value={editUser.status || 'offline'}
                       onChange={(e) => setEditUser({ ...editUser, status: e.target.value })}
-                      className="w-full px-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)]"
                     >
                       <option value="offline">Offline</option>
                       <option value="online">Online</option>
@@ -1523,7 +1529,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-3 px-4 btn-brand text-white rounded-xl hover:opacity-90 transition-all shadow-lg shadow-blue-500/25"
+                    className="flex-1 py-3 px-4 btn-brand text-white rounded-xl hover:opacity-90 transition-all shadow-lg shadow-[color:var(--primary-color)]/25"
                   >
                     Save Changes
                   </button>
@@ -1682,7 +1688,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                    </button>
                    <button
                      type="submit"
-                     className="flex-1 py-3 px-4 btn-brand text-white rounded-xl hover:opacity-90 transition-all disabled:opacity-50 shadow-lg shadow-primary-500/25"
+                     className="flex-1 py-3 px-4 btn-brand text-white rounded-xl hover:opacity-90 transition-all disabled:opacity-50 shadow-lg shadow-[color:var(--primary-color)]/25"
                    >
                      {formLoading ? (
                        <div className="flex items-center justify-center space-x-2">
@@ -1704,4 +1710,3 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
  };
 
 export default UserManagement;
-
