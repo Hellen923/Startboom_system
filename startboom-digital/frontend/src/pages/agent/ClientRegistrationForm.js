@@ -10,6 +10,7 @@ import {
 import { clientsAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import { BUTTON_STYLES, FORM_STYLES } from '../../utils/designSystem';
 
 const ClientRegistrationForm = ({ onClose, onSuccess }) => {
   const { user } = useAuth();
@@ -329,9 +330,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="text"
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                      className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
-                        errors.name ? 'border-red-300' : 'border-gray-300'
-                      }`}
+                      className={`${FORM_STYLES.input} ${errors.name ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : ''}`}
                       placeholder="Enter full name"
                     />
                     {errors.name && (
@@ -365,9 +364,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="email"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
-                        errors.email ? 'border-red-300' : 'border-gray-300'
-                      }`}
+                      className={`${FORM_STYLES.input} ${errors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : ''}`}
                       placeholder="email@example.com"
                     />
                     {errors.email && (
@@ -383,9 +380,7 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
-                        errors.phone ? 'border-red-300' : 'border-gray-300'
-                      }`}
+                      className={`${FORM_STYLES.input} ${errors.phone ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : ''}`}
                       placeholder="+256 7XX XXX XXX"
                     />
                     {errors.phone && (
@@ -799,14 +794,14 @@ const ClientRegistrationForm = ({ onClose, onSuccess }) => {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  className={`${BUTTON_STYLES.secondary}`}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className={`${BUTTON_STYLES.primary} disabled:opacity-50`}
                 >
                   {loading ? (
                     <div className="flex items-center space-x-2">

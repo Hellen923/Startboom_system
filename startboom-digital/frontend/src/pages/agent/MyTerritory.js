@@ -39,10 +39,19 @@ const MyTerritory = () => {
 
   if (loading) {
     return (
-      <div className="p-6 max-w-6xl mx-auto">
-        <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-          <p className="mt-4 text-gray-600">Loading territory information...</p>
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <MapPin className="w-7 h-7 text-primary-600" />
+              My Territory
+            </h1>
+            <p className="text-gray-600 mt-1">View your assigned territory and team members</p>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            <p className="mt-4 text-gray-600">Loading territory information...</p>
+          </div>
         </div>
       </div>
     );
@@ -50,19 +59,29 @@ const MyTerritory = () => {
 
   if (!territory) {
     return (
-      <div className="p-6 max-w-6xl mx-auto">
-        <div className="bg-white rounded-xl shadow-sm p-12 text-center">
-          <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">No Territory Assigned</h2>
-          <p className="text-gray-600">You haven't been assigned to a territory yet.</p>
-          <p className="text-sm text-gray-500 mt-2">Contact your administrator for territory assignment.</p>
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <MapPin className="w-7 h-7 text-primary-600" />
+              My Territory
+            </h1>
+            <p className="text-gray-600 mt-1">View your assigned territory and team members</p>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+            <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">No Territory Assigned</h2>
+            <p className="text-gray-600">You haven't been assigned to a territory yet.</p>
+            <p className="text-sm text-gray-500 mt-2">Contact your administrator for territory assignment.</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -188,6 +207,7 @@ const MyTerritory = () => {
         )}
       </div>
     </div>
+  </div>
   );
 };
 
