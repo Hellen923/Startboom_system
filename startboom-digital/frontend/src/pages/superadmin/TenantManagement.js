@@ -631,8 +631,10 @@ const DeleteModal = ({ tenant, onClose, onDeleted }) => {
   const [confirmText, setConfirmText] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const isMatch = confirmText.trim().toLowerCase() === tenant.name.trim().toLowerCase();
+
   const handleDelete = async () => {
-    if (confirmText !== tenant.name) return;
+    if (!isMatch) return;
     try {
       setLoading(true);
       await tenantsAPI.delete(tenant._id);
@@ -659,26 +661,36 @@ const DeleteModal = ({ tenant, onClose, onDeleted }) => {
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
-        <p className="text-gray-600 mb-4">This action cannot be undone. This will permanently delete the</p>
+        <p className="text-gray-600 mb-4">This action cannot be undone. This will permanently delete:</p>
         <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4">
           <p className="text-sm font-semibold text-red-800">{tenant.name}</p>
-          <p className="text-xs text-red-600 mt-1">and all associated data.</p>
+          <p className="text-xs text-red-600 mt-1">and all associated users, clients, deals, and data.</p>
         </div>
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Type the organization name <span className="font-bold text-primary-600">{tenant.name}</span> to confirm:
+            Type <span className="font-bold text-red-600 select-all">{tenant.name}</span> to confirm:
           </label>
           <input
             type="text"
             value={confirmText}
             onChange={e => setConfirmText(e.target.value)}
-            className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="Type organization name here"
+            className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-colors ${
+              confirmText && isMatch
+                ? 'border-red-400 focus:ring-red-400 bg-red-50'
+                : 'border-gray-300 focus:ring-primary-500 focus:border-primary-500'
+            }`}
+            placeholder={tenant.name}
           />
+          {confirmText && !isMatch && (
+            <p className="text-xs text-red-500 mt-1">Name doesn't match — check spelling</p>
+          )}
+          {isMatch && (
+            <p className="text-xs text-red-600 font-medium mt-1">✓ Name confirmed — you can now delete</p>
+          )}
         </div>
         <button
           onClick={handleDelete}
-          disabled={loading || confirmText !== tenant.name}
+          disabled={loading || !isMatch}
           className="w-full bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Deleting...' : 'Delete Organization'}
