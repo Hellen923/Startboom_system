@@ -1,5 +1,5 @@
 /**
- * Swavelink — unified theme tokens (CSS variable + design system classes)
+ * HoneyPot — unified theme tokens (CSS variable + design system classes)
  *
  * Light mode: blue gradient headers/buttons (from-primary-500 → primary-600)
  * Dark mode:  solid darker blue (#0D5B80)
