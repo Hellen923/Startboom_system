@@ -347,7 +347,7 @@ const Sales = () => {
     // Company info (if available)
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text('Startboom Digital CRM', pageWidth / 2, 28, { align: 'center' });
+    doc.text('HoneyPot CRM', pageWidth / 2, 28, { align: 'center' });
     
     // Receipt details
     doc.setFontSize(11);

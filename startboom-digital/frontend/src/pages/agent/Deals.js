@@ -213,7 +213,7 @@ const Deals = () => {
     doc.text('QUOTATION', pageWidth / 2, 20, { align: 'center' });
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text('Startboom Digital CRM', pageWidth / 2, 28, { align: 'center' });
+    doc.text('HoneyPot CRM', pageWidth / 2, 28, { align: 'center' });
     doc.setFontSize(11);
     doc.setTextColor(60);
     doc.text(`Quote #: ${deal._id}`, 14, 45);
@@ -362,7 +362,7 @@ const Deals = () => {
       <div className="flex justify-end">
         <button 
           onClick={() => setShowCreateModal(true)}
-          className="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2"
+          className="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2 shadow-sm"
         >
           <Plus size={20} />
           Create New Deal
