@@ -7,6 +7,7 @@ import {
 import api from '../../services/api';
 import toast from 'react-hot-toast';
 import Pagination from '../../components/Pagination';
+import { BUTTON_STYLES } from '../../utils/designSystem';
 
 // ── Stock badge helper ───────────────────────────────────────────────────────
 const StockBadge = ({ qty, threshold }) => {
@@ -148,8 +149,8 @@ const ProductFormModal = ({ product, onClose, onSaved }) => {
               placeholder="Brief product description..." className={inputCls} />
           </div>
           <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-            <button type="submit" disabled={saving} className="px-5 py-2 text-sm font-medium bg-primary-500 hover:bg-primary-600 text-white rounded-lg disabled:opacity-50">
+            <button type="button" onClick={onClose} className={`${BUTTON_STYLES.secondary}`}>Cancel</button>
+            <button type="submit" disabled={saving} className={`${BUTTON_STYLES.primary} disabled:opacity-50`}>
               {saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Product'}
             </button>
           </div>
@@ -181,7 +182,7 @@ const CSVUploadModal = ({ onClose, onSuccess }) => {
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'swavelink-product-template.csv'; a.click();
+    a.href = url; a.download = 'honeypot-product-template.csv'; a.click();
     URL.revokeObjectURL(url);
   };
 
@@ -247,7 +248,7 @@ const CSVUploadModal = ({ onClose, onSuccess }) => {
             <p className="text-sm font-medium text-gray-700 mb-1">Drag & drop your CSV here</p>
             <p className="text-xs text-gray-500 mb-3">or click to browse (max 5 MB)</p>
             <input type="file" accept=".csv" onChange={(e) => setFile(e.target.files[0])} className="hidden" id="csv-input" />
-            <label htmlFor="csv-input" className="cursor-pointer px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+            <label htmlFor="csv-input" className={`${BUTTON_STYLES.secondary} cursor-pointer`}>
               Browse File
             </label>
             {file && (
@@ -289,11 +290,11 @@ const CSVUploadModal = ({ onClose, onSuccess }) => {
           )}
 
           <div className="flex gap-3">
-            <button onClick={downloadTemplate} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+            <button onClick={downloadTemplate} className={`${BUTTON_STYLES.secondary} flex-1`}>
               <Download className="w-4 h-4" /> Download Template
             </button>
             <button onClick={handleUpload} disabled={!file || uploading}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">
+              className={`${BUTTON_STYLES.primary} flex-1 disabled:opacity-50`}>
               {uploading ? <><RefreshCw className="w-4 h-4 animate-spin" /> Uploading...</> : <><Upload className="w-4 h-4" /> Upload Now</>}
             </button>
           </div>
