@@ -5,7 +5,7 @@ import {
   Users, BarChart3, Calendar, ShoppingCart, TrendingUp, Shield, ArrowRight,
   CheckCircle, Star, Zap, Target, DollarSign, LineChart
 } from 'lucide-react';
-import potLogo from '../assets/pot logo.png';
+import sidebarLogo from '../assets/sidebar.png';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -95,7 +95,7 @@ const LandingPage = () => {
               >
                 <div className="h-32 w-32 lg:h-40 lg:w-40 flex items-center justify-center">
                   <img 
-                    src={potLogo} 
+                    src={sidebarLogo} 
                     alt="HoneyPot" 
                     className="w-full h-full object-contain"
                   />
@@ -138,7 +138,7 @@ const LandingPage = () => {
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate('/login')}
-                  className="group px-8 py-4 bg-gradient-to-r from-[#D99A00] to-[#B7791F] hover:from-[#B7791F] hover:to-[#D99A00] text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-2xl shadow-[#D99A00]/50 transition-all"
+                  className="group btn-primary px-8 py-4"
                 >
                   Get Started
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -341,7 +341,7 @@ const LandingPage = () => {
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/login')}
-                className="group px-10 py-5 bg-gradient-to-r from-[#D99A00] to-[#B7791F] hover:from-[#B7791F] hover:to-[#D99A00] text-white text-lg rounded-xl font-bold flex items-center gap-3 mx-auto shadow-2xl shadow-[#D99A00]/50 transition-all"
+                className="group btn-primary px-10 py-5 text-lg mx-auto"
               >
                 Get Started
                 <Zap className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -358,7 +358,7 @@ const LandingPage = () => {
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 flex items-center justify-center">
                 <img 
-                  src={potLogo} 
+                  src={sidebarLogo} 
                   alt="HoneyPot" 
                   className="w-full h-full object-contain"
                 />

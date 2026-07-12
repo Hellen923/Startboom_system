@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import potLogo from '../assets/pot logo.png';
+import sidebarLogo from '../assets/sidebar.png';
+import { BUTTON_STYLES, FORM_STYLES } from '../utils/designSystem';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -66,7 +67,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Form */}
-      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-[#FAFAF8]">
+      <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24 bg-[var(--color-bg-page)]">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -77,18 +78,18 @@ const Login = () => {
           <div className="text-center lg:text-left">
             <div className="flex items-center justify-center lg:justify-start space-x-4 mb-8">
               <div className="w-16 h-16 flex items-center justify-center">
-                <img src={potLogo} alt="HoneyPot Logo" className="w-full h-full object-contain" />
+                <img src={sidebarLogo} alt="HoneyPot Logo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-[#1F2937]">HoneyPot</h1>
-                <p className="text-sm text-[#D99A00] font-medium">CRM & Sales Platform</p>
+                <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">HoneyPot</h1>
+                <p className="text-sm text-[var(--primary-color)] font-medium">CRM & Sales Platform</p>
               </div>
             </div>
 
-            <h2 className="text-3xl font-bold text-[#1F2937] mb-2">
+            <h2 className="text-3xl font-bold text-[var(--color-text-primary)] mb-2">
               Welcome back
             </h2>
-            <p className="text-[#6B7280] mb-8">
+            <p className="text-[var(--color-text-secondary)] mb-8">
               Sign in to your account to continue
             </p>
           </div>
@@ -97,19 +98,19 @@ const Login = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#1F2937] mb-2">
+              <label htmlFor="email" className={FORM_STYLES.label}>
                 Email Address
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-[var(--color-text-placeholder)]" />
                 </div>
                 <input
                   id="email"
                   name="email"
                   type="email"
                   required
-                  className="block w-full pl-10 pr-3 py-3 border border-[#E5E7EB] bg-white text-[#1F2937] rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D99A00] focus:border-[#D99A00] transition-colors duration-200"
+                  className={`${FORM_STYLES.input} pl-11 pr-4`}
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
@@ -120,27 +121,27 @@ const Login = () => {
             {/* Password Field */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="block text-sm font-medium text-[#1F2937]">
+                <label htmlFor="password" className={FORM_STYLES.label}>
                   Password
                 </label>
                 <button
                   type="button"
-                  className="text-sm text-[#D99A00] hover:text-[#B7791F] font-medium"
+                  className="text-sm text-[var(--primary-color)] hover:text-[var(--primary-hover)] font-medium transition-colors"
                   onClick={() => navigate('/forgot-password')}
                 >
                   Forgot password?
                 </button>
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-[var(--color-text-placeholder)]" />
                 </div>
                 <input
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
-                  className="block w-full pl-10 pr-10 py-3 border border-[#E5E7EB] bg-white text-[#1F2937] rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D99A00] focus:border-[#D99A00] transition-colors duration-200"
+                  className={`${FORM_STYLES.input} pl-11 pr-12`}
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleChange}
@@ -161,11 +162,11 @@ const Login = () => {
 
             {/* Submit Button */}
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.01, y: -1 }}
+              whileTap={{ scale: 0.99 }}
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-[#D99A00] to-[#B7791F] text-white py-3 px-4 rounded-xl font-semibold focus:outline-none focus:ring-2 focus:ring-[#D99A00] focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+              className={`${BUTTON_STYLES.primary} w-full`}
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -180,9 +181,9 @@ const Login = () => {
 
           {/* Help Text */}
           <div className="mt-8 text-center">
-            <p className="text-sm text-[#6B7280]">
+            <p className="text-sm text-[#64748B]">
               Need help?{' '}
-              <a href="mailto:support@honeypot.com" className="text-[#D99A00] hover:text-[#B7791F] font-medium">
+              <a href="mailto:support@honeypot.com" className="text-[var(--primary-color)] hover:text-[var(--primary-hover)] font-medium transition-colors">
                 Contact support
               </a>
             </p>
@@ -191,7 +192,7 @@ const Login = () => {
       </div>
 
       {/* Right Side - Illustration */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#1F2937] via-[#374151] to-[#111827]">
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#182233] via-[#1E2D42] to-[#0F172A]">
         <div className="flex-1 flex items-center justify-center p-12 relative">
           {/* Subtle honey accent overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#D99A00]/5"></div>
@@ -204,31 +205,31 @@ const Login = () => {
           >
             <div className="mb-8">
               <div className="w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-                <img src={potLogo} alt="HoneyPot Logo" className="w-full h-full object-contain opacity-90" />
+                <img src={sidebarLogo} alt="HoneyPot Logo" className="w-full h-full object-contain opacity-90" />
               </div>
               <h3 className="text-4xl font-bold mb-4">HoneyPot</h3>
-              <p className="text-gray-300 text-lg max-w-md mx-auto">
+              <p className="text-[#94A3B8] text-lg max-w-md mx-auto">
                 Streamline your sales process, manage clients efficiently, and boost your team's performance with our powerful sales management solution.
               </p>
             </div>
 
             {/* Features List */}
             <div className="space-y-4 mt-12 max-w-xs mx-auto">
-              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-                <div className="w-3 h-3 bg-[#D99A00] rounded-full"></div>
-                <span className="text-white font-semibold text-lg">Product Management</span>
+              <div className="flex items-center gap-4 bg-white/8 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="w-2.5 h-2.5 bg-[#D89A00] rounded-full shrink-0"></div>
+                <span className="text-white font-medium">Product Management</span>
               </div>
-              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-                <div className="w-3 h-3 bg-[#D99A00] rounded-full"></div>
-                <span className="text-white font-semibold text-lg">Territory Mapping</span>
+              <div className="flex items-center gap-4 bg-white/8 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="w-2.5 h-2.5 bg-[#D89A00] rounded-full shrink-0"></div>
+                <span className="text-white font-medium">Territory Mapping</span>
               </div>
-              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-                <div className="w-3 h-3 bg-[#D99A00] rounded-full"></div>
-                <span className="text-white font-semibold text-lg">Team Performance</span>
+              <div className="flex items-center gap-4 bg-white/8 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="w-2.5 h-2.5 bg-[#D89A00] rounded-full shrink-0"></div>
+                <span className="text-white font-medium">Team Performance</span>
               </div>
-              <div className="flex items-center justify-start space-x-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-                <div className="w-3 h-3 bg-[#D99A00] rounded-full"></div>
-                <span className="text-white font-semibold text-lg">Sales Analytics</span>
+              <div className="flex items-center gap-4 bg-white/8 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="w-2.5 h-2.5 bg-[#D89A00] rounded-full shrink-0"></div>
+                <span className="text-white font-medium">Sales Analytics</span>
               </div>
             </div>
           </motion.div>
