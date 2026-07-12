@@ -152,7 +152,7 @@ const Goals = () => {
             setEditingGoal(null);
             setShowModal(true);
           }}
-          className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all"
+          className="flex items-center space-x-2 px-6 py-3 bg-[#D89A00] hover:bg-[#B87900] text-white rounded-lg hover:shadow-lg transition-all"
         >
           <Plus className="w-5 h-5" />
           <span className="font-semibold">New Goal</span>
@@ -201,7 +201,7 @@ const Goals = () => {
       {/* Filters */}
       <div className={`rounded-xl p-6 mb-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
         <div className="flex items-center space-x-2 mb-4">
-          <Filter className="w-5 h-5 text-indigo-600" />
+          <Filter className="w-5 h-5 text-[#D89A00]" />
           <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Filters
           </h3>
@@ -279,7 +279,7 @@ const Goals = () => {
                 setEditingGoal(null);
                 setShowModal(true);
               }}
-              className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+              className="px-6 py-3 bg-[#D89A00] text-white rounded-lg hover:bg-[#B87900] transition"
             >
               Create Goal
             </button>
@@ -620,7 +620,7 @@ const GoalModal = ({ goal, isDark, onSave, onClose }) => {
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              className="flex-1 px-4 py-2 bg-[#D89A00] text-white rounded-lg hover:bg-[#B87900]"
             >
               Save Goal
             </button>
