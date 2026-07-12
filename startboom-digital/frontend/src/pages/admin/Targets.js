@@ -160,7 +160,7 @@ const Targets = () => {
               <p className="text-sm font-medium text-gray-600">Total Agents</p>
               <p className="text-2xl font-bold text-gray-900 mt-2">{summary.totalAgents}</p>
             </div>
-            <div className="p-3 bg-blue-100 rounded-full">
+            <div className="p-3 bg-[#FEF3C7] rounded-full">
               <Users className="w-6 h-6 text-blue-600" />
             </div>
           </div>
@@ -194,8 +194,8 @@ const Targets = () => {
               <p className="text-sm font-medium text-gray-600">Avg Achievement</p>
               <p className="text-2xl font-bold text-gray-900 mt-2">{summary.avgTargetAchievement.toFixed(0)}%</p>
             </div>
-            <div className="p-3 bg-purple-100 rounded-full">
-              <TrendingUp className="w-6 h-6 text-purple-600" />
+            <div className="p-3 bg-[#FEF3C7] rounded-full">
+              <TrendingUp className="w-6 h-6 text-[#B87900]" />
             </div>
           </div>
         </motion.div>

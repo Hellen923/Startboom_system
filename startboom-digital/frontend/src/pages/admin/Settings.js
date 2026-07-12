@@ -16,6 +16,7 @@ import {
   rolesAPI
 } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
+import { BUTTON_STYLES, FORM_STYLES } from "../../utils/designSystem";
 
 const Settings = () => {
   const { user, updateUser } = useAuth();
@@ -716,7 +717,7 @@ const Settings = () => {
                       />
                       <label
                         htmlFor="logo-upload"
-                        className="cursor-pointer bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2"
+                        className="cursor-pointer btn-brand text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2"
                       >
                         <Upload className="w-4 h-4" />
                         <span>{brandingLoading ? 'Uploading...' : 'Upload Logo'}</span>
@@ -741,7 +742,7 @@ const Settings = () => {
                         type="text"
                         value={branding.primaryColor}
                         onChange={e => setBranding(prev => ({ ...prev, primaryColor: e.target.value }))}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
+                        className={`${FORM_STYLES.input} flex-1 font-mono`}
                         placeholder="#FFD700"
                       />
                     </div>
@@ -760,7 +761,7 @@ const Settings = () => {
                         type="text"
                         value={branding.secondaryColor}
                         onChange={e => setBranding(prev => ({ ...prev, secondaryColor: e.target.value }))}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
+                        className={`${FORM_STYLES.input} flex-1 font-mono`}
                         placeholder="#1f2937"
                       />
                     </div>
@@ -771,13 +772,13 @@ const Settings = () => {
                 {/* Custom Domain */}
                 <div className="mt-8 border-t border-gray-200 pt-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Custom Subdomain</label>
-                   <p className="text-xs text-gray-500 mb-3">Set your company's custom subdomain (e.g. <span className="font-mono text-primary-600">swavelink.crm.com</span>). Contact your platform provider to activate DNS routing after saving.</p>
+                   <p className="text-xs text-gray-500 mb-3">Set your company's custom subdomain (e.g. <span className="font-mono text-primary-600">honeypot.crm.com</span>). Contact your platform provider to activate DNS routing after saving.</p>
                   <div className="flex items-center space-x-3">
                     <input
                       type="text"
                       value={branding.customDomain}
                       onChange={e => setBranding(prev => ({ ...prev, customDomain: e.target.value.toLowerCase().trim() }))}
-                      className="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 font-mono"
+                      className={`${FORM_STYLES.input} w-full md:w-1/2 font-mono`}
                       placeholder="yourcompany.crm.com"
                     />
                   </div>
@@ -793,7 +794,7 @@ const Settings = () => {
                   <select
                     value={branding.currency}
                     onChange={e => setBranding(prev => ({ ...prev, currency: e.target.value }))}
-                    className="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    className={`${FORM_STYLES.select} w-full md:w-1/2`}
                   >
                     <option value="UGX">UGX (USh) - Ugandan Shilling</option>
                     <option value="USD">USD ($) - US Dollar</option>
@@ -813,7 +814,7 @@ const Settings = () => {
                   <p className="text-sm font-medium text-gray-700 mb-3">Preview</p>
                   <div className="flex items-center space-x-3 p-3 rounded-lg" style={{ backgroundColor: branding.primaryColor }}>
                     {logoPreview && <img src={logoPreview} alt="Logo" className="w-8 h-8 object-contain" />}
-                  <span className="text-white font-bold">Swavelink CRM</span>
+                  <span className="text-white font-bold">HoneyPot CRM</span>
                   </div>
                 </div>
               </div>
@@ -822,7 +823,7 @@ const Settings = () => {
                 <button
                   onClick={handleSaveBranding}
                   disabled={brandingLoading}
-                    className="bg-primary-500 text-white px-6 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-600 transition-colors disabled:opacity-50"
+                    className={`${BUTTON_STYLES.primary} disabled:opacity-50`}
                 >
                   <Save className="w-5 h-5" />
                   <span>{brandingLoading ? 'Saving...' : 'Save Branding'}</span>
@@ -895,7 +896,7 @@ const Settings = () => {
                     </select>
                     <input type="text" value={templateForm.subject} onChange={e => setTemplateForm(prev => ({ ...prev, subject: e.target.value }))} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Subject" />
                     <textarea rows={8} value={templateForm.body} onChange={e => setTemplateForm(prev => ({ ...prev, body: e.target.value }))} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Body. Use {{clientName}}, {{agentName}}, {{companyName}} placeholders." />
-                    <button onClick={handleCreateTemplate} disabled={templatesLoading} className="bg-primary-500 text-white px-5 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-600 disabled:opacity-50">
+                    <button onClick={handleCreateTemplate} disabled={templatesLoading} className="btn-brand text-white px-5 py-2 rounded-lg flex items-center space-x-2 hover:opacity-90 disabled:opacity-50">
                       <Plus className="w-4 h-4" />
                       <span>{templatesLoading ? "Saving..." : "Save Template"}</span>
                     </button>
@@ -967,7 +968,7 @@ const Settings = () => {
                     </select>
                   </div>
                 )}
-                <button onClick={handleCreateScheduledExport} disabled={exportsLoading} className="bg-primary-500 text-white px-5 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-600 disabled:opacity-50">
+                <button onClick={handleCreateScheduledExport} disabled={exportsLoading} className="btn-brand text-white px-5 py-2 rounded-lg flex items-center space-x-2 hover:opacity-90 disabled:opacity-50">
                   <Plus className="w-4 h-4" />
                   <span>{exportsLoading ? "Saving..." : "Schedule Export"}</span>
                 </button>
