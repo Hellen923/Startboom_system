@@ -1,148 +1,50 @@
 import nodemailer from 'nodemailer';
-import axios from 'axios';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 let cachedTransporter = null;
-let cachedConfigSummary = null;
-let cachedEtherealAccount = null;
-
-const logEmailConfig = () => {
-  if (!cachedConfigSummary) return;
-};
-
-// Brevo API email sending
-const sendEmailViaBrevoAPI = async (to, subject, html) => {
-  const apiKey = process.env.BREVO_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error('BREVO_API_KEY not configured');
-  }
-
-  try {
-    const response = await axios.post(
-      'https://api.brevo.com/v3/smtp/email',
-      {
-        sender: {
-          email: process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@swavelink.com',
-          name: 'Swavelink Sales Management'
-        },
-        to: [{ email: to }],
-        subject: subject,
-        htmlContent: html
-      },
-      {
-        headers: {
-          'api-key': apiKey,
-          'Content-Type': 'application/json',
-          'accept': 'application/json'
-        }
-      }
-    );
-
-    return {
-      success: true,
-      messageId: response.data.messageId
-    };
-  } catch (error) {
-    console.error('❌ Brevo API error:', error.response?.data || error.message);
-    throw error;
-  }
-};
 
 const createTransporter = async () => {
   if (cachedTransporter) return cachedTransporter;
 
-  // Prefer real SMTP credentials when provided
   if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-    const service = process.env.EMAIL_SERVICE;
-    const host = process.env.EMAIL_HOST;
-    const port = process.env.EMAIL_PORT ? Number(process.env.EMAIL_PORT) : undefined;
-    const secure = process.env.EMAIL_SECURE === 'true';
-
-    const transportConfig = {
-      connectionTimeout: process.env.EMAIL_CONNECTION_TIMEOUT ? Number(process.env.EMAIL_CONNECTION_TIMEOUT) : 30000,
-      greetingTimeout: process.env.EMAIL_GREETING_TIMEOUT ? Number(process.env.EMAIL_GREETING_TIMEOUT) : 30000,
-      socketTimeout: process.env.EMAIL_SOCKET_TIMEOUT ? Number(process.env.EMAIL_SOCKET_TIMEOUT) : 60000,
+    cachedTransporter = nodemailer.createTransport({
+      service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
       }
-    };
-
-    if (host) {
-      transportConfig.host = host;
-      transportConfig.port = port || 587;
-      transportConfig.secure = secure;
-      console.log(`📧 Email service configured with SMTP host: ${host}:${port || 587} (secure: ${secure})`);
-    } else {
-      transportConfig.service = service || 'gmail';
-      console.log(`📧 Email service configured with service: ${service || 'gmail'}`);
-    }
-
-    console.log(`📧 Email user: ${process.env.EMAIL_USER}`);
-    console.log(`📧 Timeouts: connection=${transportConfig.connectionTimeout}ms, greeting=${transportConfig.greetingTimeout}ms, socket=${transportConfig.socketTimeout}ms`);
-
-    cachedTransporter = nodemailer.createTransport(transportConfig);
-    cachedConfigSummary = {
-      provider: transportConfig.service || transportConfig.host || 'custom',
-      user: process.env.EMAIL_USER
-    };
-    
-    // Verify the connection
+    });
     try {
       await cachedTransporter.verify();
-      console.log('✅ Email transporter verified successfully');
-    } catch (verifyError) {
-      console.error('❌ Email transporter verification failed:', verifyError.message);
-      console.error('   This may cause email sending to fail. Please check your EMAIL credentials.');
+      console.log('✅ Gmail transporter verified');
+    } catch (e) {
+      console.error('❌ Gmail verification failed:', e.message);
     }
-    
-    logEmailConfig();
     return cachedTransporter;
   }
 
-  // Fall back to Ethereal (auto-generate account when not supplied)
-  console.warn('⚠️  No EMAIL_USER or EMAIL_PASS found - falling back to Ethereal test account');
-  
-  if (!cachedEtherealAccount) {
-    if (process.env.ETHEREAL_USER && process.env.ETHEREAL_PASS) {
-      cachedEtherealAccount = {
-        user: process.env.ETHEREAL_USER,
-        pass: process.env.ETHEREAL_PASS
-      };
-      cachedConfigSummary = { provider: 'ethereal:env', user: cachedEtherealAccount.user };
-    } else {
-      cachedEtherealAccount = await nodemailer.createTestAccount();
-      cachedConfigSummary = { provider: 'ethereal:auto', user: cachedEtherealAccount.user };
-      console.log('⚠️  No SMTP credentials supplied – generated temporary Ethereal account.');
-      console.log(`   Username: ${cachedEtherealAccount.user}`);
-      console.log(`   Password: ${cachedEtherealAccount.pass}`);
-    }
-  }
-
+  console.warn('⚠️ No EMAIL_USER/EMAIL_PASS — falling back to Ethereal');
+  const testAccount = await nodemailer.createTestAccount();
   cachedTransporter = nodemailer.createTransport({
     host: 'smtp.ethereal.email',
     port: 587,
-    auth: cachedEtherealAccount
+    auth: { user: testAccount.user, pass: testAccount.pass }
   });
-
-  logEmailConfig();
   return cachedTransporter;
 };
 
-export const getEmailConfigSummary = () => cachedConfigSummary;
+
 
 // Generate OTP (6-digit numeric code)
 export const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// Email templates - FIXED: Properly handle template data
 const emailTemplates = {
   taskReminder: (templateData) => {
-    const { agentName, clientName, taskTitle, taskDescription, dueDate, isOverdue, appUrl } = templateData;
+    const { agentName, clientName, taskTitle, taskDescription, dueDate, isOverdue, appUrl, companyName = 'HoneyPot CRM' } = templateData;
 
     const formattedDate = new Date(dueDate).toLocaleString('en-US', {
       weekday: 'long', year: 'numeric', month: 'long',
@@ -187,7 +89,7 @@ const emailTemplates = {
           <div class="wrapper">
             <div class="header">
               <h1>📋 Task Reminder</h1>
-              <p>Swavelink Sales Management — Automated Notification</p>
+              <p>${companyName} — Automated Notification</p>
             </div>
             <div class="body">
               <div class="badge">${statusLabel}</div>
@@ -212,9 +114,9 @@ const emailTemplates = {
               </div>` : ''}
             </div>
             <div class="footer">
-              <p><span class="brand">Swavelink</span> — Sales Management System</p>
+              <p><span class="brand">${companyName}</span></p>
               <p>This is an automated reminder. Do not reply to this email.</p>
-              <p>© ${new Date().getFullYear()} Swavelink. All rights reserved.</p>
+              <p>© ${new Date().getFullYear()} ${companyName}. All rights reserved.</p>
             </div>
           </div>
         </body>
@@ -435,11 +337,11 @@ const emailTemplates = {
   },
 
   agentWelcome: (templateData) => {
-    const { name, email, otp } = templateData;
+    const { name, email, otp, companyName = 'HoneyPot CRM' } = templateData;
     const appUrl = process.env.FRONTEND_URL || process.env.APP_URL || 'http://localhost:3000';
 
     return {
-      subject: `Welcome to Swavelink, ${name}! 🎉 Your Login Credentials`,
+      subject: `Welcome to ${companyName}, ${name}! 🎉 Your Login Credentials`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -495,8 +397,8 @@ const emailTemplates = {
         <body>
           <div class="container">
             <div class="header">
-              <h1>🎯 Welcome to Swavelink!</h1>
-              <p>Sales Management System — Uganda's Premier CRM Platform</p>
+              <h1>🎯 Welcome to ${companyName}!</h1>
+              <p>Sales Management System</p>
             </div>
             
             <div class="content">
@@ -535,11 +437,10 @@ const emailTemplates = {
               </div>
 
               <div class="footer">
-                <p style="margin:8px 0;"><span class="brand">Swavelink</span> — Sales Management System</p>
-                <p style="margin:8px 0;">Built for Uganda, Designed for Growth</p>
+                <p style="margin:8px 0;"><span class="brand">${companyName}</span></p>
                 <p style="margin:8px 0;">This is an automated message. Do not reply to this email.</p>
                 <p style="margin:8px 0;">If you didn't request this account, please contact your administrator immediately.</p>
-                <p style="margin:16px 0 0;color:#94A3B8;">© ${new Date().getFullYear()} Swavelink. All rights reserved.</p>
+                <p style="margin:16px 0 0;color:#94A3B8;">© ${new Date().getFullYear()} ${companyName}. All rights reserved.</p>
               </div>
             </div>
           </div>
@@ -550,62 +451,28 @@ const emailTemplates = {
   }
 };
 
-// Send email function - FIXED: Proper template calling with enhanced error handling
+// Send email
 export const sendEmail = async (to, templateName, templateData) => {
   try {
-    console.log(`📧 Attempting to send email to ${to} using template '${templateName}'`);
-    
     const template = emailTemplates[templateName];
+    if (!template) throw new Error(`Email template '${templateName}' not found`);
 
-    if (!template) {
-      throw new Error(`Email template '${templateName}' not found`);
-    }
-
-    // Call the template function with the data
     const emailContent = template(templateData);
-
-    // Check if Brevo API is available
-    if (process.env.BREVO_API_KEY) {
-      console.log('📤 Sending via Brevo API');
-      const result = await sendEmailViaBrevoAPI(to, emailContent.subject, emailContent.html);
-      console.log(`✅ Email sent successfully via Brevo API to ${to} (Message ID: ${result.messageId})`);
-      return result;
-    }
-
-    // Fallback to SMTP
     const transporter = await createTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@swavelink.com',
+      from: `"HoneyPot CRM" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
       to,
       subject: emailContent.subject,
       html: emailContent.html
     };
 
-    console.log(`📤 Sending email from ${mailOptions.from} to ${to}`);
-    console.log(`📋 Subject: ${emailContent.subject}`);
-
     const result = await transporter.sendMail(mailOptions);
-
-    const previewUrl = nodemailer.getTestMessageUrl(result);
-    if (previewUrl) {
-      console.log(`✅ Email sent successfully! Preview: ${previewUrl}`);
-    } else {
-      console.log(`✅ Email sent successfully to ${to} (Message ID: ${result.messageId})`);
-    }
-
-    return { success: true, messageId: result.messageId, previewUrl };
+    console.log(`✅ Email sent to ${to} (${result.messageId})`);
+    return { success: true, messageId: result.messageId };
   } catch (error) {
-    console.error('❌ Email sending error:', {
-      message: error.message,
-      code: error.code,
-      command: error.command,
-      response: error.response?.data || error.response,
-      responseCode: error.responseCode,
-      to,
-      templateName
-    });
-    return { success: false, error: error.message, details: error };
+    console.error('❌ Email error:', error.message);
+    return { success: false, error: error.message };
   }
 };
 
@@ -625,20 +492,13 @@ export const testEmailConfig = async () => {
 export const sendEmailWithAttachment = async (to, subject, htmlContent, attachments = []) => {
   try {
     const transporter = await createTransporter();
-
-    const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@swavelink.com',
+    const result = await transporter.sendMail({
+      from: `"HoneyPot CRM" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
       to,
       subject,
       html: htmlContent || '<p>Please find the attached report.</p>',
       attachments
-    };
-
-    const result = await transporter.sendMail(mailOptions);
-    const previewUrl = nodemailer.getTestMessageUrl(result);
-    if (previewUrl) {
-    }
-
+    });
     return { success: true, messageId: result.messageId };
   } catch (error) {
     console.error('❌ sendEmailWithAttachment error:', error);
