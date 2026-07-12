@@ -19,17 +19,75 @@ const STEPS = [
   { id: 'done',         label: 'Done',         icon: CheckCircle },
 ];
 
-const ALL_MODULES = [
-  { id: 'clients',    label: 'Clients',    desc: 'Manage your customer base' },
-  { id: 'deals',      label: 'Deals',      desc: 'Track sales pipeline' },
-  { id: 'sales',      label: 'Sales',      desc: 'Record completed sales' },
-  { id: 'products',   label: 'Products',   desc: 'Product catalog & inventory' },
-  { id: 'territories',label: 'Territories',desc: 'Agent location assignments' },
-  { id: 'meetings',   label: 'Meetings',   desc: 'Schedule & track meetings' },
-  { id: 'schedules',  label: 'Schedules',  desc: 'Tasks & reminders' },
-  { id: 'analytics',  label: 'Analytics',  desc: 'Performance insights' },
-  { id: 'reports',    label: 'Reports',    desc: 'Export & custom reports' },
+const MODULE_GROUPS = [
+  {
+    group: 'Core CRM',
+    modules: [
+      { id: 'clients',     label: 'Clients',     desc: 'Manage your customer base' },
+      { id: 'deals',       label: 'Deals',       desc: 'Track sales pipeline' },
+      { id: 'sales',       label: 'Sales',       desc: 'Record completed sales' },
+      { id: 'products',    label: 'Products',    desc: 'Product catalog & inventory' },
+      { id: 'territories', label: 'Territories', desc: 'Agent location assignments' },
+      { id: 'meetings',    label: 'Meetings',    desc: 'Schedule & track meetings' },
+      { id: 'schedules',   label: 'Schedules',   desc: 'Tasks & reminders' },
+      { id: 'dashboards',  label: 'Dashboards',  desc: 'Custom dashboard views' },
+      { id: 'analytics',   label: 'Analytics',   desc: 'Performance insights' },
+      { id: 'reports',     label: 'Reports',     desc: 'Export & custom reports' },
+    ]
+  },
+  {
+    group: 'Finance',
+    modules: [
+      { id: 'finance',   label: 'Finance',   desc: 'Financial overview' },
+      { id: 'invoices',  label: 'Invoices',  desc: 'Create & send invoices' },
+      { id: 'payments',  label: 'Payments',  desc: 'Track payments received' },
+      { id: 'expenses',  label: 'Expenses',  desc: 'Manage business expenses' },
+    ]
+  },
+  {
+    group: 'HR & People',
+    modules: [
+      { id: 'hr',          label: 'HR',          desc: 'Human resources management' },
+      { id: 'employees',   label: 'Employees',   desc: 'Employee records' },
+      { id: 'payroll',     label: 'Payroll',     desc: 'Payroll processing' },
+      { id: 'recruitment', label: 'Recruitment', desc: 'Hiring & onboarding' },
+    ]
+  },
+  {
+    group: 'Marketing',
+    modules: [
+      { id: 'marketing',  label: 'Marketing',  desc: 'Marketing overview' },
+      { id: 'campaigns',  label: 'Campaigns',  desc: 'Run marketing campaigns' },
+      { id: 'emails',     label: 'Email Blasts', desc: 'Bulk email sending' },
+    ]
+  },
+  {
+    group: 'Support',
+    modules: [
+      { id: 'support',       label: 'Support',        desc: 'Customer support hub' },
+      { id: 'tickets',       label: 'Tickets',        desc: 'Issue & ticket tracking' },
+      { id: 'knowledgeBase', label: 'Knowledge Base', desc: 'Internal documentation' },
+    ]
+  },
+  {
+    group: 'Inventory',
+    modules: [
+      { id: 'inventory',   label: 'Inventory',   desc: 'Stock & warehouse management' },
+      { id: 'warehouses',  label: 'Warehouses',  desc: 'Manage warehouse locations' },
+      { id: 'stock',       label: 'Stock',       desc: 'Stock levels & alerts' },
+    ]
+  },
+  {
+    group: 'Projects',
+    modules: [
+      { id: 'projects',    label: 'Projects',    desc: 'Project management' },
+      { id: 'tasks',       label: 'Tasks',       desc: 'Task tracking & assignment' },
+      { id: 'timesheets',  label: 'Timesheets',  desc: 'Time tracking' },
+    ]
+  },
 ];
+
+const ALL_MODULES = MODULE_GROUPS.flatMap(g => g.modules);
 
 const CURRENCIES = ['UGX','USD','EUR','GBP','KES','TZS','RWF','NGN','GHS','ZAR'];
 const TIMEZONES  = [
@@ -263,31 +321,36 @@ const StepModules = ({ enabled, onToggle }) => (
       <h2 className="text-xl font-bold text-gray-900">Choose your modules</h2>
       <p className="text-gray-500 text-sm mt-1">Enable only what your business needs. You can change this anytime in Settings.</p>
     </div>
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      {ALL_MODULES.map(mod => {
-        const isOn = enabled[mod.id] !== false;
-        return (
-          <button
-            key={mod.id}
-            type="button"
-            onClick={() => onToggle(mod.id, !isOn)}
-            className={`flex items-start gap-3 p-3 rounded-xl border-2 text-left transition-all ${
-              isOn ? 'border-primary-500 bg-primary-50' : 'border-gray-200 bg-white hover:border-gray-300'
-            }`}
-          >
-            <div className={`w-5 h-5 mt-0.5 rounded flex-shrink-0 border-2 flex items-center justify-center ${
-              isOn ? 'bg-primary-500 border-primary-500' : 'border-gray-300'
-            }`}>
-              {isOn && <CheckCircle className="w-3.5 h-3.5 text-white" />}
-            </div>
-            <div>
-              <p className={`text-sm font-medium ${isOn ? 'text-primary-700' : 'text-gray-700'}`}>{mod.label}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{mod.desc}</p>
-            </div>
-          </button>
-        );
-      })}
-    </div>
+    {MODULE_GROUPS.map(group => (
+      <div key={group.group}>
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{group.group}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {group.modules.map(mod => {
+            const isOn = enabled[mod.id] !== false;
+            return (
+              <button
+                key={mod.id}
+                type="button"
+                onClick={() => onToggle(mod.id, !isOn)}
+                className={`flex items-start gap-3 p-3 rounded-xl border-2 text-left transition-all ${
+                  isOn ? 'border-primary-500 bg-primary-50' : 'border-gray-200 bg-white hover:border-gray-300'
+                }`}
+              >
+                <div className={`w-5 h-5 mt-0.5 rounded flex-shrink-0 border-2 flex items-center justify-center ${
+                  isOn ? 'bg-primary-500 border-primary-500' : 'border-gray-300'
+                }`}>
+                  {isOn && <CheckCircle className="w-3.5 h-3.5 text-white" />}
+                </div>
+                <div>
+                  <p className={`text-sm font-medium ${isOn ? 'text-primary-700' : 'text-gray-700'}`}>{mod.label}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{mod.desc}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    ))}
   </div>
 );
 
