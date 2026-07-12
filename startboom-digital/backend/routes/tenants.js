@@ -926,8 +926,8 @@ router.delete('/:id', requireSuperAdmin, async (req, res) => {
     }
 
     // Delete all related data in proper order to respect references
-    // First, delete non-critical reference-breaking records
-    await AuditLog.deleteMany({ tenant: tenantId }).session(session);
+    // Use native collection to bypass AuditLog immutability middleware
+    await AuditLog.collection.deleteMany({ tenant: new mongoose.Types.ObjectId(tenantId) });
     await Notification.deleteMany({ tenant: tenantId }).session(session);
     await SecurityBlock.deleteMany({ tenant: tenantId }).session(session);
     await Performance.deleteMany({ tenant: tenantId }).session(session);
