@@ -674,7 +674,7 @@ const DeleteModal = ({ tenant, onClose, onDeleted }) => {
             type="text"
             value={confirmText}
             onChange={e => setConfirmText(e.target.value)}
-            className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-colors ${
+            className={`w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-colors text-gray-900 dark:text-gray-100 bg-white dark:bg-[#1E293B] placeholder:text-gray-400 ${
               confirmText && isMatch
                 ? 'border-red-400 focus:ring-red-400 bg-red-50'
                 : 'border-gray-300 focus:ring-primary-500 focus:border-primary-500'

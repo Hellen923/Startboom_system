@@ -14,6 +14,7 @@ const ResetPassword = () => {
     const [formData, setFormData] = useState({ email: location.state?.email || '', otp: '', newPassword: '', confirmPassword: '' });
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     useEffect(() => {
         if (!location.state?.email) {
@@ -105,8 +106,11 @@ const ResetPassword = () => {
                                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirm Password</label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><Lock className="h-5 w-5 text-gray-400" /></div>
-                                    <input id="confirmPassword" name="confirmPassword" type="password" required
-                                        className={`${inputCls} pl-10`} placeholder="Re-enter password" value={formData.confirmPassword} onChange={handleChange} />
+                                    <input id="confirmPassword" name="confirmPassword" type={showConfirm ? 'text' : 'password'} required
+                                        className={`${inputCls} pl-10 pr-10`} placeholder="Re-enter password" value={formData.confirmPassword} onChange={handleChange} />
+                                    <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center" onClick={() => setShowConfirm(p => !p)}>
+                                        {showConfirm ? <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" /> : <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />}
+                                    </button>
                                 </div>
                             </div>
                             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit" disabled={loading}
