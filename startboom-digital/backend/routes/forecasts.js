@@ -2,12 +2,17 @@
 import express from 'express';
 import Forecast from '../models/Forecast.js';
 import Deal from '../models/Deal.js';
-import { auth } from '../middleware/auth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
+// Apply tenant authentication and module enforcement
+router.use(tenantAuth);
+router.use(requireTenantModule('forecasts'));
+
+
 // Get all forecasts (with filters)
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { 
       period, status, assignmentType, userId, teamId, 
@@ -15,7 +20,7 @@ router.get('/', auth, async (req, res) => {
     } = req.query;
     
     const query = {
-      tenant: req.user.tenant
+      ...req.tenantQuery
     };
     
     if (period) query.period = period;
@@ -35,16 +40,16 @@ router.get('/', auth, async (req, res) => {
     }
     
     // For non-admins, filter by their access level
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       if (req.user.role === 'manager' && req.user.department) {
         query.$or = [
-          { user: req.user._id },
+          { user: req.user.userId },
           { team: req.user.team },
           { department: req.user.department }
         ];
       } else {
         // Agents can only see their own forecasts
-        query.user = req.user._id;
+        query.user = req.user.userId;
       }
     }
     
@@ -71,13 +76,13 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get my forecasts
-router.get('/my-forecasts', auth, async (req, res) => {
+router.get('/my-forecasts', async (req, res) => {
   try {
     const { period, status } = req.query;
     
     const query = {
-      tenant: req.user.tenant,
-      user: req.user._id
+      ...req.tenantQuery,
+      user: req.user.userId
     };
     
     if (period) query.period = period;
@@ -101,11 +106,11 @@ router.get('/my-forecasts', auth, async (req, res) => {
 });
 
 // Get single forecast by ID
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const forecast = await Forecast.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     })
       .populate('user', 'name email')
       .populate('team', 'name')
@@ -121,17 +126,17 @@ router.get('/:id', auth, async (req, res) => {
     }
     
     // Check access
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       if (req.user.role === 'manager') {
         if (forecast.department?.toString() !== req.user.department?.toString() &&
             forecast.team?.toString() !== req.user.team?.toString() &&
-            forecast.user?.toString() !== req.user._id.toString()) {
+            forecast.user?.toString() !== req.user.userId.toString()) {
           return res.status(403).json({
             message: 'Access denied'
           });
         }
       } else {
-        if (forecast.user?.toString() !== req.user._id.toString()) {
+        if (forecast.user?.toString() !== req.user.userId.toString()) {
           return res.status(403).json({
             message: 'Access denied'
           });
@@ -153,7 +158,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create forecast
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -169,7 +174,7 @@ router.post('/', auth, async (req, res) => {
     } = req.body;
     
     const forecast = new Forecast({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       name: name.trim(),
       period,
       startDate: new Date(startDate),
@@ -187,7 +192,7 @@ router.post('/', auth, async (req, res) => {
       topDeals: topDeals || [],
       notes: notes || '',
       autoUpdate: autoUpdate || { enabled: true },
-      createdBy: req.user._id
+      createdBy: req.user.userId
     });
     
     // Generate insights
@@ -210,7 +215,7 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Calculate forecast from pipeline
-router.post('/calculate', auth, async (req, res) => {
+router.post('/calculate', async (req, res) => {
   try {
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -222,7 +227,7 @@ router.post('/calculate', auth, async (req, res) => {
     
     // Build query for deals
     const dealQuery = {
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       status: 'open' // Only open deals count toward forecast
     };
     
@@ -261,11 +266,11 @@ router.post('/calculate', auth, async (req, res) => {
 });
 
 // Update forecast
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const forecast = await Forecast.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!forecast) {
@@ -275,7 +280,7 @@ router.put('/:id', auth, async (req, res) => {
     }
     
     // Check permissions
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       if (req.user.role === 'manager') {
         if (forecast.department?.toString() !== req.user.department?.toString() &&
             forecast.team?.toString() !== req.user.team?.toString()) {
@@ -308,7 +313,7 @@ router.put('/:id', auth, async (req, res) => {
     if (status) forecast.status = status;
     if (autoUpdate) forecast.autoUpdate = { ...forecast.autoUpdate, ...autoUpdate };
     
-    forecast.updatedBy = req.user._id;
+    forecast.updatedBy = req.user.userId;
     
     // Regenerate insights
     forecast.generateInsights();
@@ -330,7 +335,7 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Update actual results (as deals close)
-router.patch('/:id/actual', auth, async (req, res) => {
+router.patch('/:id/actual', async (req, res) => {
   try {
     const { actual } = req.body;
     
@@ -342,7 +347,7 @@ router.patch('/:id/actual', auth, async (req, res) => {
     
     const forecast = await Forecast.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!forecast) {
@@ -352,7 +357,7 @@ router.patch('/:id/actual', auth, async (req, res) => {
     }
     
     forecast.actual = actual;
-    forecast.updatedBy = req.user._id;
+    forecast.updatedBy = req.user.userId;
     
     // Regenerate insights with accuracy data
     forecast.generateInsights();
@@ -374,11 +379,11 @@ router.patch('/:id/actual', auth, async (req, res) => {
 });
 
 // Generate insights for forecast
-router.post('/:id/insights', auth, async (req, res) => {
+router.post('/:id/insights', async (req, res) => {
   try {
     const forecast = await Forecast.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!forecast) {
@@ -404,7 +409,7 @@ router.post('/:id/insights', auth, async (req, res) => {
 });
 
 // Delete (archive) forecast
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -414,7 +419,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     const forecast = await Forecast.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!forecast) {
@@ -424,7 +429,7 @@ router.delete('/:id', auth, async (req, res) => {
     }
     
     forecast.status = 'archived';
-    forecast.updatedBy = req.user._id;
+    forecast.updatedBy = req.user.userId;
     await forecast.save();
     
     res.json({
