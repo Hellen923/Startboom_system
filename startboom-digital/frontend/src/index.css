@@ -70,8 +70,8 @@
   --gradient-from: #D89A00;
   --gradient-to: #B87900;
   
-  /* Sidebar - Enterprise Deep Slate (#182233) */
-  --sidebar-bg: linear-gradient(180deg, #182233 0%, #0F172A 100%);
+  /* Sidebar - Warm Dark (matches landing page) */
+  --sidebar-bg: linear-gradient(180deg, #1F1D1A 0%, #2D2A26 50%, #1F1D1A 100%);
   --sidebar-border: rgba(255, 255, 255, 0.08);
   --sidebar-nav-active: rgba(216, 154, 0, 0.15);
   --sidebar-nav-hover: rgba(216, 154, 0, 0.08);
