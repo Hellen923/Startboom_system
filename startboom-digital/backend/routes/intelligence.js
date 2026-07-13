@@ -1,27 +1,32 @@
 // routes/intelligence.js
 // Proactive intelligence and alerts API
 import express from 'express';
-import { auth } from '../middleware/auth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 import intelligenceService from '../services/intelligenceService.js';
 
 const router = express.Router();
 
+// Apply tenant authentication and module enforcement
+router.use(tenantAuth);
+router.use(requireTenantModule('analytics'));
+
+
 // Get comprehensive intelligence dashboard
-router.get('/dashboard', auth, async (req, res) => {
+router.get('/dashboard', async (req, res) => {
   try {
     const filters = {};
     
     // Apply role-based filtering
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       if (req.user.role === 'manager') {
         filters.departmentId = req.user.department;
       } else {
-        filters.userId = req.user._id;
+        filters.userId = req.user.userId;
       }
     }
     
     // Allow query overrides for admins
-    if (['superadmin', 'admin'].includes(req.user.role)) {
+    if ((req.isSuperAdmin || req.user.role === 'admin')) {
       if (req.query.userId) filters.userId = req.query.userId;
       if (req.query.teamId) filters.teamId = req.query.teamId;
       if (req.query.departmentId) filters.departmentId = req.query.departmentId;
@@ -29,7 +34,7 @@ router.get('/dashboard', auth, async (req, res) => {
     }
     
     const dashboard = await intelligenceService.getIntelligenceDashboard(
-      req.user.tenant,
+      req.user.tenantId,
       filters
     );
     
@@ -47,13 +52,13 @@ router.get('/dashboard', auth, async (req, res) => {
 });
 
 // Get stale clients
-router.get('/stale-clients', auth, async (req, res) => {
+router.get('/stale-clients', async (req, res) => {
   try {
     const { days = 14 } = req.query;
     const filters = buildFilters(req);
     
     const clients = await intelligenceService.getStaleClients(
-      req.user.tenant,
+      req.user.tenantId,
       parseInt(days),
       filters
     );
@@ -73,13 +78,13 @@ router.get('/stale-clients', auth, async (req, res) => {
 });
 
 // Get stuck deals
-router.get('/stuck-deals', auth, async (req, res) => {
+router.get('/stuck-deals', async (req, res) => {
   try {
     const { days = 45 } = req.query;
     const filters = buildFilters(req);
     
     const deals = await intelligenceService.getStuckDeals(
-      req.user.tenant,
+      req.user.tenantId,
       parseInt(days),
       filters
     );
@@ -99,12 +104,12 @@ router.get('/stuck-deals', auth, async (req, res) => {
 });
 
 // Get goal predictions
-router.get('/goal-predictions', auth, async (req, res) => {
+router.get('/goal-predictions', async (req, res) => {
   try {
     const filters = buildFilters(req);
     
     const predictions = await intelligenceService.getGoalPredictions(
-      req.user.tenant,
+      req.user.tenantId,
       filters
     );
     
@@ -123,12 +128,12 @@ router.get('/goal-predictions', auth, async (req, res) => {
 });
 
 // Get overdue follow-ups
-router.get('/overdue-followups', auth, async (req, res) => {
+router.get('/overdue-followups', async (req, res) => {
   try {
     const filters = buildFilters(req);
     
     const followUps = await intelligenceService.getOverdueFollowUps(
-      req.user.tenant,
+      req.user.tenantId,
       filters
     );
     
@@ -147,13 +152,13 @@ router.get('/overdue-followups', auth, async (req, res) => {
 });
 
 // Get deals closing soon
-router.get('/deals-closing-soon', auth, async (req, res) => {
+router.get('/deals-closing-soon', async (req, res) => {
   try {
     const { days = 7 } = req.query;
     const filters = buildFilters(req);
     
     const deals = await intelligenceService.getDealsClosingSoon(
-      req.user.tenant,
+      req.user.tenantId,
       parseInt(days),
       filters
     );
@@ -173,7 +178,7 @@ router.get('/deals-closing-soon', auth, async (req, res) => {
 });
 
 // Get low activity users
-router.get('/low-activity-users', auth, async (req, res) => {
+router.get('/low-activity-users', async (req, res) => {
   try {
     // Only admins and managers can see this
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
@@ -185,7 +190,7 @@ router.get('/low-activity-users', auth, async (req, res) => {
     const filters = buildFilters(req);
     
     const users = await intelligenceService.getLowActivityUsers(
-      req.user.tenant,
+      req.user.tenantId,
       filters
     );
     
@@ -208,11 +213,11 @@ function buildFilters(req) {
   const filters = {};
   
   // Apply role-based filtering
-  if (!['superadmin', 'admin'].includes(req.user.role)) {
+  if (!(req.isSuperAdmin || req.user.role === 'admin')) {
     if (req.user.role === 'manager') {
       filters.departmentId = req.user.department;
     } else {
-      filters.userId = req.user._id;
+      filters.userId = req.user.userId;
     }
   }
   
