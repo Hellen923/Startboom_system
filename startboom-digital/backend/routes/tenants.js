@@ -708,7 +708,14 @@ router.post('/', requireSuperAdmin, async (req, res) => {
       },
       usage: { totalUsers: 0, totalClients: 0, totalDeals: 0, storageUsed: 0 },
       status: 'active',
-      metadata: metadata || {}
+      metadata: {
+        ...(metadata || {}),
+        onboardingEmail: {
+          status: 'pending',
+          recipient: normalizedEmail,
+          attempts: 0
+        }
+      }
     });
     await tenant.save();
 
@@ -741,11 +748,43 @@ router.post('/', requireSuperAdmin, async (req, res) => {
 
     console.log('📧 Email sending result:', emailResult);
 
+    const onboardingEmail = {
+      status: emailResult.success ? 'sent' : 'failed',
+      lastAttemptAt: new Date(),
+      sentAt: emailResult.success ? new Date() : null,
+      messageId: emailResult.messageId || '',
+      error: emailResult.success ? '' : (emailResult.error || 'Unknown email error'),
+      recipient: normalizedEmail,
+      attempts: 1
+    };
+
+    tenant.owner = adminUser._id;
+    tenant.set('metadata.onboardingEmail', onboardingEmail);
+    await tenant.save();
+
+    await AuditLog.create({
+      action: 'CREATE_TENANT',
+      description: `Created organization ${name}`,
+      user: req.user.userId,
+      userName: req.user.name || '',
+      userEmail: req.user.email || '',
+      userRole: req.user.role || '',
+      tenant: tenant._id,
+      entityType: 'Tenant',
+      entityId: tenant._id,
+      status: 'success',
+      metadata: {
+        adminEmail: normalizedEmail,
+        onboardingEmail
+      }
+    });
+
     const response = {
       message: 'Organization created successfully',
       tenant,
       admin: { name: companyAdminName, email: normalizedEmail, role: 'admin' },
-      emailSent: emailResult.success
+      emailSent: emailResult.success,
+      onboardingEmail
     };
 
     // If email failed, include OTP in response and log detailed error
@@ -760,6 +799,83 @@ router.post('/', requireSuperAdmin, async (req, res) => {
   } catch (error) {
     console.error('Error creating tenant:', error);
     if (error.code === 11000) return res.status(400).json({ message: 'Organization with this name or email already exists' });
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// POST resend company admin OTP (super admin only)
+router.post('/:id/resend-admin-otp', requireSuperAdmin, async (req, res) => {
+  try {
+    const tenant = await Tenant.findById(req.params.id);
+    if (!tenant) return res.status(404).json({ message: 'Tenant not found' });
+
+    const admin = await User.findOne({
+      tenant: tenant._id,
+      role: 'admin',
+      isActive: true
+    }).sort({ createdAt: 1 });
+
+    if (!admin) {
+      return res.status(404).json({ message: 'No active company admin found for this organization' });
+    }
+
+    const otp = generateOTP();
+    admin.password = otp;
+    admin.otp = otp;
+    admin.otpExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    admin.isFirstLogin = true;
+    await admin.save();
+
+    const previousAttempts = tenant.metadata?.onboardingEmail?.attempts || 0;
+    const emailResult = await sendEmail(admin.email, 'agentWelcome', {
+      name: admin.name,
+      email: admin.email,
+      otp,
+      companyName: tenant.name
+    });
+
+    const onboardingEmail = {
+      status: emailResult.success ? 'sent' : 'failed',
+      lastAttemptAt: new Date(),
+      sentAt: emailResult.success ? new Date() : null,
+      messageId: emailResult.messageId || '',
+      error: emailResult.success ? '' : (emailResult.error || 'Unknown email error'),
+      recipient: admin.email,
+      attempts: previousAttempts + 1
+    };
+
+    tenant.set('metadata.onboardingEmail', onboardingEmail);
+    await tenant.save();
+
+    await AuditLog.create({
+      action: 'UPDATE_TENANT',
+      description: `Resent onboarding OTP to ${admin.email}`,
+      user: req.user.userId,
+      userName: req.user.name || '',
+      userEmail: req.user.email || '',
+      userRole: req.user.role || '',
+      tenant: tenant._id,
+      entityType: 'Tenant',
+      entityId: tenant._id,
+      status: emailResult.success ? 'success' : 'failed',
+      metadata: { onboardingEmail }
+    });
+
+    const response = {
+      message: emailResult.success ? 'Company admin OTP email sent' : 'OTP regenerated but email failed to send',
+      emailSent: emailResult.success,
+      onboardingEmail,
+      admin: { id: admin._id, name: admin.name, email: admin.email }
+    };
+
+    if (!emailResult.success) {
+      response.otp = otp;
+      response.emailError = onboardingEmail.error;
+    }
+
+    res.json(response);
+  } catch (error) {
+    console.error('Error resending company admin OTP:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
