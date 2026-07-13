@@ -5,6 +5,10 @@ import { logAction } from '../utils/auditLog.js';
 
 const router = express.Router();
 
+// Apply tenant authentication
+router.use(tenantAuth);
+
+
 router.use(tenantAuth);
 
 export const DEFAULT_EMAIL_TEMPLATES = [
