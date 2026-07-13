@@ -6,6 +6,10 @@ import { logAction } from '../utils/auditLog.js';
 
 const router = express.Router();
 
+// Apply tenant authentication
+router.use(tenantAuth);
+
+
 router.use(tenantAuth);
 // Only admins and superadmins can manage roles
 router.use(requireRole(['admin', 'superadmin']));
