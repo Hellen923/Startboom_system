@@ -613,11 +613,11 @@ label {
   font-size: 0.875rem; font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease-out;
-  box-shadow: 0 2px 8px rgba(216, 154, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
 }
 .btn-brand:hover { 
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(216, 154, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
 }
 .btn-brand:disabled { 
   opacity: 0.5; 
