@@ -3,13 +3,13 @@ import mongoose from 'mongoose';
 import { body, validationResult } from 'express-validator';
 import Issue from '../models/Issue.js';
 import Client from '../models/Client.js';
-import { tenantAuth } from '../middleware/tenantAuth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 import AuditLog from '../models/AuditLog.js';
 
 const router = express.Router();
 
 // All issue routes require tenant isolation and login
-router.use(tenantAuth);
+router.use(tenantAuth, requireTenantModule('issues'));
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/issues  — list with optional filters
