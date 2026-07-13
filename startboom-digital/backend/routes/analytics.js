@@ -3,12 +3,12 @@ import Deal from '../models/Deal.js';
 import Client from '../models/Client.js';
 import Sale from '../models/Sale.js';
 import User from '../models/User.js';
-import { tenantAuth, requireRole } from '../middleware/tenantAuth.js';
+import { tenantAuth, requireRole, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
 // Apply tenant-aware auth to ALL routes
-router.use(tenantAuth);
+router.use(tenantAuth, requireTenantModule('analytics'));
 
 // GET /api/analytics/conversion
 router.get('/conversion', requireRole(['admin', 'manager', 'superadmin']), async (req, res) => {

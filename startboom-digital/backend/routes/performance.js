@@ -6,6 +6,10 @@ import { tenantAuth } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
+// Apply tenant authentication
+router.use(tenantAuth);
+
+
 // Apply tenant-aware middleware to all routes
 router.use(tenantAuth);
 
