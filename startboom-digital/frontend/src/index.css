@@ -175,11 +175,11 @@ textarea:focus-visible {
 }
 .sidebar-item.active {
   background-color: var(--sidebar-nav-active);
-  border-left-color: #D99A00;
+  border-left-color: var(--primary-color);
   color: #FFFFFF;
 }
 .sidebar-item.active .sidebar-item-icon { 
-  color: #D99A00;
+  color: var(--primary-color);
   opacity: 1;
 }
 .sidebar-item-icon {
@@ -188,13 +188,13 @@ textarea:focus-visible {
 }
 
 .dark .sidebar-item.active {
-  border-left-color: #D99A00;
+  border-left-color: var(--primary-color);
 }
 .dark .sidebar-item.active .sidebar-item-icon {
-  color: #D99A00;
+  color: var(--primary-color);
 }
 .dark .sidebar-item.active .sidebar-active-dot {
-  background-color: #D99A00;
+  background-color: var(--primary-color);
 }
 
 .sidebar-footer {
