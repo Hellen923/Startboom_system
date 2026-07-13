@@ -7,7 +7,7 @@ const AuthContext = createContext();
 const applyTenantBranding = (tenant) => {
   if (!tenant) return;
   const color = tenant.branding?.primaryColor || tenant.settings?.primaryColor;
-  const logo  = tenant.branding?.logo || tenant.settings?.logo;
+  const logo  = tenant.branding?.logo || tenant.settings?.logo || null;
   if (color) {
     const root = document.documentElement;
     const hex = color;
