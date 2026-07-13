@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { Lock, ArrowLeft, CheckCircle, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { authAPI } from '../services/api';
-import sidebarLogo from '../assets/sidebar.png';
+import { PLATFORM_BRAND } from '../utils/platformBranding';
 import { BUTTON_STYLES, FORM_STYLES } from '../utils/designSystem';
 
 const ResetPassword = () => {
@@ -63,10 +63,8 @@ const ResetPassword = () => {
                         <Link to="/login" className="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 mb-6 transition-colors">
                             <ArrowLeft className="w-4 h-4 mr-2" />Back to Login
                         </Link>
-                        <div className="flex items-center justify-center lg:justify-start space-x-3 mb-6">
-                            <div className="bg-[var(--color-bg-card)] p-2 rounded-xl flex items-center justify-center border border-[var(--color-border)]">
-                                <img src={sidebarLogo} alt="HoneyPot" className="w-8 h-8 object-contain" />
-                            </div>
+                        <div className="flex items-center justify-center lg:justify-start mb-6">
+                            <img src={PLATFORM_BRAND.logo} alt="HoneyPot" className="w-10 h-10 object-contain" />
                         </div>
                         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                             {step === 1 ? 'Verify Your Identity' : 'Set New Password'}
