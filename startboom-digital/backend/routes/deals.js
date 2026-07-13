@@ -3,7 +3,7 @@ import express from 'express';
 import Deal from '../models/Deal.js';
 import { body, validationResult } from 'express-validator';
 import { createNotification } from '../utils/notifications.js';
-import { tenantAuth } from '../middleware/tenantAuth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 import { logAction } from '../utils/auditLog.js';
 
 const router = express.Router();
@@ -50,7 +50,7 @@ const appendAndFilter = (query, filter) => {
 };
 
 // Apply tenant-aware middleware to all routes
-router.use(tenantAuth);
+router.use(tenantAuth, requireTenantModule('deals'));
 
 // Get all deals (admin sees all, agents see their own)
 router.get('/', async (req, res) => {

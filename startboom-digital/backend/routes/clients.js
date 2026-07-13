@@ -3,7 +3,7 @@ import PDFDocument from 'pdfkit';
 import twilio from 'twilio';
 import Client from '../models/Client.js';
 import { body, validationResult, query } from 'express-validator';
-import { tenantAuth } from '../middleware/tenantAuth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 import { logAction } from '../utils/auditLog.js';
 import { sendEmail } from '../services/emailService.js';
 
@@ -121,7 +121,7 @@ router.post('/call/token', tenantAuth, async (req, res) => {
 });
 
 // Apply tenant-aware middleware to all routes
-router.use(tenantAuth);
+router.use(tenantAuth, requireTenantModule('clients'));
 
 // Get all clients with pagination and filtering
 router.get('/', async (req, res) => {
