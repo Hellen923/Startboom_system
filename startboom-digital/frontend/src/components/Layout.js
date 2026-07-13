@@ -229,13 +229,13 @@ const agentNavSections = [
     const tenantName = user?.tenant?.name || 'HoneyPot';
     const initial = tenantName.charAt(0).toUpperCase();
     return (
-    <div className="flex items-center justify-between px-6 py-6 border-b sidebar-divider">
+    <div className="flex items-center justify-between px-6 py-5 border-b sidebar-divider">
       <div className="flex items-center space-x-3 min-w-0">
-        <div className="w-12 h-12 flex items-center justify-center shrink-0 rounded-xl overflow-hidden bg-white/10">
+        <div className="w-10 h-10 shrink-0 flex items-center justify-center">
           {tenantLogo ? (
             <img src={tenantLogo} alt="Logo" className="w-full h-full object-contain" />
           ) : (
-            <span className="text-white font-bold text-xl">{initial}</span>
+            <span className="text-white font-bold text-2xl leading-none">{initial}</span>
           )}
         </div>
         <div className="min-w-0">
