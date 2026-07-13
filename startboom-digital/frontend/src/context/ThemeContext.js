@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { PLATFORM_BRAND } from '../utils/platformBranding';
 
 const ThemeContext = createContext();
 
 export const ACCENT_PRESETS = [
-  { id: 'honeypot', label: 'HoneyPot Gold', color: 'var(--primary-color)' },
+  { id: 'honeypot', label: 'HoneyPot Gold', color: PLATFORM_BRAND.primaryColor },
   { id: 'sage',     label: 'Sage Green',    color: '#10B981' },
   { id: 'slate',    label: 'Slate Blue',    color: '#64748B' },
   { id: 'sky',      label: 'Sky Blue',      color: '#0EA5E9' },
@@ -13,7 +14,7 @@ export const ACCENT_PRESETS = [
 
 const DEFAULT_THEME = {
   mode: 'light',
-  primaryColor: 'var(--primary-color)',  // HoneyPot Gold (Enterprise Spec)
+  primaryColor: PLATFORM_BRAND.primaryColor,  // HoneyPot Gold (Enterprise Spec)
   accentPreset: 'honeypot',
 };
 
@@ -112,15 +113,23 @@ export const useTheme = () => {
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(DEFAULT_THEME);
 
+  const normalizeHexColor = (value) => (
+    typeof value === 'string' && /^#[0-9A-Fa-f]{6}$/.test(value)
+      ? value
+      : DEFAULT_THEME.primaryColor
+  );
+
   const hexToRgba = (hex, alpha) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
+    const safeHex = normalizeHexColor(hex);
+    const r = parseInt(safeHex.slice(1, 3), 16);
+    const g = parseInt(safeHex.slice(3, 5), 16);
+    const b = parseInt(safeHex.slice(5, 7), 16);
     return `rgba(${r},${g},${b},${alpha})`;
   };
 
   const shiftColor = (hex, amount) => {
-    const num = parseInt(hex.slice(1), 16);
+    const safeHex = normalizeHexColor(hex);
+    const num = parseInt(safeHex.slice(1), 16);
     const clamp = (v) => Math.max(0, Math.min(255, v));
     const r = clamp((num >> 16) + amount);
     const g = clamp(((num >> 8) & 0xff) + amount);
@@ -132,7 +141,7 @@ export const ThemeProvider = ({ children }) => {
     const root = document.documentElement;
     // Tenant color takes priority over theme preset color
     const savedTenantColor = localStorage.getItem('tenant_primary_color');
-    const primary = tenantColor || savedTenantColor || t.primaryColor || DEFAULT_THEME.primaryColor;
+    const primary = normalizeHexColor(tenantColor || savedTenantColor || t.primaryColor || DEFAULT_THEME.primaryColor);
     const mode = t.mode === 'dark' ? 'dark' : 'light';
     const tokens = THEME_TOKENS[mode];
 

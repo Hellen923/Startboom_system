@@ -1,34 +1,26 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { authAPI, tenantsAPI } from '../services/api';
+import { authAPI } from '../services/api';
+import { applyBrandColor, clearTenantBranding } from '../utils/platformBranding';
 
 const AuthContext = createContext();
 
-// Apply tenant branding to CSS variables immediately
-const applyTenantBranding = (tenant) => {
-  if (!tenant) return;
-  const color = tenant.branding?.primaryColor || tenant.settings?.primaryColor;
-  const logo  = tenant.branding?.logo || tenant.settings?.logo || null;
+// Apply tenant branding to CSS variables immediately. Super Admin always keeps platform branding.
+const applyWorkspaceBranding = (account) => {
+  if (!account?.tenant || account.role === 'superadmin') {
+    clearTenantBranding();
+    return;
+  }
+
+  const tenant = account.tenant;
+  const color = tenant.branding?.primaryColor;
+  const logo = tenant.branding?.logo || null;
   if (color) {
     // Save so ThemeContext preserves it across light/dark toggles
     localStorage.setItem('tenant_primary_color', color);
-    const root = document.documentElement;
-    const r = parseInt(color.slice(1,3),16);
-    const g = parseInt(color.slice(3,5),16);
-    const b = parseInt(color.slice(5,7),16);
-    const darker = '#' + [r,g,b].map(v => Math.max(0,v-25).toString(16).padStart(2,'0')).join('');
-    const gradient = `linear-gradient(to right, ${color}, ${darker})`;
-    root.style.setProperty('--primary-color', color);
-    root.style.setProperty('--primary-hover', darker);
-    root.style.setProperty('--primary-ring', `rgba(${r},${g},${b},0.25)`);
-    root.style.setProperty('--color-accent-surface', `rgba(${r},${g},${b},0.08)`);
-    root.style.setProperty('--gradient-from', color);
-    root.style.setProperty('--gradient-to', darker);
-    root.style.setProperty('--brand-header-bg', gradient);
-    root.style.setProperty('--btn-brand-bg', gradient);
-    root.style.setProperty('--sidebar-nav-active', `rgba(${r},${g},${b},0.15)`);
-    root.style.setProperty('--sidebar-nav-hover', `rgba(${r},${g},${b},0.08)`);
+    applyBrandColor(color);
   } else {
     localStorage.removeItem('tenant_primary_color');
+    applyBrandColor();
   }
   if (logo) {
     localStorage.setItem('tenant_logo', logo);
@@ -73,7 +65,7 @@ export const AuthProvider = ({ children }) => {
           const userData = response.data;
           setUser(userData);
           localStorage.setItem('user', JSON.stringify(userData));
-          applyTenantBranding(userData.tenant);
+          applyWorkspaceBranding(userData);
         } catch (validationError) {
           // Token is expired or invalid - clear session and redirect to login
           const status = validationError.response?.status;
@@ -102,6 +94,7 @@ export const AuthProvider = ({ children }) => {
           const userData = response.data;
           localStorage.setItem('user', JSON.stringify(userData));
           setUser(userData);
+          applyWorkspaceBranding(userData);
         } catch (error) {
           // Don't log out on refresh failures, just log the error
           console.warn('Token refresh failed:', error.message);
@@ -119,6 +112,7 @@ export const AuthProvider = ({ children }) => {
           const userData = response.data;
           setUser(userData);
           localStorage.setItem('user', JSON.stringify(userData));
+          applyWorkspaceBranding(userData);
           console.log('Session validated successfully');
         }).catch(error => {
           console.warn('Session validation failed after reconnect:', error.message);
@@ -160,7 +154,7 @@ export const AuthProvider = ({ children }) => {
       }
       setToken(newToken);
       setUser(userWithTenant);
-      applyTenantBranding(userWithTenant.tenant);
+      applyWorkspaceBranding(userWithTenant);
 
       return {
         success: true,
@@ -180,6 +174,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
     localStorage.removeItem('tenantId');
     localStorage.removeItem('tenantName');
+    clearTenantBranding();
 
     authAPI.logout().finally(() => {
       setToken(null);
