@@ -123,13 +123,9 @@ const ALL_NAV_ITEMS = {
  * @returns {Array} Filtered navigation sections
  */
 export const generateNavigation = (user, permissions = null) => {
-  if (!user || !user.role) {
-    return [];
-  }
+  if (!user || !user.role) return [];
 
-  // Get base navigation for user's role
   let baseNav = [];
-  
   if (user.role === 'superadmin') {
     baseNav = ALL_NAV_ITEMS.superadmin;
   } else if (user.role === 'admin' || user.role === 'manager') {
@@ -138,30 +134,54 @@ export const generateNavigation = (user, permissions = null) => {
     baseNav = ALL_NAV_ITEMS.agent;
   }
 
-  // Filter navigation based on permissions
-  const filteredNav = baseNav.map(section => {
-    const filteredItems = section.items.filter(item => {
-      // Check role requirement
-      if (item.requiredRole && !item.requiredRole.includes(user.role)) {
-        return false;
-      }
+  // Get enabled modules from tenant — if no modules set, everything is enabled
+  const tenantModules = user.tenant?.modules || null;
 
-      // Check permission requirement (if permissions object provided)
+  // Map nav paths to module IDs
+  const MODULE_MAP = {
+    '/admin/products':       'products',
+    '/agent/products':       'products',
+    '/admin/territories':    'territories',
+    '/agent/my-territory':   'territories',
+    '/admin/analytics':      'analytics',
+    '/admin/reports':        'reports',
+    '/admin/custom-reports': 'reports',
+    '/admin/forecasts':      'forecasts',
+    '/admin/activities':     'activities',
+    '/admin/goals':          'goals',
+    '/admin/pipelines':      'pipelines',
+    '/admin/workflows':      'workflows',
+    '/admin/departments':    'departments',
+    '/admin/branches':       'branches',
+    '/agent/deals':          'deals',
+    '/agent/sales':          'sales',
+    '/agent/clients':        'clients',
+    '/agent/leads':          'clients',
+    '/agent/contacts':       'clients',
+    '/agent/schedules':      'schedules',
+    '/agent/tasks':          'tasks',
+    '/agent/issues':         'issues',
+  };
+
+  const isModuleEnabled = (path) => {
+    if (!tenantModules) return true; // no restrictions set
+    const moduleId = MODULE_MAP[path];
+    if (!moduleId) return true; // not mapped = always show
+    const val = tenantModules[moduleId];
+    return val !== false && val !== 'false'; // enabled unless explicitly false
+  };
+
+  const filteredNav = baseNav.map(section => ({
+    ...section,
+    items: section.items.filter(item => {
+      if (item.requiredRole && !item.requiredRole.includes(user.role)) return false;
       if (item.requiredPermission && permissions) {
         const [module, action] = item.requiredPermission.split(':');
-        if (permissions[module] && !permissions[module][action]) {
-          return false;
-        }
+        if (permissions[module] && !permissions[module][action]) return false;
       }
-
-      return true;
-    });
-
-    return {
-      ...section,
-      items: filteredItems
-    };
-  }).filter(section => section.items.length > 0); // Remove empty sections
+      return isModuleEnabled(item.path);
+    })
+  })).filter(section => section.items.length > 0);
 
   return filteredNav;
 };
