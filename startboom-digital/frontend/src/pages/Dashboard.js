@@ -306,7 +306,7 @@ const Dashboard = () => {
   const isAgent = role === 'agent';
 
   return (
-    <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
+    <div className="w-full space-y-6">
 
       {/* ─────────────────────────────────────────────────────────────────── */}
       {/* ADMIN / SUPER-ADMIN DASHBOARD                                       */}
