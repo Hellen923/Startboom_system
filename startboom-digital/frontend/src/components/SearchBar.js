@@ -43,13 +43,13 @@ const SearchBar = ({
     <div className="flex items-center space-x-3">
       {/* Search Input */}
       <div className="flex-1 relative">
-        <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
+        <Search className={`pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder={placeholder}
-          className={`w-full pl-10 pr-10 py-3 rounded-lg border transition-all ${
+          className={`w-full pl-12 pr-10 py-3 rounded-lg border transition-all ${
             isDark 
               ? 'bg-[#1E293B] border-gray-700 text-white placeholder-gray-500 focus:border-indigo-500' 
               : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-indigo-500'

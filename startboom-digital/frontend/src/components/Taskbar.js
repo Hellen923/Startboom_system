@@ -156,14 +156,14 @@ const Taskbar = ({
 
           <form onSubmit={handleSearch} className="flex-1 min-w-0">
             <div className="relative flex items-center">
-              <Search className={`absolute left-3.5 h-4 w-4 pointer-events-none ${dm.textMuted}`} />
+              <Search className={`pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 ${dm.textMuted}`} />
               <input
                 ref={searchRef}
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={searchConfig.placeholder}
-                className={`w-full rounded-xl py-2.5 pl-10 pr-20 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-ring)] ${dm.input}`}
+                className={`w-full rounded-xl py-2.5 pl-12 pr-20 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-ring)] ${dm.input}`}
               />
               <kbd
                 className={`hidden sm:inline-flex absolute right-3 items-center rounded-md px-1.5 py-0.5 text-[10px] font-medium border ${dm.border} bg-[var(--color-bg-input)] ${dm.textMuted}`}
