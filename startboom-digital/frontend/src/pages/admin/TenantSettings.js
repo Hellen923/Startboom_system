@@ -109,6 +109,25 @@ const TenantSettings = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
+      // Apply branding immediately
+      const color = formData.branding?.primaryColor;
+      if (color) {
+        const root = document.documentElement;
+        const r = parseInt(color.slice(1,3),16);
+        const g = parseInt(color.slice(3,5),16);
+        const b = parseInt(color.slice(5,7),16);
+        const darker = '#' + [r,g,b].map(v => Math.max(0,v-25).toString(16).padStart(2,'0')).join('');
+        root.style.setProperty('--primary-color', color);
+        root.style.setProperty('--primary-hover', darker);
+        root.style.setProperty('--primary-ring', `rgba(${r},${g},${b},0.25)`);
+        root.style.setProperty('--gradient-from', color);
+        root.style.setProperty('--gradient-to', darker);
+        root.style.setProperty('--brand-header-bg', `linear-gradient(to right, ${color}, ${darker})`);
+        root.style.setProperty('--btn-brand-bg', `linear-gradient(to right, ${color}, ${darker})`);
+        root.style.setProperty('--sidebar-nav-active', `rgba(${r},${g},${b},0.15)`);
+        root.style.setProperty('--sidebar-nav-hover', `rgba(${r},${g},${b},0.08)`);
+      }
+
       toast.success('Settings saved successfully');
       fetchTenantSettings();
     } catch (error) {
