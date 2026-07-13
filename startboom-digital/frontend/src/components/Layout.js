@@ -218,7 +218,7 @@ const agentNavSections = [
           <div className="font-medium text-[13px]">{item.label}</div>
         </div>
         {isActive && (
-          <div className="w-1.5 h-1.5 rounded-full bg-[#D89A00] sidebar-active-dot" />
+          <div className="w-1.5 h-1.5 rounded-full sidebar-active-dot" style={{ backgroundColor: 'var(--primary-color)' }} />
         )}
       </Link>
     );
