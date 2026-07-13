@@ -138,9 +138,9 @@ export const TABLE_STYLES = {
 export const FORM_STYLES = {
   group: 'mb-6',
   label: 'block text-[13px] font-medium text-[#475569] dark:text-[#CBD5E1] mb-2',
-  input: 'w-full h-12 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC] placeholder:text-[#94A3B8] text-sm focus:outline-none focus:border-[#D89A00] focus:ring-[3px] focus:ring-[rgba(216,154,0,0.1)] transition-all duration-150',
-  select: 'w-full h-12 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC] text-sm focus:outline-none focus:border-[#D89A00] focus:ring-[3px] focus:ring-[rgba(216,154,0,0.1)] transition-all duration-150',
-  textarea: 'w-full px-4 py-3 min-h-[120px] rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC] placeholder:text-[#94A3B8] text-sm focus:outline-none focus:border-[#D89A00] focus:ring-[3px] focus:ring-[rgba(216,154,0,0.1)] transition-all duration-150 resize-none',
+  input: 'w-full h-12 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC] placeholder:text-[#94A3B8] text-sm focus:outline-none focus:border-[var(--primary-color)] focus:ring-[3px] focus:ring-[rgba(216,154,0,0.1)] transition-all duration-150',
+  select: 'w-full h-12 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC] text-sm focus:outline-none focus:border-[var(--primary-color)] focus:ring-[3px] focus:ring-[rgba(216,154,0,0.1)] transition-all duration-150',
+  textarea: 'w-full px-4 py-3 min-h-[120px] rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC] placeholder:text-[#94A3B8] text-sm focus:outline-none focus:border-[var(--primary-color)] focus:ring-[3px] focus:ring-[rgba(216,154,0,0.1)] transition-all duration-150 resize-none',
   error: 'text-xs text-[#EF4444] dark:text-[#FCA5A5] mt-1',
   helper: 'text-xs text-[#64748B] dark:text-[#94A3B8] mt-1',
 };
@@ -151,7 +151,7 @@ export const FORM_STYLES = {
  */
 export const BUTTON_STYLES = {
   // Primary Button (Honey Gold Accent)
-  primary: 'inline-flex items-center justify-center gap-2 h-12 px-6 bg-[#D89A00] hover:bg-[#B87900] text-white rounded-xl text-sm font-semibold shadow-[0_2px_8px_rgba(216,154,0,0.2)] hover:shadow-[0_4px_12px_rgba(216,154,0,0.3)] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed',
+  primary: 'inline-flex items-center justify-center gap-2 h-12 px-6 btn-brand rounded-xl text-sm font-semibold transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed',
   
   // Secondary Button (White with Border)
   secondary: 'inline-flex items-center justify-center gap-2 h-12 px-6 bg-white dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-[#334155] text-[#475569] dark:text-[#CBD5E1] rounded-xl text-sm font-semibold hover:bg-[#F8FAFC] dark:hover:bg-[#334155] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed',
@@ -181,7 +181,7 @@ export const BADGE_STYLES = {
   danger: 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#FEE2E2] dark:bg-[rgba(239,68,68,0.2)] text-[#DC2626] dark:text-[#FCA5A5]',
   info: 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#DBEAFE] dark:bg-[rgba(59,130,246,0.2)] text-[#2563EB] dark:text-[#93C5FD]',
   neutral: 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#F1F5F9] dark:bg-[#334155] text-[#475569] dark:text-[#CBD5E1]',
-  honey: 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#FEF3C7] dark:bg-[rgba(216,154,0,0.2)] text-[#D89A00] dark:text-[#FDE047]',
+  honey: 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#FEF3C7] dark:bg-[rgba(216,154,0,0.2)] text-[var(--primary-color)] dark:text-[#FDE047]',
 };
 
 /**
@@ -204,9 +204,9 @@ export const COLORS = {
   textPlaceholder: 'text-[#94A3B8] dark:text-[#64748B]',
   
   // Brand
-  primary: 'text-[#D89A00]',
-  primaryBg: 'bg-[#D89A00]',
-  primaryHover: 'hover:bg-[#B87900]',
+  primary: 'text-[var(--primary-color)]',
+  primaryBg: 'bg-[var(--primary-color)]',
+  primaryHover: 'hover:bg-[var(--primary-hover)]',
 };
 
 /**
@@ -286,8 +286,8 @@ export const CHART_COLORS = {
   ],
   
   // === BRAND ACCENT (Use SPARINGLY - only KPI highlights, NOT charts) ===
-  brandAccent: '#D89A00',    // Honey Gold - ONLY for brand moments
-  brandHover: '#B87900',     // Darker honey for interactions
+  brandAccent: 'var(--primary-color)',    // Honey Gold - ONLY for brand moments
+  brandHover: 'var(--primary-hover)',     // Darker honey for interactions
   
   // Chart UI elements
   grid: 'rgba(226,232,240,0.5)',
@@ -337,7 +337,7 @@ export const formatStatusText = (status) => {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 };
-
+ // eslint-disable-next-line
 export default {
   SPACING,
   TYPOGRAPHY,
