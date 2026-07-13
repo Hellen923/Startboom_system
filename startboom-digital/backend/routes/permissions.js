@@ -8,6 +8,10 @@ const router = express.Router();
 // Apply tenant authentication
 router.use(tenantAuth);
 
+
+// Apply tenant authentication
+router.use(tenantAuth);
+
 /**
  * GET /api/permissions
  * Fetch permissions for a specific role
