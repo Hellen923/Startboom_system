@@ -224,23 +224,28 @@ const agentNavSections = [
     );
   };
 
-  const SidebarHeader = () => (
+  const SidebarHeader = () => {
+    const tenantLogo = user?.tenant?.branding?.logo || user?.tenant?.settings?.logo || localStorage.getItem('tenant_logo');
+    return (
     <div className="flex items-center justify-between px-6 py-6 border-b sidebar-divider">
       <div className="flex items-center space-x-3 min-w-0">
         <div className="w-12 h-12 flex items-center justify-center shrink-0">
           <img 
-            src={sidebarLogo} 
-            alt="HoneyPot" 
+            src={tenantLogo || sidebarLogo} 
+            alt="Logo" 
             className="w-full h-full object-contain"
           />
         </div>
         <div className="min-w-0">
-          <h2 className="text-base font-bold text-white leading-tight truncate">HoneyPot</h2>
+          <h2 className="text-base font-bold text-white leading-tight truncate">
+            {user?.tenant?.name || 'HoneyPot'}
+          </h2>
           <p className="text-[10px] font-semibold tracking-wider uppercase text-white/70 mt-0.5">{roleSubtitle}</p>
         </div>
       </div>
     </div>
   );
+  };
 
   const SidebarNav = ({ onItemClick }) => (
     <nav className="flex-1 px-3 py-6 overflow-y-auto scrollbar-thin">
