@@ -23,7 +23,7 @@ const makeIcon = (color) => L.divIcon({
   popupAnchor: [0, -30],
 });
 
-const COLORS = ['#D89A00','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#84cc16'];
+const COLORS = ['var(--primary-color)','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#84cc16'];
 
 // Fly to bounds when territories change
 const MapFlyTo = ({ territories }) => {

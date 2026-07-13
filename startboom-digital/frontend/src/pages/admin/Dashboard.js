@@ -558,7 +558,7 @@ const UserTable = ({ users }) => {
 
   const getRoleBadge = (role) => {
     const styles = {
-      admin:   'bg-purple-100 text-purple-700',
+      admin:   'bg-purple-100 text-[var(--primary-color)]',
       manager: 'bg-blue-100 text-blue-700',
       agent:   'bg-primary-100 text-primary-700',
     };

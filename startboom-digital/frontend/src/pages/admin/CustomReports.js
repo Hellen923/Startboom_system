@@ -90,7 +90,7 @@ const CustomReports = () => {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => handleExecute(report._id)}
-                  className="p-2 rounded-lg bg-indigo-100 text-indigo-600 hover:bg-indigo-200"
+                  className="p-2 rounded-lg bg-indigo-100 text-[var(--primary-color)] hover:bg-indigo-200"
                 >
                   <Play className="w-4 h-4" />
                 </button>

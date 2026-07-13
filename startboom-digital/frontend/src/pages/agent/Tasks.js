@@ -221,7 +221,7 @@ export default function Tasks() {
                   {/* Checkbox + Title */}
                   <div className="flex items-start gap-3 flex-1 min-w-0">
                     <button onClick={() => handleToggleComplete(task)}
-                      className={`mt-1 flex-shrink-0 ${task.completed ? 'text-green-500' : 'text-slate-300 hover:text-indigo-500'}`}>
+                      className={`mt-1 flex-shrink-0 ${task.completed ? 'text-green-500' : 'text-slate-300 hover:text-[var(--primary-color)]'}`}>
                       {task.completed ? <CheckSquare size={20} /> : <Square size={20} />}
                     </button>
                     <div className="min-w-0 flex-1">
@@ -246,7 +246,7 @@ export default function Tasks() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-shrink-0 ml-auto sm:ml-0">
-                    <button onClick={() => setDetailTask(task)} title="View details" className="p-2 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg">
+                    <button onClick={() => setDetailTask(task)} title="View details" className="p-2 text-slate-500 hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] rounded-lg">
                       <MoreHorizontal size={18} />
                     </button>
                     <button title="Call" className="p-2 text-slate-500 hover:bg-green-50 hover:text-green-600 rounded-lg">

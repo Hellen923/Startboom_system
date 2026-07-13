@@ -121,7 +121,7 @@ export const CardHeader = ({
       <div className="flex items-center space-x-3">
         {Icon && (
           <div className={`p-2 rounded-xl ${isDark ? 'bg-[#334155]' : 'bg-[#F1F5F9]'}`}>
-            <Icon className="w-5 h-5 text-[#D89A00]" />
+            <Icon className="w-5 h-5 text-[var(--primary-color)]" />
           </div>
         )}
         <div>
@@ -198,7 +198,7 @@ export const StatCard = ({
   value, 
   change, 
   changeType = 'neutral',
-  iconBg = 'bg-[#D89A00]',
+  iconBg = 'bg-[var(--primary-color)]',
   className = '' 
 }) => {
   const { theme } = useTheme();

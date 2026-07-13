@@ -84,8 +84,8 @@ export const ANALYTICS_PALETTE = {
   ],
   
   // === BRAND ACCENT (Use SPARINGLY - only for KPI highlights, not charts) ===
-  brandAccent: '#D89A00',    // Honey Gold - ONLY for brand moments
-  brandHover: '#B87900',     // Darker honey for interactions
+  brandAccent: 'var(--primary-color)',    // Honey Gold - ONLY for brand moments
+  brandHover: 'var(--primary-hover)',     // Darker honey for interactions
 };
 
 /** 

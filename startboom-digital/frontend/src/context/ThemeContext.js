@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 const ThemeContext = createContext();
 
 export const ACCENT_PRESETS = [
-  { id: 'honeypot', label: 'HoneyPot Gold', color: '#D89A00' },
+  { id: 'honeypot', label: 'HoneyPot Gold', color: 'var(--primary-color)' },
   { id: 'sage',     label: 'Sage Green',    color: '#10B981' },
   { id: 'slate',    label: 'Slate Blue',    color: '#64748B' },
   { id: 'sky',      label: 'Sky Blue',      color: '#0EA5E9' },
@@ -13,7 +13,7 @@ export const ACCENT_PRESETS = [
 
 const DEFAULT_THEME = {
   mode: 'light',
-  primaryColor: '#D89A00',  // HoneyPot Gold (Enterprise Spec)
+  primaryColor: 'var(--primary-color)',  // HoneyPot Gold (Enterprise Spec)
   accentPreset: 'honeypot',
 };
 
@@ -53,7 +53,7 @@ const THEME_TOKENS = {
     '--color-tab-inactive':    '#F1F5F9',
     '--color-tab-active-bg':   '#FFFFFF',
     '--brand-header-text':     '#FFFFFF',
-    '--brand-header-solid':    '#B87900',  // Honey hover state
+    '--brand-header-solid':    'var(--primary-hover)',  // Honey hover state
     '--sidebar-bg':            'linear-gradient(180deg, #182233 0%, #0F172A 100%)',  // Deep Slate (Enterprise Spec)
     '--sidebar-border':        'rgba(255, 255, 255, 0.08)',
     '--sidebar-nav-active':    'rgba(216, 154, 0, 0.15)',  // Honey gold tint
@@ -94,7 +94,7 @@ const THEME_TOKENS = {
     '--color-tab-inactive':    '#334155',
     '--color-tab-active-bg':   '#1E293B',
     '--brand-header-text':     '#FFFFFF',
-    '--brand-header-solid':    '#B87900',  // Honey hover
+    '--brand-header-solid':    'var(--primary-hover)',  // Honey hover
     '--sidebar-bg':            'linear-gradient(180deg, #182233 0%, #0F172A 100%)',  // Deep Slate (Enterprise Spec)
     '--sidebar-border':        '#334155',
     '--sidebar-nav-active':    'rgba(216, 154, 0, 0.2)',  // Honey gold tint

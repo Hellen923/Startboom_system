@@ -14,7 +14,7 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color = 'primary' }) => 
     blue: 'bg-blue-50 text-blue-600',
     red: 'bg-red-50 text-red-600',
     yellow: 'bg-yellow-50 text-yellow-600',
-    purple: 'bg-purple-50 text-purple-600',
+    purple: 'bg-purple-50 text-[var(--primary-color)]',
   };
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
@@ -289,7 +289,7 @@ const SuperAdminDashboard = () => {
                       </td>
                       <td className="px-6 py-4 text-gray-700 text-sm">{user.email}</td>
                       <td className="px-6 py-4">
-                        <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-purple-100 text-purple-700 capitalize">{user.role}</span>
+                        <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-purple-100 text-[var(--primary-color)] capitalize">{user.role}</span>
                       </td>
                       <td className="px-6 py-4">
                         <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${user.isActive === false ? 'bg-gray-100 text-gray-600' : 'bg-green-100 text-green-700'}`}>

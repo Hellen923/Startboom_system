@@ -195,7 +195,7 @@ const Targets = () => {
               <p className="text-2xl font-bold text-gray-900 mt-2">{summary.avgTargetAchievement.toFixed(0)}%</p>
             </div>
             <div className="p-3 bg-[#FEF3C7] rounded-full">
-              <TrendingUp className="w-6 h-6 text-[#B87900]" />
+              <TrendingUp className="w-6 h-6 text-[var(--primary-hover)]" />
             </div>
           </div>
         </motion.div>

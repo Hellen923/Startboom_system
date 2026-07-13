@@ -157,12 +157,10 @@ const Activities = () => {
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`
-                  px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all
-                  ${activeTab === tab
-                    ? 'bg-indigo-600 text-white'
-                    : isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
-                  }
+                  px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-white
+                  ${activeTab === tab ? '' : isDark ? 'text-gray-400 hover:text-white !bg-transparent' : 'text-gray-600 hover:text-gray-900 !bg-transparent'}
                 `}
+                style={activeTab === tab ? { background: 'var(--btn-brand-bg)' } : {}}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
@@ -193,7 +191,7 @@ const StatCard = ({ title, value, icon: Icon, gradient, isDark }) => (
   >
     <div className="flex items-center justify-between mb-3">
       <div className={`p-2 rounded-lg ${isDark ? 'bg-white/10' : 'bg-gray-100'}`}>
-        <Icon className="w-5 h-5" style={{ color: isDark ? 'white' : PROFESSIONAL_COLORS.primary.main }} />
+        <Icon className="w-5 h-5" style={{ color: 'var(--primary-color)' }} />
       </div>
     </div>
     <p className={`text-sm mb-1 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{title}</p>
@@ -402,7 +400,7 @@ const BreakdownTab = ({ myStats, isDark }) => {
 const MetricBox = ({ label, value, isDark, icon: Icon }) => (
   <div className={`p-4 rounded-lg ${isDark ? 'bg-[#334155]' : 'bg-white border border-gray-200'}`}>
     <div className="flex items-center justify-between mb-2">
-      <Icon className="w-5 h-5 text-indigo-600" />
+      <Icon className="w-5 h-5 text-[var(--primary-color)]" />
     </div>
     <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{label}</p>
     <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>{value}</p>

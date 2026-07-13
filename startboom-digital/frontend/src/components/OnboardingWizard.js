@@ -217,7 +217,7 @@ const StepBranding = ({ data, onChange, onUploadLogo, uploading }) => {
               // Reds & Pinks
               '#DC2626','#E11D48','#DB2777','#EC4899',
               // Oranges & Ambers
-              '#EA580C','#D97706','#CA8A04','#D89A00',
+              '#EA580C','#D97706','#CA8A04','var(--primary-color)',
               // Neutrals & Slates
               '#0F172A','#1E293B','#334155','#475569',
             ].map(c => (

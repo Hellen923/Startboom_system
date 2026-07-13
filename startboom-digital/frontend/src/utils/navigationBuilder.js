@@ -225,7 +225,7 @@ export const getUserHomeRoute = (user) => {
 
   return roleHomeRoutes[user.role] || '/dashboard';
 };
-
+// eslint-disable-next-line
 export default {
   generateNavigation,
   canAccessRoute,

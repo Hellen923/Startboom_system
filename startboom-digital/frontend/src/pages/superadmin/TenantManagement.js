@@ -430,8 +430,8 @@ const ViewDetailsModal = ({ tenant, onClose }) => {
                 <p className="text-xs text-gray-500 mt-1">/{tenant.settings?.features?.maxClients || 1000} max</p>
               </div>
               <div className="bg-purple-50 rounded-xl p-4 text-center">
-                <p className="text-2xl font-bold text-purple-600">{tenant.usage?.totalDeals || 0}</p>
-                <p className="text-xs text-purple-600">Deals</p>
+                <p className="text-2xl font-bold text-[var(--primary-color)]">{tenant.usage?.totalDeals || 0}</p>
+                <p className="text-xs text-[var(--primary-color)]">Deals</p>
                 <p className="text-xs text-gray-500 mt-1">/{tenant.settings?.features?.maxDeals || 500} max</p>
               </div>
               <div className="bg-gray-50 rounded-xl p-4 text-center">

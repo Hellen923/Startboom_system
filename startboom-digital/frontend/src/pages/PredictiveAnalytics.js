@@ -488,7 +488,7 @@ const PredictiveAnalytics = () => {
                 <div className="text-sm text-gray-600">Conversion Rate</div>
               </div>
               <div className="text-center p-4 bg-gray-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">
+                <div className="text-2xl font-bold text-[var(--primary-color)]">
                   ${performancePrediction.prediction.factors.averageDealSize.toLocaleString()}
                 </div>
                 <div className="text-sm text-gray-600">Avg Deal Size</div>
