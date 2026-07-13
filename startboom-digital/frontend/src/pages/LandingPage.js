@@ -5,7 +5,7 @@ import {
   Users, BarChart3, Calendar, ShoppingCart, TrendingUp, Shield, ArrowRight,
   CheckCircle, Star, Zap, Target, DollarSign, LineChart
 } from 'lucide-react';
-import sidebarLogo from '../assets/sidebar.png';
+import { PLATFORM_BRAND } from '../utils/platformBranding';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -93,13 +93,11 @@ const LandingPage = () => {
                 transition={{ duration: 0.5 }}
                 className="flex items-center gap-6 mb-8"
               >
-                <div className="h-32 w-32 lg:h-40 lg:w-40 flex items-center justify-center">
-                  <img 
-                    src={sidebarLogo} 
-                    alt="HoneyPot" 
-                    className="w-full h-full object-contain"
-                  />
-                </div>
+                <img
+                  src={PLATFORM_BRAND.logo}
+                  alt="HoneyPot"
+                  className="h-32 w-32 lg:h-40 lg:w-40 object-contain"
+                />
                 <div>
                   <h1 className="text-4xl lg:text-5xl font-bold text-white">HoneyPot</h1>
                   <p className="text-lg lg:text-xl text-[#D99A00] font-medium">CRM & Sales Platform</p>
@@ -356,13 +354,11 @@ const LandingPage = () => {
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 flex items-center justify-center">
-                <img 
-                  src={sidebarLogo} 
-                  alt="HoneyPot" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
+              <img
+                src={PLATFORM_BRAND.logo}
+                alt="HoneyPot"
+                className="h-10 w-10 object-contain"
+              />
               <div>
                 <div className="text-white font-bold">HoneyPot</div>
                 <div className="text-sm text-gray-400">CRM & Sales Platform</div>
