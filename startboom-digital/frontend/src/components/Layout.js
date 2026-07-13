@@ -226,19 +226,21 @@ const agentNavSections = [
 
   const SidebarHeader = () => {
     const tenantLogo = user?.tenant?.branding?.logo || user?.tenant?.settings?.logo || localStorage.getItem('tenant_logo');
+    const tenantName = user?.tenant?.name || 'HoneyPot';
+    const initial = tenantName.charAt(0).toUpperCase();
     return (
     <div className="flex items-center justify-between px-6 py-6 border-b sidebar-divider">
       <div className="flex items-center space-x-3 min-w-0">
-        <div className="w-12 h-12 flex items-center justify-center shrink-0">
-          <img 
-            src={tenantLogo || sidebarLogo} 
-            alt="Logo" 
-            className="w-full h-full object-contain"
-          />
+        <div className="w-12 h-12 flex items-center justify-center shrink-0 rounded-xl overflow-hidden bg-white/10">
+          {tenantLogo ? (
+            <img src={tenantLogo} alt="Logo" className="w-full h-full object-contain" />
+          ) : (
+            <span className="text-white font-bold text-xl">{initial}</span>
+          )}
         </div>
         <div className="min-w-0">
           <h2 className="text-base font-bold text-white leading-tight truncate">
-            {user?.tenant?.name || 'HoneyPot'}
+            {tenantName}
           </h2>
           <p className="text-[10px] font-semibold tracking-wider uppercase text-white/70 mt-0.5">{roleSubtitle}</p>
         </div>
