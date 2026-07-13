@@ -13,14 +13,36 @@ const downloadCSV = (headers, rows, filename) => {
   URL.revokeObjectURL(url);
 };
 
+const getTenantInfo = () => {
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return {
+      name: user?.tenant?.name || user?.companyName || 'HoneyPot CRM',
+      logo: user?.tenant?.branding?.logo || user?.tenant?.settings?.logo || localStorage.getItem('tenant_logo') || null,
+      color: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#D89A00',
+    };
+  } catch { return { name: 'HoneyPot CRM', logo: null, color: '#D89A00' }; }
+};
+
 const downloadPDF = (title, headers, rows) => {
-  const body = rows.map((row) => `<tr>${row.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('');
+  const { name: companyName, logo, color } = getTenantInfo();
+  const logoHtml = logo ? `<img src="${logo}" style="height:40px;object-fit:contain" alt="logo" />` : '';
+  const body = rows.map((row) => `<tr>${row.map((c) => `<td>${c ?? ''}</td>`).join('')}</tr>`).join('');
   const html = `<html><head><title>${title}</title>
-    <style>body{font-family:Arial,sans-serif;font-size:12px}h2{color:var(--primary-color,#FFD700)}
-    table{width:100%;border-collapse:collapse;margin-top:12px}th{background:#1f2937;color:#fff;padding:8px;text-align:left}
-    td{padding:7px 8px;border-bottom:1px solid #e5e7eb}</style></head>
-    <body><h2>${title}</h2><p>Exported: ${new Date().toLocaleString()}</p>
-    <table><thead><tr>${headers.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></body></html>`;
+    <style>
+      body{font-family:Arial,sans-serif;font-size:12px;margin:0;padding:20px}
+      .header{display:flex;align-items:center;gap:12px;padding:16px 20px;background:${color};color:#fff;border-radius:8px;margin-bottom:16px}
+      .header h1{margin:0;font-size:16px;font-weight:700}  
+      .header p{margin:2px 0 0;font-size:11px;opacity:0.85}
+      .meta{font-size:11px;color:#64748b;margin-bottom:12px}
+      table{width:100%;border-collapse:collapse}th{background:#1f2937;color:#fff;padding:8px;text-align:left;font-size:11px}
+      td{padding:7px 8px;border-bottom:1px solid #e5e7eb;font-size:11px}
+    </style></head>
+    <body>
+      <div class="header">${logoHtml}<div><h1>${companyName}</h1><p>${title}</p></div></div>
+      <p class="meta">Generated: ${new Date().toLocaleString()}</p>
+      <table><thead><tr>${headers.map((h) => `<th>${h}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table>
+    </body></html>`;
   const win = window.open('', '_blank');
   if (!win) return;
   win.document.write(html);
