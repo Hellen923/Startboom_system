@@ -1,14 +1,15 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, Users, Target, TrendingUp, ShieldCheck, AlertCircle, CheckCircle, Clock, ArrowRight } from 'lucide-react';
+import { Building2, Users, TrendingUp, ShieldCheck, AlertCircle, CheckCircle, Clock, ArrowRight, Search } from 'lucide-react';
 import { tenantsAPI, usersAPI } from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
-import potLogo from '../../assets/pot logo.png';
 import DashboardQuickActions from '../../components/DashboardQuickActions';
+
+const cardClass = 'chart-panel';
 
 const StatCard = ({ icon: Icon, title, value, subtitle, color = 'primary' }) => {
   const colors = {
+    primary: 'bg-primary-50 text-primary-600',
     orange: 'bg-primary-50 text-primary-600',
     green: 'bg-green-50 text-green-600',
     blue: 'bg-blue-50 text-blue-600',
@@ -17,7 +18,7 @@ const StatCard = ({ icon: Icon, title, value, subtitle, color = 'primary' }) => 
     purple: 'bg-purple-50 text-[var(--primary-color)]',
   };
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow">
+    <div className={`${cardClass} p-5`}>
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <p className="text-sm font-medium text-gray-600">{title}</p>
@@ -47,33 +48,12 @@ const StatusBadge = ({ status }) => {
 };
 
 const SuperAdminDashboard = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [tenants, setTenants] = useState([]);
   const [platformUsers, setPlatformUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userSearch, setUserSearch] = useState('');
-
-  const handleExport = (type) => {
-    const headers = ['Name', 'Email', 'Role', 'Status', 'Tenant', 'Created'];
-    const data = platformUsers.map(u => [
-      u.name || '',
-      u.email || '',
-      u.role || '',
-      u.isActive !== false ? 'Active' : 'Inactive',
-      u.tenantName || u.tenant?.name || '',
-      u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '',
-    ]);
-
-    if (type === 'csv') {
-      exportToCSV(data, headers, `platform-users-${new Date().toISOString().slice(0,10)}.csv`);
-      toast.success(`Exported ${platformUsers.length} users`);
-    } else if (type === 'pdf') {
-      exportToPDF('Platform Users', headers, data, `platform-users-${new Date().toISOString().slice(0,10)}.pdf`);
-    } else {
-      toast.error('Export type not supported');
-    }
-  };
+  const [tenantSearch, setTenantSearch] = useState('');
 
   const [stats, setStats] = useState({
     total: 0, active: 0, trial: 0, suspended: 0,
@@ -140,54 +120,6 @@ const SuperAdminDashboard = () => {
     }
   };
 
-  // ---- Export helpers ----
-  const exportToCSV = (data, filename) => {
-    if (!data.length) return;
-    const headers = ['Name', 'Email', 'Role', 'Status', 'Tenant', 'Created'];
-    const rows = data.map(u => [
-      u.name || '',
-      u.email || '',
-      u.role || '',
-      u.isActive !== false ? 'Active' : 'Inactive',
-      u.tenantName || u.tenant?.name || '',
-      u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '',
-    ]);
-    const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `${filename}.csv`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  };
-
-  const exportToPDF = (title, headers, data, filename) => {
-    const rows = data.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
-    const html = `
-      <html><head><title>${title}</title>
-      <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; }
-        h2 { color: #FFD700; }
-        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-        th { background: #1f2937; color: white; padding: 8px; text-align: left; font-size: 11px; }
-        td { padding: 7px 8px; border-bottom: 1px solid #e5e7eb; }
-        tr:nth-child(even) td { background: #f9fafb; }
-      </style></head>
-      <body>
-        <h2>${title}</h2>
-        <p>Generated: ${new Date().toLocaleString()}</p>
-        <table>
-          <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </body></html>`;
-    const win = window.open('', '_blank');
-    if (!win) return;
-    win.document.write(html);
-    win.document.close();
-    win.print();
-  };
-
   const filteredPlatformUsers = useMemo(() => {
     if (!userSearch.trim()) return platformUsers;
     const q = userSearch.toLowerCase();
@@ -198,6 +130,29 @@ const SuperAdminDashboard = () => {
         (u.role || '').toLowerCase().includes(q)
     );
   }, [platformUsers, userSearch]);
+
+  const filteredTenants = useMemo(() => {
+    if (!tenantSearch.trim()) return tenants;
+    const q = tenantSearch.toLowerCase();
+    return tenants.filter(
+      tenant =>
+        (tenant.name || '').toLowerCase().includes(q) ||
+        (tenant.email || '').toLowerCase().includes(q) ||
+        (tenant.status || '').toLowerCase().includes(q)
+    );
+  }, [tenants, tenantSearch]);
+
+  const statusSeries = [
+    { label: 'Active', value: stats.active, color: 'bg-green-500' },
+    { label: 'Trial', value: stats.trial, color: 'bg-yellow-500' },
+    { label: 'Suspended', value: stats.suspended, color: 'bg-red-500' },
+  ];
+  const usageSeries = [
+    { label: 'Users', value: stats.totalUsers, color: 'bg-blue-500' },
+    { label: 'Clients', value: stats.totalClients, color: 'bg-green-500' },
+    { label: 'Deals', value: stats.totalDeals, color: 'bg-primary-500' },
+  ];
+  const maxUsageValue = Math.max(...usageSeries.map(item => item.value), 1);
 
   if (loading) {
     return (
@@ -221,7 +176,7 @@ const SuperAdminDashboard = () => {
 
       {/* Tenant Status Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div className={`${cardClass} p-5`}>
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-green-50 rounded-lg"><CheckCircle className="w-5 h-5 text-green-600" /></div>
             <div>
@@ -230,7 +185,7 @@ const SuperAdminDashboard = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div className={`${cardClass} p-5`}>
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-yellow-50 rounded-lg"><Clock className="w-5 h-5 text-yellow-600" /></div>
             <div>
@@ -239,7 +194,7 @@ const SuperAdminDashboard = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div className={`${cardClass} p-5`}>
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-red-50 rounded-lg"><AlertCircle className="w-5 h-5 text-red-600" /></div>
             <div>
@@ -250,10 +205,71 @@ const SuperAdminDashboard = () => {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <div className={`${cardClass} p-5`}>
+          <div className="mb-5">
+            <h2 className="text-lg font-semibold text-gray-900">Organization Status</h2>
+            <p className="text-sm text-gray-500">Distribution of tenants across the platform.</p>
+          </div>
+          <div className="space-y-4">
+            {statusSeries.map((item) => {
+              const percentage = stats.total ? Math.round((item.value / stats.total) * 100) : 0;
+              return (
+                <div key={item.label}>
+                  <div className="mb-1 flex items-center justify-between text-sm">
+                    <span className="font-medium text-gray-700">{item.label}</span>
+                    <span className="text-gray-500">{item.value} ({percentage}%)</span>
+                  </div>
+                  <div className="h-3 overflow-hidden rounded-full bg-gray-100">
+                    <div className={`h-full rounded-full ${item.color}`} style={{ width: `${percentage}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className={`${cardClass} p-5`}>
+          <div className="mb-5">
+            <h2 className="text-lg font-semibold text-gray-900">Platform Activity Mix</h2>
+            <p className="text-sm text-gray-500">Users, clients, and deals recorded across all organizations.</p>
+          </div>
+          <div className="space-y-4">
+            {usageSeries.map((item) => {
+              const percentage = Math.max(Math.round((item.value / maxUsageValue) * 100), item.value > 0 ? 8 : 0);
+              return (
+                <div key={item.label}>
+                  <div className="mb-1 flex items-center justify-between text-sm">
+                    <span className="font-medium text-gray-700">{item.label}</span>
+                    <span className="text-gray-500">{item.value.toLocaleString()}</span>
+                  </div>
+                  <div className="h-3 overflow-hidden rounded-full bg-gray-100">
+                    <div className={`h-full rounded-full ${item.color}`} style={{ width: `${percentage}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
       {/* All Users Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900">All Users</h2>
+      <div className={cardClass}>
+        <div className="flex flex-col gap-4 p-5 border-b border-gray-100 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">All Users</h2>
+            <p className="text-sm text-gray-500">Search platform users by name, email, or role.</p>
+          </div>
+          <div className="relative w-full lg:w-80">
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <input
+              type="search"
+              value={userSearch}
+              onChange={(e) => setUserSearch(e.target.value)}
+              placeholder="Search users..."
+              className="w-full rounded-xl border border-gray-300 bg-white py-2.5 pl-12 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            />
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -307,16 +323,31 @@ const SuperAdminDashboard = () => {
       </div>
 
       {/* Recent Tenants Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900">All Organizations</h2>
-          <button
-            onClick={() => navigate('/superadmin/tenants')}
-            className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center space-x-1"
-          >
-            <span>View All</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+      <div className={cardClass}>
+        <div className="flex flex-col gap-4 p-5 border-b border-gray-100 xl:flex-row xl:items-center xl:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">All Organizations</h2>
+            <p className="text-sm text-gray-500">Search tenants by organization, email, or status.</p>
+          </div>
+          <div className="flex w-full flex-col gap-3 sm:flex-row xl:w-auto">
+            <div className="relative w-full sm:w-80">
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+              <input
+                type="search"
+                value={tenantSearch}
+                onChange={(e) => setTenantSearch(e.target.value)}
+                placeholder="Search organizations..."
+                className="w-full rounded-xl border border-gray-300 bg-white py-2.5 pl-12 pr-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+              />
+            </div>
+            <button
+              onClick={() => navigate('/superadmin/tenants')}
+              className="inline-flex items-center justify-center gap-1 rounded-xl border border-primary-200 px-4 py-2.5 text-sm font-semibold text-primary-600 hover:bg-primary-50"
+            >
+              <span>View Tenants</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -331,14 +362,14 @@ const SuperAdminDashboard = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {tenants.length === 0 ? (
+              {filteredTenants.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
                     No organizations found
                   </td>
                 </tr>
               ) : (
-                tenants.map((tenant) => (
+                filteredTenants.map((tenant) => (
                   <tr key={tenant._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-3">
@@ -387,3 +418,4 @@ const SuperAdminDashboard = () => {
 };
 
 export default SuperAdminDashboard;
+
