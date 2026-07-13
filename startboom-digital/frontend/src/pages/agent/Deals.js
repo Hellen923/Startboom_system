@@ -459,13 +459,13 @@ const Deals = () => {
           <div className="flex gap-4 flex-wrap">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Search className="pointer-events-none absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
               <input
                 type="text"
                 placeholder="Search deals..."
                 value={filters.search}
                 onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                className="pl-12 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
 

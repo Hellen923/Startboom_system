@@ -197,13 +197,13 @@ export default function Issues() {
       <div className="bg-white rounded-2xl shadow-sm p-5">
         <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
           <div className="relative w-full lg:w-96">
-            <Search className="absolute left-3 top-3 text-slate-400" size={18} />
+            <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input
               type="text"
               placeholder="Search issues by client, type, or description…"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-slate-200 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
           <div className="flex gap-3 flex-wrap">

@@ -474,7 +474,7 @@ export default function Leads() {
         <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
           <div className="relative w-full lg:w-96">
             <Search
-              className="absolute left-3 top-3 text-slate-400"
+              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
               size={18}
             />
 
@@ -483,7 +483,7 @@ export default function Leads() {
               placeholder="Search leads..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-slate-200 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
