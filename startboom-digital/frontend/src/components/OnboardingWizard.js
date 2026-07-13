@@ -207,19 +207,34 @@ const StepBranding = ({ data, onChange, onUploadLogo, uploading }) => {
             className="w-12 h-12 rounded-lg border border-gray-300 cursor-pointer p-1"
           />
           <div className="flex gap-2 flex-wrap">
-            {['#0066FF','#3b82f6','#10b981','#8b5cf6','#ef4444','#f59e0b','#06b6d4','#ec4899'].map(c => (
+            {[
+              // Blues & Indigos
+              '#0066FF','#2563EB','#4F46E5','#6366F1',
+              // Teals & Greens
+              '#0891B2','#0D9488','#059669','#16A34A',
+              // Purples
+              '#7C3AED','#9333EA','#A855F7','#C026D3',
+              // Reds & Pinks
+              '#DC2626','#E11D48','#DB2777','#EC4899',
+              // Oranges & Ambers
+              '#EA580C','#D97706','#CA8A04','#D89A00',
+              // Neutrals & Slates
+              '#0F172A','#1E293B','#334155','#475569',
+            ].map(c => (
               <button
                 key={c}
                 type="button"
                 onClick={() => onChange('primaryColor', c)}
                 style={{ background: c }}
-                className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${
-                  data.primaryColor === c ? 'border-gray-800 scale-110' : 'border-transparent'
+                title={c}
+                className={`w-7 h-7 rounded-full border-2 transition-transform hover:scale-110 ${
+                  data.primaryColor === c ? 'border-gray-800 scale-110 ring-2 ring-offset-1 ring-gray-400' : 'border-transparent'
                 }`}
               />
             ))}
           </div>
         </div>
+        <p className="text-xs text-gray-400 mt-2">Or pick any custom colour using the colour picker</p>
       </div>
     </div>
   );
