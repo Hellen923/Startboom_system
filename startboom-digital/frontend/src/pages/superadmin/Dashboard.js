@@ -4,7 +4,6 @@ import { Building2, Users, Target, TrendingUp, ShieldCheck, AlertCircle, CheckCi
 import { tenantsAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
-import potLogo from '../../assets/pot logo.png';
 
 const StatCard = ({ icon: Icon, title, value, subtitle, color = 'honey' }) => {
   const colors = {
