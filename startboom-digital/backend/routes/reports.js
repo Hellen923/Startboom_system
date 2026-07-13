@@ -8,12 +8,12 @@ import Deal from '../models/Deal.js';
 import Schedule from '../models/Schedule.js';
 import User from '../models/User.js';
 import Sale from '../models/Sale.js';
-import { tenantAuth } from '../middleware/tenantAuth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
 // Apply tenant-aware middleware to all routes
-router.use(tenantAuth);
+router.use(tenantAuth, requireTenantModule('reports'));
 
 // Get Analytics Data
 router.get('/analytics', async (req, res) => {
