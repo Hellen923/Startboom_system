@@ -1,18 +1,22 @@
 // routes/notes.js
 import express from 'express';
 import Note from '../models/Note.js';
-import { auth } from '../middleware/auth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
+// Apply tenant authentication
+router.use(tenantAuth);
+
+
 // Get all notes (with filters)
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { type, category, visibility, isTemplate, tags, search } = req.query;
     
     // Use text search if search query provided
     if (search) {
-      const notes = await Note.searchNotes(req.user.tenant, search, {
+      const notes = await Note.searchNotes(req.user.tenantId, search, {
         type, category, visibility, tags: tags ? tags.split(',') : []
       });
       
@@ -25,7 +29,7 @@ router.get('/', auth, async (req, res) => {
     
     // Build query
     const query = {
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isDeleted: false
     };
     
@@ -36,13 +40,13 @@ router.get('/', auth, async (req, res) => {
     if (tags) query.tags = { $in: tags.split(',') };
     
     // Access control
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       query.$or = [
-        { owner: req.user._id },
+        { owner: req.user.userId },
         { visibility: 'company' },
         { visibility: 'department', 'sharedWith.id': req.user.department },
         { visibility: 'team', 'sharedWith.id': req.user.team },
-        { 'collaborators.user': req.user._id }
+        { 'collaborators.user': req.user.userId }
       ];
     }
     
@@ -67,13 +71,13 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get my notes
-router.get('/my-notes', auth, async (req, res) => {
+router.get('/my-notes', async (req, res) => {
   try {
     const { type, category } = req.query;
     
     const query = {
-      tenant: req.user.tenant,
-      owner: req.user._id,
+      ...req.tenantQuery,
+      owner: req.user.userId,
       isDeleted: false
     };
     
@@ -98,11 +102,11 @@ router.get('/my-notes', auth, async (req, res) => {
 });
 
 // Get favorites
-router.get('/favorites', auth, async (req, res) => {
+router.get('/favorites', async (req, res) => {
   try {
     const notes = await Note.find({
-      tenant: req.user.tenant,
-      favoritedBy: req.user._id,
+      ...req.tenantQuery,
+      favoritedBy: req.user.userId,
       isDeleted: false
     })
       .populate('owner', 'name email avatar')
@@ -123,11 +127,11 @@ router.get('/favorites', auth, async (req, res) => {
 });
 
 // Get single note
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const note = await Note.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isDeleted: false
     })
       .populate('owner', 'name email avatar')
@@ -156,7 +160,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create note
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const {
       title, content, type, format, category, tags,
@@ -164,7 +168,7 @@ router.post('/', auth, async (req, res) => {
     } = req.body;
     
     const note = new Note({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       title: title.trim(),
       content: content || '',
       type: type || 'note',
@@ -176,9 +180,9 @@ router.post('/', auth, async (req, res) => {
       sharedWith: sharedWith || [],
       isTemplate: isTemplate || false,
       templateCategory,
-      owner: req.user._id,
+      owner: req.user.userId,
       collaborators: [{
-        user: req.user._id,
+        user: req.user.userId,
         role: 'owner'
       }]
     });
@@ -200,11 +204,11 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update note
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const note = await Note.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isDeleted: false
     });
     
@@ -215,9 +219,9 @@ router.put('/:id', auth, async (req, res) => {
     }
     
     // Check permission
-    const isOwner = note.owner.toString() === req.user._id.toString();
+    const isOwner = note.owner.toString() === req.user.userId.toString();
     const isEditor = note.collaborators.some(c => 
-      c.user.toString() === req.user._id.toString() && 
+      c.user.toString() === req.user.userId.toString() && 
       ['owner', 'editor'].includes(c.role)
     );
     
@@ -233,7 +237,7 @@ router.put('/:id', auth, async (req, res) => {
     } = req.body;
     
     // Save version before updating
-    await note.saveVersion(req.user._id, changeDescription);
+    await note.saveVersion(req.user.userId, changeDescription);
     
     if (title) note.title = title.trim();
     if (content !== undefined) note.content = content;
@@ -260,11 +264,11 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Add collaborator
-router.post('/:id/collaborators', auth, async (req, res) => {
+router.post('/:id/collaborators', async (req, res) => {
   try {
     const note = await Note.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isDeleted: false
     });
     
@@ -275,7 +279,7 @@ router.post('/:id/collaborators', auth, async (req, res) => {
     }
     
     // Only owner can add collaborators
-    if (note.owner.toString() !== req.user._id.toString()) {
+    if (note.owner.toString() !== req.user.userId.toString()) {
       return res.status(403).json({
         message: 'Only the note owner can add collaborators'
       });
@@ -300,11 +304,11 @@ router.post('/:id/collaborators', auth, async (req, res) => {
 });
 
 // Toggle favorite
-router.patch('/:id/favorite', auth, async (req, res) => {
+router.patch('/:id/favorite', async (req, res) => {
   try {
     const note = await Note.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isDeleted: false
     });
     
@@ -315,15 +319,15 @@ router.patch('/:id/favorite', auth, async (req, res) => {
     }
     
     const isFavorited = note.favoritedBy.some(id => 
-      id.toString() === req.user._id.toString()
+      id.toString() === req.user.userId.toString()
     );
     
     if (isFavorited) {
       note.favoritedBy = note.favoritedBy.filter(id => 
-        id.toString() !== req.user._id.toString()
+        id.toString() !== req.user.userId.toString()
       );
     } else {
-      note.favoritedBy.push(req.user._id);
+      note.favoritedBy.push(req.user.userId);
     }
     
     await note.save();
@@ -343,11 +347,11 @@ router.patch('/:id/favorite', auth, async (req, res) => {
 });
 
 // Delete note
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const note = await Note.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isDeleted: false
     });
     
@@ -358,8 +362,8 @@ router.delete('/:id', auth, async (req, res) => {
     }
     
     // Only owner can delete
-    if (note.owner.toString() !== req.user._id.toString() &&
-        !['superadmin', 'admin'].includes(req.user.role)) {
+    if (note.owner.toString() !== req.user.userId.toString() &&
+        !(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only the note owner can delete'
       });
@@ -367,7 +371,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     note.isDeleted = true;
     note.deletedAt = new Date();
-    note.deletedBy = req.user._id;
+    note.deletedBy = req.user.userId;
     await note.save();
     
     res.json({
