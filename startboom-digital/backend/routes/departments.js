@@ -3,16 +3,20 @@ import express from 'express';
 import Department from '../models/Department.js';
 import Team from '../models/Team.js';
 import User from '../models/User.js';
-import { auth } from '../middleware/auth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 import { checkPermission } from '../middleware/permission.js';
 
 const router = express.Router();
 
+// Apply tenant authentication and module enforcement
+router.use(tenantAuth);
+router.use(requireTenantModule('departments'));
+
 // Get all departments
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const departments = await Department.find({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isActive: true
     })
       .populate('head', 'name email')
@@ -22,13 +26,13 @@ router.get('/', auth, async (req, res) => {
     // Get stats for each department
     for (let dept of departments) {
       const userCount = await User.countDocuments({
-        tenant: req.user.tenant,
+        ...req.tenantQuery,
         department: dept._id,
         isActive: true
       });
       
       const teamCount = await Team.countDocuments({
-        tenant: req.user.tenant,
+        ...req.tenantQuery,
         department: dept._id,
         isActive: true
       });
@@ -52,11 +56,11 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get single department by ID
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const department = await Department.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     })
       .populate('head', 'name email phone')
       .populate('createdBy', 'name');
@@ -69,13 +73,13 @@ router.get('/:id', auth, async (req, res) => {
     
     // Get users and teams
     const users = await User.find({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       department: department._id,
       isActive: true
     }).select('name email role');
     
     const teams = await Team.find({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       department: department._id,
       isActive: true
     }).populate('manager', 'name email');
@@ -96,10 +100,10 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create department (admin only)
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     // Only admins can create departments
-    if (req.user.role !== 'superadmin' && req.user.role !== 'admin') {
+    if (!req.isSuperAdmin && req.user.role !== 'admin') {
       return res.status(403).json({
         message: 'Only administrators can create departments'
       });
@@ -109,7 +113,7 @@ router.post('/', auth, async (req, res) => {
     
     // Check if department name already exists for this tenant
     const existing = await Department.findOne({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       name: name.trim()
     });
     
@@ -121,14 +125,14 @@ router.post('/', auth, async (req, res) => {
     
     // Create department
     const department = new Department({
-      tenant: req.user.tenant,
+      tenant: req.user.tenantId,
       name: name.trim(),
       description: description || '',
       modules: modules || ['clients', 'deals', 'sales'],
       icon: icon || 'Briefcase',
       color: color || '#0066FF',
       head: head || null,
-      createdBy: req.user._id
+      createdBy: req.user.userId
     });
     
     await department.save();
@@ -148,10 +152,10 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update department
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     // Only admins can update departments
-    if (req.user.role !== 'superadmin' && req.user.role !== 'admin') {
+    if (!req.isSuperAdmin && req.user.role !== 'admin') {
       return res.status(403).json({
         message: 'Only administrators can update departments'
       });
@@ -159,7 +163,7 @@ router.put('/:id', auth, async (req, res) => {
     
     const department = await Department.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!department) {
@@ -173,7 +177,7 @@ router.put('/:id', auth, async (req, res) => {
     // Check name uniqueness if changing name
     if (name && name !== department.name) {
       const existing = await Department.findOne({
-        tenant: req.user.tenant,
+        ...req.tenantQuery,
         name: name.trim(),
         _id: { $ne: department._id }
       });
@@ -193,7 +197,7 @@ router.put('/:id', auth, async (req, res) => {
     if (head !== undefined) department.head = head;
     if (isActive !== undefined) department.isActive = isActive;
     
-    department.updatedBy = req.user._id;
+    department.updatedBy = req.user.userId;
     
     await department.save();
     
@@ -212,10 +216,10 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Delete (soft delete) department
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     // Only admins can delete departments
-    if (req.user.role !== 'superadmin' && req.user.role !== 'admin') {
+    if (!req.isSuperAdmin && req.user.role !== 'admin') {
       return res.status(403).json({
         message: 'Only administrators can delete departments'
       });
@@ -223,7 +227,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     const department = await Department.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!department) {
@@ -234,7 +238,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     // Check if department has users
     const userCount = await User.countDocuments({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       department: department._id,
       isActive: true
     });
@@ -247,7 +251,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     // Soft delete
     department.isActive = false;
-    department.updatedBy = req.user._id;
+    department.updatedBy = req.user.userId;
     await department.save();
     
     res.json({
@@ -264,9 +268,9 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 // Add module to department
-router.post('/:id/modules', auth, async (req, res) => {
+router.post('/:id/modules', async (req, res) => {
   try {
-    if (req.user.role !== 'superadmin' && req.user.role !== 'admin') {
+    if (!req.isSuperAdmin && req.user.role !== 'admin') {
       return res.status(403).json({
         message: 'Only administrators can modify department modules'
       });
@@ -302,9 +306,9 @@ router.post('/:id/modules', auth, async (req, res) => {
 });
 
 // Remove module from department
-router.delete('/:id/modules/:moduleName', auth, async (req, res) => {
+router.delete('/:id/modules/:moduleName', async (req, res) => {
   try {
-    if (req.user.role !== 'superadmin' && req.user.role !== 'admin') {
+    if (!req.isSuperAdmin && req.user.role !== 'admin') {
       return res.status(403).json({
         message: 'Only administrators can modify department modules'
       });
