@@ -10,9 +10,9 @@
     "sync:atlas": "node sync-to-atlas.js",
     "ensure:admin": "node ensure-admin.js",
     "create:superadmin": "node create-superadmin.js",
-    "test": "NODE_ENV=test jest --runInBand --detectOpenHandles",
-    "test:watch": "NODE_ENV=test jest --watch --runInBand",
-    "test:coverage": "NODE_ENV=test jest --coverage --runInBand"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --detectOpenHandles",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch --runInBand",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --runInBand"
   },
   "dependencies": {
     "@twilio/voice-sdk": "^2.18.3",
