@@ -776,10 +776,10 @@ router.patch('/onboarding', async (req, res) => {
 
     // Save step-specific data
     if (step === 'branding') {
-      if (logo)           update['settings.logo']           = logo;
-      if (primaryColor)   update['settings.primaryColor']   = primaryColor;
-      if (secondaryColor) update['settings.secondaryColor'] = secondaryColor;
-      if (companyName)    update.name                       = companyName;
+      if (logo)           { update['settings.logo'] = logo; update['branding.logo'] = logo; }
+      if (primaryColor)   { update['settings.primaryColor'] = primaryColor; update['branding.primaryColor'] = primaryColor; }
+      if (secondaryColor) { update['settings.secondaryColor'] = secondaryColor; update['branding.secondaryColor'] = secondaryColor; }
+      if (companyName)    update.name = companyName;
       if (completed)      update['onboarding.stepsCompleted.branding'] = true;
     }
 
