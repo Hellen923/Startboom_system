@@ -3,17 +3,22 @@ import express from 'express';
 import Team from '../models/Team.js';
 import Department from '../models/Department.js';
 import User from '../models/User.js';
-import { auth } from '../middleware/auth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
+// Apply tenant authentication and module enforcement
+router.use(tenantAuth);
+router.use(requireTenantModule('teams'));
+
+
 // Get all teams (optionally filter by department)
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { department } = req.query;
     
     const query = {
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isActive: true
     };
     
@@ -42,11 +47,11 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get single team by ID
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const team = await Team.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     })
       .populate('department', 'name modules')
       .populate('manager', 'name email phone')
@@ -73,7 +78,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create team
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     // Only admins and managers can create teams
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
@@ -87,7 +92,7 @@ router.post('/', auth, async (req, res) => {
     // Validate department exists
     const dept = await Department.findOne({
       _id: department,
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isActive: true
     });
     
@@ -99,7 +104,7 @@ router.post('/', auth, async (req, res) => {
     
     // Check if team name already exists for this tenant
     const existing = await Team.findOne({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       name: name.trim()
     });
     
@@ -111,14 +116,14 @@ router.post('/', auth, async (req, res) => {
     
     // Create team
     const team = new Team({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       department: department,
       name: name.trim(),
       description: description || '',
       manager: manager || null,
       members: members || [],
       targets: targets || {},
-      createdBy: req.user._id
+      createdBy: req.user.userId
     });
     
     await team.save();
@@ -154,7 +159,7 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update team
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     // Only admins and managers can update teams
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
@@ -165,7 +170,7 @@ router.put('/:id', auth, async (req, res) => {
     
     const team = await Team.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!team) {
@@ -179,7 +184,7 @@ router.put('/:id', auth, async (req, res) => {
     // Check name uniqueness if changing name
     if (name && name !== team.name) {
       const existing = await Team.findOne({
-        tenant: req.user.tenant,
+        ...req.tenantQuery,
         name: name.trim(),
         _id: { $ne: team._id }
       });
@@ -197,7 +202,7 @@ router.put('/:id', auth, async (req, res) => {
     if (targets) team.targets = { ...team.targets, ...targets };
     if (isActive !== undefined) team.isActive = isActive;
     
-    team.updatedBy = req.user._id;
+    team.updatedBy = req.user.userId;
     
     await team.save();
     await team.populate([
@@ -221,7 +226,7 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Add member to team
-router.post('/:id/members', auth, async (req, res) => {
+router.post('/:id/members', async (req, res) => {
   try {
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -233,7 +238,7 @@ router.post('/:id/members', auth, async (req, res) => {
     
     const team = await Team.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!team) {
@@ -245,7 +250,7 @@ router.post('/:id/members', auth, async (req, res) => {
     // Check if user exists and belongs to same tenant
     const user = await User.findOne({
       _id: userId,
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isActive: true
     });
     
@@ -279,7 +284,7 @@ router.post('/:id/members', auth, async (req, res) => {
 });
 
 // Remove member from team
-router.delete('/:id/members/:userId', auth, async (req, res) => {
+router.delete('/:id/members/:userId', async (req, res) => {
   try {
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -289,7 +294,7 @@ router.delete('/:id/members/:userId', auth, async (req, res) => {
     
     const team = await Team.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!team) {
@@ -323,7 +328,7 @@ router.delete('/:id/members/:userId', auth, async (req, res) => {
 });
 
 // Delete (soft delete) team
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -333,7 +338,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     const team = await Team.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!team) {
@@ -344,7 +349,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     // Soft delete
     team.isActive = false;
-    team.updatedBy = req.user._id;
+    team.updatedBy = req.user.userId;
     await team.save();
     
     // Clear team field from all members
@@ -368,9 +373,9 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 // Get user's teams
-router.get('/user/my-teams', auth, async (req, res) => {
+router.get('/user/my-teams', async (req, res) => {
   try {
-    const teams = await Team.getUserTeams(req.user.tenant, req.user._id);
+    const teams = await Team.getUserTeams(req.user.tenantId, req.user.userId);
     
     res.json({
       success: true,
