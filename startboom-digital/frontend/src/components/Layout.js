@@ -39,7 +39,7 @@ import ProfileModal from './ProfileModal';
 import LogoutModal from './LogoutModal';
 import QuickActionModal from './QuickActionModal';
 import Taskbar from './Taskbar';
-import sidebarLogo from '../assets/sidebar.png';
+import { PLATFORM_BRAND } from '../utils/platformBranding';
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -84,7 +84,7 @@ const Layout = ({ children }) => {
       title: 'Platform',
       items: [
         { path: '/dashboard', icon: PieChart, label: 'Dashboard', description: 'Platform insights and tenant summaries at a glance.' },
-        { path: '/superadmin', icon: ShieldCheck, label: 'Command Center', description: 'Super admin control center for platform operations.' },
+        { path: '/superadmin', icon: ShieldCheck, label: 'Dashboard', description: 'Welcome to HoneyPot CRM. Manage every tenant, user, subscription, and platform signal from one place.' },
         { path: '/superadmin/tenants', icon: Building2, label: 'Tenants', description: 'View and manage tenant organizations from one place.' },
       ],
     },
@@ -225,15 +225,16 @@ const agentNavSections = [
   };
 
   const SidebarHeader = () => {
-    const tenantLogo = user?.tenant?.branding?.logo || user?.tenant?.settings?.logo || localStorage.getItem('tenant_logo');
-    const tenantName = user?.tenant?.name || 'HoneyPot';
+    const tenantLogo = !isSuperAdmin ? user?.tenant?.branding?.logo : null;
+    const logo = isSuperAdmin ? PLATFORM_BRAND.logo : tenantLogo;
+    const tenantName = isSuperAdmin ? PLATFORM_BRAND.name : user?.tenant?.name || PLATFORM_BRAND.name;
     const initial = tenantName.charAt(0).toUpperCase();
     return (
     <div className="flex items-center justify-between px-6 py-5 border-b sidebar-divider">
       <div className="flex items-center space-x-3 min-w-0">
         <div className="w-10 h-10 shrink-0 flex items-center justify-center">
-          {tenantLogo ? (
-            <img src={tenantLogo} alt="Logo" className="w-full h-full object-contain" />
+          {logo ? (
+            <img src={logo} alt={`${tenantName} logo`} className="max-w-full max-h-full object-contain" />
           ) : (
             <span className="text-white font-bold text-2xl leading-none">{initial}</span>
           )}
@@ -352,7 +353,7 @@ const agentNavSections = [
           />
           <div className="p-3 sm:p-4 md:p-6 lg:p-8">
             <div className="dashboard-page">
-              <div className="space-y-2 mb-6">
+              <div className="space-y-2 mb-3">
                 <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{activeNavItem.label}</h1>
                 <p className="text-sm text-[var(--color-text-muted)] max-w-3xl leading-relaxed">{activeNavItem.description || 'Welcome to HoneyPot CRM — where every opportunity finds its value.'}</p>
               </div>
