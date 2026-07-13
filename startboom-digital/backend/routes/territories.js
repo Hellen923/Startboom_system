@@ -3,7 +3,7 @@ import axios from 'axios';
 import Territory from '../models/Territory.js';
 import User from '../models/User.js';
 import AuditLog from '../models/AuditLog.js';
-import { tenantAuth, requireRole } from '../middleware/tenantAuth.js';
+import { tenantAuth, requireRole, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ const NOMINATIM_BASE_URL = 'https://nominatim.openstreetmap.org';
 const NOMINATIM_USER_AGENT = process.env.NOMINATIM_USER_AGENT || 'Swavelink SalesApp/1.0';
 
 // Apply tenant-aware auth to ALL routes
-router.use(tenantAuth);
+router.use(tenantAuth, requireTenantModule('territories'));
 
 // GET /api/territories/search-location
 router.get('/search-location', async (req, res) => {

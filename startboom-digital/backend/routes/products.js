@@ -5,13 +5,13 @@ import fs from 'fs';
 import { promisify } from 'util';
 import Product from '../models/Product.js';
 import AuditLog from '../models/AuditLog.js';
-import { tenantAuth, requireRole } from '../middleware/tenantAuth.js';
+import { tenantAuth, requireRole, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 const unlinkFile = promisify(fs.unlink);
 
 // Apply tenant-aware auth to ALL routes
-router.use(tenantAuth);
+router.use(tenantAuth, requireTenantModule('products'));
 
 const upload = multer({
   dest: 'uploads/',
