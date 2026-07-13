@@ -80,16 +80,23 @@ const tenantSchema = new mongoose.Schema({
     type: Map,
     of: Boolean,
     default: {
+      clients: true,
       sales: true,
       deals: true,
       products: true,
-      finance: true,
-      hr: true,
-      projects: true,
-      support: true,
-      inventory: true,
-      marketing: true,
-      analytics: true
+      territories: true,
+      schedules: true,
+      tasks: true,
+      issues: true,
+      departments: true,
+      branches: true,
+      goals: true,
+      activities: true,
+      workflows: true,
+      forecasts: true,
+      analytics: true,
+      reports: true,
+      customFields: true
     }
   },
   
@@ -229,6 +236,19 @@ const tenantSchema = new mongoose.Schema({
       type: String, 
       enum: ['website', 'referral', 'marketing', 'direct', ''],
       default: 'website'
+    },
+    onboardingEmail: {
+      status: {
+        type: String,
+        enum: ['pending', 'sent', 'failed', ''],
+        default: ''
+      },
+      lastAttemptAt: { type: Date, default: null },
+      sentAt: { type: Date, default: null },
+      messageId: { type: String, default: '' },
+      error: { type: String, default: '' },
+      recipient: { type: String, default: '' },
+      attempts: { type: Number, default: 0 }
     }
   },
 
