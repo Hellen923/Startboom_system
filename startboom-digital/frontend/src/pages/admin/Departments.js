@@ -148,7 +148,7 @@ const Departments = () => {
             setEditingDept(null);
             setShowDeptModal(true);
           }}
-          className="flex items-center space-x-2 px-6 py-3 bg-[#D89A00] hover:bg-[#B87900] text-white rounded-lg hover:shadow-lg transition-all"
+          className="flex items-center space-x-2 px-6 py-3 btn-brand rounded-lg hover:shadow-lg transition-all"
         >
           <Plus className="w-5 h-5" />
           <span className="font-semibold">New Department</span>
@@ -272,7 +272,7 @@ const Departments = () => {
                       setEditingTeam({ department: dept._id });
                       setShowTeamModal(true);
                     }}
-                    className="flex items-center space-x-1 text-sm text-[#D89A00] hover:text-[#B87900]"
+                    className="flex items-center space-x-1 text-sm text-[var(--primary-color)] hover:text-[var(--primary-hover)]"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Add Team</span>
@@ -319,7 +319,7 @@ const Departments = () => {
               setEditingDept(null);
               setShowDeptModal(true);
             }}
-            className="px-6 py-3 bg-[#D89A00] text-white rounded-lg hover:bg-[#B87900] transition"
+            className="px-6 py-3 btn-brand rounded-lg transition"
           >
             Create Department
           </button>
@@ -380,7 +380,7 @@ const TeamCard = ({ team, isDark, onEdit, onDelete }) => (
     className={`p-3 rounded-lg ${isDark ? 'bg-[#334155]' : 'bg-gray-50'} flex items-center justify-between`}
   >
     <div className="flex items-center space-x-3">
-      <Users className="w-4 h-4 text-[#D89A00]" />
+      <Users className="w-4 h-4 text-[var(--primary-color)]" />
       <div>
         <p className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
           {team.name}
@@ -460,7 +460,7 @@ const DepartmentModal = ({ department, isDark, onSave, onClose }) => {
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-[#D89A00] text-white rounded-lg hover:bg-[#B87900]"
+              className="flex-1 px-4 py-2 btn-brand rounded-lg"
             >
               Save
             </button>
@@ -574,7 +574,7 @@ const TeamModal = ({ team, departments, isDark, onSave, onClose }) => {
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-[#D89A00] text-white rounded-lg hover:bg-[#B87900]"
+              className="flex-1 px-4 py-2 btn-brand rounded-lg"
             >
               Save
             </button>

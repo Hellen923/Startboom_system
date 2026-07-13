@@ -649,11 +649,11 @@ export default function Leads() {
                           <StickyNote size={16} />
                         </button>
                         <button onClick={() => handleEvent(lead)} title="Schedule Event"
-                          className="p-1.5 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors">
+                          className="p-1.5 text-slate-500 hover:text-[var(--primary-color)] hover:bg-purple-50 rounded-lg transition-colors">
                           <Calendar size={16} />
                         </button>
                         <button onClick={() => handleOpenForward(lead)} title="Forward to Agent"
-                          className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                          className="p-1.5 text-slate-500 hover:text-[var(--primary-color)] hover:bg-[var(--primary-color)]/10 rounded-lg transition-colors">
                           <ArrowRightLeft size={16} />
                         </button>
                         {(lead.leadStatus === 'Qualified' || lead.leadStatus === 'Converted') && (
@@ -776,7 +776,7 @@ export default function Leads() {
                                   <button
                                     onClick={() => handleOpenForward(lead)}
                                     title="Forward"
-                                    className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                    className="p-1.5 text-slate-500 hover:text-[var(--primary-color)] hover:bg-[var(--primary-color)]/10 rounded-lg transition-colors"
                                   >
                                     <ArrowRightLeft size={15} />
                                   </button>

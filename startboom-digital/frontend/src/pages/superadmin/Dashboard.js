@@ -8,7 +8,7 @@ import potLogo from '../../assets/pot logo.png';
 
 const StatCard = ({ icon: Icon, title, value, subtitle, color = 'honey' }) => {
   const colors = {
-    honey: 'bg-[#D89A00]',
+    honey: 'bg-[var(--primary-color)]',
     blue: 'bg-[#0EA5E9]',
     green: 'bg-[#10B981]',
     purple: 'bg-[#8B5CF6]',
@@ -83,7 +83,7 @@ const SuperAdminDashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D89A00]"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-color)]"></div>
       </div>
     );
   }
@@ -94,7 +94,7 @@ const SuperAdminDashboard = () => {
       <div className="flex justify-end">
         <button
           onClick={() => navigate('/superadmin/tenants')}
-          className="inline-flex items-center justify-center gap-2 h-12 px-6 bg-[#D89A00] hover:bg-[#B87900] text-white rounded-xl text-sm font-semibold shadow-[0_2px_8px_rgba(216,154,0,0.2)] hover:shadow-[0_4px_12px_rgba(216,154,0,0.3)] transition-all duration-150"
+          className="inline-flex items-center justify-center gap-2 h-12 px-6 btn-brand rounded-xl text-sm font-semibold shadow-[0_2px_8px_rgba(216,154,0,0.2)] hover:shadow-[0_4px_12px_rgba(216,154,0,0.3)] transition-all duration-150"
         >
           <Building2 className="w-4 h-4" />
           <span>Manage Tenants</span>
@@ -153,7 +153,7 @@ const SuperAdminDashboard = () => {
           <h2 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">All Organizations</h2>
           <button
             onClick={() => navigate('/superadmin/tenants')}
-            className="text-[#D89A00] hover:text-[#B87900] text-sm font-semibold flex items-center space-x-1 transition-colors duration-150"
+            className="text-[var(--primary-color)] hover:text-[var(--primary-hover)] text-sm font-semibold flex items-center space-x-1 transition-colors duration-150"
           >
             <span>View All</span>
             <ArrowRight className="w-4 h-4" />
@@ -184,7 +184,7 @@ const SuperAdminDashboard = () => {
                     <td className="px-4 py-4">
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-[rgba(216,154,0,0.1)] dark:bg-[rgba(216,154,0,0.2)] rounded-full flex items-center justify-center">
-                          <span className="text-[#D89A00] font-semibold text-sm">
+                          <span className="text-[var(--primary-color)] font-semibold text-sm">
                             {tenant.name?.charAt(0).toUpperCase()}
                           </span>
                         </div>
@@ -210,7 +210,7 @@ const SuperAdminDashboard = () => {
       </div>
 
       {/* Super Admin Info Card */}
-      <div className="bg-gradient-to-r from-[#D89A00] to-[#B87900] rounded-2xl p-6 text-white shadow-[0_8px_30px_rgba(216,154,0,0.2)]">
+      <div className="bg-gradient-to-r from-[var(--primary-color)] to-[var(--primary-hover)] rounded-2xl p-6 text-white shadow-[0_8px_30px_rgba(15,23,42,0.12)]">
         <div className="flex items-center space-x-4">
           <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
             <ShieldCheck className="w-8 h-8 text-white" strokeWidth={2} />

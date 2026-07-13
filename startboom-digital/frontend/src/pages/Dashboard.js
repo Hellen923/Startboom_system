@@ -34,7 +34,7 @@ const KPICard = ({ icon: Icon, title, value, subtitle, trend, color = 'primary' 
     primary: 'bg-primary-50 dark:bg-[#193A52] text-primary-600 dark:text-[#1795CC]',
     blue:    'bg-blue-50   dark:bg-[#193A52] text-blue-600   dark:text-[#1795CC]',
     green:   'bg-green-50  dark:bg-[#1a3a2a] text-green-600  dark:text-green-400',
-    purple:  'bg-purple-50 dark:bg-[#2a1a3a] text-purple-600 dark:text-purple-400',
+    purple:  'bg-purple-50 dark:bg-[#2a1a3a] text-[var(--primary-color)] dark:text-purple-400',
     red:     'bg-red-50    dark:bg-[#3a1a1a] text-red-600    dark:text-red-400',
     teal:    'bg-teal-50   dark:bg-[#1a3a38] text-teal-600   dark:text-teal-400',
   };

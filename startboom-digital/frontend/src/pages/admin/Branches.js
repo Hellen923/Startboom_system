@@ -141,7 +141,7 @@ const Branches = () => {
               setEditingBranch(null);
               setShowModal(true);
             }}
-            className="flex items-center space-x-2 px-6 py-3 bg-[#D89A00] hover:bg-[#B87900] text-white rounded-lg hover:shadow-lg transition-all"
+            className="btn-brand flex items-center space-x-2 px-6 py-3 rounded-lg"
           >
             <Plus className="w-5 h-5" />
             <span className="font-semibold">New Branch</span>
@@ -329,8 +329,8 @@ const TreeNode = ({ branch, level, expandedNodes, toggleNode, isDark, onEdit, on
                 </span>
               )}
               <span className={`text-xs px-2 py-1 rounded capitalize ${
-                branch.type === 'headquarters' ? 'bg-[#FEF3C7] text-[#B87900]' :
-                branch.type === 'regional_office' ? 'bg-[#FEF3C7] text-[#D89A00]' :
+                branch.type === 'headquarters' ? 'bg-amber-100 text-amber-800' :
+                branch.type === 'regional_office' ? 'bg-amber-100 text-amber-700' :
                 'bg-gray-100 text-gray-800'
               }`}>
                 {branch.type?.replace('_', ' ')}
@@ -455,8 +455,8 @@ const GridView = ({ branches, isDark, onEdit, onDelete }) => (
           {/* Type Badge */}
           <div className="mb-4">
             <span className={`text-xs px-3 py-1 rounded-full capitalize ${
-              branch.type === 'headquarters' ? 'bg-[#FEF3C7] text-[#B87900]' :
-              branch.type === 'regional_office' ? 'bg-[#FEF3C7] text-[#D89A00]' :
+              branch.type === 'headquarters' ? 'bg-amber-100 text-amber-800' :
+              branch.type === 'regional_office' ? 'bg-amber-100 text-amber-700' :
               'bg-gray-100 text-gray-800'
             }`}>
               {branch.type?.replace('_', ' ')}
@@ -794,7 +794,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-[#D89A00] text-white rounded-lg hover:bg-[#B87900]"
+              className="btn-brand flex-1 px-4 py-2 rounded-lg"
             >
               Save Branch
             </button>

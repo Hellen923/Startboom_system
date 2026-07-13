@@ -430,8 +430,8 @@ const UserManagement = () => {
   const getRoleMeta = (role) => {
     const roles = {
       superadmin: { label: 'Super Admin', badge: 'bg-red-100 text-red-700', iconBg: 'bg-red-100', icon: Shield, iconColor: 'text-red-600' },
-      manager: { label: 'Manager', badge: 'bg-[#FEF3C7] text-[#D89A00]', iconBg: 'bg-[#FEF3C7]', icon: Shield, iconColor: 'text-[#D89A00]' },
-      admin: { label: 'Administrator', badge: 'bg-[#FEF3C7] text-[#B87900]', iconBg: 'bg-[#FEF3C7]', icon: Shield, iconColor: 'text-[#B87900]' },
+      manager: { label: 'Manager', badge: 'bg-[#FEF3C7] text-[var(--primary-color)]', iconBg: 'bg-[#FEF3C7]', icon: Shield, iconColor: 'text-[var(--primary-color)]' },
+      admin: { label: 'Administrator', badge: 'bg-[#FEF3C7] text-[var(--primary-hover)]', iconBg: 'bg-[#FEF3C7]', icon: Shield, iconColor: 'text-[var(--primary-hover)]' },
       agent: { label: 'Sales Agent', badge: 'bg-primary-100 text-primary-700', iconBg: 'bg-primary-100', icon: User, iconColor: 'text-primary-600' }
     };
     return roles[role] || roles.agent;
@@ -533,10 +533,10 @@ return (
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Managers</p>
-                  <p className="text-2xl font-bold text-[#D89A00]">{stats.managers}</p>
+                  <p className="text-2xl font-bold text-[var(--primary-color)]">{stats.managers}</p>
                 </div>
                 <div className="w-12 h-12 bg-[#FEF3C7] rounded-xl flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-[#D89A00]" />
+                  <Shield className="w-6 h-6 text-[var(--primary-color)]" />
                 </div>
               </div>
             </motion.div>
@@ -585,10 +585,10 @@ return (
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500 mb-1">Admins</p>
-                <p className="text-2xl font-bold text-[#B87900]">{stats.admins}</p>
+                <p className="text-2xl font-bold text-[var(--primary-hover)]">{stats.admins}</p>
               </div>
               <div className="w-12 h-12 bg-[#FEF3C7] rounded-xl flex items-center justify-center">
-                <Shield className="w-6 h-6 text-[#B87900]" />
+                <Shield className="w-6 h-6 text-[var(--primary-hover)]" />
               </div>
             </div>
           </motion.div>
@@ -831,7 +831,7 @@ return (
                                       e.stopPropagation();
                                       handleResendOTP(userItem._id, userItem.name);
                                     }}
-                                    className="p-2 text-gray-400 hover:text-[#D89A00] hover:bg-[#FEF3C7] rounded-lg transition-all"
+                                    className="p-2 text-gray-400 hover:text-[var(--primary-color)] hover:bg-[#FEF3C7] rounded-lg transition-all"
                                     title="Resend OTP"
                                   >
                                     <RefreshCw className="w-4 h-4" />
@@ -846,7 +846,7 @@ return (
                                       e.stopPropagation();
                                       openTargetModal(userItem);
                                     }}
-                                    className="p-2 text-gray-400 hover:text-[#D89A00] hover:bg-[#FEF3C7] rounded-lg transition-all"
+                                    className="p-2 text-gray-400 hover:text-[var(--primary-color)] hover:bg-[#FEF3C7] rounded-lg transition-all"
                                     title="Set Targets"
                                   >
                                     <TrendingUp className="w-4 h-4" />
@@ -860,7 +860,7 @@ return (
                                 e.stopPropagation();
                                 handleEditClick(userItem);
                               }}
-                              className="p-2 text-gray-400 hover:text-[#D89A00] hover:bg-[#FEF3C7] rounded-lg transition-all"
+                              className="p-2 text-gray-400 hover:text-[var(--primary-color)] hover:bg-[#FEF3C7] rounded-lg transition-all"
                               title="Edit User"
                             >
                               <Edit className="w-4 h-4" />
@@ -1404,7 +1404,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   <input
                     value={editUser.name}
                     onChange={(e) => setEditUser({ ...editUser, name: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
                   />
                 </div>
                 
@@ -1413,7 +1413,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   <input
                     value={editUser.phone || ''}
                     onChange={(e) => setEditUser({ ...editUser, phone: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
                   />
                 </div>
                 
@@ -1423,7 +1423,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                     <select
                       value={editUser.department}
                       onChange={(e) => setEditUser({ ...editUser, department: e.target.value, customDepartment: e.target.value === 'Others' ? editUser.customDepartment : '' })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
                     >
                       <option value="">Select Department</option>
                       <option value="HR">HR</option>
@@ -1434,7 +1434,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                     {editUser.department === 'Others' && (
                       <input
                         type="text"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all mt-2"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all mt-2"
                         placeholder="Enter department name"
                         value={editUser.customDepartment || ''}
                         onChange={(e) => setEditUser({ ...editUser, customDepartment: e.target.value })}
@@ -1447,7 +1447,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                    <select
                      value={editUser.region || ''}
                      onChange={(e) => setEditUser({ ...editUser, region: e.target.value })}
-                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all"
+                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
                    >
                      <option value="">Select Region</option>
                      <option value="Central">Central</option>
@@ -1470,7 +1470,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                    <select
                      value={editUser.role}
                      onChange={(e) => setEditUser({ ...editUser, role: e.target.value })}
-                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all"
+                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
                    >
                      <option value="admin">Administrator</option>
                      <option value="manager">Manager</option>
@@ -1486,7 +1486,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                      <select
                        value={editUser.customRole || ''}
                        onChange={(e) => setEditUser({ ...editUser, customRole: e.target.value })}
-                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D89A00] focus:border-[#D89A00] transition-all"
+                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
                      >
                        <option value="">Default Permissions</option>
                        {customRoles.map(role => (

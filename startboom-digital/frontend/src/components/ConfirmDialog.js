@@ -38,7 +38,8 @@ const ConfirmDialog = ({
       icon: AlertCircle,
       iconBg: 'bg-blue-100 dark:bg-blue-900/30',
       iconColor: 'text-blue-600 dark:text-blue-400',
-      buttonBg: 'bg-blue-600 hover:bg-blue-700',
+      buttonBg: '',
+      buttonStyle: { background: 'var(--btn-brand-bg)' },
       buttonText: 'text-white'
     },
     success: {
@@ -114,6 +115,7 @@ const ConfirmDialog = ({
               className={`flex-1 px-4 py-3 rounded-lg font-semibold transition ${config.buttonBg} ${config.buttonText} ${
                 loading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
+              style={config.buttonStyle || {}}
             >
               {loading ? (
                 <span className="flex items-center justify-center">

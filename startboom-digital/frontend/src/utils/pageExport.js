@@ -19,9 +19,9 @@ const getTenantInfo = () => {
     return {
       name: user?.tenant?.name || user?.companyName || 'HoneyPot CRM',
       logo: user?.tenant?.branding?.logo || user?.tenant?.settings?.logo || localStorage.getItem('tenant_logo') || null,
-      color: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#D89A00',
+      color: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || 'var(--primary-color)',
     };
-  } catch { return { name: 'HoneyPot CRM', logo: null, color: '#D89A00' }; }
+  } catch { return { name: 'HoneyPot CRM', logo: null, color: 'var(--primary-color)' }; }
 };
 
 const downloadPDF = (title, headers, rows) => {

@@ -184,11 +184,10 @@ const PermissionManager = () => {
           <button
             onClick={handleSave}
             disabled={!hasChanges || saving}
-            className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition ${
-              hasChanges && !saving
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition text-white ${
+              !hasChanges || saving ? 'bg-gray-300 !text-gray-500 cursor-not-allowed' : ''
             }`}
+            style={hasChanges && !saving ? { background: 'var(--btn-brand-bg)' } : {}}
           >
             <Save className="w-5 h-5" />
             <span className="font-semibold">{saving ? 'Saving...' : 'Save Changes'}</span>
@@ -208,15 +207,16 @@ const PermissionManager = () => {
               onClick={() => setSelectedRole(role.id)}
               className={`p-4 rounded-lg text-left transition ${
                 selectedRole === role.id
-                  ? 'bg-indigo-600 text-white'
+                  ? 'text-white'
                   : isDark ? 'bg-[#334155] hover:bg-[#475569]' : 'bg-gray-50 hover:bg-gray-100'
               }`}
+              style={selectedRole === role.id ? { background: 'var(--btn-brand-bg)' } : {}}
             >
               <div className="flex items-center space-x-2 mb-2">
                 <Shield className="w-5 h-5" />
                 <span className="font-semibold">{role.label}</span>
               </div>
-              <p className={`text-sm ${selectedRole === role.id ? 'text-indigo-100' : isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p className={`text-sm ${selectedRole === role.id ? 'text-white/80' : isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                 {role.description}
               </p>
             </button>
@@ -297,7 +297,7 @@ const PermissionManager = () => {
                         type="checkbox"
                         checked={perm.actions.view || false}
                         onChange={(e) => updatePermission(module.id, 'view', e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 rounded"
+                        className="w-4 h-4 rounded accent-[var(--primary-color)]"
                       />
                     </td>
                     <td className="px-4 py-4 text-center">
@@ -305,7 +305,7 @@ const PermissionManager = () => {
                         type="checkbox"
                         checked={perm.actions.create || false}
                         onChange={(e) => updatePermission(module.id, 'create', e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 rounded"
+                        className="w-4 h-4 rounded accent-[var(--primary-color)]"
                       />
                     </td>
                     <td className="px-4 py-4 text-center">
@@ -313,7 +313,7 @@ const PermissionManager = () => {
                         type="checkbox"
                         checked={perm.actions.edit || false}
                         onChange={(e) => updatePermission(module.id, 'edit', e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 rounded"
+                        className="w-4 h-4 rounded accent-[var(--primary-color)]"
                       />
                     </td>
                     <td className="px-4 py-4 text-center">
@@ -321,7 +321,7 @@ const PermissionManager = () => {
                         type="checkbox"
                         checked={perm.actions.delete || false}
                         onChange={(e) => updatePermission(module.id, 'delete', e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 rounded"
+                        className="w-4 h-4 rounded accent-[var(--primary-color)]"
                       />
                     </td>
                     <td className="px-4 py-4 text-center">
@@ -329,7 +329,7 @@ const PermissionManager = () => {
                         type="checkbox"
                         checked={perm.actions.export || false}
                         onChange={(e) => updatePermission(module.id, 'export', e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 rounded"
+                        className="w-4 h-4 rounded accent-[var(--primary-color)]"
                       />
                     </td>
                     <td className="px-4 py-4">

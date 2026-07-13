@@ -19,7 +19,7 @@ const typeMeta = {
   Complaint:       { icon: MessageSquare, color: 'bg-primary-100 text-primary-700' },
   'Feature Request':{ icon: HelpCircle,   color: 'bg-blue-100 text-blue-700' },
   Billing:         { icon: CreditCard,   color: 'bg-amber-100 text-amber-700' },
-  Technical:       { icon: Wrench,       color: 'bg-purple-100 text-purple-700' },
+  Technical:       { icon: Wrench,       color: 'bg-purple-100 text-[var(--primary-color)]' },
   General:         { icon: AlertCircle,  color: 'bg-slate-100 text-slate-700' },
 };
 
@@ -299,7 +299,7 @@ export default function Issues() {
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-2">
                           <button onClick={() => setDetailIssue(issue)} title="View"
-                            className="p-2 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg">
+                            className="p-2 text-slate-500 hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] rounded-lg">
                             <Eye size={16} />
                           </button>
                         </div>

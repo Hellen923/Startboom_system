@@ -788,7 +788,7 @@ const Clients = () => {
               </p>
             </div>
             <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-              <Star className="w-6 h-6 text-purple-600" />
+              <Star className="w-6 h-6 text-[var(--primary-color)]" />
             </div>
           </div>
         </div>
@@ -1089,7 +1089,7 @@ const Clients = () => {
                               });
                               window.location.href = `/agent/schedules?${params.toString()}`;
                             }}
-                            className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg"
+                            className="p-2 text-[var(--primary-color)] hover:bg-purple-50 rounded-lg"
                             aria-label={`Schedule with ${client.name}`}
                             title="Create Schedule"
                           >

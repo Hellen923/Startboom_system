@@ -845,7 +845,7 @@ const DealsChartsView = ({ stats, formatUGX }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-4 bg-gray-50 rounded-lg">
           <h4 className="text-sm font-medium text-gray-700 mb-3">Win Rate</h4>
-          <div className="text-3xl font-bold text-purple-600">
+          <div className="text-3xl font-bold text-[var(--primary-color)]">
             {stats?.totalStats?.winRate ?? 0}%
           </div>
           <div className="text-xs text-gray-600 mt-3 space-y-1">
@@ -902,7 +902,7 @@ const DealsChartsView = ({ stats, formatUGX }) => {
         </div>
         <div>
           <div className="text-xs text-gray-600 mb-1">Total Pipeline Value</div>
-          <div className="text-lg font-bold text-purple-600">
+          <div className="text-lg font-bold text-[var(--primary-color)]">
             {formatUGX(stats?.totalStats?.totalValue - (stats?.totalStats?.wonValue || 0) - (stats?.totalStats?.lostValue || 0) || 0)}
           </div>
         </div>

@@ -412,7 +412,7 @@ title="Follow-up Task Status"
             <select
               value={tableStatus}
               onChange={e => { setTableStatus(e.target.value); setTablePage(1); }}
-              className="h-12 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC] text-sm focus:outline-none focus:border-[#D89A00] focus:ring-[3px] focus:ring-[rgba(216,154,0,0.1)]"
+              className="h-12 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC] text-sm focus:outline-none focus:border-[var(--primary-color)] focus:ring-[3px] focus:ring-[rgba(216,154,0,0.1)]"
             >
               <option value="">All Status</option>
               <option value="prospect">Prospect (Lead)</option>
@@ -451,7 +451,7 @@ title="Follow-up Task Status"
               {tableLoading ? (
                 <tr>
                   <td colSpan="6" className="px-4 py-10 text-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#D89A00] mx-auto" />
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[var(--primary-color)] mx-auto" />
                   </td>
                 </tr>
               ) : clients.length === 0 ? (
@@ -469,7 +469,7 @@ title="Follow-up Task Status"
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-[rgba(216,154,0,0.1)] dark:bg-[rgba(216,154,0,0.2)] rounded-full flex items-center justify-center flex-shrink-0">
-                            <span className="text-[#D89A00] font-semibold text-sm">
+                            <span className="text-[var(--primary-color)] font-semibold text-sm">
                               {client.name?.charAt(0).toUpperCase()}
                             </span>
                           </div>
