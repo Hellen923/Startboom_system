@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Building2, Plus, Search, CheckCircle, XCircle, Clock, Edit, Eye, X, Trash2, Users, MapPin } from 'lucide-react';
 import { tenantsAPI } from '../../services/api';
 import toast from 'react-hot-toast';
-import sidebarLogo from '../../assets/sidebar.png';
+import { PLATFORM_BRAND } from '../../utils/platformBranding';
 import { FORM_STYLES, BUTTON_STYLES } from '../../utils/designSystem';
 
 const StatusBadge = ({ status }) => {
@@ -132,9 +132,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center space-x-3">
-            <div className="brand-header p-2 rounded-xl">
-            <img src={sidebarLogo} alt="HoneyPot" className="w-6 h-6 object-contain" />
-            </div>
+            <img src={PLATFORM_BRAND.logo} alt="HoneyPot" className="w-8 h-8 object-contain" />
             <h2 className="text-lg font-bold text-gray-900">Create New Organization</h2>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -335,17 +333,21 @@ const ViewDetailsModal = ({ tenant, onClose }) => {
   }, [tenant._id]);
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+    <div className="fixed inset-0 bg-black/50 z-50 p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl mx-auto my-6 overflow-hidden">
+        <div className="sticky top-0 z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-5 border-b border-gray-100 bg-white">
           <div className="flex items-center space-x-3">
             <div className="brand-header p-2 rounded-xl">
               <Eye className="w-6 h-6 text-white" />
             </div>
             <h2 className="text-lg font-bold text-gray-900">Organization Details</h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <X className="w-5 h-5 text-gray-500" />
+          <button
+            onClick={onClose}
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            <X className="w-4 h-4" />
+            <span>Close</span>
           </button>
         </div>
         <div className="p-6">
@@ -454,7 +456,7 @@ const ViewDetailsModal = ({ tenant, onClose }) => {
                       <p className="text-sm font-medium text-gray-900">{item.description}</p>
                       <span className="text-xs text-gray-500 whitespace-nowrap">{new Date(item.createdAt).toLocaleString()}</span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">{item.action} · {item.status}</p>
+                    <p className="text-xs text-gray-500 mt-1">{item.action} - {item.status}</p>
                   </div>
                 ))
               )}
@@ -826,13 +828,13 @@ const TenantManagement = () => {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Search organizations..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             />
           </div>
           <div className="flex gap-2">

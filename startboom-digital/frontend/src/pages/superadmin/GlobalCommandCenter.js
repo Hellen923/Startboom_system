@@ -34,7 +34,7 @@ import { tenantsAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import { useChartTheme, ANALYTICS_PALETTE } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
-import sidebarLogo from '../../assets/sidebar.png';
+import { PLATFORM_BRAND } from '../../utils/platformBranding';
 import Pagination from '../../components/Pagination';
 
 const formatNumber = (value) => new Intl.NumberFormat().format(Math.round(value || 0));
@@ -186,9 +186,7 @@ const GlobalCommandCenter = () => {
       <div className={`${cardClass} p-5`}>
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex items-center gap-4">
-            <div className="rounded-lg bg-primary-500 p-3">
-              <img src={sidebarLogo} alt="HoneyPot" className="h-8 w-8 object-contain" />
-            </div>
+            <img src={PLATFORM_BRAND.logo} alt="HoneyPot" className="h-10 w-10 object-contain" />
             <div>
               <h1 className="text-2xl font-bold text-gray-950 md:text-3xl">Super Admin Overview</h1>
               <p className="mt-1 text-sm text-gray-500">
@@ -337,12 +335,12 @@ const GlobalCommandCenter = () => {
             </div>
             <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <input
                   value={query}
                   onChange={(e) => { setQuery(e.target.value); setTenantPage(1); }}
                   placeholder="Search tenants..."
-                  className="w-full sm:w-64 form-input pl-10 pr-3"
+                  className="w-full sm:w-64 form-input pl-12 pr-3"
                 />
               </div>
               <select
