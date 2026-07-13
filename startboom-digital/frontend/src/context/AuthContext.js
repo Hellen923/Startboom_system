@@ -9,24 +9,28 @@ const applyTenantBranding = (tenant) => {
   const color = tenant.branding?.primaryColor || tenant.settings?.primaryColor;
   const logo  = tenant.branding?.logo || tenant.settings?.logo || null;
   if (color) {
+    // Save so ThemeContext preserves it across light/dark toggles
+    localStorage.setItem('tenant_primary_color', color);
     const root = document.documentElement;
-    const hex = color;
-    const r = parseInt(hex.slice(1,3),16);
-    const g = parseInt(hex.slice(3,5),16);
-    const b = parseInt(hex.slice(5,7),16);
+    const r = parseInt(color.slice(1,3),16);
+    const g = parseInt(color.slice(3,5),16);
+    const b = parseInt(color.slice(5,7),16);
     const darker = '#' + [r,g,b].map(v => Math.max(0,v-25).toString(16).padStart(2,'0')).join('');
+    const gradient = `linear-gradient(to right, ${color}, ${darker})`;
     root.style.setProperty('--primary-color', color);
     root.style.setProperty('--primary-hover', darker);
     root.style.setProperty('--primary-ring', `rgba(${r},${g},${b},0.25)`);
+    root.style.setProperty('--color-accent-surface', `rgba(${r},${g},${b},0.08)`);
     root.style.setProperty('--gradient-from', color);
     root.style.setProperty('--gradient-to', darker);
-    root.style.setProperty('--brand-header-bg', `linear-gradient(to right, ${color}, ${darker})`);
-    root.style.setProperty('--btn-brand-bg', `linear-gradient(to right, ${color}, ${darker})`);
+    root.style.setProperty('--brand-header-bg', gradient);
+    root.style.setProperty('--btn-brand-bg', gradient);
     root.style.setProperty('--sidebar-nav-active', `rgba(${r},${g},${b},0.15)`);
     root.style.setProperty('--sidebar-nav-hover', `rgba(${r},${g},${b},0.08)`);
+  } else {
+    localStorage.removeItem('tenant_primary_color');
   }
   if (logo) {
-    // Store logo URL so Layout can use it
     localStorage.setItem('tenant_logo', logo);
   } else {
     localStorage.removeItem('tenant_logo');

@@ -109,21 +109,24 @@ const TenantSettings = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      // Apply branding immediately
+      // Apply branding immediately and persist so theme toggle preserves it
       const color = formData.branding?.primaryColor;
       if (color) {
+        localStorage.setItem('tenant_primary_color', color);
         const root = document.documentElement;
         const r = parseInt(color.slice(1,3),16);
         const g = parseInt(color.slice(3,5),16);
         const b = parseInt(color.slice(5,7),16);
         const darker = '#' + [r,g,b].map(v => Math.max(0,v-25).toString(16).padStart(2,'0')).join('');
+        const gradient = `linear-gradient(to right, ${color}, ${darker})`;
         root.style.setProperty('--primary-color', color);
         root.style.setProperty('--primary-hover', darker);
         root.style.setProperty('--primary-ring', `rgba(${r},${g},${b},0.25)`);
+        root.style.setProperty('--color-accent-surface', `rgba(${r},${g},${b},0.08)`);
         root.style.setProperty('--gradient-from', color);
         root.style.setProperty('--gradient-to', darker);
-        root.style.setProperty('--brand-header-bg', `linear-gradient(to right, ${color}, ${darker})`);
-        root.style.setProperty('--btn-brand-bg', `linear-gradient(to right, ${color}, ${darker})`);
+        root.style.setProperty('--brand-header-bg', gradient);
+        root.style.setProperty('--btn-brand-bg', gradient);
         root.style.setProperty('--sidebar-nav-active', `rgba(${r},${g},${b},0.15)`);
         root.style.setProperty('--sidebar-nav-hover', `rgba(${r},${g},${b},0.08)`);
       }
@@ -175,7 +178,7 @@ const TenantSettings = () => {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all disabled:opacity-50"
+          className="btn-brand px-6 py-3"
         >
           <Save className="w-5 h-5" />
           <span className="font-semibold">{saving ? 'Saving...' : 'Save Changes'}</span>
@@ -192,9 +195,10 @@ const TenantSettings = () => {
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-2 rounded-lg font-medium capitalize transition ${
                   activeTab === tab
-                    ? 'bg-indigo-600 text-white'
+                    ? 'text-white'
                     : isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-gray-900'
                 }`}
+                style={activeTab === tab ? { background: 'var(--btn-brand-bg)' } : {}}
               >
                 {tab}
               </button>
@@ -430,9 +434,10 @@ const TenantSettings = () => {
                   key={module.id}
                   className={`p-4 rounded-lg border-2 transition ${
                     isEnabled 
-                      ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20'
+                      ? 'bg-[var(--color-accent-surface)]'
                       : isDark ? 'border-gray-600 bg-[#334155]' : 'border-gray-300 bg-gray-50'
                   }`}
+                  style={isEnabled ? { borderColor: 'var(--primary-color)' } : {}}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-3">
@@ -448,11 +453,10 @@ const TenantSettings = () => {
                     </div>
                     <button
                       onClick={() => handleModuleToggle(module.id)}
-                      className={`p-2 rounded-lg transition ${
-                        isEnabled
-                          ? 'bg-indigo-600 text-white'
-                          : isDark ? 'bg-gray-600 text-gray-300' : 'bg-gray-300 text-gray-600'
+                      className={`p-2 rounded-lg transition text-white ${
+                        isEnabled ? '' : isDark ? 'bg-gray-600' : 'bg-gray-300'
                       }`}
+                      style={isEnabled ? { background: 'var(--btn-brand-bg)' } : {}}
                     >
                       {isEnabled ? <CheckCircle className="w-5 h-5" /> : <X className="w-5 h-5" />}
                     </button>

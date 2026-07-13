@@ -128,37 +128,33 @@ export const ThemeProvider = ({ children }) => {
     return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
   };
 
-  const applyTheme = useCallback((t) => {
+  const applyTheme = useCallback((t, tenantColor) => {
     const root = document.documentElement;
-    const primary = t.primaryColor || DEFAULT_THEME.primaryColor;
+    // Tenant color takes priority over theme preset color
+    const savedTenantColor = localStorage.getItem('tenant_primary_color');
+    const primary = tenantColor || savedTenantColor || t.primaryColor || DEFAULT_THEME.primaryColor;
     const mode = t.mode === 'dark' ? 'dark' : 'light';
     const tokens = THEME_TOKENS[mode];
 
+    // Apply all layout/color tokens first
+    Object.entries(tokens).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
+
+    // Then apply brand color (always wins over token defaults)
     root.style.setProperty('--primary-color', primary);
     root.style.setProperty('--primary-hover', shiftColor(primary, -20));
     root.style.setProperty('--primary-ring', hexToRgba(primary, 0.25));
+    root.style.setProperty('--color-accent-surface', hexToRgba(primary, 0.08));
 
     const gradientTo = shiftColor(primary, -25);
     root.style.setProperty('--gradient-from', primary);
     root.style.setProperty('--gradient-to', gradientTo);
-
-    if (mode === 'light') {
-      // HoneyPot: Restrained honey gold gradient for buttons/headers only
-      const gradient = `linear-gradient(to right, ${primary}, ${gradientTo})`;
-      root.style.setProperty('--brand-header-bg', gradient);
-      root.style.setProperty('--btn-brand-bg', gradient);
-      // Sidebar is solid charcoal (already set in tokens)
-      root.style.setProperty('--sidebar-bg', tokens['--sidebar-bg']);
-    } else {
-      root.style.setProperty('--brand-header-bg', tokens['--brand-header-solid']);
-      root.style.setProperty('--btn-brand-bg', tokens['--brand-header-solid']);
-      root.style.setProperty('--sidebar-bg', tokens['--sidebar-bg']);
-    }
-    root.style.setProperty('--brand-header-text', tokens['--brand-header-text']);
-
-    Object.entries(tokens).forEach(([key, value]) => {
-      root.style.setProperty(key, value);
-    });
+    const gradient = `linear-gradient(to right, ${primary}, ${gradientTo})`;
+    root.style.setProperty('--brand-header-bg', gradient);
+    root.style.setProperty('--btn-brand-bg', gradient);
+    root.style.setProperty('--sidebar-nav-active', hexToRgba(primary, 0.15));
+    root.style.setProperty('--sidebar-nav-hover', hexToRgba(primary, 0.08));
 
     if (mode === 'dark') {
       root.classList.add('dark');
@@ -185,7 +181,7 @@ export const ThemeProvider = ({ children }) => {
     const next = { ...theme, ...partial };
     setTheme(next);
     localStorage.setItem('honeypot_theme', JSON.stringify(next));
-    applyTheme(next);
+    applyTheme(next); // tenant color is read from localStorage inside applyTheme
   };
 
   const setAccentPreset = (presetId) => {
