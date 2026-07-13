@@ -1,7 +1,37 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { authAPI } from '../services/api';
+import { authAPI, tenantsAPI } from '../services/api';
 
 const AuthContext = createContext();
+
+// Apply tenant branding to CSS variables immediately
+const applyTenantBranding = (tenant) => {
+  if (!tenant) return;
+  const color = tenant.branding?.primaryColor || tenant.settings?.primaryColor;
+  const logo  = tenant.branding?.logo || tenant.settings?.logo;
+  if (color) {
+    const root = document.documentElement;
+    const hex = color;
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    const darker = '#' + [r,g,b].map(v => Math.max(0,v-25).toString(16).padStart(2,'0')).join('');
+    root.style.setProperty('--primary-color', color);
+    root.style.setProperty('--primary-hover', darker);
+    root.style.setProperty('--primary-ring', `rgba(${r},${g},${b},0.25)`);
+    root.style.setProperty('--gradient-from', color);
+    root.style.setProperty('--gradient-to', darker);
+    root.style.setProperty('--brand-header-bg', `linear-gradient(to right, ${color}, ${darker})`);
+    root.style.setProperty('--btn-brand-bg', `linear-gradient(to right, ${color}, ${darker})`);
+    root.style.setProperty('--sidebar-nav-active', `rgba(${r},${g},${b},0.15)`);
+    root.style.setProperty('--sidebar-nav-hover', `rgba(${r},${g},${b},0.08)`);
+  }
+  if (logo) {
+    // Store logo URL so Layout can use it
+    localStorage.setItem('tenant_logo', logo);
+  } else {
+    localStorage.removeItem('tenant_logo');
+  }
+};
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -39,6 +69,7 @@ export const AuthProvider = ({ children }) => {
           const userData = response.data;
           setUser(userData);
           localStorage.setItem('user', JSON.stringify(userData));
+          applyTenantBranding(userData.tenant);
         } catch (validationError) {
           // Token is expired or invalid - clear session and redirect to login
           const status = validationError.response?.status;
@@ -125,6 +156,7 @@ export const AuthProvider = ({ children }) => {
       }
       setToken(newToken);
       setUser(userWithTenant);
+      applyTenantBranding(userWithTenant.tenant);
 
       return {
         success: true,
