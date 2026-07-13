@@ -339,7 +339,7 @@ const TenantSettings = () => {
                 <Palette className="w-4 h-4 inline mr-2" />
                 Primary Color
               </label>
-              <div className="flex space-x-3">
+              <div className="flex space-x-3 mb-3">
                 <input
                   type="color"
                   value={formData.branding?.primaryColor || '#4F46E5'}
@@ -352,6 +352,27 @@ const TenantSettings = () => {
                   onChange={(e) => setFormData({ ...formData, branding: { ...formData.branding, primaryColor: e.target.value }})}
                   className={`flex-1 px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
                 />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  '#0066FF','#2563EB','#4F46E5','#6366F1',
+                  '#0891B2','#0D9488','#059669','#16A34A',
+                  '#7C3AED','#9333EA','#A855F7','#C026D3',
+                  '#DC2626','#E11D48','#DB2777','#EC4899',
+                  '#EA580C','#D97706','#CA8A04','#D89A00',
+                  '#0F172A','#1E293B','#334155','#475569',
+                ].map(c => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, branding: { ...formData.branding, primaryColor: c }})}
+                    style={{ background: c }}
+                    title={c}
+                    className={`w-7 h-7 rounded-full border-2 transition-transform hover:scale-110 ${
+                      formData.branding?.primaryColor === c ? 'border-white scale-110 ring-2 ring-offset-1 ring-gray-400' : 'border-transparent'
+                    }`}
+                  />
+                ))}
               </div>
             </div>
 
