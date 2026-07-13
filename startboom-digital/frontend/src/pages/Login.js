@@ -192,7 +192,7 @@ const Login = () => {
       </div>
 
       {/* Right Side - Illustration */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#182233] via-[#1E2D42] to-[#0F172A]">
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#1F1D1A] via-[#2D2A26] to-[#1F1D1A]">
         <div className="flex-1 flex items-center justify-center p-12 relative">
           {/* Subtle honey accent overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#D99A00]/5"></div>
@@ -213,24 +213,18 @@ const Login = () => {
               </p>
             </div>
 
-            {/* Features List */}
-            <div className="space-y-4 mt-12 max-w-xs mx-auto">
-              <div className="flex items-center gap-4 bg-white/8 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-                <div className="w-2.5 h-2.5 bg-[#D89A00] rounded-full shrink-0"></div>
-                <span className="text-white font-medium">Product Management</span>
-              </div>
-              <div className="flex items-center gap-4 bg-white/8 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-                <div className="w-2.5 h-2.5 bg-[#D89A00] rounded-full shrink-0"></div>
-                <span className="text-white font-medium">Territory Mapping</span>
-              </div>
-              <div className="flex items-center gap-4 bg-white/8 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-                <div className="w-2.5 h-2.5 bg-[#D89A00] rounded-full shrink-0"></div>
-                <span className="text-white font-medium">Team Performance</span>
-              </div>
-              <div className="flex items-center gap-4 bg-white/8 backdrop-blur-sm rounded-xl p-4 border border-white/10">
-                <div className="w-2.5 h-2.5 bg-[#D89A00] rounded-full shrink-0"></div>
-                <span className="text-white font-medium">Sales Analytics</span>
-              </div>
+              <div className="space-y-4 mt-12 max-w-xs mx-auto">
+              {[
+                'Product Management',
+                'Territory Mapping',
+                'Team Performance',
+                'Sales Analytics',
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-4 bg-white/8 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                  <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: 'var(--primary-color)' }}></div>
+                  <span className="text-white font-medium">{item}</span>
+                </div>
+              ))}
             </div>
           </motion.div>
         </div>
