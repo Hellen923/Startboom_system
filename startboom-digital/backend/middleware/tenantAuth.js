@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import Tenant from '../models/Tenant.js';
 import Subscription from '../models/Subscription.js';
+import { canonicalModuleId, isModuleEnabled } from '../utils/moduleRegistry.js';
 
 /**
  * Tenant-Aware Authentication Middleware
@@ -121,6 +122,7 @@ export const tenantAuth = async (req, res, next) => {
     req.tenant = user.tenant;
     req.tenantId = user.tenant._id;
     req.isSuperAdmin = false;
+    req.tenantModules = user.tenant.modules || {};
 
     // Tenant-scoped query filter helper
     req.tenantQuery = { tenant: user.tenant._id };
@@ -154,6 +156,36 @@ export const tenantAuth = async (req, res, next) => {
       code: 'AUTH_SERVICE_ERROR'
     });
   }
+};
+
+/**
+ * Tenant Module Access Middleware
+ *
+ * Enforces tenant workspace module toggles on the backend. This complements
+ * frontend navigation hiding so disabled modules cannot still be called by API.
+ */
+export const requireTenantModule = (moduleId) => {
+  return (req, res, next) => {
+    if (req.isSuperAdmin) return next();
+
+    if (!req.tenant) {
+      return res.status(403).json({
+        message: 'Tenant context required.',
+        code: 'NO_TENANT_CONTEXT'
+      });
+    }
+
+    const normalizedModuleId = canonicalModuleId(moduleId);
+    if (!isModuleEnabled(req.tenant.modules, normalizedModuleId)) {
+      return res.status(403).json({
+        message: `The ${normalizedModuleId} module is disabled for this organization.`,
+        code: 'TENANT_MODULE_DISABLED',
+        module: normalizedModuleId
+      });
+    }
+
+    next();
+  };
 };
 
 /**
