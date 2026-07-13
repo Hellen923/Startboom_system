@@ -642,9 +642,18 @@ router.patch('/branding/logo', async (req, res) => {
     }
     const { logo, primaryColor, secondaryColor, customDomain, currency } = req.body;
     const update = {};
-    if (logo) update['settings.logo'] = logo;
-    if (primaryColor) update['settings.primaryColor'] = primaryColor;
-    if (secondaryColor) update['settings.secondaryColor'] = secondaryColor;
+    if (logo) {
+      update['branding.logo'] = logo;
+      update['settings.logo'] = logo;
+    }
+    if (primaryColor) {
+      update['branding.primaryColor'] = primaryColor;
+      update['settings.primaryColor'] = primaryColor;
+    }
+    if (secondaryColor) {
+      update['branding.secondaryColor'] = secondaryColor;
+      update['settings.secondaryColor'] = secondaryColor;
+    }
     if (customDomain !== undefined) update['settings.customDomain'] = customDomain.trim().toLowerCase();
     if (currency) update['settings.currency'] = currency;
 
@@ -660,15 +669,16 @@ router.patch('/branding/logo', async (req, res) => {
 router.post('/', requireSuperAdmin, async (req, res) => {
   try {
     const { name, email, phone, address, adminName, subscriptionPlan = 'starter', settings, metadata } = req.body;
+    const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
 
-    if (!name || !email) {
+    if (!name || !normalizedEmail) {
       return res.status(400).json({ message: 'Name and email are required' });
     }
 
-    const existing = await Tenant.findOne({ email });
+    const existing = await Tenant.findOne({ email: normalizedEmail });
     if (existing) return res.status(400).json({ message: 'Organization with this email already exists' });
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) return res.status(400).json({ message: 'A user with this email already exists' });
 
     const subscription = await Subscription.findOne({ planName: subscriptionPlan }) ||
@@ -676,7 +686,7 @@ router.post('/', requireSuperAdmin, async (req, res) => {
 
     const tenant = new Tenant({
       name,
-      email,
+      email: normalizedEmail,
       phone: phone || '',
       address: address || {},
       subscription: subscription?._id || null,
@@ -707,7 +717,7 @@ router.post('/', requireSuperAdmin, async (req, res) => {
 
     const adminUser = new User({
       name: companyAdminName,
-      email,
+      email: normalizedEmail,
       password: otp, // Pass plain OTP; User model pre-save will hash it
       role: 'admin',
       tenant: tenant._id,
@@ -722,10 +732,11 @@ router.post('/', requireSuperAdmin, async (req, res) => {
 
     await Tenant.findByIdAndUpdate(tenant._id, { 'usage.totalUsers': 1 });
 
-    const emailResult = await sendEmail(email, 'agentWelcome', {
+    const emailResult = await sendEmail(normalizedEmail, 'agentWelcome', {
       name: companyAdminName,
-      email,
-      otp
+      email: normalizedEmail,
+      otp,
+      companyName: name
     });
 
     console.log('📧 Email sending result:', emailResult);
@@ -733,7 +744,7 @@ router.post('/', requireSuperAdmin, async (req, res) => {
     const response = {
       message: 'Organization created successfully',
       tenant,
-      admin: { name: companyAdminName, email, role: 'admin' },
+      admin: { name: companyAdminName, email: normalizedEmail, role: 'admin' },
       emailSent: emailResult.success
     };
 
@@ -989,7 +1000,7 @@ router.get('/:id/stats', requireSuperAdmin, async (req, res) => {
   }
 });
 
-// GET /api/tenant/settings - Get current tenant settings
+// GET /api/tenants/settings - Get current tenant settings
 router.get('/settings', async (req, res) => {
   try {
     if (req.isSuperAdmin) {
@@ -1011,7 +1022,7 @@ router.get('/settings', async (req, res) => {
   }
 });
 
-// PUT /api/tenant/settings - Update tenant settings
+// PUT /api/tenants/settings - Update tenant settings
 router.put('/settings', async (req, res) => {
   try {
     if (req.isSuperAdmin) {
@@ -1095,7 +1106,7 @@ router.put('/settings', async (req, res) => {
   }
 });
 
-// PATCH /api/tenant/modules/:moduleId - Toggle module status
+// PATCH /api/tenants/modules/:moduleId - Toggle module status
 router.patch('/modules/:moduleId', async (req, res) => {
   try {
     if (req.isSuperAdmin) {
