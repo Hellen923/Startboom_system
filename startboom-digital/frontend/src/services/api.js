@@ -170,6 +170,7 @@ export const tenantsAPI = {
   create: (data) => api.post('/tenants', data),
   update: (id, data) => api.put(`/tenants/${id}`, data),
   updateStatus: (id, status) => api.patch(`/tenants/${id}/status`, { status }),
+  resendAdminOtp: (id) => api.post(`/tenants/${id}/resend-admin-otp`),
   delete: (id) => api.delete(`/tenants/${id}`),
   getStats: (id) => api.get(`/tenants/${id}/stats`),
   updateBranding: (data) => api.patch('/tenants/branding/logo', data),

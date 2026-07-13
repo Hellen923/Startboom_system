@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Building2, Plus, Search, CheckCircle, XCircle, Clock, Edit, Eye, X, Trash2, Users, MapPin } from 'lucide-react';
+import { Building2, Plus, Search, CheckCircle, XCircle, Clock, Edit, Eye, X, Trash2, Users, MapPin, Mail, RefreshCw } from 'lucide-react';
 import { tenantsAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 import { PLATFORM_BRAND } from '../../utils/platformBranding';
@@ -17,6 +17,30 @@ const StatusBadge = ({ status }) => {
     <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${styles[status] || styles.inactive}`}>
       {status?.charAt(0).toUpperCase() + status?.slice(1)}
     </span>
+  );
+};
+
+const EmailStatusBadge = ({ email }) => {
+  const status = email?.status || 'pending';
+  const styles = {
+    sent: 'bg-green-100 text-green-700',
+    failed: 'bg-red-100 text-red-700',
+    pending: 'bg-yellow-100 text-yellow-700',
+  };
+  const labels = {
+    sent: 'Sent',
+    failed: 'Failed',
+    pending: 'Pending',
+  };
+  return (
+    <div className="space-y-1">
+      <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${styles[status] || styles.pending}`}>
+        {labels[status] || 'Pending'}
+      </span>
+      {email?.lastAttemptAt && (
+        <p className="text-xs text-gray-400">{new Date(email.lastAttemptAt).toLocaleDateString()}</p>
+      )}
+    </div>
   );
 };
 
@@ -712,6 +736,7 @@ const TenantManagement = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedTenant, setSelectedTenant] = useState(null);
+  const [resendingTenantId, setResendingTenantId] = useState(null);
 
   useEffect(() => {
     loadTenants();
@@ -804,6 +829,26 @@ const TenantManagement = () => {
     }
   };
 
+  const handleResendAdminOtp = async (tenantId, tenantName) => {
+    try {
+      setResendingTenantId(tenantId);
+      const res = await tenantsAPI.resendAdminOtp(tenantId);
+      if (res.data?.emailSent) {
+        toast.success(`OTP email sent for ${tenantName}`);
+      } else {
+        toast.error(res.data?.emailError || 'OTP regenerated but email failed to send');
+        if (res.data?.otp) {
+          window.alert(`Email failed, but a new OTP was generated for ${res.data?.admin?.email || tenantName}:\n\n${res.data.otp}`);
+        }
+      }
+      loadTenants();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to resend admin OTP');
+    } finally {
+      setResendingTenantId(null);
+    }
+  };
+
   const filtered = tenants.filter(t => {
     const matchesSearch = t.name?.toLowerCase().includes(search.toLowerCase()) ||
       t.email?.toLowerCase().includes(search.toLowerCase());
@@ -874,6 +919,7 @@ className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Clients</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Deals</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Limits</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">OTP Email</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                 <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
@@ -881,7 +927,7 @@ className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
             <tbody className="divide-y divide-gray-100">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-16 text-center">
+                  <td colSpan="9" className="px-6 py-16 text-center">
                     <Building2 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                     <p className="text-gray-500">No organizations found</p>
                   </td>
@@ -927,6 +973,9 @@ className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                           {Math.round(((tenant.userCount || tenant.usage?.totalUsers || 0) / (tenant.settings?.features?.maxUsers || 100)) * 100)}% users used
                         </span>
                       </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <EmailStatusBadge email={tenant.metadata?.onboardingEmail} />
                     </td>
                     <td className="px-6 py-4 text-gray-500 text-sm">
                       {new Date(tenant.createdAt).toLocaleDateString()}
@@ -974,6 +1023,18 @@ className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                           title="Emergency Lockdown"
                         >
                           <XCircle className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleResendAdminOtp(tenant._id, tenant.name)}
+                          disabled={resendingTenantId === tenant._id}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                          title="Resend company admin OTP"
+                        >
+                          {resendingTenantId === tenant._id ? (
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Mail className="w-4 h-4" />
+                          )}
                         </button>
                         <button
                           onClick={() => handleScheduleDeactivation(tenant._id, tenant.name)}
