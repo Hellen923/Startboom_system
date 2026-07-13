@@ -1,17 +1,21 @@
 // routes/branches.js
 import express from 'express';
 import Branch from '../models/Branch.js';
-import { auth } from '../middleware/auth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
+// Apply tenant authentication and module enforcement
+router.use(tenantAuth);
+router.use(requireTenantModule('branches'));
+
 // Get all branches
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { type, isActive, parentBranch } = req.query;
     
     const query = {
-      tenant: req.user.tenant
+      ...req.tenantQuery
     };
     
     if (type) query.type = type;
@@ -39,9 +43,9 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get branch tree (hierarchical structure)
-router.get('/tree', auth, async (req, res) => {
+router.get('/tree', async (req, res) => {
   try {
-    const tree = await Branch.getBranchTree(req.user.tenant);
+    const tree = await Branch.getBranchTree(req.user.tenantId);
     
     res.json({
       success: true,
@@ -57,11 +61,11 @@ router.get('/tree', auth, async (req, res) => {
 });
 
 // Get single branch by ID
-router.get('/:id', auth, async (req, res) => {
-  try {
+router.get('/:id', async (req, res) => {
+  try{
     const branch = await Branch.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     })
       .populate('manager', 'name email phone')
       .populate('parentBranch', 'name code')
@@ -94,11 +98,11 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Get branch hierarchy path
-router.get('/:id/hierarchy', auth, async (req, res) => {
+router.get('/:id/hierarchy', async (req, res) => {
   try {
     const branch = await Branch.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!branch) {
@@ -123,10 +127,10 @@ router.get('/:id/hierarchy', auth, async (req, res) => {
 });
 
 // Create branch
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     // Only admins can create branches
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!req.isSuperAdmin && req.user.role !== 'admin') {
       return res.status(403).json({
         message: 'Only administrators can create branches'
       });
@@ -140,7 +144,7 @@ router.post('/', auth, async (req, res) => {
     
     // Check if name already exists
     const existing = await Branch.findOne({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       name: name.trim()
     });
     
@@ -151,7 +155,7 @@ router.post('/', auth, async (req, res) => {
     }
     
     const branch = new Branch({
-      tenant: req.user.tenant,
+      tenant: req.user.tenantId,
       name: name.trim(),
       code: code ? code.toUpperCase().trim() : undefined,
       description: description || '',
@@ -165,7 +169,7 @@ router.post('/', auth, async (req, res) => {
       currency: currency || 'UGX',
       operatingHours: operatingHours || {},
       settings: settings || {},
-      createdBy: req.user._id
+      createdBy: req.user.userId
     });
     
     await branch.save();
@@ -185,9 +189,9 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update branch
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!req.isSuperAdmin && req.user.role !== 'admin') {
       return res.status(403).json({
         message: 'Only administrators can update branches'
       });
@@ -195,7 +199,7 @@ router.put('/:id', auth, async (req, res) => {
     
     const branch = await Branch.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!branch) {
@@ -213,7 +217,7 @@ router.put('/:id', auth, async (req, res) => {
     // Check name uniqueness if changing
     if (name && name !== branch.name) {
       const existing = await Branch.findOne({
-        tenant: req.user.tenant,
+        ...req.tenantQuery,
         name: name.trim(),
         _id: { $ne: branch._id }
       });
@@ -240,7 +244,7 @@ router.put('/:id', auth, async (req, res) => {
     if (settings) branch.settings = new Map({ ...Object.fromEntries(branch.settings), ...settings });
     if (isActive !== undefined) branch.isActive = isActive;
     
-    branch.updatedBy = req.user._id;
+    branch.updatedBy = req.user.userId;
     
     await branch.save();
     
@@ -259,9 +263,9 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Update branch stats
-router.patch('/:id/stats', auth, async (req, res) => {
+router.patch('/:id/stats', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!req.isSuperAdmin && req.user.role !== 'admin') {
       return res.status(403).json({
         message: 'Only administrators can update branch stats'
       });
@@ -271,7 +275,7 @@ router.patch('/:id/stats', auth, async (req, res) => {
     
     const branch = await Branch.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!branch) {
@@ -302,9 +306,9 @@ router.patch('/:id/stats', auth, async (req, res) => {
 });
 
 // Delete (soft delete) branch
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!req.isSuperAdmin && req.user.role !== 'admin') {
       return res.status(403).json({
         message: 'Only administrators can delete branches'
       });
@@ -312,7 +316,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     const branch = await Branch.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!branch) {
@@ -330,7 +334,7 @@ router.delete('/:id', auth, async (req, res) => {
     }
     
     branch.isActive = false;
-    branch.updatedBy = req.user._id;
+    branch.updatedBy = req.user.userId;
     await branch.save();
     
     res.json({
