@@ -219,7 +219,15 @@ router.post('/login', loginLimiter, async (req, res) => {
       tenant: user.tenant ? {
         id: user.tenant._id,
         name: user.tenant.name,
-        slug: user.tenant.slug
+        slug: user.tenant.slug,
+        branding: user.tenant.branding || null,
+        modules: user.tenant.modules || null,
+        settings: user.tenant.settings ? {
+          primaryColor: user.tenant.settings.primaryColor,
+          logo: user.tenant.settings.logo,
+          currency: user.tenant.settings.currency,
+          timezone: user.tenant.settings.timezone,
+        } : null
       } : null,
       isFirstLogin: user.isFirstLogin,
       isActive: user.isActive,
@@ -342,7 +350,7 @@ router.get('/me', async (req, res) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
-    const user = await User.findById(decoded.userId).select('-password -otp');
+    const user = await User.findById(decoded.userId).select('-password -otp').populate('tenant', 'name slug branding settings modules');
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
