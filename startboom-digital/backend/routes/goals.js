@@ -1,17 +1,22 @@
 // routes/goals.js
 import express from 'express';
 import Goal from '../models/Goal.js';
-import { auth } from '../middleware/auth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
+// Apply tenant authentication and module enforcement
+router.use(tenantAuth);
+router.use(requireTenantModule('goals'));
+
+
 // Get all goals (with filters)
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { type, assignmentType, status, period, userId, teamId, departmentId, branchId } = req.query;
     
     const query = {
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isActive: true
     };
     
@@ -25,17 +30,17 @@ router.get('/', auth, async (req, res) => {
     if (branchId) query.branch = branchId;
     
     // For non-admins, filter by their access level
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       // Managers can see department goals
       if (req.user.role === 'manager' && req.user.department) {
         query.$or = [
-          { user: req.user._id },
+          { user: req.user.userId },
           { team: req.user.team },
           { department: req.user.department }
         ];
       } else {
         // Agents can only see their own goals
-        query.user = req.user._id;
+        query.user = req.user.userId;
       }
     }
     
@@ -62,11 +67,11 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get my goals
-router.get('/my-goals', auth, async (req, res) => {
+router.get('/my-goals', async (req, res) => {
   try {
     const { period } = req.query;
     
-    const goals = await Goal.getUserGoals(req.user._id, period);
+    const goals = await Goal.getUserGoals(req.user.userId, period);
     
     res.json({
       success: true,
@@ -83,7 +88,7 @@ router.get('/my-goals', auth, async (req, res) => {
 });
 
 // Get team goals
-router.get('/team/:teamId', auth, async (req, res) => {
+router.get('/team/:teamId', async (req, res) => {
   try {
     const { period } = req.query;
     
@@ -104,11 +109,11 @@ router.get('/team/:teamId', auth, async (req, res) => {
 });
 
 // Get single goal by ID
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const goal = await Goal.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     })
       .populate('user', 'name email')
       .populate('team', 'name')
@@ -125,19 +130,19 @@ router.get('/:id', auth, async (req, res) => {
     }
     
     // Check access
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       if (req.user.role === 'manager') {
         // Managers can see department/team goals
         if (goal.department?.toString() !== req.user.department?.toString() &&
             goal.team?.toString() !== req.user.team?.toString() &&
-            goal.user?.toString() !== req.user._id.toString()) {
+            goal.user?.toString() !== req.user.userId.toString()) {
           return res.status(403).json({
             message: 'Access denied'
           });
         }
       } else {
         // Agents can only see their own goals
-        if (goal.user?.toString() !== req.user._id.toString()) {
+        if (goal.user?.toString() !== req.user.userId.toString()) {
           return res.status(403).json({
             message: 'Access denied'
           });
@@ -159,7 +164,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create goal
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     // Only admins and managers can create goals
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
@@ -176,7 +181,7 @@ router.post('/', auth, async (req, res) => {
     } = req.body;
     
     const goal = new Goal({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       name: name.trim(),
       description: description || '',
       type,
@@ -194,7 +199,7 @@ router.post('/', auth, async (req, res) => {
       weight: weight || 100,
       autoUpdate: autoUpdate || {},
       notifications: notifications || {},
-      createdBy: req.user._id
+      createdBy: req.user.userId
     });
     
     await goal.save();
@@ -222,11 +227,11 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update goal
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const goal = await Goal.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!goal) {
@@ -236,7 +241,7 @@ router.put('/:id', auth, async (req, res) => {
     }
     
     // Check permissions
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       if (req.user.role === 'manager') {
         // Managers can update department/team goals
         if (goal.department?.toString() !== req.user.department?.toString() &&
@@ -265,7 +270,7 @@ router.put('/:id', auth, async (req, res) => {
     if (notifications) goal.notifications = { ...goal.notifications, ...notifications };
     if (isActive !== undefined) goal.isActive = isActive;
     
-    goal.updatedBy = req.user._id;
+    goal.updatedBy = req.user.userId;
     
     await goal.save();
     
@@ -284,13 +289,13 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Update goal progress
-router.patch('/:id/progress', auth, async (req, res) => {
+router.patch('/:id/progress', async (req, res) => {
   try {
     const { actual, increment } = req.body;
     
     const goal = await Goal.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!goal) {
@@ -327,7 +332,7 @@ router.patch('/:id/progress', auth, async (req, res) => {
 });
 
 // Cascade goal (split parent goal to children)
-router.post('/:id/cascade', auth, async (req, res) => {
+router.post('/:id/cascade', async (req, res) => {
   try {
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -355,7 +360,7 @@ router.post('/:id/cascade', auth, async (req, res) => {
 });
 
 // Get goal hierarchy
-router.get('/:id/hierarchy', auth, async (req, res) => {
+router.get('/:id/hierarchy', async (req, res) => {
   try {
     const hierarchy = await Goal.getGoalHierarchy(req.params.id);
     
@@ -379,7 +384,7 @@ router.get('/:id/hierarchy', auth, async (req, res) => {
 });
 
 // Delete (soft delete) goal
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -389,7 +394,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     const goal = await Goal.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!goal) {
@@ -399,7 +404,7 @@ router.delete('/:id', auth, async (req, res) => {
     }
     
     goal.isActive = false;
-    goal.updatedBy = req.user._id;
+    goal.updatedBy = req.user.userId;
     await goal.save();
     
     res.json({
