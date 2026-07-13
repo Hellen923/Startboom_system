@@ -1,17 +1,22 @@
 // routes/pipelines.js
 import express from 'express';
 import Pipeline from '../models/Pipeline.js';
-import { auth } from '../middleware/auth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
+// Apply tenant authentication and module enforcement
+router.use(tenantAuth);
+router.use(requireTenantModule('deals'));
+
+
 // Get all pipelines (optionally filter by entity type)
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { entityType } = req.query;
     
     const query = {
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isActive: true
     };
     
@@ -38,10 +43,10 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get default pipeline for entity type
-router.get('/default/:entityType', auth, async (req, res) => {
+router.get('/default/:entityType', async (req, res) => {
   try {
     const pipeline = await Pipeline.getDefault(
-      req.user.tenant,
+      req.user.tenantId,
       req.params.entityType
     );
     
@@ -65,11 +70,11 @@ router.get('/default/:entityType', auth, async (req, res) => {
 });
 
 // Get single pipeline by ID
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const pipeline = await Pipeline.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     }).populate('createdBy', 'name email');
     
     if (!pipeline) {
@@ -92,10 +97,10 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create pipeline
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     // Only admins can create pipelines
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only administrators can create pipelines'
       });
@@ -105,7 +110,7 @@ router.post('/', auth, async (req, res) => {
     
     // Check if name already exists
     const existing = await Pipeline.findOne({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       name: name.trim()
     });
     
@@ -118,13 +123,13 @@ router.post('/', auth, async (req, res) => {
     // If setting as default, unset other defaults
     if (isDefault) {
       await Pipeline.updateMany(
-        { tenant: req.user.tenant, entityType: entityType, isDefault: true },
+        { ...req.tenantQuery, entityType: entityType, isDefault: true },
         { $set: { isDefault: false } }
       );
     }
     
     const pipeline = new Pipeline({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       name: name.trim(),
       description: description || '',
       entityType: entityType || 'deal',
@@ -132,7 +137,7 @@ router.post('/', auth, async (req, res) => {
       isDefault: isDefault || false,
       departments: departments || [],
       settings: settings || {},
-      createdBy: req.user._id
+      createdBy: req.user.userId
     });
     
     await pipeline.save();
@@ -152,9 +157,9 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update pipeline
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only administrators can update pipelines'
       });
@@ -162,7 +167,7 @@ router.put('/:id', auth, async (req, res) => {
     
     const pipeline = await Pipeline.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!pipeline) {
@@ -176,7 +181,7 @@ router.put('/:id', auth, async (req, res) => {
     // Check name uniqueness if changing
     if (name && name !== pipeline.name) {
       const existing = await Pipeline.findOne({
-        tenant: req.user.tenant,
+        ...req.tenantQuery,
         name: name.trim(),
         _id: { $ne: pipeline._id }
       });
@@ -193,7 +198,7 @@ router.put('/:id', auth, async (req, res) => {
     if (isDefault && !pipeline.isDefault) {
       await Pipeline.updateMany(
         { 
-          tenant: req.user.tenant, 
+          ...req.tenantQuery, 
           entityType: pipeline.entityType, 
           isDefault: true,
           _id: { $ne: pipeline._id }
@@ -209,7 +214,7 @@ router.put('/:id', auth, async (req, res) => {
     if (settings) pipeline.settings = { ...pipeline.settings, ...settings };
     if (isActive !== undefined) pipeline.isActive = isActive;
     
-    pipeline.updatedBy = req.user._id;
+    pipeline.updatedBy = req.user.userId;
     
     await pipeline.save();
     
@@ -228,9 +233,9 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Add stage to pipeline
-router.post('/:id/stages', auth, async (req, res) => {
+router.post('/:id/stages', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only administrators can modify pipeline stages'
       });
@@ -238,7 +243,7 @@ router.post('/:id/stages', auth, async (req, res) => {
     
     const pipeline = await Pipeline.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!pipeline) {
@@ -264,9 +269,9 @@ router.post('/:id/stages', auth, async (req, res) => {
 });
 
 // Remove stage from pipeline
-router.delete('/:id/stages/:stageName', auth, async (req, res) => {
+router.delete('/:id/stages/:stageName', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only administrators can modify pipeline stages'
       });
@@ -274,7 +279,7 @@ router.delete('/:id/stages/:stageName', auth, async (req, res) => {
     
     const pipeline = await Pipeline.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!pipeline) {
@@ -300,9 +305,9 @@ router.delete('/:id/stages/:stageName', auth, async (req, res) => {
 });
 
 // Reorder stages
-router.put('/:id/stages/reorder', auth, async (req, res) => {
+router.put('/:id/stages/reorder', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only administrators can reorder stages'
       });
@@ -312,7 +317,7 @@ router.put('/:id/stages/reorder', auth, async (req, res) => {
     
     const pipeline = await Pipeline.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!pipeline) {
@@ -338,9 +343,9 @@ router.put('/:id/stages/reorder', auth, async (req, res) => {
 });
 
 // Delete (soft delete) pipeline
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only administrators can delete pipelines'
       });
@@ -348,7 +353,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     const pipeline = await Pipeline.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!pipeline) {
@@ -360,7 +365,7 @@ router.delete('/:id', auth, async (req, res) => {
     // Don't allow deleting default pipeline if it's the only one
     if (pipeline.isDefault) {
       const otherPipelines = await Pipeline.countDocuments({
-        tenant: req.user.tenant,
+        ...req.tenantQuery,
         entityType: pipeline.entityType,
         isActive: true,
         _id: { $ne: pipeline._id }
@@ -374,7 +379,7 @@ router.delete('/:id', auth, async (req, res) => {
     }
     
     pipeline.isActive = false;
-    pipeline.updatedBy = req.user._id;
+    pipeline.updatedBy = req.user.userId;
     await pipeline.save();
     
     res.json({
@@ -391,16 +396,16 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 // Create default sales pipeline for tenant
-router.post('/setup/default', auth, async (req, res) => {
+router.post('/setup/default', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only administrators can create default pipelines'
       });
     }
     
     // Check if default already exists
-    const existing = await Pipeline.getDefault(req.user.tenant, 'deal');
+    const existing = await Pipeline.getDefault(req.user.tenantId, 'deal');
     
     if (existing) {
       return res.status(400).json({
@@ -409,8 +414,8 @@ router.post('/setup/default', auth, async (req, res) => {
     }
     
     const pipeline = await Pipeline.createDefaultSalesPipeline(
-      req.user.tenant,
-      req.user._id
+      req.user.tenantId,
+      req.user.userId
     );
     
     res.status(201).json({
