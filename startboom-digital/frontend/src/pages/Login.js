@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import sidebarLogo from '../assets/sidebar.png';
+import { PLATFORM_BRAND } from '../utils/platformBranding';
 import { BUTTON_STYLES, FORM_STYLES } from '../utils/designSystem';
 
 const Login = () => {
@@ -77,9 +77,7 @@ const Login = () => {
           {/* Header */}
           <div className="text-center lg:text-left">
             <div className="flex items-center justify-center lg:justify-start space-x-4 mb-8">
-              <div className="w-16 h-16 flex items-center justify-center">
-                <img src={sidebarLogo} alt="HoneyPot Logo" className="w-full h-full object-contain" />
-              </div>
+              <img src={PLATFORM_BRAND.logo} alt="HoneyPot Logo" className="w-16 h-16 object-contain" />
               <div>
                 <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">HoneyPot</h1>
                 <p className="text-sm text-[var(--primary-color)] font-medium">CRM & Sales Platform</p>
@@ -204,9 +202,7 @@ const Login = () => {
             className="text-center text-white relative z-10"
           >
             <div className="mb-8">
-              <div className="w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-                <img src={sidebarLogo} alt="HoneyPot Logo" className="w-full h-full object-contain opacity-90" />
-              </div>
+              <img src={PLATFORM_BRAND.logo} alt="HoneyPot Logo" className="w-24 h-24 mx-auto mb-6 object-contain opacity-90" />
               <h3 className="text-4xl font-bold mb-4">HoneyPot</h3>
               <p className="text-[#94A3B8] text-lg max-w-md mx-auto">
                 Streamline your sales process, manage clients efficiently, and boost your team's performance with our powerful sales management solution.
