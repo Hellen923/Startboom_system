@@ -1,12 +1,16 @@
 // routes/activities.js
 import express from 'express';
 import Activity from '../models/Activity.js';
-import { auth } from '../middleware/auth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
+// Apply tenant authentication
+router.use(tenantAuth);
+
+
 // Get all activities (with filters)
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { 
       type, entityType, entityId, userId, teamId, departmentId, branchId,
@@ -14,7 +18,7 @@ router.get('/', auth, async (req, res) => {
     } = req.query;
     
     const query = {
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isActive: true
     };
     
@@ -36,16 +40,16 @@ router.get('/', auth, async (req, res) => {
     }
     
     // For non-admins, filter by their access level
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       if (req.user.role === 'manager' && req.user.department) {
         query.$or = [
-          { user: req.user._id },
+          { user: req.user.userId },
           { team: req.user.team },
           { department: req.user.department }
         ];
       } else {
         // Agents can only see their own activities
-        query.user = req.user._id;
+        query.user = req.user.userId;
       }
     }
     
@@ -75,13 +79,13 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get my activities
-router.get('/my-activities', auth, async (req, res) => {
+router.get('/my-activities', async (req, res) => {
   try {
     const { startDate, endDate, type, limit = 50 } = req.query;
     
     const query = {
-      tenant: req.user.tenant,
-      user: req.user._id,
+      ...req.tenantQuery,
+      user: req.user.userId,
       isActive: true
     };
     
@@ -113,13 +117,13 @@ router.get('/my-activities', auth, async (req, res) => {
 });
 
 // Get activity stats for user
-router.get('/stats/user/:userId', auth, async (req, res) => {
+router.get('/stats/user/:userId', async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     
     // Check access
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role) && 
-        req.params.userId !== req.user._id.toString()) {
+        req.params.userId !== req.user.userId.toString()) {
       return res.status(403).json({
         message: 'Access denied'
       });
@@ -145,12 +149,12 @@ router.get('/stats/user/:userId', auth, async (req, res) => {
 });
 
 // Get my activity stats
-router.get('/stats/my-stats', auth, async (req, res) => {
+router.get('/stats/my-stats', async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     
     const stats = await Activity.getUserStats(
-      req.user._id,
+      req.user.userId,
       startDate ? new Date(startDate) : null,
       endDate ? new Date(endDate) : null
     );
@@ -169,13 +173,13 @@ router.get('/stats/my-stats', auth, async (req, res) => {
 });
 
 // Get activity breakdown by type
-router.get('/stats/breakdown/:userId', auth, async (req, res) => {
+router.get('/stats/breakdown/:userId', async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     
     // Check access
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role) && 
-        req.params.userId !== req.user._id.toString()) {
+        req.params.userId !== req.user.userId.toString()) {
       return res.status(403).json({
         message: 'Access denied'
       });
@@ -201,7 +205,7 @@ router.get('/stats/breakdown/:userId', auth, async (req, res) => {
 });
 
 // Get team activity stats
-router.get('/stats/team/:teamId', auth, async (req, res) => {
+router.get('/stats/team/:teamId', async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     
@@ -232,12 +236,12 @@ router.get('/stats/team/:teamId', auth, async (req, res) => {
 });
 
 // Get battle card (leaderboard of activity scores)
-router.get('/stats/battle-card', auth, async (req, res) => {
+router.get('/stats/battle-card', async (req, res) => {
   try {
     const { startDate, endDate, teamId, departmentId, branchId } = req.query;
     
     const match = {
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isActive: true
     };
     
@@ -254,7 +258,7 @@ router.get('/stats/battle-card', auth, async (req, res) => {
     if (branchId) match.branch = branchId;
     
     // Access control
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       if (req.user.role === 'manager' && req.user.department) {
         match.department = req.user.department;
       } else {
@@ -312,7 +316,7 @@ router.get('/stats/battle-card', auth, async (req, res) => {
 });
 
 // Get activity scores configuration
-router.get('/scores', auth, async (req, res) => {
+router.get('/scores', async (req, res) => {
   try {
     const scores = Activity.getActivityScores();
     
@@ -330,11 +334,11 @@ router.get('/scores', auth, async (req, res) => {
 });
 
 // Get single activity by ID
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const activity = await Activity.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     })
       .populate('user', 'name email')
       .populate('entityId')
@@ -350,17 +354,17 @@ router.get('/:id', auth, async (req, res) => {
     }
     
     // Check access
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       if (req.user.role === 'manager') {
         if (activity.department?.toString() !== req.user.department?.toString() &&
             activity.team?.toString() !== req.user.team?.toString() &&
-            activity.user?._id?.toString() !== req.user._id.toString()) {
+            activity.user?._id?.toString() !== req.user.userId.toString()) {
           return res.status(403).json({
             message: 'Access denied'
           });
         }
       } else {
-        if (activity.user?._id?.toString() !== req.user._id.toString()) {
+        if (activity.user?._id?.toString() !== req.user.userId.toString()) {
           return res.status(403).json({
             message: 'Access denied'
           });
@@ -382,7 +386,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create activity
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const {
       type, customTypeName, entityType, entityId,
@@ -393,8 +397,8 @@ router.post('/', auth, async (req, res) => {
     } = req.body;
     
     const activity = new Activity({
-      tenant: req.user.tenant,
-      user: req.user._id,
+      ...req.tenantQuery,
+      user: req.user.userId,
       type,
       customTypeName,
       entityType: entityType || 'none',
@@ -413,7 +417,7 @@ router.post('/', auth, async (req, res) => {
       attachments: attachments || [],
       tags: tags || [],
       metadata: metadata || {},
-      owner: req.user._id,
+      owner: req.user.userId,
       department: req.user.department,
       team: req.user.team,
       branch: req.user.branch
@@ -436,11 +440,11 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update activity
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const activity = await Activity.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!activity) {
@@ -450,8 +454,8 @@ router.put('/:id', auth, async (req, res) => {
     }
     
     // Check permissions (only owner or admin can update)
-    if (!['superadmin', 'admin'].includes(req.user.role) &&
-        activity.user.toString() !== req.user._id.toString()) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin') &&
+        activity.user.toString() !== req.user.userId.toString()) {
       return res.status(403).json({
         message: 'Access denied'
       });
@@ -496,11 +500,11 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Delete (soft delete) activity
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const activity = await Activity.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!activity) {
@@ -510,8 +514,8 @@ router.delete('/:id', auth, async (req, res) => {
     }
     
     // Check permissions (only owner or admin can delete)
-    if (!['superadmin', 'admin'].includes(req.user.role) &&
-        activity.user.toString() !== req.user._id.toString()) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin') &&
+        activity.user.toString() !== req.user.userId.toString()) {
       return res.status(403).json({
         message: 'Access denied'
       });
