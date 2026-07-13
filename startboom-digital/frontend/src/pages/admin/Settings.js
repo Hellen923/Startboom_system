@@ -17,6 +17,7 @@ import {
 } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { BUTTON_STYLES, FORM_STYLES } from "../../utils/designSystem";
+import { applyBrandColor } from "../../utils/platformBranding";
 
 const Settings = () => {
   const { user, updateUser } = useAuth();
@@ -100,13 +101,13 @@ const Settings = () => {
 
   // Branding
   const [branding, setBranding] = useState({
-    logo: user?.tenant?.settings?.logo || '',
-    primaryColor: user?.tenant?.settings?.primaryColor || '#FFD700',
-    secondaryColor: user?.tenant?.settings?.secondaryColor || '#1f2937',
+    logo: user?.tenant?.branding?.logo || user?.tenant?.settings?.logo || '',
+    primaryColor: user?.tenant?.branding?.primaryColor || user?.tenant?.settings?.primaryColor || '#D89A00',
+    secondaryColor: user?.tenant?.branding?.secondaryColor || user?.tenant?.settings?.secondaryColor || '#1f2937',
     currency: user?.tenant?.settings?.currency || 'USD',
     customDomain: user?.tenant?.settings?.customDomain || ''
   });
-  const [logoPreview, setLogoPreview] = useState(user?.tenant?.logo || '');
+  const [logoPreview, setLogoPreview] = useState(user?.tenant?.branding?.logo || user?.tenant?.settings?.logo || '');
   const [brandingLoading, setBrandingLoading] = useState(false);
 
   useEffect(() => {
@@ -272,7 +273,20 @@ const Settings = () => {
     }
     try {
       setBrandingLoading(true);
-      await tenantsAPI.updateBranding(branding);
+      const res = await tenantsAPI.updateBranding(branding);
+      const updatedTenant = res.data.tenant;
+      if (updatedTenant) {
+        updateUser({ tenant: { ...user.tenant, ...updatedTenant } });
+      }
+      if (branding.primaryColor) {
+        localStorage.setItem('tenant_primary_color', branding.primaryColor);
+        applyBrandColor(branding.primaryColor);
+      }
+      if (branding.logo) {
+        localStorage.setItem('tenant_logo', branding.logo);
+      } else {
+        localStorage.removeItem('tenant_logo');
+      }
       toast.success('Branding updated successfully!');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update branding');

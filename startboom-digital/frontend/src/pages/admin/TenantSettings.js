@@ -1,11 +1,9 @@
 // Tenant Settings - Company branding, modules, and configuration
 import React, { useState, useEffect } from 'react';
-import { 
-  Settings, 
+import {
   Save, 
   Upload, 
   Palette, 
-  Grid, 
   Building2,
   Mail,
   Phone,
@@ -17,16 +15,17 @@ import {
   CheckCircle,
   X
 } from 'lucide-react';
-import axios from 'axios';
-import PROFESSIONAL_COLORS from '../../utils/professionalColors';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
+import { tenantsAPI } from '../../services/api';
+import { applyBrandColor } from '../../utils/platformBranding';
+import { TENANT_MODULES, isModuleEnabled } from '../../utils/moduleRegistry';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import toast from 'react-hot-toast';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-
 const TenantSettings = () => {
   const { theme } = useTheme();
+  const { user, updateUser } = useAuth();
   const isDark = theme.mode === 'dark';
   
   const [loading, setLoading] = useState(true);
@@ -59,36 +58,26 @@ const TenantSettings = () => {
     }
   });
 
-  // Available modules
-  const availableModules = [
-    { id: 'sales', label: 'Sales & CRM', description: 'Customer relationship and sales management', icon: '💼' },
-    { id: 'deals', label: 'Deal Pipeline', description: 'Sales pipeline and opportunity tracking', icon: '🎯' },
-    { id: 'products', label: 'Product Catalog', description: 'Product and service management', icon: '📦' },
-    { id: 'finance', label: 'Finance', description: 'Invoicing, payments, and accounting', icon: '💰' },
-    { id: 'hr', label: 'HR & Recruitment', description: 'Human resources management', icon: '👥' },
-    { id: 'projects', label: 'Project Management', description: 'Project tracking and collaboration', icon: '📊' },
-    { id: 'support', label: 'Customer Support', description: 'Ticketing and support management', icon: '🎧' },
-    { id: 'inventory', label: 'Inventory', description: 'Stock and warehouse management', icon: '📦' },
-    { id: 'marketing', label: 'Marketing', description: 'Campaigns and lead generation', icon: '📢' },
-    { id: 'analytics', label: 'Analytics', description: 'Business intelligence and reporting', icon: '📈' }
-  ];
-
   useEffect(() => {
     fetchTenantSettings();
   }, []);
 
+  const syncTenantContext = (tenantData) => {
+    if (!tenantData || !user?.tenant) return;
+    updateUser({ tenant: { ...user.tenant, ...tenantData } });
+  };
+
   const fetchTenantSettings = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${API_URL}/tenant/settings`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await tenantsAPI.getSettings();
       
       setTenant(response.data.tenant);
+      syncTenantContext(response.data.tenant);
       setFormData({
         ...formData,
         ...response.data.tenant,
+        companyName: response.data.tenant.name || '',
         branding: response.data.tenant.branding || formData.branding,
         settings: response.data.tenant.settings || formData.settings
       });
@@ -103,36 +92,19 @@ const TenantSettings = () => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const token = localStorage.getItem('token');
-      
-      await axios.put(`${API_URL}/tenant/settings`, formData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await tenantsAPI.updateSettings(formData);
+      const updatedTenant = response.data.tenant;
+      setTenant(updatedTenant);
+      syncTenantContext(updatedTenant);
 
       // Apply branding immediately and persist so theme toggle preserves it
       const color = formData.branding?.primaryColor;
       if (color) {
         localStorage.setItem('tenant_primary_color', color);
-        const root = document.documentElement;
-        const r = parseInt(color.slice(1,3),16);
-        const g = parseInt(color.slice(3,5),16);
-        const b = parseInt(color.slice(5,7),16);
-        const darker = '#' + [r,g,b].map(v => Math.max(0,v-25).toString(16).padStart(2,'0')).join('');
-        const gradient = `linear-gradient(to right, ${color}, ${darker})`;
-        root.style.setProperty('--primary-color', color);
-        root.style.setProperty('--primary-hover', darker);
-        root.style.setProperty('--primary-ring', `rgba(${r},${g},${b},0.25)`);
-        root.style.setProperty('--color-accent-surface', `rgba(${r},${g},${b},0.08)`);
-        root.style.setProperty('--gradient-from', color);
-        root.style.setProperty('--gradient-to', darker);
-        root.style.setProperty('--brand-header-bg', gradient);
-        root.style.setProperty('--btn-brand-bg', gradient);
-        root.style.setProperty('--sidebar-nav-active', `rgba(${r},${g},${b},0.15)`);
-        root.style.setProperty('--sidebar-nav-hover', `rgba(${r},${g},${b},0.08)`);
+        applyBrandColor(color);
       }
 
       toast.success('Settings saved successfully');
-      fetchTenantSettings();
     } catch (error) {
       console.error('Error saving settings:', error);
       toast.error('Failed to save settings');
@@ -143,18 +115,18 @@ const TenantSettings = () => {
 
   const handleModuleToggle = async (moduleId) => {
     try {
-      const token = localStorage.getItem('token');
       const currentModules = tenant?.modules || {};
-      const newStatus = !currentModules[moduleId];
+      const newStatus = !isModuleEnabled(currentModules, moduleId);
       
-      await axios.patch(`${API_URL}/tenant/modules/${moduleId}`, {
-        enabled: newStatus
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await tenantsAPI.updateModule(moduleId, newStatus);
+      const updatedTenant = {
+        ...tenant,
+        modules: response.data.modules || { ...currentModules, [moduleId]: newStatus }
+      };
 
       toast.success(`Module ${newStatus ? 'enabled' : 'disabled'}`);
-      fetchTenantSettings();
+      setTenant(updatedTenant);
+      syncTenantContext(updatedTenant);
     } catch (error) {
       console.error('Error toggling module:', error);
       toast.error('Failed to update module');
@@ -363,7 +335,7 @@ const TenantSettings = () => {
                   '#0891B2','#0D9488','#059669','#16A34A',
                   '#7C3AED','#9333EA','#A855F7','#C026D3',
                   '#DC2626','#E11D48','#DB2777','#EC4899',
-                  '#EA580C','#D97706','#CA8A04','var(--primary-color)',
+                  '#EA580C','#D97706','#CA8A04','#D89A00',
                   '#0F172A','#1E293B','#334155','#475569',
                 ].map(c => (
                   <button
@@ -427,8 +399,8 @@ const TenantSettings = () => {
             Enable/Disable Modules
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {availableModules.map(module => {
-              const isEnabled = tenant?.modules?.[module.id] !== false;
+            {TENANT_MODULES.map(module => {
+              const isEnabled = isModuleEnabled(tenant?.modules, module.id);
               return (
                 <div
                   key={module.id}
@@ -441,7 +413,9 @@ const TenantSettings = () => {
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-3">
-                      <span className="text-2xl">{module.icon}</span>
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent-surface)] text-xs font-bold text-[var(--primary-color)]">
+                        {module.label.slice(0, 2).toUpperCase()}
+                      </span>
                       <div>
                         <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                           {module.label}
