@@ -26,6 +26,7 @@ import {
   Calendar,
   Settings
 } from 'lucide-react';
+import { MODULE_ROUTE_MAP, isModuleEnabled as isTenantModuleEnabled } from './moduleRegistry';
 
 // Define all possible navigation items with required permissions
 const ALL_NAV_ITEMS = {
@@ -137,38 +138,11 @@ export const generateNavigation = (user, permissions = null) => {
   // Get enabled modules from tenant — if no modules set, everything is enabled
   const tenantModules = user.tenant?.modules || null;
 
-  // Map nav paths to module IDs
-  const MODULE_MAP = {
-    '/admin/products':       'products',
-    '/agent/products':       'products',
-    '/admin/territories':    'territories',
-    '/agent/my-territory':   'territories',
-    '/admin/analytics':      'analytics',
-    '/admin/reports':        'reports',
-    '/admin/custom-reports': 'reports',
-    '/admin/forecasts':      'forecasts',
-    '/admin/activities':     'activities',
-    '/admin/goals':          'goals',
-    '/admin/pipelines':      'pipelines',
-    '/admin/workflows':      'workflows',
-    '/admin/departments':    'departments',
-    '/admin/branches':       'branches',
-    '/agent/deals':          'deals',
-    '/agent/sales':          'sales',
-    '/agent/clients':        'clients',
-    '/agent/leads':          'clients',
-    '/agent/contacts':       'clients',
-    '/agent/schedules':      'schedules',
-    '/agent/tasks':          'tasks',
-    '/agent/issues':         'issues',
-  };
-
   const isModuleEnabled = (path) => {
     if (!tenantModules) return true; // no restrictions set
-    const moduleId = MODULE_MAP[path];
+    const moduleId = MODULE_ROUTE_MAP[path];
     if (!moduleId) return true; // not mapped = always show
-    const val = tenantModules[moduleId];
-    return val !== false && val !== 'false'; // enabled unless explicitly false
+    return isTenantModuleEnabled(tenantModules, moduleId);
   };
 
   const filteredNav = baseNav.map(section => ({

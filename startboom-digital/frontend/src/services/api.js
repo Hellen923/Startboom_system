@@ -173,6 +173,8 @@ export const tenantsAPI = {
   delete: (id) => api.delete(`/tenants/${id}`),
   getStats: (id) => api.get(`/tenants/${id}/stats`),
   updateBranding: (data) => api.patch('/tenants/branding/logo', data),
+  getSettings: () => api.get('/tenants/settings'),
+  updateSettings: (data) => api.put('/tenants/settings', data),
   // Onboarding
   getOnboarding: () => api.get('/tenants/onboarding'),
   saveOnboarding: (data) => api.patch('/tenants/onboarding', data),
