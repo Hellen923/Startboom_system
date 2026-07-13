@@ -2,12 +2,16 @@
 import express from 'express';
 import Comment from '../models/Comment.js';
 import Notification from '../models/Notification.js';
-import { auth } from '../middleware/auth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
+// Apply tenant authentication
+router.use(tenantAuth);
+
+
 // Get comments for entity
-router.get('/entity/:entityType/:entityId', auth, async (req, res) => {
+router.get('/entity/:entityType/:entityId', async (req, res) => {
   try {
     const { entityType, entityId } = req.params;
     const { includeReplies = 'true', limit = 50, skip = 0 } = req.query;
@@ -37,7 +41,7 @@ router.get('/entity/:entityType/:entityId', auth, async (req, res) => {
 });
 
 // Get single comment with thread
-router.get('/:id/thread', auth, async (req, res) => {
+router.get('/:id/thread', async (req, res) => {
   try {
     const thread = await Comment.getThread(req.params.id);
     
@@ -61,7 +65,7 @@ router.get('/:id/thread', auth, async (req, res) => {
 });
 
 // Create comment
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { 
       entityType, entityId, content, parentComment, 
@@ -78,10 +82,10 @@ router.post('/', auth, async (req, res) => {
     }
     
     const comment = new Comment({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       entityType,
       entityId,
-      author: req.user._id,
+      author: req.user.userId,
       content: content.trim(),
       parentComment,
       threadDepth,
@@ -98,7 +102,7 @@ router.post('/', auth, async (req, res) => {
     if (mentions && mentions.length > 0) {
       for (const mention of mentions) {
         await Notification.create({
-          tenant: req.user.tenant,
+          ...req.tenantQuery,
           user: mention.user,
           title: 'You were mentioned in a comment',
           message: `${req.user.name} mentioned you: "${content.substring(0, 100)}..."`,
@@ -133,11 +137,11 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update comment
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const comment = await Comment.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!comment) {
@@ -147,7 +151,7 @@ router.put('/:id', auth, async (req, res) => {
     }
     
     // Only author can edit
-    if (comment.author.toString() !== req.user._id.toString()) {
+    if (comment.author.toString() !== req.user.userId.toString()) {
       return res.status(403).json({
         message: 'Only the comment author can edit'
       });
@@ -155,7 +159,7 @@ router.put('/:id', auth, async (req, res) => {
     
     const { content } = req.body;
     
-    await comment.edit(content, req.user._id);
+    await comment.edit(content, req.user.userId);
     await comment.populate('author', 'name email avatar');
     
     res.json({
@@ -173,13 +177,13 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Add reaction
-router.post('/:id/reactions', auth, async (req, res) => {
+router.post('/:id/reactions', async (req, res) => {
   try {
     const { emoji } = req.body;
     
     const comment = await Comment.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!comment) {
@@ -188,7 +192,7 @@ router.post('/:id/reactions', auth, async (req, res) => {
       });
     }
     
-    await comment.addReaction(emoji, req.user._id);
+    await comment.addReaction(emoji, req.user.userId);
     
     res.json({
       success: true,
@@ -205,11 +209,11 @@ router.post('/:id/reactions', auth, async (req, res) => {
 });
 
 // Remove reaction
-router.delete('/:id/reactions/:emoji', auth, async (req, res) => {
+router.delete('/:id/reactions/:emoji', async (req, res) => {
   try {
     const comment = await Comment.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!comment) {
@@ -218,7 +222,7 @@ router.delete('/:id/reactions/:emoji', auth, async (req, res) => {
       });
     }
     
-    await comment.removeReaction(req.params.emoji, req.user._id);
+    await comment.removeReaction(req.params.emoji, req.user.userId);
     
     res.json({
       success: true,
@@ -235,7 +239,7 @@ router.delete('/:id/reactions/:emoji', auth, async (req, res) => {
 });
 
 // Pin/unpin comment
-router.patch('/:id/pin', auth, async (req, res) => {
+router.patch('/:id/pin', async (req, res) => {
   try {
     // Only admins/managers can pin
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
@@ -246,7 +250,7 @@ router.patch('/:id/pin', auth, async (req, res) => {
     
     const comment = await Comment.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!comment) {
@@ -274,11 +278,11 @@ router.patch('/:id/pin', auth, async (req, res) => {
 });
 
 // Delete comment
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const comment = await Comment.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!comment) {
@@ -288,7 +292,7 @@ router.delete('/:id', auth, async (req, res) => {
     }
     
     // Only author or admin can delete
-    if (comment.author.toString() !== req.user._id.toString() &&
+    if (comment.author.toString() !== req.user.userId.toString() &&
         !['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
         message: 'Permission denied'
@@ -297,7 +301,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     comment.isDeleted = true;
     comment.deletedAt = new Date();
-    comment.deletedBy = req.user._id;
+    comment.deletedBy = req.user.userId;
     await comment.save();
     
     res.json({
