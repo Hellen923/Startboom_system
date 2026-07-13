@@ -6,13 +6,13 @@ import Product from '../models/Product.js';
 import User from '../models/User.js';
 import { body, validationResult } from 'express-validator';
 import { createNotification } from '../utils/notifications.js';
-import { tenantAuth } from '../middleware/tenantAuth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 import { saleCreationLimiter } from '../middleware/rateLimiter.js';
 
 const PAYMENT_METHODS = ['cash', 'credit', 'mtn_momo', 'airtel_momo', 'bank_transfer', 'cheque'];
 
 const router = express.Router();
-router.use(tenantAuth);
+router.use(tenantAuth, requireTenantModule('sales'));
 
 // Get all sales (admin sees all, agents see their own)
 router.get('/', async (req, res) => {
