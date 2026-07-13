@@ -2,18 +2,23 @@
 import express from 'express';
 import Workflow from '../models/Workflow.js';
 import WorkflowExecution from '../models/WorkflowExecution.js';
-import { auth } from '../middleware/auth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 import { executeWorkflow } from '../services/workflowEngine.js';
 
 const router = express.Router();
 
+// Apply tenant authentication and module enforcement
+router.use(tenantAuth);
+router.use(requireTenantModule('workflows'));
+
+
 // Get all workflows
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { triggerType, isActive, isTemplate } = req.query;
     
     const query = {
-      tenant: req.user.tenant
+      ...req.tenantQuery
     };
     
     if (triggerType) query['trigger.type'] = triggerType;
@@ -39,7 +44,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get workflow templates
-router.get('/templates', auth, async (req, res) => {
+router.get('/templates', async (req, res) => {
   try {
     const { category } = req.query;
     
@@ -60,11 +65,11 @@ router.get('/templates', auth, async (req, res) => {
 });
 
 // Get single workflow
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const workflow = await Workflow.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     }).populate('createdBy updatedBy', 'name email');
     
     if (!workflow) {
@@ -87,7 +92,7 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create workflow
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     // Only admins can create workflows
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
@@ -101,7 +106,7 @@ router.post('/', auth, async (req, res) => {
     } = req.body;
     
     const workflow = new Workflow({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       name: name.trim(),
       description: description || '',
       trigger,
@@ -109,7 +114,7 @@ router.post('/', auth, async (req, res) => {
       settings: settings || {},
       isTemplate: isTemplate || false,
       templateCategory,
-      createdBy: req.user._id
+      createdBy: req.user.userId
     });
     
     await workflow.save();
@@ -129,7 +134,7 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update workflow
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -139,7 +144,7 @@ router.put('/:id', auth, async (req, res) => {
     
     const workflow = await Workflow.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!workflow) {
@@ -157,7 +162,7 @@ router.put('/:id', auth, async (req, res) => {
     if (settings) workflow.settings = { ...workflow.settings, ...settings };
     if (isActive !== undefined) workflow.isActive = isActive;
     
-    workflow.updatedBy = req.user._id;
+    workflow.updatedBy = req.user.userId;
     
     await workflow.save();
     
@@ -176,7 +181,7 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Clone workflow
-router.post('/:id/clone', auth, async (req, res) => {
+router.post('/:id/clone', async (req, res) => {
   try {
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -186,7 +191,7 @@ router.post('/:id/clone', auth, async (req, res) => {
     
     const workflow = await Workflow.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!workflow) {
@@ -197,7 +202,7 @@ router.post('/:id/clone', auth, async (req, res) => {
     
     const { name } = req.body;
     const clonedWorkflow = await workflow.clone(name);
-    clonedWorkflow.createdBy = req.user._id;
+    clonedWorkflow.createdBy = req.user.userId;
     await clonedWorkflow.save();
     
     res.status(201).json({
@@ -215,7 +220,7 @@ router.post('/:id/clone', auth, async (req, res) => {
 });
 
 // Execute workflow manually
-router.post('/:id/execute', auth, async (req, res) => {
+router.post('/:id/execute', async (req, res) => {
   try {
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -249,13 +254,13 @@ router.post('/:id/execute', auth, async (req, res) => {
 });
 
 // Get workflow executions
-router.get('/:id/executions', auth, async (req, res) => {
+router.get('/:id/executions', async (req, res) => {
   try {
     const { status, limit = 50, skip = 0 } = req.query;
     
     const query = {
       workflow: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     };
     
     if (status) query.status = status;
@@ -284,12 +289,12 @@ router.get('/:id/executions', auth, async (req, res) => {
 });
 
 // Get execution stats
-router.get('/:id/stats', auth, async (req, res) => {
+router.get('/:id/stats', async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
     
     const stats = await WorkflowExecution.getStats(
-      req.user.tenant,
+      req.user.tenantId,
       req.params.id,
       startDate ? new Date(startDate) : null,
       endDate ? new Date(endDate) : null
@@ -309,7 +314,7 @@ router.get('/:id/stats', auth, async (req, res) => {
 });
 
 // Toggle workflow active status
-router.patch('/:id/toggle', auth, async (req, res) => {
+router.patch('/:id/toggle', async (req, res) => {
   try {
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -319,7 +324,7 @@ router.patch('/:id/toggle', auth, async (req, res) => {
     
     const workflow = await Workflow.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!workflow) {
@@ -329,7 +334,7 @@ router.patch('/:id/toggle', auth, async (req, res) => {
     }
     
     workflow.settings.isActive = !workflow.settings.isActive;
-    workflow.updatedBy = req.user._id;
+    workflow.updatedBy = req.user.userId;
     await workflow.save();
     
     res.json({
@@ -347,9 +352,9 @@ router.patch('/:id/toggle', auth, async (req, res) => {
 });
 
 // Delete workflow
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only administrators can delete workflows'
       });
@@ -357,7 +362,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     const workflow = await Workflow.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!workflow) {
@@ -367,7 +372,7 @@ router.delete('/:id', auth, async (req, res) => {
     }
     
     workflow.isActive = false;
-    workflow.updatedBy = req.user._id;
+    workflow.updatedBy = req.user.userId;
     await workflow.save();
     
     res.json({
