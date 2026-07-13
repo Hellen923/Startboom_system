@@ -1,7 +1,7 @@
 import express from 'express';
 import Schedule from '../models/Schedule.js';
 import { createNotification } from '../utils/notifications.js';
-import { tenantAuth } from '../middleware/tenantAuth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 // Generate pseudo-realistic meeting link based on mode
 const generateMeetingLink = (mode) => {
@@ -32,7 +32,7 @@ const generateMeetingLink = (mode) => {
 const router = express.Router();
 
 // Apply tenant-aware middleware to all routes
-router.use(tenantAuth);
+router.use(tenantAuth, requireTenantModule('schedules'));
 
 // Get all schedules with filters
 router.get('/', async (req, res) => {
