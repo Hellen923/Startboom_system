@@ -1,17 +1,22 @@
 // routes/customFields.js
 import express from 'express';
 import CustomField from '../models/CustomField.js';
-import { auth } from '../middleware/auth.js';
+import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
+// Apply tenant authentication and module enforcement
+router.use(tenantAuth);
+router.use(requireTenantModule('customFields'));
+
+
 // Get all custom fields (optionally filter by entity type)
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { entityType } = req.query;
     
     const query = {
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       isActive: true
     };
     
@@ -37,10 +42,10 @@ router.get('/', auth, async (req, res) => {
 });
 
 // Get fields for specific entity
-router.get('/entity/:entityType', auth, async (req, res) => {
+router.get('/entity/:entityType', async (req, res) => {
   try {
     const fields = await CustomField.getFieldsForEntity(
-      req.user.tenant,
+      req.user.tenantId,
       req.params.entityType
     );
     
@@ -59,11 +64,11 @@ router.get('/entity/:entityType', auth, async (req, res) => {
 });
 
 // Get single custom field
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const field = await CustomField.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!field) {
@@ -86,10 +91,10 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // Create custom field
-router.post('/', auth, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     // Only admins can create custom fields
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only administrators can create custom fields'
       });
@@ -103,7 +108,7 @@ router.post('/', auth, async (req, res) => {
     
     // Check if field name already exists for this entity
     const existing = await CustomField.findOne({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       entityType: entityType,
       fieldName: fieldName.toLowerCase().trim()
     });
@@ -115,7 +120,7 @@ router.post('/', auth, async (req, res) => {
     }
     
     const field = new CustomField({
-      tenant: req.user.tenant,
+      ...req.tenantQuery,
       entityType,
       fieldName: fieldName.toLowerCase().trim(),
       fieldLabel: fieldLabel.trim(),
@@ -127,7 +132,7 @@ router.post('/', auth, async (req, res) => {
       permissions: permissions || {},
       isCalculated: isCalculated || false,
       formula: formula || null,
-      createdBy: req.user._id
+      createdBy: req.user.userId
     });
     
     await field.save();
@@ -147,9 +152,9 @@ router.post('/', auth, async (req, res) => {
 });
 
 // Update custom field
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only administrators can update custom fields'
       });
@@ -157,7 +162,7 @@ router.put('/:id', auth, async (req, res) => {
     
     const field = await CustomField.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!field) {
@@ -185,7 +190,7 @@ router.put('/:id', auth, async (req, res) => {
     if (formula !== undefined) field.formula = formula;
     if (isActive !== undefined) field.isActive = isActive;
     
-    field.updatedBy = req.user._id;
+    field.updatedBy = req.user.userId;
     
     await field.save();
     
@@ -204,9 +209,9 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // Delete (soft delete) custom field
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only administrators can delete custom fields'
       });
@@ -214,7 +219,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     const field = await CustomField.findOne({
       _id: req.params.id,
-      tenant: req.user.tenant
+      ...req.tenantQuery
     });
     
     if (!field) {
@@ -225,7 +230,7 @@ router.delete('/:id', auth, async (req, res) => {
     
     // Soft delete - don't actually remove (data still exists)
     field.isActive = false;
-    field.updatedBy = req.user._id;
+    field.updatedBy = req.user.userId;
     await field.save();
     
     res.json({
@@ -242,12 +247,12 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 // Validate data against custom fields
-router.post('/validate', auth, async (req, res) => {
+router.post('/validate', async (req, res) => {
   try {
     const { entityType, data } = req.body;
     
     const result = await CustomField.validateEntityData(
-      req.user.tenant,
+      req.user.tenantId,
       entityType,
       data
     );
@@ -267,9 +272,9 @@ router.post('/validate', auth, async (req, res) => {
 });
 
 // Reorder custom fields
-router.put('/reorder/:entityType', auth, async (req, res) => {
+router.put('/reorder/:entityType', async (req, res) => {
   try {
-    if (!['superadmin', 'admin'].includes(req.user.role)) {
+    if (!(req.isSuperAdmin || req.user.role === 'admin')) {
       return res.status(403).json({
         message: 'Only administrators can reorder custom fields'
       });
@@ -279,8 +284,8 @@ router.put('/reorder/:entityType', auth, async (req, res) => {
     
     const updatePromises = fieldOrder.map((fieldId, index) => {
       return CustomField.updateOne(
-        { _id: fieldId, tenant: req.user.tenant },
-        { $set: { 'ui.order': index + 1, updatedBy: req.user._id } }
+        { _id: fieldId, ...req.tenantQuery },
+        { $set: { 'ui.order': index + 1, updatedBy: req.user.userId } }
       );
     });
     
