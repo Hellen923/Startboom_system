@@ -21,8 +21,14 @@ const createTransporter = async () => {
       console.log('✅ Gmail transporter verified');
     } catch (e) {
       console.error('❌ Gmail verification failed:', e.message);
+      cachedTransporter = null;
+      throw new Error(`Gmail verification failed: ${e.message}`);
     }
     return cachedTransporter;
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Email service is not configured. Set EMAIL_USER and EMAIL_PASS in production.');
   }
 
   console.warn('⚠️ No EMAIL_USER/EMAIL_PASS — falling back to Ethereal');
