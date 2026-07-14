@@ -193,6 +193,46 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Test email endpoint (temporary - for verification)
+app.get('/api/test-email', async (req, res) => {
+  try {
+    const { sendEmail } = await import('./services/emailService.js');
+    const testEmail = req.query.email || 'hellenkiwagama@gmail.com';
+    
+    const result = await sendEmail(
+      testEmail,
+      'agentWelcome',
+      {
+        name: 'Test User',
+        email: testEmail,
+        otp: '123456',
+        companyName: 'HoneyPot CRM Test'
+      }
+    );
+
+    if (result.success) {
+      res.json({ 
+        success: true, 
+        message: `Test email sent successfully to ${testEmail}!`,
+        messageId: result.messageId,
+        note: 'Check your inbox (and spam folder)'
+      });
+    } else {
+      res.status(500).json({ 
+        success: false, 
+        message: 'Email sending failed',
+        error: result.error 
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error sending test email',
+      error: error.message 
+    });
+  }
+});
+
 app.get('/api/version', (req, res) => {
   res.set('Cache-Control', 'no-store');
   res.json({
