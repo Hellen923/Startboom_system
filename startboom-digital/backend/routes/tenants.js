@@ -684,6 +684,11 @@ router.post('/', requireSuperAdmin, async (req, res) => {
     const subscription = await Subscription.findOne({ planName: subscriptionPlan }) ||
       await Subscription.findOne({ planName: 'starter' });
 
+    // Generate OTP for admin user
+    const otp = generateOTP();
+    const companyAdminName = adminName || `${name} Admin`;
+
+    // Create tenant and admin user in parallel
     const tenant = new Tenant({
       name,
       email: normalizedEmail,
@@ -706,21 +711,18 @@ router.post('/', requireSuperAdmin, async (req, res) => {
           bulkOperations: true
         }
       },
-      usage: { totalUsers: 0, totalClients: 0, totalDeals: 0, storageUsed: 0 },
+      usage: { totalUsers: 1, totalClients: 0, totalDeals: 0, storageUsed: 0 },
       status: 'active',
       metadata: {
         ...(metadata || {}),
         onboardingEmail: {
-          status: 'pending',
+          status: 'queued',
           recipient: normalizedEmail,
-          attempts: 0
+          attempts: 0,
+          lastAttemptAt: new Date()
         }
       }
     });
-    await tenant.save();
-
-    const otp = generateOTP();
-    const companyAdminName = adminName || `${name} Admin`;
 
     const adminUser = new User({
       name: companyAdminName,
@@ -735,67 +737,105 @@ router.post('/', requireSuperAdmin, async (req, res) => {
       phone: phone || '',
       status: 'offline'
     });
-    await adminUser.save();
 
-    await Tenant.findByIdAndUpdate(tenant._id, { 'usage.totalUsers': 1 });
-
-    const emailResult = await sendEmail(normalizedEmail, 'agentWelcome', {
-      name: companyAdminName,
-      email: normalizedEmail,
-      otp,
-      companyName: name
-    });
-
-    console.log('📧 Email sending result:', emailResult);
-
-    const onboardingEmail = {
-      status: emailResult.success ? 'sent' : 'failed',
-      lastAttemptAt: new Date(),
-      sentAt: emailResult.success ? new Date() : null,
-      messageId: emailResult.messageId || '',
-      error: emailResult.success ? '' : (emailResult.error || 'Unknown email error'),
-      recipient: normalizedEmail,
-      attempts: 1
-    };
-
+    // Set owner before saving
     tenant.owner = adminUser._id;
-    tenant.set('metadata.onboardingEmail', onboardingEmail);
-    await tenant.save();
 
-    await AuditLog.create({
-      action: 'CREATE_TENANT',
-      description: `Created organization ${name}`,
-      user: req.user.userId,
-      userName: req.user.name || '',
-      userEmail: req.user.email || '',
-      userRole: req.user.role || '',
-      tenant: tenant._id,
-      entityType: 'Tenant',
-      entityId: tenant._id,
-      status: 'success',
-      metadata: {
-        adminEmail: normalizedEmail,
-        onboardingEmail
-      }
+    // Save both in parallel for speed
+    await Promise.all([tenant.save(), adminUser.save()]);
+
+    // Send email asynchronously (fire-and-forget) - don't block response
+    setImmediate(() => {
+      sendEmail(normalizedEmail, 'agentWelcome', {
+        name: companyAdminName,
+        email: normalizedEmail,
+        otp,
+        companyName: name
+      }).then(emailResult => {
+        console.log(`📧 Welcome email for ${name}:`, emailResult.success ? 'sent' : 'failed');
+        
+        // Update tenant with email status (async, no need to wait)
+        const emailStatus = {
+          status: emailResult.success ? 'sent' : 'failed',
+          lastAttemptAt: new Date(),
+          sentAt: emailResult.success ? new Date() : null,
+          messageId: emailResult.messageId || '',
+          error: emailResult.success ? '' : (emailResult.error || 'Unknown email error'),
+          recipient: normalizedEmail,
+          attempts: 1
+        };
+
+        Tenant.findByIdAndUpdate(tenant._id, { 
+          'metadata.onboardingEmail': emailStatus 
+        }).catch(err => console.error('Failed to update email status:', err));
+      }).catch(err => {
+        console.error('❌ Email error:', err.message);
+        Tenant.findByIdAndUpdate(tenant._id, { 
+          'metadata.onboardingEmail': {
+            status: 'failed',
+            lastAttemptAt: new Date(),
+            error: err.message || 'Unknown error',
+            recipient: normalizedEmail,
+            attempts: 1
+          }
+        }).catch(updateErr => console.error('Failed to update email error:', updateErr));
+      });
     });
 
-    const response = {
+    // Log audit trail (async, fire-and-forget)
+    setImmediate(() => {
+      AuditLog.create({
+        action: 'CREATE_TENANT',
+        description: `Created organization ${name}`,
+        user: req.user.userId,
+        userName: req.user.name || '',
+        userEmail: req.user.email || '',
+        userRole: req.user.role || '',
+        tenant: tenant._id,
+        entityType: 'Tenant',
+        entityId: tenant._id,
+        status: 'success',
+        metadata: {
+          adminEmail: normalizedEmail,
+          emailQueued: true
+        }
+      }).catch(err => console.error('Failed to create audit log:', err));
+    });
+
+    // Return immediately with OTP (email will be sent in background)
+    res.status(201).json({
+      message: 'Organization created successfully',
+      tenant: {
+        _id: tenant._id,
+        name: tenant.name,
+        email: tenant.email,
+        phone: tenant.phone,
+        status: tenant.status,
+        createdAt: tenant.createdAt
+      },
+      admin: { 
+        name: companyAdminName, 
+        email: normalizedEmail, 
+        role: 'admin' 
+      },
+      otp, // Always include OTP in case email fails
+      emailStatus: 'sending',
+      note: 'Welcome email is being sent. Use the OTP above for immediate access if needed.'
+    });
+  } catch (error) {
+    console.error('❌ Error creating tenant:', error);
+    if (error.code === 11000) return res.status(400).json({ message: 'Organization with this name or email already exists' });
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});n immediately with OTP (email will be sent in background)
+    res.status(201).json({
       message: 'Organization created successfully',
       tenant,
       admin: { name: companyAdminName, email: normalizedEmail, role: 'admin' },
-      emailSent: emailResult.success,
-      onboardingEmail
-    };
-
-    // If email failed, include OTP in response and log detailed error
-    if (!emailResult.success) {
-      console.error('❌ Failed to send welcome email:', emailResult.error);
-      response.otp = otp;
-      response.emailError = emailResult.error;
-      response.message = 'Organization created but email failed to send';
-    }
-
-    res.status(201).json(response);
+      otp, // Always include OTP in case email fails
+      emailStatus: 'sending',
+      note: 'Welcome email is being sent. OTP is provided for immediate access.'
+    });
   } catch (error) {
     console.error('Error creating tenant:', error);
     if (error.code === 11000) return res.status(400).json({ message: 'Organization with this name or email already exists' });

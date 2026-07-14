@@ -7,6 +7,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 60000, // 60 seconds timeout for all requests
 });
 
 api.interceptors.request.use(
@@ -167,7 +168,9 @@ export const tenantsAPI = {
   impersonateAdmin: (id) => api.post(`/tenants/${id}/impersonate-admin`),
   sendAnnouncement: (data) => api.post('/tenants/communications/announce', data),
   getById: (id) => api.get(`/tenants/${id}`),
-  create: (data) => api.post('/tenants', data),
+  create: (data) => api.post('/tenants', data, { timeout: 90000 }), // 90 seconds for tenant creation (sends email)
+  update: (id, data) => api.put(`/tenants/${id}`, data),
+  resendAdminOTP: (id) => api.post(`/tenants/${id}/resend-admin-otp`),
   update: (id, data) => api.put(`/tenants/${id}`, data),
   updateStatus: (id, status) => api.patch(`/tenants/${id}/status`, { status }),
   resendAdminOtp: (id) => api.post(`/tenants/${id}/resend-admin-otp`),

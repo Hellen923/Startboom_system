@@ -99,6 +99,10 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
   };
 
   if (success) {
+    const emailSent = success.emailStatus === 'sent' || success.emailSent === true;
+    const emailSending = success.emailStatus === 'sending' || success.emailStatus === 'queued';
+    const emailFailed = !emailSent && !emailSending && success.otp;
+    
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 text-center">
@@ -117,7 +121,7 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
             <p className="text-sm text-gray-700">🔑 Role: <span className="font-medium">Admin</span></p>
           </div>
 
-          {success.emailSent ? (
+          {emailSent ? (
             <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
               <div className="flex items-center space-x-2 mb-1">
                 <CheckCircle className="w-5 h-5 text-green-600" />
@@ -126,19 +130,39 @@ const CreateTenantModal = ({ onClose, onCreated }) => {
               <p className="text-sm text-green-600">Welcome email with login credentials was sent to <strong>{success.admin?.email}</strong></p>
               <p className="text-xs text-green-500 mt-1">They can log in immediately and will be prompted to set a new password.</p>
             </div>
-          ) : (
+          ) : emailSending ? (
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+              <div className="flex items-center space-x-2 mb-1">
+                <Mail className="w-5 h-5 text-blue-600 animate-pulse" />
+                <p className="text-sm font-semibold text-blue-700">✅ Welcome Email Queued for Delivery</p>
+              </div>
+              <p className="text-sm text-blue-600 mb-3">A welcome email with login credentials is being sent to <strong>{success.admin?.email}</strong></p>
+              <div className="bg-blue-100 border border-blue-300 rounded-lg p-3 mb-3">
+                <p className="text-xs font-semibold text-blue-800 mb-1">📧 What happens next:</p>
+                <p className="text-xs text-blue-700">• Email will arrive within 1-2 minutes</p>
+                <p className="text-xs text-blue-700">• Contains login credentials & OTP</p>
+                <p className="text-xs text-blue-700">• Check spam folder if not received</p>
+              </div>
+              <div className="bg-white border-2 border-blue-300 rounded-xl p-3">
+                <p className="text-xs text-blue-700 font-semibold mb-1">🔑 Backup OTP (if email is delayed):</p>
+                <p className="text-2xl font-mono font-bold text-center text-gray-900 tracking-widest">{success.otp}</p>
+                <p className="text-xs text-blue-500 mt-2">Login: https://crm-dbs.vercel.app/login</p>
+              </div>
+            </div>
+          ) : emailFailed ? (
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
               <div className="flex items-center space-x-2 mb-1">
                 <XCircle className="w-5 h-5 text-red-600" />
                 <p className="text-sm font-semibold text-red-700">Email Failed to Send</p>
               </div>
-              <p className="text-sm text-red-600">Please share this OTP manually with <strong>{success.admin?.email}</strong>:</p>
-              <div className="bg-white border-2 border-red-300 rounded-xl p-3 mt-2">
+              <p className="text-sm text-red-600 mb-3">Please share this OTP manually with <strong>{success.admin?.email}</strong>:</p>
+              <div className="bg-white border-2 border-red-300 rounded-xl p-3 mb-2">
                 <p className="text-2xl font-mono font-bold text-center text-gray-900 tracking-widest">{success.otp}</p>
               </div>
-              <p className="text-xs text-red-500 mt-2">Login URL: https://crm-dbs.vercel.app/login</p>
+              <p className="text-xs text-red-500">Login URL: https://crm-dbs.vercel.app/login</p>
+              <p className="text-xs text-red-600 mt-2">💡 You can resend the email from the tenant management page</p>
             </div>
-          )}
+          ) : null}
 
           <button
             onClick={onClose}
