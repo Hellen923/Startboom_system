@@ -1078,6 +1078,8 @@ router.delete('/:id', requireSuperAdmin, async (req, res) => {
       return res.status(404).json({ message: 'Tenant not found' });
     }
 
+    console.log(`🗑️ Deleting tenant: ${tenant.name} (${tenantId})`);
+
     // Delete all related data in proper order to respect references
     // Use native collection to bypass AuditLog immutability middleware
     await AuditLog.collection.deleteMany({ tenant: new mongoose.Types.ObjectId(tenantId) });
@@ -1102,7 +1104,8 @@ router.delete('/:id', requireSuperAdmin, async (req, res) => {
     await Stock.deleteMany({ tenant: tenantId }).session(session);
 
     // Delete all User records for this tenant - this frees up unique emails for reuse
-    await User.deleteMany({ tenant: tenantId }).session(session);
+    const userDeleteResult = await User.deleteMany({ tenant: tenantId }).session(session);
+    console.log(`🗑️ Deleted ${userDeleteResult.deletedCount} users for tenant ${tenant.name}`);
 
     // Finally, delete the tenant itself
     await Tenant.findByIdAndDelete(tenantId).session(session);
@@ -1110,11 +1113,48 @@ router.delete('/:id', requireSuperAdmin, async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    res.json({ message: 'Organization and all associated data deleted successfully' });
+    console.log(`✅ Tenant ${tenant.name} and all associated data deleted successfully`);
+    res.json({ 
+      message: 'Organization and all associated data deleted successfully',
+      deletedUsers: userDeleteResult.deletedCount
+    });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    console.error('Error deleting tenant:', error);
+    console.error('❌ Error deleting tenant:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// POST cleanup orphaned users (super admin only) - removes users whose tenant no longer exists
+router.post('/cleanup/orphaned-users', requireSuperAdmin, async (req, res) => {
+  try {
+    // Find all users
+    const allUsers = await User.find({}).lean();
+    const tenantIds = [...new Set(allUsers.map(u => u.tenant?.toString()).filter(Boolean))];
+    
+    // Find which tenant IDs no longer exist
+    const existingTenants = await Tenant.find({ _id: { $in: tenantIds } }).select('_id').lean();
+    const existingTenantIds = new Set(existingTenants.map(t => t._id.toString()));
+    
+    // Delete users whose tenant doesn't exist
+    const orphanedUsers = allUsers.filter(u => u.tenant && !existingTenantIds.has(u.tenant.toString()));
+    
+    if (orphanedUsers.length === 0) {
+      return res.json({ message: 'No orphaned users found', cleaned: 0 });
+    }
+
+    const orphanedUserIds = orphanedUsers.map(u => u._id);
+    const result = await User.deleteMany({ _id: { $in: orphanedUserIds } });
+    
+    console.log(`🧹 Cleaned up ${result.deletedCount} orphaned users`);
+    res.json({ 
+      message: `Cleaned up ${result.deletedCount} orphaned user(s)`,
+      cleaned: result.deletedCount,
+      emails: orphanedUsers.map(u => u.email)
+    });
+  } catch (error) {
+    console.error('❌ Error cleaning orphaned users:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
