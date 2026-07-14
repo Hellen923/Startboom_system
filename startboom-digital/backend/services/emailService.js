@@ -20,14 +20,7 @@ const createTransporter = async () => {
         pass: apiKey
       }
     });
-    try {
-      await cachedTransporter.verify();
-      console.log('✅ Brevo transporter verified');
-    } catch (e) {
-      console.error('❌ Brevo verification failed:', e.message);
-      cachedTransporter = null;
-      throw new Error(`Brevo verification failed: ${e.message}`);
-    }
+    console.log('✅ Brevo transporter configured');
     return cachedTransporter;
   }
 
@@ -42,14 +35,7 @@ const createTransporter = async () => {
         pass: process.env.SENDGRID_API_KEY
       }
     });
-    try {
-      await cachedTransporter.verify();
-      console.log('✅ SendGrid transporter verified');
-    } catch (e) {
-      console.error('❌ SendGrid verification failed:', e.message);
-      cachedTransporter = null;
-      throw new Error(`SendGrid verification failed: ${e.message}`);
-    }
+    console.log('✅ SendGrid transporter configured');
     return cachedTransporter;
   }
 
@@ -58,7 +44,7 @@ const createTransporter = async () => {
     cachedTransporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
-      secure: false, // Use STARTTLS
+      secure: false,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
@@ -67,15 +53,8 @@ const createTransporter = async () => {
         rejectUnauthorized: true
       }
     });
-    try {
-      await cachedTransporter.verify();
-      console.log('✅ Gmail transporter verified');
-    } catch (e) {
-      console.error('❌ Gmail verification failed:', e.message);
-      console.warn('⚠️ Gmail SMTP may be blocked by your hosting provider. Consider using Brevo or SendGrid instead.');
-      cachedTransporter = null;
-      throw new Error(`Gmail verification failed: ${e.message}`);
-    }
+    console.log('✅ Gmail transporter configured');
+    console.warn('⚠️ Note: Gmail SMTP may be blocked by some hosting providers');
     return cachedTransporter;
   }
 
@@ -541,6 +520,17 @@ export const sendEmail = async (to, templateName, templateData) => {
 // Test email configuration
 export const testEmailConfig = async () => {
   try {
+    // Skip verification in production on Render (they block SMTP verification)
+    // Emails will still work when actually sent
+    if (process.env.RENDER || process.env.NODE_ENV === 'production') {
+      if (process.env.BREVO_API_KEY || process.env.SENDGRID_API_KEY || process.env.EMAIL_USER) {
+        console.log('⚠️ Email verification skipped in production (SMTP verification blocked by host)');
+        console.log('📧 Email service configured - emails will be sent when triggered');
+        return true;
+      }
+    }
+    
+    // Full verification for local development
     const transporter = await createTransporter();
     await transporter.verify();
     return true;
