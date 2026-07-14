@@ -827,20 +827,6 @@ router.post('/', requireSuperAdmin, async (req, res) => {
     if (error.code === 11000) return res.status(400).json({ message: 'Organization with this name or email already exists' });
     res.status(500).json({ message: 'Server error', error: error.message });
   }
-});n immediately with OTP (email will be sent in background)
-    res.status(201).json({
-      message: 'Organization created successfully',
-      tenant,
-      admin: { name: companyAdminName, email: normalizedEmail, role: 'admin' },
-      otp, // Always include OTP in case email fails
-      emailStatus: 'sending',
-      note: 'Welcome email is being sent. OTP is provided for immediate access.'
-    });
-  } catch (error) {
-    console.error('Error creating tenant:', error);
-    if (error.code === 11000) return res.status(400).json({ message: 'Organization with this name or email already exists' });
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
 });
 
 // POST resend company admin OTP (super admin only)
