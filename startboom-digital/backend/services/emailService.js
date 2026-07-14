@@ -8,6 +8,52 @@ let cachedTransporter = null;
 const createTransporter = async () => {
   if (cachedTransporter) return cachedTransporter;
 
+  // Option 1: Brevo/Sendinblue (recommended - free 300 emails/day, works on Render)
+  if (process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY) {
+    const apiKey = process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY;
+    cachedTransporter = nodemailer.createTransport({
+      host: 'smtp-relay.brevo.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.BREVO_SMTP_USER || process.env.EMAIL_USER,
+        pass: apiKey
+      }
+    });
+    try {
+      await cachedTransporter.verify();
+      console.log('✅ Brevo transporter verified');
+    } catch (e) {
+      console.error('❌ Brevo verification failed:', e.message);
+      cachedTransporter = null;
+      throw new Error(`Brevo verification failed: ${e.message}`);
+    }
+    return cachedTransporter;
+  }
+
+  // Option 2: SendGrid (alternative - free 100 emails/day)
+  if (process.env.SENDGRID_API_KEY) {
+    cachedTransporter = nodemailer.createTransport({
+      host: 'smtp.sendgrid.net',
+      port: 587,
+      secure: false,
+      auth: {
+        user: 'apikey',
+        pass: process.env.SENDGRID_API_KEY
+      }
+    });
+    try {
+      await cachedTransporter.verify();
+      console.log('✅ SendGrid transporter verified');
+    } catch (e) {
+      console.error('❌ SendGrid verification failed:', e.message);
+      cachedTransporter = null;
+      throw new Error(`SendGrid verification failed: ${e.message}`);
+    }
+    return cachedTransporter;
+  }
+
+  // Option 3: Gmail (works locally, may be blocked on some hosts like Render)
   if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
     cachedTransporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
@@ -26,6 +72,7 @@ const createTransporter = async () => {
       console.log('✅ Gmail transporter verified');
     } catch (e) {
       console.error('❌ Gmail verification failed:', e.message);
+      console.warn('⚠️ Gmail SMTP may be blocked by your hosting provider. Consider using Brevo or SendGrid instead.');
       cachedTransporter = null;
       throw new Error(`Gmail verification failed: ${e.message}`);
     }
@@ -471,8 +518,12 @@ export const sendEmail = async (to, templateName, templateData) => {
     const emailContent = template(templateData);
     const transporter = await createTransporter();
 
+    // Use EMAIL_FROM if set, otherwise use EMAIL_USER, otherwise use a default
+    const fromAddress = process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@honeypotcrm.com';
+    const fromName = templateData.companyName || 'HoneyPot CRM';
+
     const mailOptions = {
-      from: `"HoneyPot CRM" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+      from: `"${fromName}" <${fromAddress}>`,
       to,
       subject: emailContent.subject,
       html: emailContent.html
