@@ -667,30 +667,44 @@ router.patch('/branding/logo', async (req, res) => {
 
 // POST create new tenant (super admin only)
 router.post('/', requireSuperAdmin, async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const { name, email, phone, address, adminName, subscriptionPlan = 'starter', settings, metadata } = req.body;
     const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
 
     if (!name || !normalizedEmail) {
+      await session.abortTransaction(); session.endSession();
       return res.status(400).json({ message: 'Name and email are required' });
     }
 
-    const existing = await Tenant.findOne({ email: normalizedEmail });
-    if (existing) return res.status(400).json({ message: 'Organization with this email already exists' });
+    const [existingTenant, existingUser] = await Promise.all([
+      Tenant.findOne({ email: normalizedEmail }).session(session),
+      User.findOne({ email: normalizedEmail }).session(session)
+    ]);
+    if (existingTenant) {
+      await session.abortTransaction(); session.endSession();
+      return res.status(400).json({ message: 'Organization with this email already exists' });
+    }
+    if (existingUser) {
+      await session.abortTransaction(); session.endSession();
+      return res.status(400).json({ message: 'A user with this email already exists' });
+    }
 
-    const existingUser = await User.findOne({ email: normalizedEmail });
-    if (existingUser) return res.status(400).json({ message: 'A user with this email already exists' });
+    const subscription = await Subscription.findOne({ planName: subscriptionPlan }).session(session) ||
+      await Subscription.findOne({ planName: 'starter' }).session(session);
 
-    const subscription = await Subscription.findOne({ planName: subscriptionPlan }) ||
-      await Subscription.findOne({ planName: 'starter' });
-
-    // Generate OTP for admin user
     const otp = generateOTP();
     const companyAdminName = adminName || `${name} Admin`;
 
-    // Create tenant and admin user in parallel
+    // Generate a unique slug upfront to avoid duplicate key errors on retry
+    const baseSlug = name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '').trim();
+    const slugExists = await Tenant.findOne({ slug: baseSlug }).session(session);
+    const slug = slugExists ? `${baseSlug}-${Date.now()}` : baseSlug;
+
     const tenant = new Tenant({
       name,
+      slug,
       email: normalizedEmail,
       phone: phone || '',
       address: address || {},
@@ -715,22 +729,17 @@ router.post('/', requireSuperAdmin, async (req, res) => {
       status: 'active',
       metadata: {
         ...(metadata || {}),
-        onboardingEmail: {
-          status: 'queued',
-          recipient: normalizedEmail,
-          attempts: 0,
-          lastAttemptAt: new Date()
-        }
+        onboardingEmail: { status: 'queued', recipient: normalizedEmail, attempts: 0, lastAttemptAt: new Date() }
       }
     });
 
     const adminUser = new User({
       name: companyAdminName,
       email: normalizedEmail,
-      password: otp, // Pass plain OTP; User model pre-save will hash it
+      password: otp,
       role: 'admin',
       tenant: tenant._id,
-      otp, // Also store plain OTP for first-login OTP verification
+      otp,
       otpExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
       isFirstLogin: true,
       isActive: true,
@@ -738,13 +747,15 @@ router.post('/', requireSuperAdmin, async (req, res) => {
       status: 'offline'
     });
 
-    // Set owner before saving
     tenant.owner = adminUser._id;
 
-    // Save both in parallel for speed
-    await Promise.all([tenant.save(), adminUser.save()]);
+    // Save sequentially inside the transaction so a failure rolls back both
+    await tenant.save({ session });
+    await adminUser.save({ session });
+    await session.commitTransaction();
+    session.endSession();
 
-    // Send email asynchronously (fire-and-forget) - don't block response
+    // Send email asynchronously (fire-and-forget)
     setImmediate(() => {
       sendEmail(normalizedEmail, 'agentWelcome', {
         name: companyAdminName,
@@ -753,36 +764,25 @@ router.post('/', requireSuperAdmin, async (req, res) => {
         companyName: name
       }).then(emailResult => {
         console.log(`📧 Welcome email for ${name}:`, emailResult.success ? 'sent' : 'failed');
-        
-        // Update tenant with email status (async, no need to wait)
-        const emailStatus = {
-          status: emailResult.success ? 'sent' : 'failed',
-          lastAttemptAt: new Date(),
-          sentAt: emailResult.success ? new Date() : null,
-          messageId: emailResult.messageId || '',
-          error: emailResult.success ? '' : (emailResult.error || 'Unknown email error'),
-          recipient: normalizedEmail,
-          attempts: 1
-        };
-
-        Tenant.findByIdAndUpdate(tenant._id, { 
-          'metadata.onboardingEmail': emailStatus 
-        }).catch(err => console.error('Failed to update email status:', err));
-      }).catch(err => {
-        console.error('❌ Email error:', err.message);
-        Tenant.findByIdAndUpdate(tenant._id, { 
+        Tenant.findByIdAndUpdate(tenant._id, {
           'metadata.onboardingEmail': {
-            status: 'failed',
+            status: emailResult.success ? 'sent' : 'failed',
             lastAttemptAt: new Date(),
-            error: err.message || 'Unknown error',
+            sentAt: emailResult.success ? new Date() : null,
+            messageId: emailResult.messageId || '',
+            error: emailResult.success ? '' : (emailResult.error || 'Unknown email error'),
             recipient: normalizedEmail,
             attempts: 1
           }
+        }).catch(err => console.error('Failed to update email status:', err));
+      }).catch(err => {
+        console.error('❌ Email error:', err.message);
+        Tenant.findByIdAndUpdate(tenant._id, {
+          'metadata.onboardingEmail': { status: 'failed', lastAttemptAt: new Date(), error: err.message || 'Unknown error', recipient: normalizedEmail, attempts: 1 }
         }).catch(updateErr => console.error('Failed to update email error:', updateErr));
       });
     });
 
-    // Log audit trail (async, fire-and-forget)
     setImmediate(() => {
       AuditLog.create({
         action: 'CREATE_TENANT',
@@ -795,34 +795,21 @@ router.post('/', requireSuperAdmin, async (req, res) => {
         entityType: 'Tenant',
         entityId: tenant._id,
         status: 'success',
-        metadata: {
-          adminEmail: normalizedEmail,
-          emailQueued: true
-        }
+        metadata: { adminEmail: normalizedEmail, emailQueued: true }
       }).catch(err => console.error('Failed to create audit log:', err));
     });
 
-    // Return immediately with OTP (email will be sent in background)
     res.status(201).json({
       message: 'Organization created successfully',
-      tenant: {
-        _id: tenant._id,
-        name: tenant.name,
-        email: tenant.email,
-        phone: tenant.phone,
-        status: tenant.status,
-        createdAt: tenant.createdAt
-      },
-      admin: { 
-        name: companyAdminName, 
-        email: normalizedEmail, 
-        role: 'admin' 
-      },
-      otp, // Always include OTP in case email fails
+      tenant: { _id: tenant._id, name: tenant.name, email: tenant.email, phone: tenant.phone, status: tenant.status, createdAt: tenant.createdAt },
+      admin: { name: companyAdminName, email: normalizedEmail, role: 'admin' },
+      otp,
       emailStatus: 'sending',
       note: 'Welcome email is being sent. Use the OTP above for immediate access if needed.'
     });
   } catch (error) {
+    await session.abortTransaction().catch(() => {});
+    session.endSession();
     console.error('❌ Error creating tenant:', error);
     if (error.code === 11000) return res.status(400).json({ message: 'Organization with this name or email already exists' });
     res.status(500).json({ message: 'Server error', error: error.message });
