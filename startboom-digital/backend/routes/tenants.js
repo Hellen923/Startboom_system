@@ -721,7 +721,7 @@ router.post('/', requireSuperAdmin, async (req, res) => {
       status: 'active',
       metadata: {
         ...(metadata || {}),
-        onboardingEmail: { status: 'queued', recipient: normalizedEmail, attempts: 0, lastAttemptAt: new Date() }
+        onboardingEmail: { status: 'pending', recipient: normalizedEmail, attempts: 0, lastAttemptAt: new Date() }
       }
     });
 
