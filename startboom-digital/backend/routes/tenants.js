@@ -667,39 +667,31 @@ router.patch('/branding/logo', async (req, res) => {
 
 // POST create new tenant (super admin only)
 router.post('/', requireSuperAdmin, async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
+  let savedTenant = null;
   try {
     const { name, email, phone, address, adminName, subscriptionPlan = 'starter', settings, metadata } = req.body;
     const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
 
     if (!name || !normalizedEmail) {
-      await session.abortTransaction(); session.endSession();
       return res.status(400).json({ message: 'Name and email are required' });
     }
 
     const [existingTenant, existingUser] = await Promise.all([
-      Tenant.findOne({ email: normalizedEmail }).session(session),
-      User.findOne({ email: normalizedEmail }).session(session)
+      Tenant.findOne({ email: normalizedEmail }),
+      User.findOne({ email: normalizedEmail })
     ]);
-    if (existingTenant) {
-      await session.abortTransaction(); session.endSession();
-      return res.status(400).json({ message: 'Organization with this email already exists' });
-    }
-    if (existingUser) {
-      await session.abortTransaction(); session.endSession();
-      return res.status(400).json({ message: 'A user with this email already exists' });
-    }
+    if (existingTenant) return res.status(400).json({ message: 'Organization with this email already exists' });
+    if (existingUser) return res.status(400).json({ message: 'A user with this email already exists' });
 
-    const subscription = await Subscription.findOne({ planName: subscriptionPlan }).session(session) ||
-      await Subscription.findOne({ planName: 'starter' }).session(session);
+    const subscription = await Subscription.findOne({ planName: subscriptionPlan }) ||
+      await Subscription.findOne({ planName: 'starter' });
 
     const otp = generateOTP();
     const companyAdminName = adminName || `${name} Admin`;
 
-    // Generate a unique slug upfront to avoid duplicate key errors on retry
+    // Generate unique slug upfront to avoid duplicate key errors
     const baseSlug = name.toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '').trim();
-    const slugExists = await Tenant.findOne({ slug: baseSlug }).session(session);
+    const slugExists = await Tenant.findOne({ slug: baseSlug });
     const slug = slugExists ? `${baseSlug}-${Date.now()}` : baseSlug;
 
     const tenant = new Tenant({
@@ -749,11 +741,10 @@ router.post('/', requireSuperAdmin, async (req, res) => {
 
     tenant.owner = adminUser._id;
 
-    // Save sequentially inside the transaction so a failure rolls back both
-    await tenant.save({ session });
-    await adminUser.save({ session });
-    await session.commitTransaction();
-    session.endSession();
+    // Save tenant first, then user — if user save fails, clean up tenant
+    await tenant.save();
+    savedTenant = tenant;
+    await adminUser.save();
 
     // Send email asynchronously (fire-and-forget)
     setImmediate(() => {
@@ -808,8 +799,10 @@ router.post('/', requireSuperAdmin, async (req, res) => {
       note: 'Welcome email is being sent. Use the OTP above for immediate access if needed.'
     });
   } catch (error) {
-    await session.abortTransaction().catch(() => {});
-    session.endSession();
+    // If user save failed but tenant was saved, clean it up
+    if (savedTenant) {
+      await Tenant.findByIdAndDelete(savedTenant._id).catch(() => {});
+    }
     console.error('❌ Error creating tenant:', error);
     if (error.code === 11000) return res.status(400).json({ message: 'Organization with this name or email already exists' });
     res.status(500).json({ message: 'Server error', error: error.message });
