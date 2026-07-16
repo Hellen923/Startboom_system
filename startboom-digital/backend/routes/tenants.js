@@ -1046,61 +1046,32 @@ router.patch('/:id/status', requireSuperAdmin, async (req, res) => {
 
 // DELETE tenant (super admin only)
 router.delete('/:id', requireSuperAdmin, async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
     const tenantId = req.params.id;
-    const tenant = await Tenant.findById(tenantId).session(session);
-    if (!tenant) {
-      await session.abortTransaction();
-      session.endSession();
-      return res.status(404).json({ message: 'Tenant not found' });
-    }
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant) return res.status(404).json({ message: 'Tenant not found' });
 
     console.log(`🗑️ Deleting tenant: ${tenant.name} (${tenantId})`);
 
-    // Delete all related data in proper order to respect references
-    // Use native collection to bypass AuditLog immutability middleware
     await AuditLog.collection.deleteMany({ tenant: new mongoose.Types.ObjectId(tenantId) });
-    await Notification.deleteMany({ tenant: tenantId }).session(session);
-    await SecurityBlock.deleteMany({ tenant: tenantId }).session(session);
-    await Performance.deleteMany({ tenant: tenantId }).session(session);
-    await Meeting.deleteMany({ tenant: tenantId }).session(session);
-    await Schedule.deleteMany({ tenant: tenantId }).session(session);
+    await Promise.all([
+      Notification.deleteMany({ tenant: tenantId }),
+      SecurityBlock.deleteMany({ tenant: tenantId }),
+      Performance.deleteMany({ tenant: tenantId }),
+      Meeting.deleteMany({ tenant: tenantId }),
+      Schedule.deleteMany({ tenant: tenantId }),
+      Deal.deleteMany({ tenant: tenantId }),
+      Sale.deleteMany({ tenant: tenantId }),
+      Client.deleteMany({ tenant: tenantId }),
+      Stock.deleteMany({ tenant: tenantId }),
+    ]);
 
-    // Delete Deal records (references Client, User)
-    const deals = await Deal.find({ tenant: tenantId }).session(session);
-    const dealIds = deals.map(d => d._id);
-    await Deal.deleteMany({ tenant: tenantId }).session(session);
+    const userDeleteResult = await User.deleteMany({ tenant: tenantId });
+    await Tenant.findByIdAndDelete(tenantId);
 
-    // Delete Sale records (references Client, User)
-    await Sale.deleteMany({ tenant: tenantId }).session(session);
-
-    // Delete Client records (references User)
-    await Client.deleteMany({ tenant: tenantId }).session(session);
-
-    // Delete Stock records (references User)
-    await Stock.deleteMany({ tenant: tenantId }).session(session);
-
-    // Delete all User records for this tenant - this frees up unique emails for reuse
-    const userDeleteResult = await User.deleteMany({ tenant: tenantId }).session(session);
-    console.log(`🗑️ Deleted ${userDeleteResult.deletedCount} users for tenant ${tenant.name}`);
-
-    // Finally, delete the tenant itself
-    await Tenant.findByIdAndDelete(tenantId).session(session);
-
-    await session.commitTransaction();
-    session.endSession();
-
-    console.log(`✅ Tenant ${tenant.name} and all associated data deleted successfully`);
-    res.json({ 
-      message: 'Organization and all associated data deleted successfully',
-      deletedUsers: userDeleteResult.deletedCount
-    });
+    console.log(`✅ Tenant ${tenant.name} deleted successfully`);
+    res.json({ message: 'Organization and all associated data deleted successfully', deletedUsers: userDeleteResult.deletedCount });
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
     console.error('❌ Error deleting tenant:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }

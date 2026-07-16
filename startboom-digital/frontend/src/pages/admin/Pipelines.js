@@ -42,9 +42,14 @@ const Pipelines = () => {
       setLoading(true);
       const params = filterEntity !== 'all' ? { entityType: filterEntity } : {};
       const response = await pipelineApi.getAll(params);
-      setPipelines(response.data.pipelines || []);
-      if (response.data.pipelines?.length > 0 && !selectedPipeline) {
-        setSelectedPipeline(response.data.pipelines[0]);
+      const fresh = response.data.pipelines || [];
+      setPipelines(fresh);
+      // Always sync selectedPipeline with fresh data so stages update instantly
+      if (fresh.length > 0) {
+        const current = selectedPipeline
+          ? fresh.find(p => p._id === selectedPipeline._id) || fresh[0]
+          : fresh[0];
+        setSelectedPipeline(current);
       }
     } catch (error) {
       console.error('Error fetching pipelines:', error);
@@ -97,18 +102,26 @@ const Pipelines = () => {
     }
   };
 
-  const handleAddStage = async (stageData) => {
+  const handleSaveStage = async (stageData) => {
     if (!selectedPipeline) return;
-    
     try {
-      await pipelineApi.addStage(selectedPipeline._id, stageData);
-      toast.success('Stage added successfully');
+      if (editingStage) {
+        // Update: send full stages array with the edited stage replaced
+        const updatedStages = selectedPipeline.stages.map(s =>
+          s.name === editingStage.name ? { ...s, ...stageData } : s
+        );
+        await pipelineApi.update(selectedPipeline._id, { stages: updatedStages });
+        toast.success('Stage updated successfully');
+      } else {
+        await pipelineApi.addStage(selectedPipeline._id, stageData);
+        toast.success('Stage added successfully');
+      }
       setShowStageModal(false);
       setEditingStage(null);
       fetchPipelines();
     } catch (error) {
-      console.error('Error adding stage:', error);
-      toast.error('Failed to add stage');
+      console.error('Error saving stage:', error);
+      toast.error('Failed to save stage');
     }
   };
 
@@ -276,6 +289,7 @@ const Pipelines = () => {
                     key={index}
                     stage={stage}
                     isDark={isDark}
+                    onEdit={(s) => { setEditingStage(s); setShowStageModal(true); }}
                     onDelete={handleDeleteStage}
                   />
                 ))}
@@ -313,7 +327,7 @@ const Pipelines = () => {
         <StageModal
           stage={editingStage}
           isDark={isDark}
-          onSave={handleAddStage}
+          onSave={handleSaveStage}
           onClose={() => {
             setShowStageModal(false);
             setEditingStage(null);
@@ -326,7 +340,7 @@ const Pipelines = () => {
 
 
 // Stage Card Component
-const StageCard = ({ stage, isDark, onDelete }) => {
+const StageCard = ({ stage, isDark, onEdit, onDelete }) => {
   const getStageIcon = () => {
     if (stage.isFinal) {
       return stage.finalType === 'won' ? <CheckCircle className="w-5 h-5 text-emerald-500" /> : <XCircle className="w-5 h-5 text-red-500" />;
@@ -376,12 +390,22 @@ const StageCard = ({ stage, isDark, onDelete }) => {
             </div>
           </div>
         </div>
-        <button
-          onClick={() => onDelete(stage.name)}
-          className="p-2 rounded-lg hover:bg-red-100 text-red-600 transition"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
+        <div className="flex items-center space-x-1">
+          <button
+            onClick={() => onEdit(stage)}
+            className={`p-2 rounded-lg transition ${isDark ? 'hover:bg-gray-600 text-gray-300' : 'hover:bg-gray-200 text-gray-600'}`}
+            title="Edit stage"
+          >
+            <Edit2 className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onDelete(stage.name)}
+            className="p-2 rounded-lg hover:bg-red-100 text-red-600 transition"
+            title="Delete stage"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );
