@@ -110,6 +110,18 @@ const Settings = () => {
   const [logoPreview, setLogoPreview] = useState(user?.tenant?.branding?.logo || user?.tenant?.settings?.logo || '');
   const [brandingLoading, setBrandingLoading] = useState(false);
 
+  // Sync logo and branding when user object updates (e.g. after wizard completes)
+  useEffect(() => {
+    const logo = user?.tenant?.branding?.logo || user?.tenant?.settings?.logo || '';
+    setLogoPreview(logo);
+    setBranding(prev => ({
+      ...prev,
+      logo,
+      primaryColor: user?.tenant?.branding?.primaryColor || user?.tenant?.settings?.primaryColor || prev.primaryColor,
+      secondaryColor: user?.tenant?.branding?.secondaryColor || user?.tenant?.settings?.secondaryColor || prev.secondaryColor,
+    }));
+  }, [user?.tenant?.branding?.logo, user?.tenant?.settings?.logo]); // eslint-disable-line
+
   useEffect(() => {
     if (activeTab === 'security') loadAuditLogs();
     if (activeTab === 'emailTemplates') loadEmailTemplates();
@@ -287,6 +299,8 @@ const Settings = () => {
       } else {
         localStorage.removeItem('tenant_logo');
       }
+      // Refresh full user so sidebar logo updates immediately
+      try { const meRes = await authAPI.getMe(); updateUser(meRes.data); } catch (_e) {}
       toast.success('Branding updated successfully!');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update branding');
