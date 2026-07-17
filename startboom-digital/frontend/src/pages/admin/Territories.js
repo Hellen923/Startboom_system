@@ -556,25 +556,12 @@ const Territories = () => {
               </motion.div>
             );
           })()}
-          {/* All territories mini list below map — hidden when a territory is selected to avoid clutter */}
-          {!selectedId && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {territories.map(t => (
-              <TerritoryCard key={t._id} territory={t} onManageAgents={setManageTerritory} onUpdate={fetchTerritories} />
-            ))}
-          </div>
-          )}
+
         </div>
       )}
 
-      {/* Grid View */}
-      {(viewMode === 'grid' || territories.length === 0) && (
-      loading ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
-          <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-gray-500 mt-3">Loading territories...</p>
-        </div>
-      ) : territories.length === 0 ? (
+      {/* Empty state — shown in both views when no territories exist */}
+      {!loading && territories.length === 0 && (
         <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
           <MapPin className="w-14 h-14 mx-auto text-gray-300 mb-4" />
           <h3 className="text-lg font-semibold text-gray-700 mb-1">No territories yet</h3>
@@ -584,7 +571,10 @@ const Territories = () => {
             Create Territory
           </button>
         </div>
-      ) : (
+      )}
+
+      {/* Grid View — only when Cards tab is active */}
+      {viewMode === 'grid' && !loading && territories.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {territories.map(t => (
             <TerritoryCard
@@ -595,7 +585,6 @@ const Territories = () => {
             />
           ))}
         </div>
-      )
       )}
 
       {/* Modals */}
