@@ -575,7 +575,7 @@ const Reports = () => {
         <div className="flex gap-2">
           <button
             onClick={handlePDFDownload}
-            className="px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 flex items-center gap-2 text-sm"
+            className="px-3 py-2 btn-brand text-white rounded-lg flex items-center gap-2 text-sm"
             title="Export full report with graphs and tables as PDF"
           >
             <Download className="w-4 h-4" />
@@ -583,7 +583,7 @@ const Reports = () => {
           </button>
           <button
             onClick={handleExportCSV}
-            className="px-3 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 flex items-center gap-2 text-sm"
+            className="px-3 py-2 btn-brand text-white rounded-lg flex items-center gap-2 text-sm opacity-90"
             title="Export sales, agents, and deals tables as CSV"
           >
             <FileText className="w-4 h-4" />
