@@ -4,7 +4,7 @@ import {
   Building2, Palette, Globe, Users, UserPlus, CheckCircle,
   ArrowRight, ArrowLeft, X, Upload, Loader2, Sparkles, LayoutGrid
 } from 'lucide-react';
-import { tenantsAPI, usersAPI, clientsAPI, uploadAPI } from '../services/api';
+import { tenantsAPI, usersAPI, clientsAPI, uploadAPI, authAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -721,6 +721,9 @@ const OnboardingWizard = ({ onComplete }) => {
   const handleFinish = async () => {
     try {
       await tenantsAPI.saveOnboarding({ step: 'complete', completed: true, currentStep: STEPS.length - 1 });
+      // Refresh user so Settings page picks up the wizard-saved logo/branding
+      const meRes = await authAPI.getMe();
+      updateUser(meRes.data);
     } catch { /* non-critical */ }
     onComplete();
   };
