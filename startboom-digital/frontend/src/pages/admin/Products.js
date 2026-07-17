@@ -26,7 +26,7 @@ const EmptyState = ({ onAdd, onUpload }) => (
       <button onClick={onUpload} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
         <Upload className="w-4 h-4" /> Upload CSV
       </button>
-      <button onClick={onAdd} className="flex items-center gap-2 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium">
+      <button onClick={onAdd} className="flex items-center gap-2 px-4 py-2 btn-brand text-white rounded-lg text-sm font-medium">
         <Plus className="w-4 h-4" /> Add Product
       </button>
     </div>
@@ -397,7 +397,7 @@ const Products = () => {
             <Upload className="w-4 h-4" /> CSV Upload
           </button>
           <button onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium">
+            className="flex items-center gap-2 px-4 py-2 btn-brand text-white rounded-lg text-sm font-medium">
             <Plus className="w-4 h-4" /> Add Product
           </button>
         </div>
@@ -407,7 +407,7 @@ const Products = () => {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
           <div className="p-16 text-center">
-            <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin mx-auto" style={{ borderColor: 'var(--primary-color)', borderTopColor: 'transparent' }} />
             <p className="text-sm text-gray-500 mt-3">Loading products...</p>
           </div>
         ) : filteredProducts.length === 0 ? (
