@@ -510,7 +510,7 @@ const Settings = () => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                     activeTab === tab.id
-                      ? "border-primary-500 text-primary-600"
+                      ? "border-[var(--primary-color)] text-[var(--primary-color)]"
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   }`}
                 >
@@ -688,7 +688,7 @@ const Settings = () => {
                 <button
                   onClick={handleSaveProfile}
                   disabled={isSaving}
-                    className="bg-primary-500 text-white px-6 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-600 transition-colors disabled:opacity-50"
+                    className="btn-brand text-white px-6 py-2 rounded-lg flex items-center space-x-2 disabled:opacity-50"
                 >
                   <Save className="w-5 h-5" />
                   <span>{isSaving ? "Saving..." : "Save Profile"}</span>
@@ -885,7 +885,7 @@ const Settings = () => {
                 <button
                   onClick={handleSaveNotifications}
                   disabled={isSaving}
-                    className="bg-primary-500 text-white px-6 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-600 transition-colors disabled:opacity-50"
+                    className="btn-brand text-white px-6 py-2 rounded-lg flex items-center space-x-2 disabled:opacity-50"
                 >
                   <Save className="w-5 h-5" />
                   <span>{isSaving ? "Saving..." : "Save Settings"}</span>
@@ -1158,7 +1158,7 @@ const Settings = () => {
                 <button
                   onClick={handleSaveSecurity}
                   disabled={isSaving}
-                    className="bg-primary-500 text-white px-6 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-600 transition-colors disabled:opacity-50"
+                    className="btn-brand text-white px-6 py-2 rounded-lg flex items-center space-x-2 disabled:opacity-50"
                 >
                   <Save className="w-5 h-5" />
                   <span>{isSaving ? "Saving..." : "Save Security Settings"}</span>
@@ -1207,7 +1207,7 @@ const Settings = () => {
                           ))}
                         </div>
                       </div>
-                      <button onClick={handleCreateRole} disabled={rolesLoading} className="w-full bg-primary-500 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-primary-600 disabled:opacity-50">
+                      <button onClick={handleCreateRole} disabled={rolesLoading} className="w-full btn-brand text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 disabled:opacity-50">
                         <Plus className="w-4 h-4" />
                         <span>{rolesLoading ? "Saving..." : "Create Role"}</span>
                       </button>
@@ -1313,7 +1313,7 @@ const Settings = () => {
                 <button
                   onClick={handleSaveCompliance}
                   disabled={isSaving}
-                    className="bg-primary-500 text-white px-6 py-2 rounded-lg flex items-center space-x-2 hover:bg-primary-600 transition-colors disabled:opacity-50"
+                    className="btn-brand text-white px-6 py-2 rounded-lg flex items-center space-x-2 disabled:opacity-50"
                 >
                   <Save className="w-5 h-5" />
                   <span>{isSaving ? "Saving..." : "Save Compliance Settings"}</span>
