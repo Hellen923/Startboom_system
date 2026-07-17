@@ -363,7 +363,7 @@ const TerritoryCard = ({ territory, onManageAgents, onUpdate }) => {
             {activeAgents.length} Agent{activeAgents.length !== 1 ? 's' : ''}
           </div>
           <button onClick={() => onManageAgents(territory)}
-            className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 font-semibold">
+            className="flex items-center gap-2 px-3 py-2 btn-brand text-white rounded-lg text-sm font-medium">
             <UserPlus className="w-3.5 h-3.5" /> Manage
           </button>
         </div>
@@ -452,23 +452,25 @@ const Territories = () => {
             <button
               onClick={() => setViewMode('map')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                viewMode === 'map' ? 'bg-white shadow-sm text-primary-600' : 'text-gray-500 hover:text-gray-700'
+                viewMode === 'map' ? 'bg-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
               }`}
+              style={viewMode === 'map' ? { color: 'var(--primary-color)' } : {}}
             >
               <Map className="w-4 h-4" /> Map
             </button>
             <button
               onClick={() => setViewMode('grid')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                viewMode === 'grid' ? 'bg-white shadow-sm text-primary-600' : 'text-gray-500 hover:text-gray-700'
+                viewMode === 'grid' ? 'bg-white shadow-sm' : 'text-gray-500 hover:text-gray-700'
               }`}
+              style={viewMode === 'grid' ? { color: 'var(--primary-color)' } : {}}
             >
               <List className="w-4 h-4" /> Cards
             </button>
           </div>
         </div>
         <button onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium">
+          className="flex items-center gap-2 px-4 py-2 btn-brand text-white rounded-lg text-sm font-medium">
           <Plus className="w-4 h-4" /> Create Territory
         </button>
       </div>
@@ -508,7 +510,7 @@ const Territories = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <button onClick={() => setManageTerritory(t)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium">
+                      className="flex items-center gap-1.5 px-3 py-1.5 btn-brand text-white rounded-lg text-sm font-medium">
                       <UserPlus className="w-4 h-4" /> Manage Agents
                     </button>
                     <button onClick={() => setSelectedId(null)} className="p-1.5 hover:bg-gray-100 rounded-lg">
@@ -554,12 +556,14 @@ const Territories = () => {
               </motion.div>
             );
           })()}
-          {/* All territories mini list below map */}
+          {/* All territories mini list below map — hidden when a territory is selected to avoid clutter */}
+          {!selectedId && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {territories.map(t => (
               <TerritoryCard key={t._id} territory={t} onManageAgents={setManageTerritory} onUpdate={fetchTerritories} />
             ))}
           </div>
+          )}
         </div>
       )}
 
@@ -576,7 +580,7 @@ const Territories = () => {
           <h3 className="text-lg font-semibold text-gray-700 mb-1">No territories yet</h3>
           <p className="text-gray-400 text-sm mb-5">Create your first territory and assign agents to it.</p>
           <button onClick={() => setShowCreateModal(true)}
-            className="px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium">
+            className="px-5 py-2.5 btn-brand text-white rounded-lg text-sm font-medium">
             Create Territory
           </button>
         </div>
