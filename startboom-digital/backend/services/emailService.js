@@ -3,73 +3,60 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-let cachedTransporter = null;
-
+// Never cache — always create a fresh transporter so Render spin-ups don't reuse dead connections
 const createTransporter = async () => {
-  if (cachedTransporter) return cachedTransporter;
-
   // Option 1: Brevo/Sendinblue (recommended - free 300 emails/day, works on Render)
   if (process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY) {
     const apiKey = process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY;
-    cachedTransporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: 'smtp-relay.brevo.com',
       port: 587,
       secure: false,
       auth: {
-        user: process.env.BREVO_SMTP_USER || process.env.EMAIL_USER,
+        user: process.env.BREVO_SMTP_USER,
         pass: apiKey
       }
     });
     console.log('✅ Brevo transporter configured');
-    return cachedTransporter;
+    return transporter;
   }
 
   // Option 2: SendGrid (alternative - free 100 emails/day)
   if (process.env.SENDGRID_API_KEY) {
-    cachedTransporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: 'smtp.sendgrid.net',
       port: 587,
       secure: false,
-      auth: {
-        user: 'apikey',
-        pass: process.env.SENDGRID_API_KEY
-      }
+      auth: { user: 'apikey', pass: process.env.SENDGRID_API_KEY }
     });
     console.log('✅ SendGrid transporter configured');
-    return cachedTransporter;
+    return transporter;
   }
 
-  // Option 3: Gmail (works locally, may be blocked on some hosts like Render)
+  // Option 3: Gmail fallback
   if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-    cachedTransporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
       secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      },
-      tls: {
-        rejectUnauthorized: true
-      }
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+      tls: { rejectUnauthorized: true }
     });
     console.log('✅ Gmail transporter configured');
-    console.warn('⚠️ Note: Gmail SMTP may be blocked by some hosting providers');
-    return cachedTransporter;
+    return transporter;
   }
 
   if (process.env.NODE_ENV === 'production') {
-    throw new Error('Email service is not configured. Set EMAIL_USER and EMAIL_PASS in production.');
+    throw new Error('Email service is not configured. Set BREVO_SMTP_USER + BREVO_API_KEY in production.');
   }
 
-  console.warn('⚠️ No EMAIL_USER/EMAIL_PASS — falling back to Ethereal');
+  console.warn('⚠️ No email credentials — falling back to Ethereal');
   const testAccount = await nodemailer.createTestAccount();
-  cachedTransporter = nodemailer.createTransport({
+  return nodemailer.createTransport({
     host: 'smtp.ethereal.email',
     port: 587,
     auth: { user: testAccount.user, pass: testAccount.pass }
   });
-  return cachedTransporter;
 };
 
 
@@ -497,8 +484,9 @@ export const sendEmail = async (to, templateName, templateData) => {
     const emailContent = template(templateData);
     const transporter = await createTransporter();
 
-    // Use EMAIL_FROM if set, otherwise use EMAIL_USER, otherwise use a default
-    const fromAddress = process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@honeypotcrm.com';
+    // When using Brevo, EMAIL_FROM must be a verified sender in your Brevo account.
+    // BREVO_FROM overrides EMAIL_FROM so you can set the verified address separately.
+    const fromAddress = process.env.BREVO_FROM || process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@honeypotcrm.com';
     const fromName = templateData.companyName || 'HoneyPot CRM';
 
     const mailOptions = {
