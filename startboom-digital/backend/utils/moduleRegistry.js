@@ -8,6 +8,7 @@ const MODULE_ALIASES = {
   contacts: 'clients',
   leads: 'clients',
   myTerritory: 'territories',
+  teams: 'departments',
   auditLogs: 'reports'
 };
 
