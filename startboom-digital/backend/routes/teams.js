@@ -7,6 +7,8 @@ import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
+const isValidObjectId = (id) => id && id !== 'undefined' && id !== 'null' && /^[0-9a-fA-F]{24}$/.test(id);
+
 // Apply tenant authentication and module enforcement
 router.use(tenantAuth);
 router.use(requireTenantModule('teams'));
@@ -49,6 +51,10 @@ router.get('/', async (req, res) => {
 // Get single team by ID
 router.get('/:id', async (req, res) => {
   try {
+    if (!isValidObjectId(req.params.id)) {
+      return res.status(400).json({ message: 'Valid team ID is required' });
+    }
+
     const team = await Team.findOne({
       _id: req.params.id,
       ...req.tenantQuery
@@ -88,6 +94,14 @@ router.post('/', async (req, res) => {
     }
     
     const { name, description, department, manager, members, targets } = req.body;
+
+    if (!name?.trim()) {
+      return res.status(400).json({ message: 'Team name is required' });
+    }
+
+    if (!isValidObjectId(department)) {
+      return res.status(400).json({ message: 'Valid department is required' });
+    }
     
     // Validate department exists
     const dept = await Department.findOne({
@@ -161,6 +175,10 @@ router.post('/', async (req, res) => {
 // Update team
 router.put('/:id', async (req, res) => {
   try {
+    if (!isValidObjectId(req.params.id)) {
+      return res.status(400).json({ message: 'Valid team ID is required' });
+    }
+
     // Only admins and managers can update teams
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
@@ -228,6 +246,10 @@ router.put('/:id', async (req, res) => {
 // Add member to team
 router.post('/:id/members', async (req, res) => {
   try {
+    if (!isValidObjectId(req.params.id)) {
+      return res.status(400).json({ message: 'Valid team ID is required' });
+    }
+
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
         message: 'Only administrators and managers can add team members'
@@ -235,6 +257,10 @@ router.post('/:id/members', async (req, res) => {
     }
     
     const { userId, role } = req.body;
+
+    if (!isValidObjectId(userId)) {
+      return res.status(400).json({ message: 'Valid user ID is required' });
+    }
     
     const team = await Team.findOne({
       _id: req.params.id,
@@ -286,6 +312,10 @@ router.post('/:id/members', async (req, res) => {
 // Remove member from team
 router.delete('/:id/members/:userId', async (req, res) => {
   try {
+    if (!isValidObjectId(req.params.id) || !isValidObjectId(req.params.userId)) {
+      return res.status(400).json({ message: 'Valid team and user IDs are required' });
+    }
+
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
         message: 'Only administrators and managers can remove team members'
@@ -330,6 +360,10 @@ router.delete('/:id/members/:userId', async (req, res) => {
 // Delete (soft delete) team
 router.delete('/:id', async (req, res) => {
   try {
+    if (!isValidObjectId(req.params.id)) {
+      return res.status(400).json({ message: 'Valid team ID is required' });
+    }
+
     if (!['superadmin', 'admin', 'manager'].includes(req.user.role)) {
       return res.status(403).json({
         message: 'Only administrators and managers can delete teams'
