@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Users, BarChart3, Calendar, ShoppingCart, TrendingUp, Shield, ArrowRight,
   CheckCircle, Star, Zap, Target, DollarSign, LineChart
 } from 'lucide-react';
-import { PLATFORM_BRAND } from '../utils/platformBranding';
+import { PLATFORM_BRAND, clearTenantBranding } from '../utils/platformBranding';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+
+  // Force default HoneyPot branding on landing page
+  useEffect(() => {
+    clearTenantBranding();
+  }, []);
 
   const features = [
     {

@@ -17,10 +17,11 @@ import {
 } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { BUTTON_STYLES, FORM_STYLES } from "../../utils/designSystem";
-import { applyBrandColor } from "../../utils/platformBranding";
+import { applyBrandColor, canUseTenantBranding, clearTenantBranding, PLATFORM_BRAND } from "../../utils/platformBranding";
 
 const Settings = () => {
   const { user, updateUser } = useAuth();
+  const canManageTenantBranding = canUseTenantBranding(user);
   const [activeTab, setActiveTab] = useState("profile");
   const [isSaving, setIsSaving] = useState(false);
 
@@ -105,7 +106,7 @@ const Settings = () => {
   // Branding
   const [branding, setBranding] = useState({
     logo: user?.tenant?.branding?.logo || user?.tenant?.settings?.logo || '',
-    primaryColor: user?.tenant?.branding?.primaryColor || user?.tenant?.settings?.primaryColor || '#D89A00',
+    primaryColor: user?.tenant?.branding?.primaryColor || user?.tenant?.settings?.primaryColor || PLATFORM_BRAND.primaryColor,
     secondaryColor: user?.tenant?.branding?.secondaryColor || user?.tenant?.settings?.secondaryColor || '#1f2937',
     currency: user?.tenant?.settings?.currency || 'USD',
     customDomain: user?.tenant?.settings?.customDomain || ''
@@ -115,6 +116,17 @@ const Settings = () => {
 
   // Sync logo and branding when user object updates (e.g. after wizard completes)
   useEffect(() => {
+    if (!canManageTenantBranding) {
+      setLogoPreview('');
+      setBranding(prev => ({
+        ...prev,
+        logo: '',
+        primaryColor: PLATFORM_BRAND.primaryColor,
+      }));
+      clearTenantBranding();
+      return;
+    }
+
     const logo = user?.tenant?.branding?.logo || user?.tenant?.settings?.logo || '';
     setLogoPreview(logo);
     setBranding(prev => ({
@@ -123,7 +135,7 @@ const Settings = () => {
       primaryColor: user?.tenant?.branding?.primaryColor || user?.tenant?.settings?.primaryColor || prev.primaryColor,
       secondaryColor: user?.tenant?.branding?.secondaryColor || user?.tenant?.settings?.secondaryColor || prev.secondaryColor,
     }));
-  }, [user?.tenant?.branding?.logo, user?.tenant?.settings?.logo]); // eslint-disable-line
+  }, [canManageTenantBranding, user?.tenant?.branding?.logo, user?.tenant?.settings?.logo]); // eslint-disable-line
 
   // Sync profile picture when user updates
   useEffect(() => {
@@ -167,6 +179,13 @@ const Settings = () => {
     { id: "security", label: "Security", icon: Shield },
     { id: "compliance", label: "Legal & Compliance", icon: FileText },
   ];
+  const visibleTabs = tabs.filter(tab => tab.id !== 'branding' || canManageTenantBranding);
+
+  useEffect(() => {
+    if (activeTab === 'branding' && !canManageTenantBranding) {
+      setActiveTab('profile');
+    }
+  }, [activeTab, canManageTenantBranding]);
 
   // Password strength indicator
   const getPasswordStrength = (pass) => {
@@ -301,6 +320,11 @@ const Settings = () => {
 
   // Branding save
   const handleLogoUpload = async (e) => {
+    if (!canManageTenantBranding) {
+      toast.error('Tenant branding is only available inside a tenant workspace');
+      return;
+    }
+
     const file = e.target.files[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
@@ -322,6 +346,12 @@ const Settings = () => {
   };
 
   const handleSaveBranding = async () => {
+    if (!canManageTenantBranding) {
+      clearTenantBranding();
+      toast.error('Tenant branding is only available inside a tenant workspace');
+      return;
+    }
+
     if (branding.customDomain && !/^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}$/.test(branding.customDomain)) {
       toast.error('Custom domain must be a valid domain (e.g. xtreative.crm.com)');
       return;
@@ -333,11 +363,11 @@ const Settings = () => {
       if (updatedTenant) {
         updateUser({ tenant: { ...user.tenant, ...updatedTenant } });
       }
-      if (branding.primaryColor) {
+      if (canManageTenantBranding && branding.primaryColor) {
         localStorage.setItem('tenant_primary_color', branding.primaryColor);
         applyBrandColor(branding.primaryColor);
       }
-      if (branding.logo) {
+      if (canManageTenantBranding && branding.logo) {
         localStorage.setItem('tenant_logo', branding.logo);
       } else {
         localStorage.removeItem('tenant_logo');
@@ -559,7 +589,7 @@ const Settings = () => {
         {/* Tab Navigation */}
         <div className="border-b border-gray-200 overflow-x-auto">
           <nav className="flex space-x-8 px-6 min-w-min">
-            {tabs.map((tab) => {
+            {visibleTabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
@@ -792,7 +822,7 @@ const Settings = () => {
           )}
 
           {/* Branding Tab */}
-          {activeTab === "branding" && (
+          {activeTab === "branding" && canManageTenantBranding && (
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}

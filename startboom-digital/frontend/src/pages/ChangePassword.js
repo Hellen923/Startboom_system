@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { Eye, EyeOff } from 'lucide-react';
+import { clearTenantBranding } from '../utils/platformBranding';
 
 const inputCls = 'w-full p-3 border border-gray-300 rounded-xl mt-1 bg-white dark:bg-[#1E293B] text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500';
 
@@ -20,6 +21,13 @@ const ChangePassword = () => {
   const [showOtp, setShowOtp] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+
+  // Force default HoneyPot branding if user is not logged in or is super admin
+  useEffect(() => {
+    if (!user || user.role === 'superadmin') {
+      clearTenantBranding();
+    }
+  }, [user]);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 

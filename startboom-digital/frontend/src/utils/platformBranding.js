@@ -4,6 +4,10 @@ export const PLATFORM_BRAND = {
   primaryColor: '#D89A00',
 };
 
+export const canUseTenantBranding = (account) => (
+  Boolean(account?.tenant) && account.role !== 'superadmin'
+);
+
 const hexToRgb = (hex) => {
   const clean = typeof hex === 'string' && hex.startsWith('#') ? hex : PLATFORM_BRAND.primaryColor;
   return {
@@ -37,6 +41,17 @@ export const applyBrandColor = (color = PLATFORM_BRAND.primaryColor) => {
   root.style.setProperty('--btn-brand-bg', gradient);
   root.style.setProperty('--sidebar-nav-active', `rgba(${r},${g},${b},0.15)`);
   root.style.setProperty('--sidebar-nav-hover', `rgba(${r},${g},${b},0.08)`);
+};
+
+export const getStoredTenantBrandColor = () => {
+  try {
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+    const account = storedUser ? JSON.parse(storedUser) : null;
+    return token && canUseTenantBranding(account) ? localStorage.getItem('tenant_primary_color') : null;
+  } catch {
+    return null;
+  }
 };
 
 export const clearTenantBranding = () => {

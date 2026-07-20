@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { Lock, ArrowLeft, CheckCircle, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { authAPI } from '../services/api';
-import { PLATFORM_BRAND } from '../utils/platformBranding';
+import { PLATFORM_BRAND, clearTenantBranding } from '../utils/platformBranding';
 import { BUTTON_STYLES, FORM_STYLES } from '../utils/designSystem';
 
 const ResetPassword = () => {
@@ -15,6 +15,11 @@ const ResetPassword = () => {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+
+    // Force default HoneyPot branding
+    useEffect(() => {
+        clearTenantBranding();
+    }, []);
 
     useEffect(() => {
         if (!location.state?.email) {

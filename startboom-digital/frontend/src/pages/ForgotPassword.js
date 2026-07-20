@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { Mail, ArrowLeft, Send, Lock } from 'lucide-react';
 import { authAPI } from '../services/api';
-import { PLATFORM_BRAND } from '../utils/platformBranding';
+import { PLATFORM_BRAND, clearTenantBranding } from '../utils/platformBranding';
 import { BUTTON_STYLES, FORM_STYLES } from '../utils/designSystem';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
+
+    // Force default HoneyPot branding
+    useEffect(() => {
+        clearTenantBranding();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

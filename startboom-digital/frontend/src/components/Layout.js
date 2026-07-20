@@ -283,8 +283,12 @@ const agentNavSections = [
   const SidebarFooter = ({ mobile = false }) => (
     <div className="sidebar-footer p-4">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white font-bold text-sm border border-white/20">
-          {userInitial}
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white font-bold text-sm border border-white/20 overflow-hidden">
+          {user?.profilePicture ? (
+            <img src={user.profilePicture} alt={user?.name || 'User'} className="w-full h-full object-cover" />
+          ) : (
+            userInitial
+          )}
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-white">{user?.name || 'Admin'}</p>

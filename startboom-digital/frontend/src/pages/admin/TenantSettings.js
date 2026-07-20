@@ -18,7 +18,7 @@ import {
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { tenantsAPI } from '../../services/api';
-import { applyBrandColor } from '../../utils/platformBranding';
+import { applyBrandColor, canUseTenantBranding, clearTenantBranding } from '../../utils/platformBranding';
 import { TENANT_MODULES, isModuleEnabled } from '../../utils/moduleRegistry';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import toast from 'react-hot-toast';
@@ -27,6 +27,7 @@ const TenantSettings = () => {
   const { theme } = useTheme();
   const { user, updateUser } = useAuth();
   const isDark = theme.mode === 'dark';
+  const canManageTenantBranding = canUseTenantBranding(user);
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -59,8 +60,14 @@ const TenantSettings = () => {
   });
 
   useEffect(() => {
+    if (!canManageTenantBranding) {
+      clearTenantBranding();
+      setLoading(false);
+      return;
+    }
+
     fetchTenantSettings();
-  }, []);
+  }, [canManageTenantBranding]);
 
   const syncTenantContext = (tenantData) => {
     if (!tenantData || !user?.tenant) return;
@@ -90,6 +97,12 @@ const TenantSettings = () => {
   };
 
   const handleSave = async () => {
+    if (!canManageTenantBranding) {
+      clearTenantBranding();
+      toast.error('Tenant settings are only available inside a tenant workspace');
+      return;
+    }
+
     try {
       setSaving(true);
       const response = await tenantsAPI.updateSettings(formData);
@@ -99,7 +112,7 @@ const TenantSettings = () => {
 
       // Apply branding immediately and persist so theme toggle preserves it
       const color = formData.branding?.primaryColor;
-      if (color) {
+      if (canManageTenantBranding && color) {
         localStorage.setItem('tenant_primary_color', color);
         applyBrandColor(color);
       }
@@ -134,6 +147,17 @@ const TenantSettings = () => {
   };
 
   if (loading) return <LoadingSpinner />;
+
+  if (!canManageTenantBranding) {
+    return (
+      <div className="min-h-screen p-6 bg-gray-50">
+        <div className="rounded-xl bg-white p-6 shadow-lg">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Tenant Settings</h1>
+          <p className="text-gray-600">Tenant branding and company settings are only available inside a tenant workspace.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-gray-50'}`}>

@@ -1,12 +1,12 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { authAPI } from '../services/api';
-import { applyBrandColor, clearTenantBranding } from '../utils/platformBranding';
+import { applyBrandColor, canUseTenantBranding, clearTenantBranding } from '../utils/platformBranding';
 
 const AuthContext = createContext();
 
 // Apply tenant branding to CSS variables immediately. Super Admin always keeps platform branding.
 const applyWorkspaceBranding = (account) => {
-  if (!account?.tenant || account.role === 'superadmin') {
+  if (!canUseTenantBranding(account)) {
     clearTenantBranding();
     return;
   }
@@ -59,6 +59,11 @@ export const AuthProvider = ({ children }) => {
       const storedToken = localStorage.getItem('token');
       const storedUser = localStorage.getItem('user');
 
+      if (!storedToken || !storedUser) {
+        clearTenantBranding();
+        return;
+      }
+
       if (storedToken && storedUser) {
         try {
           const response = await authAPI.getMe();
@@ -75,6 +80,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.removeItem('user');
             localStorage.removeItem('tenantId');
             localStorage.removeItem('tenantName');
+            clearTenantBranding();
             setToken(null);
             setUser(null);
           } else if (status === 403) {
@@ -151,6 +157,9 @@ export const AuthProvider = ({ children }) => {
       if (userData.tenant) {
         localStorage.setItem('tenantId', userData.tenant.id || userData.tenant._id);
         localStorage.setItem('tenantName', userData.tenant.name);
+      } else {
+        localStorage.removeItem('tenantId');
+        localStorage.removeItem('tenantName');
       }
       setToken(newToken);
       setUser(userWithTenant);
@@ -186,6 +195,7 @@ export const AuthProvider = ({ children }) => {
     const updatedUser = { ...user, ...userData };
     setUser(updatedUser);
     localStorage.setItem('user', JSON.stringify(updatedUser));
+    applyWorkspaceBranding(updatedUser);
   };
 
   const value = {
