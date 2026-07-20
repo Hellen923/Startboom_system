@@ -29,6 +29,7 @@ const Departments = () => {
   const [showTeamModal, setShowTeamModal] = useState(false);
   const [editingDept, setEditingDept] = useState(null);
   const [editingTeam, setEditingTeam] = useState(null);
+  const [newTeamDepartment, setNewTeamDepartment] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -71,7 +72,7 @@ const Departments = () => {
 
   const handleSaveTeam = async (teamData) => {
     try {
-      if (editingTeam) {
+      if (editingTeam?._id) {
         await teamApi.update(editingTeam._id, teamData);
         toast.success('Team updated successfully');
       } else {
@@ -80,6 +81,7 @@ const Departments = () => {
       }
       setShowTeamModal(false);
       setEditingTeam(null);
+      setNewTeamDepartment('');
       fetchData();
     } catch (error) {
       console.error('Error saving team:', error);
@@ -269,7 +271,8 @@ const Departments = () => {
                   </h4>
                   <button
                     onClick={() => {
-                      setEditingTeam({ department: dept._id });
+                      setEditingTeam(null);
+                      setNewTeamDepartment(dept._id);
                       setShowTeamModal(true);
                     }}
                     className="flex items-center space-x-1 text-sm text-[var(--primary-color)] hover:text-[var(--primary-hover)]"
@@ -342,12 +345,14 @@ const Departments = () => {
       {showTeamModal && (
         <TeamModal
           team={editingTeam}
+          initialDepartment={newTeamDepartment}
           departments={departments}
           isDark={isDark}
           onSave={handleSaveTeam}
           onClose={() => {
             setShowTeamModal(false);
             setEditingTeam(null);
+            setNewTeamDepartment('');
           }}
         />
       )}
@@ -472,11 +477,11 @@ const DepartmentModal = ({ department, isDark, onSave, onClose }) => {
 };
 
 // Team Modal Component
-const TeamModal = ({ team, departments, isDark, onSave, onClose }) => {
+const TeamModal = ({ team, initialDepartment = '', departments, isDark, onSave, onClose }) => {
   const [formData, setFormData] = useState({
     name: team?.name || '',
     description: team?.description || '',
-    department: team?.department?._id || team?.department || '',
+    department: team?.department?._id || team?.department || initialDepartment,
     targets: {
       revenue: team?.targets?.revenue || 0,
       deals: team?.targets?.deals || 0
