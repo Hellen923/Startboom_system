@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { PLATFORM_BRAND } from '../utils/platformBranding';
+import { getStoredTenantBrandColor, PLATFORM_BRAND } from '../utils/platformBranding';
 
 const ThemeContext = createContext();
 
@@ -139,8 +139,8 @@ export const ThemeProvider = ({ children }) => {
 
   const applyTheme = useCallback((t, tenantColor) => {
     const root = document.documentElement;
-    // Tenant color takes priority over theme preset color
-    const savedTenantColor = localStorage.getItem('tenant_primary_color');
+    // Tenant color is only restored for signed-in tenant users.
+    const savedTenantColor = getStoredTenantBrandColor();
     const primary = normalizeHexColor(tenantColor || savedTenantColor || t.primaryColor || DEFAULT_THEME.primaryColor);
     const mode = t.mode === 'dark' ? 'dark' : 'light';
     const tokens = THEME_TOKENS[mode];

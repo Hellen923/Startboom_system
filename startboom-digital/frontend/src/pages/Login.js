@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { PLATFORM_BRAND } from '../utils/platformBranding';
+import { PLATFORM_BRAND, clearTenantBranding } from '../utils/platformBranding';
 import { BUTTON_STYLES, FORM_STYLES } from '../utils/designSystem';
 
 const Login = () => {
@@ -16,6 +16,11 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  // Force default HoneyPot branding on login page
+  useEffect(() => {
+    clearTenantBranding();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
