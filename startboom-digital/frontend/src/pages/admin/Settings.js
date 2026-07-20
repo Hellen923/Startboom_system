@@ -28,7 +28,10 @@ const Settings = () => {
   const [profileData, setProfileData] = useState({
     name: user?.name || "",
     email: user?.email || "",
+    profilePicture: user?.profilePicture || "",
   });
+  const [profilePicturePreview, setProfilePicturePreview] = useState(user?.profilePicture || '');
+  const [uploadingProfilePicture, setUploadingProfilePicture] = useState(false);
 
   // Password change
   const [passwordData, setPasswordData] = useState({
@@ -121,6 +124,13 @@ const Settings = () => {
       secondaryColor: user?.tenant?.branding?.secondaryColor || user?.tenant?.settings?.secondaryColor || prev.secondaryColor,
     }));
   }, [user?.tenant?.branding?.logo, user?.tenant?.settings?.logo]); // eslint-disable-line
+
+  // Sync profile picture when user updates
+  useEffect(() => {
+    const pic = user?.profilePicture || '';
+    setProfilePicturePreview(pic);
+    setProfileData(prev => ({ ...prev, profilePicture: pic }));
+  }, [user?.profilePicture]); // eslint-disable-line
 
   useEffect(() => {
     if (activeTab === 'security') loadAuditLogs();
@@ -253,6 +263,39 @@ const Settings = () => {
       );
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // Profile picture upload
+  const handleProfilePictureUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+    try {
+      setUploadingProfilePicture(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await uploadAPI.uploadFile(formData);
+      const pictureUrl = res.data.url;
+      setProfilePicturePreview(pictureUrl);
+      setProfileData(prev => ({ ...prev, profilePicture: pictureUrl }));
+      
+      // Save to user immediately
+      const userId = user?._id || user?.id;
+      const profileRes = await usersAPI.update(userId, { profilePicture: pictureUrl });
+      
+      // Refresh user so sidebar updates
+      const meRes = await authAPI.getMe();
+      updateUser(meRes.data);
+      
+      toast.success('Profile picture updated successfully');
+    } catch (err) {
+      toast.error('Failed to upload profile picture');
+    } finally {
+      setUploadingProfilePicture(false);
     }
   };
 
@@ -549,6 +592,43 @@ const Settings = () => {
                 <h3 className="text-lg font-semibold text-gray-900 mb-6">
                   Admin Profile
                 </h3>
+                
+                {/* Profile Picture Upload */}
+                <div className="mb-8">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Profile Picture
+                  </label>
+                  <div className="flex items-center gap-6">
+                    <div className="flex h-24 w-24 items-center justify-center rounded-full overflow-hidden border-2 border-gray-200 bg-gray-50">
+                      {profilePicturePreview ? (
+                        <img src={profilePicturePreview} alt="Profile" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-gray-100 text-2xl font-bold text-gray-400">
+                          {(user?.name || 'U').charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        id="profile-picture-upload"
+                        className="hidden"
+                        onChange={handleProfilePictureUpload}
+                        disabled={uploadingProfilePicture}
+                      />
+                      <label
+                        htmlFor="profile-picture-upload"
+                        className={`inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer ${uploadingProfilePicture ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        <Upload className="w-4 h-4" />
+                        <span>{uploadingProfilePicture ? 'Uploading...' : 'Upload Photo'}</span>
+                      </label>
+                      <p className="text-xs text-gray-500 mt-2">JPG, PNG or GIF. Max 5MB.</p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
