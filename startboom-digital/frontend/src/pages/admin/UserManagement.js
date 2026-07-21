@@ -24,6 +24,11 @@ const UserManagement = () => {
       setSearchTerm(location.state.search);
       navigate(location.pathname, { replace: true, state: {} });
     }
+    if (location?.state?.filterDepartment) {
+      // Filter users by department when navigating from Departments page
+      setSelectedDepartment(location.state.filterDepartment);
+      navigate(location.pathname, { replace: true, state: {} });
+    }
     if (location?.state?.openCreate) {
       setShowAddModal(true);
       navigate(location.pathname, { replace: true, state: {} });
@@ -41,6 +46,7 @@ const UserManagement = () => {
   const [detailsUser, setDetailsUser] = useState(null);
   const [selectedRole, setSelectedRole] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [selectedDepartment, setSelectedDepartment] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
@@ -380,7 +386,11 @@ const UserManagement = () => {
         (selectedStatus === 'inactive' && user.isActive === false) ||
         (selectedStatus === 'pending' && user.isFirstLogin);
 
-      return matchesSearch && matchesRole && matchesStatus;
+      // Department filter
+      const matchesDepartment = selectedDepartment === 'all' || 
+        (user.department?._id || user.department) === selectedDepartment;
+
+      return matchesSearch && matchesRole && matchesStatus && matchesDepartment;
     })
     .sort((a, b) => {
       let comparison = 0;
@@ -694,7 +704,7 @@ return (
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-6 mt-4 border-t border-gray-100">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 pt-6 mt-4 border-t border-gray-100">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
                     <select
@@ -721,6 +731,20 @@ return (
                       <option value="active">Active</option>
                       <option value="inactive">Inactive</option>
                       <option value="pending">Pending</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
+                    <select
+                      value={selectedDepartment}
+                      onChange={(e) => setSelectedDepartment(e.target.value)}
+                      className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="all">All Departments</option>
+                      {departments.map(d => (
+                        <option key={d._id} value={d._id}>{d.name}</option>
+                      ))}
                     </select>
                   </div>
 
