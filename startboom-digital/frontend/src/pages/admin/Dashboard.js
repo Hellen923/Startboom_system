@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Users, TrendingUp, DollarSign, Target, Download, FileText } from 'lucide-react';
+import { Users, TrendingUp, DollarSign, Target, Download, FileText, Building } from 'lucide-react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import DonutChart, { StageValueChart } from '../../components/charts/DonutChart';
 import { useAuth } from '../../context/AuthContext';
 import { useChartTheme, getChartPalette, ANALYTICS_PALETTE } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
 import { dealsAPI, salesAPI, clientsAPI, usersAPI, tenantsAPI } from '../../services/api';
+import { departmentApi } from '../../services/enterpriseApi';
 import OnboardingWizard from '../../components/OnboardingWizard';
 import DashboardQuickActions from '../../components/DashboardQuickActions';
 import toast from 'react-hot-toast';
@@ -35,6 +36,8 @@ const AdminDashboard = () => {
   const [period, setPeriod] = useState('monthly');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [departments, setDepartments] = useState([]);
+  const [selectedDept, setSelectedDept] = useState('');
 
   // Check onboarding status on mount
   useEffect(() => {
@@ -241,7 +244,16 @@ const AdminDashboard = () => {
       const users = usersRes?.data || [];
       const usersArr = Array.isArray(users) ? users : (users.users || []);
       const agents = usersArr.filter(u => u.role === 'agent');
-      const agentsForCharts = agents.map(agent => ({ _id: String(agent._id), name: agent.name || 'Unnamed Agent' }));
+      
+      // Apply department filter if selected
+      const filteredAgents = selectedDept
+        ? agents.filter(a => {
+            const deptId = a.department?._id || a.department;
+            return deptId === selectedDept;
+          })
+        : agents;
+      
+      const agentsForCharts = filteredAgents.map(agent => ({ _id: String(agent._id), name: agent.name || 'Unnamed Agent' }));
       setAgentsList(agentsForCharts);
       setAgentsCount(agentsForCharts.length || 0);
       setAllUsers(usersArr);
@@ -364,7 +376,17 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     loadData();
-  }, [period]);
+    loadDepartments();
+  }, [period, selectedDept]);
+
+  const loadDepartments = async () => {
+    try {
+      const res = await departmentApi.getAll();
+      setDepartments(res.data.departments || []);
+    } catch (error) {
+      console.error('Failed to load departments:', error);
+    }
+  };
 
   return (
     <>
@@ -374,8 +396,22 @@ const AdminDashboard = () => {
       )}
 
       <div className="space-y-6 pt-4 dashboard-page">
-        {/* Period Filter */}
-        <div className="flex justify-end">
+        {/* Period & Department Filters */}
+        <div className="flex justify-between items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <Building className="w-5 h-5 text-gray-500" />
+            <select
+              value={selectedDept}
+              onChange={(e) => setSelectedDept(e.target.value)}
+              className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-800 dark:border-gray-700"
+            >
+              <option value="">All Departments</option>
+              {departments.map(d => (
+                <option key={d._id} value={d._id}>{d.name}</option>
+              ))}
+            </select>
+          </div>
+          
           <div className="tab-bar">
             {PERIODS.map(p => (
               <button
