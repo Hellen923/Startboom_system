@@ -159,16 +159,17 @@ const Reports = () => {
 
       // Agents Performance Table
       csvContent += '=== AGENTS PERFORMANCE ===\n';
-      csvContent += 'Agent Name,Email,Phone,Total Sales,Revenue,Total Deals,Won Deals,Lost Deals,Win Rate %,Total Clients\n';
+      csvContent += 'Agent Name,Department,Email,Phone,Total Sales,Revenue,Total Deals,Won Deals,Lost Deals,Win Rate %,Total Clients\n';
       getSortedAgents().forEach(agent => {
         const phone = agent.phone || 'Not Provided';
+        const dept = agent.department?.name || 'Unassigned';
         const revenue = agent.revenue || 0;
         const total = agent.deals.length || 0;
         const won = agent.dealsWon || 0;
         const lost = agent.dealsLost || 0;
         const rate = agent.conversionRate || 0;
         const clients = agent.clients.length || 0;
-        csvContent += `"${agent.name}","${agent.email}","${phone}",${agent.sales.length},${revenue},${total},${won},${lost},${rate},${clients}\n`;
+        csvContent += `"${agent.name}","${dept}","${agent.email}","${phone}",${agent.sales.length},${revenue},${total},${won},${lost},${rate},${clients}\n`;
       });
       csvContent += '\n\n';
 
@@ -1024,6 +1025,7 @@ const Reports = () => {
                 <thead className="table-header">
                   <tr>
                     <th className="px-4 py-3 text-left font-medium">Sales Agent Name</th>
+                    <th className="px-4 py-3 text-left font-medium">Department</th>
                     <th className="px-4 py-3 text-left font-medium">Email</th>
                     <th className="px-4 py-3 text-left font-medium">Phone</th>
                     <th className="px-4 py-3 text-right font-medium">Total Sales</th>
@@ -1047,6 +1049,12 @@ const Reports = () => {
                             {agent.name}
                             <ChevronRight className={`inline-block ml-2 w-4 h-4 transition-transform ${expandedRows[`agent-${agent._id}`] ? 'rotate-90' : ''}`} />
                           </td>
+                          <td className="px-4 py-3 text-gray-600">
+                            <span className="inline-flex items-center gap-1">
+                              <Building className="w-3 h-3 text-gray-400" />
+                              {agent.department?.name || 'Unassigned'}
+                            </span>
+                          </td>
                           <td className="px-4 py-3 text-gray-600">{agent.email}</td>
                           <td className="px-4 py-3 text-gray-600">{agent.phone || 'Not Provided'}</td>
                           <td className="px-4 py-3 text-right">{agent.sales.length}</td>
@@ -1067,7 +1075,7 @@ const Reports = () => {
                         </tr>
                         {expandedRows[`agent-${agent._id}`] && (
                           <tr>
-                            <td colSpan="10" className="px-4 py-3 bg-gray-50">
+                            <td colSpan="11" className="px-4 py-3 bg-gray-50">
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
                                 <div>
                                   <span className="font-medium text-gray-700">Agent ID:</span>
@@ -1079,7 +1087,7 @@ const Reports = () => {
                                 </div>
                                 <div>
                                   <span className="font-medium text-gray-700">Department:</span>
-                                  <span className="text-gray-900 ml-2">{agent.department || 'Not specified'}</span>
+                                  <span className="text-gray-900 ml-2">{agent.department?.name || agent.department || 'Not specified'}</span>
                                 </div>
                                 <div>
                                   <span className="font-medium text-gray-700">Joined:</span>
