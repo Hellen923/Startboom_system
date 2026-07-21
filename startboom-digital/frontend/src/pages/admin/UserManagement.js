@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion'; 
 import { 
   Search, Edit, Trash2, User, UserPlus, Shield, RefreshCw, 
   UserX, X, Mail, Phone, Calendar, Award, TrendingUp,
   Filter, Download, CheckCircle, XCircle,
-  Clock, AlertCircle, ChevronDown, Users
+  Clock, AlertCircle, ChevronDown, Users, Building2
 } from 'lucide-react';
 import { usersAPI, rolesAPI } from '../../services/api';
+import { departmentApi, teamApi } from '../../services/enterpriseApi';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import Pagination from '../../components/Pagination';
@@ -30,6 +31,8 @@ const UserManagement = () => {
   }, [location, navigate]);
   const [users, setUsers] = useState([]);
   const [customRoles, setCustomRoles] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -51,15 +54,26 @@ const UserManagement = () => {
     role: 'agent',
     customRole: '',
     department: '',
-    customDepartment: '',
+    team: '',
     region: ''
   });
+
+  // Filter teams by selected department
+  const availableTeams = newUser.department 
+    ? teams.filter(t => (t.department?._id || t.department) === newUser.department)
+    : [];
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successInfo, setSuccessInfo] = useState({});
 
    const [showEditModal, setShowEditModal] = useState(false);
    const [editUser, setEditUser] = useState(null);
+   
+   // Filter teams for edit modal
+   const editAvailableTeams = editUser?.department 
+     ? teams.filter(t => (t.department?._id || t.department) === editUser.department)
+     : [];
+   
    const [showDeactivateModal, setShowDeactivateModal] = useState(false);
    const [deactivateTarget, setDeactivateTarget] = useState(null);
 
@@ -75,7 +89,10 @@ const UserManagement = () => {
 
   useEffect(() => {
     loadUsers();
-    if (!isSuperAdmin) loadCustomRoles();
+    if (!isSuperAdmin) {
+      loadCustomRoles();
+      loadDepartmentsAndTeams();
+    }
   }, []);
 
   const loadCustomRoles = async () => {
@@ -84,6 +101,19 @@ const UserManagement = () => {
       setCustomRoles(res.data.roles || []);
     } catch (error) {
       console.error('Failed to load custom roles');
+    }
+  };
+
+  const loadDepartmentsAndTeams = async () => {
+    try {
+      const [deptRes, teamRes] = await Promise.all([
+        departmentApi.getAll(),
+        teamApi.getAll()
+      ]);
+      setDepartments(deptRes.data.departments || []);
+      setTeams(teamRes.data.teams || []);
+    } catch (error) {
+      console.error('Failed to load departments/teams');
     }
   };
 
@@ -185,8 +215,7 @@ const UserManagement = () => {
 
     setFormLoading(true);
     try {
-      const resolvedDepartment = newUser.department === 'Others' ? newUser.customDepartment : newUser.department;
-      const response = await usersAPI.registerAgent({ ...newUser, department: resolvedDepartment, customDepartment: undefined });
+      const response = await usersAPI.registerAgent({ ...newUser, department: newUser.department || null, team: newUser.team || null });
 
       setSuccessInfo({
         emailSent: response.data.emailSent,
@@ -197,7 +226,7 @@ const UserManagement = () => {
       setShowSuccessModal(true);
 
       setShowAddModal(false);
-      setNewUser({ name: '', email: '', phone: '', role: isSuperAdmin ? 'manager' : 'agent', customRole: '', department: '', customDepartment: '', region: '' });
+      setNewUser({ name: '', email: '', phone: '', role: isSuperAdmin ? 'manager' : 'agent', customRole: '', department: '', team: '', region: '' });
       setFormErrors({});
       loadUsers();
     } catch (error) {
@@ -241,13 +270,9 @@ const UserManagement = () => {
   };
 
   const handleEditClick = (user) => {
-    const known = ['HR', 'Finance', 'IT'];
-    const dept = known.includes(user.department) ? user.department : (user.department ? 'Others' : '');
-    setEditUser({ 
-      ...user, 
-      department: dept, 
-      customDepartment: dept === 'Others' ? (user.department || '') : '' 
-    });
+    const deptId = user.department?._id || user.department || '';
+    const teamId = user.team?._id || user.team || '';
+    setEditUser({ ...user, department: deptId, team: teamId });
     setShowEditModal(true);
   };
 
@@ -322,7 +347,8 @@ const UserManagement = () => {
         isActive: editUser.isActive,
         status: editUser.status,
         customRole: editUser.customRole || null,
-        department: editUser.department === 'Others' ? (editUser.customDepartment || editUser.department) : editUser.department,
+        department: editUser.department || null,
+        team: editUser.team || null,
         region: editUser.region || ''
       };
       await usersAPI.update(editUser._id, payload);
@@ -475,6 +501,16 @@ return (
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate('/admin/departments')}
+                className="modern-card glass-effect text-gray-700 dark:text-gray-200 px-4 py-2.5 rounded-xl flex items-center space-x-2 hover:bg-gray-100 dark:hover:bg-primary-500/10 transition-all shadow-sm border border-gray-200/50 dark:border-white/10"
+              >
+                <Building2 className="w-4 h-4" />
+                <span>Departments</span>
+              </motion.button>
+
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -728,6 +764,7 @@ return (
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Contact</th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Role & Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Department & Team</th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Performance</th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Joined</th>
                     <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
@@ -787,6 +824,17 @@ return (
                                 {getAccountStatus(userItem).label}
                               </span>
                             </div>
+                          </div>
+                        </td>
+                        
+                        <td className="px-6 py-4">
+                          <div className="space-y-1">
+                            <p className="text-sm text-gray-700">
+                              {userItem.department?.name || (typeof userItem.department === 'string' ? userItem.department : null) || <span className="text-gray-400">—</span>}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {userItem.team?.name || (typeof userItem.team === 'string' ? userItem.team : '')}
+                            </p>
                           </div>
                         </td>
                         
@@ -1010,7 +1058,13 @@ return (
                         {detailsUser.department && (
                           <div>
                             <p className="text-xs text-gray-500 mb-1">Department</p>
-                            <p className="text-sm text-gray-900">{detailsUser.department}</p>
+                            <p className="text-sm text-gray-900">{detailsUser.department?.name || detailsUser.department}</p>
+                          </div>
+                        )}
+                        {detailsUser.team && (
+                          <div>
+                            <p className="text-xs text-gray-500 mb-1">Team</p>
+                            <p className="text-sm text-gray-900">{detailsUser.team?.name || detailsUser.team}</p>
                           </div>
                         )}
                         {detailsUser.region && (
@@ -1258,25 +1312,31 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
                   <select
                     value={newUser.department}
-                    onChange={(e) => setNewUser({ ...newUser, department: e.target.value, customDepartment: e.target.value === 'Others' ? newUser.customDepartment : '' })}
+                    onChange={(e) => setNewUser({ ...newUser, department: e.target.value, team: '' })}
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
                   >
                     <option value="">Select Department</option>
-                    <option value="HR">HR</option>
-                    <option value="Finance">Finance</option>
-                    <option value="IT">IT</option>
-                    <option value="Others">Others</option>
+                    {departments.map(d => (
+                      <option key={d._id} value={d._id}>{d.name}</option>
+                    ))}
                   </select>
-                  {newUser.department === 'Others' && (
-                    <input
-                      type="text"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all mt-2"
-                      placeholder="Enter department name"
-                      value={newUser.customDepartment}
-                      onChange={(e) => setNewUser({ ...newUser, customDepartment: e.target.value })}
-                    />
-                  )}
                 </div>
+
+                {newUser.department && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Team</label>
+                    <select
+                      value={newUser.team}
+                      onChange={(e) => setNewUser({ ...newUser, team: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                    >
+                      <option value="">Select Team (optional)</option>
+                      {teams.filter(t => (t.department?._id || t.department) === newUser.department).map(t => (
+                        <option key={t._id} value={t._id}>{t.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Region</label>
@@ -1421,26 +1481,32 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
                     <select
-                      value={editUser.department}
-                      onChange={(e) => setEditUser({ ...editUser, department: e.target.value, customDepartment: e.target.value === 'Others' ? editUser.customDepartment : '' })}
+                      value={editUser.department || ''}
+                      onChange={(e) => setEditUser({ ...editUser, department: e.target.value, team: '' })}
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
                     >
                       <option value="">Select Department</option>
-                      <option value="HR">HR</option>
-                      <option value="Finance">Finance</option>
-                      <option value="IT">IT</option>
-                      <option value="Others">Others</option>
+                      {departments.map(d => (
+                        <option key={d._id} value={d._id}>{d.name}</option>
+                      ))}
                     </select>
-                    {editUser.department === 'Others' && (
-                      <input
-                        type="text"
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all mt-2"
-                        placeholder="Enter department name"
-                        value={editUser.customDepartment || ''}
-                        onChange={(e) => setEditUser({ ...editUser, customDepartment: e.target.value })}
-                      />
-                    )}
                   </div>
+
+                  {editUser.department && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Team</label>
+                      <select
+                        value={editUser.team || ''}
+                        onChange={(e) => setEditUser({ ...editUser, team: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
+                      >
+                        <option value="">Select Team (optional)</option>
+                        {teams.filter(t => (t.department?._id || t.department) === editUser.department).map(t => (
+                          <option key={t._id} value={t._id}>{t.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
                  <div>
                    <label className="block text-sm font-medium text-gray-700 mb-2">Region</label>
