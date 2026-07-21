@@ -1,5 +1,6 @@
 // Departments & Teams Management - Organization Structure
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Building2, 
   Users, 
@@ -9,9 +10,11 @@ import {
   TrendingUp,
   Target,
   DollarSign,
-  UserPlus
+  UserPlus,
+  ArrowRight
 } from 'lucide-react';
 import { departmentApi, teamApi } from '../../services/enterpriseApi';
+import { usersAPI } from '../../services/api';
 import PROFESSIONAL_COLORS from '../../utils/professionalColors';
 import { useTheme } from '../../context/ThemeContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -20,10 +23,12 @@ import toast from 'react-hot-toast';
 const Departments = () => {
   const { theme } = useTheme();
   const isDark = theme.mode === 'dark';
+  const navigate = useNavigate();
   
   const [loading, setLoading] = useState(true);
   const [departments, setDepartments] = useState([]);
   const [teams, setTeams] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [selectedDept, setSelectedDept] = useState(null);
   const [showDeptModal, setShowDeptModal] = useState(false);
   const [showTeamModal, setShowTeamModal] = useState(false);
@@ -38,12 +43,14 @@ const Departments = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [deptRes, teamRes] = await Promise.all([
+      const [deptRes, teamRes, usersRes] = await Promise.all([
         departmentApi.getAll(),
-        teamApi.getAll()
+        teamApi.getAll(),
+        usersAPI.getAll()
       ]);
       setDepartments(deptRes.data.departments || []);
       setTeams(teamRes.data.teams || []);
+      setAllUsers(usersRes.data || []);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast.error('Failed to load departments and teams');
@@ -121,12 +128,18 @@ const Departments = () => {
 
   const getDepartmentStats = (dept) => {
     const deptTeams = getDepartmentTeams(dept._id);
-    const totalMembers = deptTeams.reduce((sum, t) => sum + (t.members?.length || 0), 0);
+    
+    // Count users directly assigned to this department (including those in teams)
+    const usersInDept = allUsers.filter(u => {
+      const userDeptId = u.department?._id || u.department;
+      return userDeptId === dept._id;
+    });
+    
     const totalRevenue = deptTeams.reduce((sum, t) => sum + (t.stats?.totalRevenue || 0), 0);
     
     return {
       teamCount: deptTeams.length,
-      memberCount: totalMembers,
+      memberCount: usersInDept.length,
       revenue: totalRevenue
     };
   };
@@ -145,16 +158,29 @@ const Departments = () => {
             Manage departments, teams, and organizational hierarchy
           </p>
         </div>
-        <button
-          onClick={() => {
-            setEditingDept(null);
-            setShowDeptModal(true);
-          }}
-          className="flex items-center space-x-2 px-6 py-3 btn-brand rounded-lg hover:shadow-lg transition-all"
-        >
-          <Plus className="w-5 h-5" />
-          <span className="font-semibold">New Department</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/admin/users')}
+            className={`px-4 py-2.5 rounded-lg flex items-center gap-2 transition-all ${
+              isDark 
+                ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' 
+                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>View All Users</span>
+          </button>
+          <button
+            onClick={() => {
+              setEditingDept(null);
+              setShowDeptModal(true);
+            }}
+            className="flex items-center space-x-2 px-6 py-3 btn-brand rounded-lg hover:shadow-lg transition-all"
+          >
+            <Plus className="w-5 h-5" />
+            <span className="font-semibold">New Department</span>
+          </button>
+        </div>
       </div>
 
       {/* Summary Cards */}
@@ -177,7 +203,7 @@ const Departments = () => {
         />
         <StatCard
           title="Total Members"
-          value={teams.reduce((sum, t) => sum + (t.members?.length || 0), 0)}
+          value={allUsers.length}
           icon={UserPlus}
           color={PROFESSIONAL_COLORS.info.main}
           gradient={PROFESSIONAL_COLORS.gradients.teal}
@@ -250,7 +276,18 @@ const Departments = () => {
                   </p>
                 </div>
                 <div>
-                  <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Members</p>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Members</p>
+                    {stats.memberCount > 0 && (
+                      <button
+                        onClick={() => navigate('/admin/users', { state: { filterDepartment: dept._id } })}
+                        className="text-xs text-[var(--primary-color)] hover:text-[var(--primary-hover)] flex items-center gap-1"
+                        title="View all users in this department"
+                      >
+                        <ArrowRight className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
                   <p className={`text-lg font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                     {stats.memberCount}
                   </p>
