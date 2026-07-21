@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, User, Mail, Camera, Lock, Moon, Sun, Upload, Palette } from 'lucide-react';
+import { X, User, Mail, Camera, Lock, Moon, Sun, Upload, Palette, Building, Users as UsersIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme, ACCENT_PRESETS } from '../context/ThemeContext';
 import { authAPI, usersAPI, uploadAPI } from '../services/api';
@@ -110,6 +110,20 @@ const ProfileModal = ({ isOpen, onClose }) => {
               <div className={rowCls}><User className="w-5 h-5 text-primary-500" /><label className={labelCls}>Role</label></div>
               <p className={`${valueCls} capitalize`}>{user?.role || 'N/A'}</p>
             </div>
+            {user?.role === 'agent' && (
+              <>
+                <div className={fieldCls}>
+                  <div className={rowCls}><Building className="w-5 h-5 text-primary-500" /><label className={labelCls}>Department</label></div>
+                  <p className={valueCls}>{user?.department?.name || 'Not assigned'}</p>
+                </div>
+                {user?.team?.name && (
+                  <div className={fieldCls}>
+                    <div className={rowCls}><UsersIcon className="w-5 h-5 text-primary-500" /><label className={labelCls}>Team</label></div>
+                    <p className={valueCls}>{user.team.name}</p>
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           {/* Settings */}
