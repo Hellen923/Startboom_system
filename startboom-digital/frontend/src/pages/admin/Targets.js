@@ -8,7 +8,11 @@ const Targets = () => {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingAgent, setEditingAgent] = useState(null);
-  const [targetValue, setTargetValue] = useState('');
+  const [targetValues, setTargetValues] = useState({
+    monthlyTargetDeals: '',
+    monthlyTargetAmount: '',
+    monthlyTargetClients: ''
+  });
   const [commissionValue, setCommissionValue] = useState('');
 
   useEffect(() => {
@@ -28,18 +32,24 @@ const Targets = () => {
             const perfResponse = await performanceAPI.getAgentStats(agent._id);
             return {
               ...agent,
-              monthlyTarget: perfResponse.data.monthlyTarget || 0,
-              commissionRate: perfResponse.data.commissionRate || 0,
+              monthlyTarget: perfResponse.data.monthlyTarget || agent.monthlyTargetAmount || 0,
+              commissionRate: perfResponse.data.commissionRate || agent.commissionRate || 0,
               monthlySales: perfResponse.data.monthlySales || 0,
               commissionEarned: perfResponse.data.commissionEarned || 0,
+              monthlyTargetDeals: agent.monthlyTargetDeals || perfResponse.data.monthlyTargetDeals || 0,
+              monthlyTargetAmount: agent.monthlyTargetAmount || perfResponse.data.monthlyTargetAmount || 0,
+              monthlyTargetClients: agent.monthlyTargetClients || perfResponse.data.monthlyTargetClients || 0,
             };
           } catch (error) {
             return {
               ...agent,
-              monthlyTarget: 0,
-              commissionRate: 0,
+              monthlyTarget: agent.monthlyTargetAmount || 0,
+              commissionRate: agent.commissionRate || 0,
               monthlySales: 0,
               commissionEarned: 0,
+              monthlyTargetDeals: agent.monthlyTargetDeals || 0,
+              monthlyTargetAmount: agent.monthlyTargetAmount || 0,
+              monthlyTargetClients: agent.monthlyTargetClients || 0,
             };
           }
         })
@@ -56,17 +66,34 @@ const Targets = () => {
 
   const handleEditTarget = (agent) => {
     setEditingAgent(agent._id);
-    setTargetValue(agent.monthlyTarget || '');
+    setTargetValues({
+      monthlyTargetDeals: agent.monthlyTargetDeals || '',
+      monthlyTargetAmount: agent.monthlyTarget || agent.monthlyTargetAmount || '',
+      monthlyTargetClients: agent.monthlyTargetClients || ''
+    });
     setCommissionValue(agent.commissionRate || '');
   };
 
   const handleSaveTarget = async (agentId) => {
     try {
-      const targetNum = Number(targetValue);
+      const dealsNum = targetValues.monthlyTargetDeals ? Number(targetValues.monthlyTargetDeals) : undefined;
+      const amountNum = targetValues.monthlyTargetAmount ? Number(targetValues.monthlyTargetAmount) : undefined;
+      const clientsNum = targetValues.monthlyTargetClients ? Number(targetValues.monthlyTargetClients) : undefined;
       const commissionNum = Number(commissionValue);
 
-      if (isNaN(targetNum) || targetNum < 0) {
-        toast.error('Please enter a valid target amount');
+      // Validate numeric inputs
+      if (dealsNum !== undefined && (isNaN(dealsNum) || dealsNum < 0)) {
+        toast.error('Please enter a valid deals target');
+        return;
+      }
+
+      if (amountNum !== undefined && (isNaN(amountNum) || amountNum < 0)) {
+        toast.error('Please enter a valid amount target');
+        return;
+      }
+
+      if (clientsNum !== undefined && (isNaN(clientsNum) || clientsNum < 0)) {
+        toast.error('Please enter a valid clients target');
         return;
       }
 
@@ -75,9 +102,17 @@ const Targets = () => {
         return;
       }
 
-      // Save target
-      if (targetValue !== '') {
-        await usersAPI.setTargets(agentId, { monthlyTarget: targetNum });
+      // Save all 3 target fields
+      const targetData = {};
+      if (dealsNum !== undefined) targetData.monthlyTargetDeals = dealsNum;
+      if (amountNum !== undefined) {
+        targetData.monthlyTargetAmount = amountNum;
+        targetData.monthlyTarget = amountNum; // Keep both for backwards compatibility
+      }
+      if (clientsNum !== undefined) targetData.monthlyTargetClients = clientsNum;
+
+      if (Object.keys(targetData).length > 0) {
+        await usersAPI.setTargets(agentId, targetData);
       }
 
       // Save commission
@@ -87,7 +122,11 @@ const Targets = () => {
 
       toast.success('Updated successfully!');
       setEditingAgent(null);
-      setTargetValue('');
+      setTargetValues({
+        monthlyTargetDeals: '',
+        monthlyTargetAmount: '',
+        monthlyTargetClients: ''
+      });
       setCommissionValue('');
       
       // Reload data
@@ -100,7 +139,11 @@ const Targets = () => {
 
   const handleCancelEdit = () => {
     setEditingAgent(null);
-    setTargetValue('');
+    setTargetValues({
+      monthlyTargetDeals: '',
+      monthlyTargetAmount: '',
+      monthlyTargetClients: ''
+    });
     setCommissionValue('');
   };
 
@@ -218,7 +261,7 @@ const Targets = () => {
         </motion.div>
       </div>
 
-      {/* Agents Table */}
+      {/* Agents Table - Grouped by Department */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100">
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">Agent Targets & Performance</h2>
@@ -235,10 +278,16 @@ const Targets = () => {
               <thead className="table-header">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Agent
+                    Agent & Department
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Monthly Target
+                    Deals Target
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Amount Target
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Clients Target
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Sales This Month
@@ -258,111 +307,173 @@ const Targets = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {agents.map((agent) => {
-                  const progress = calculateProgress(agent.monthlySales, agent.monthlyTarget);
-                  const isEditing = editingAgent === agent._id;
+                {(() => {
+                  // Group agents by department
+                  const grouped = agents.reduce((acc, agent) => {
+                    const deptName = agent.department?.name || 'Unassigned';
+                    if (!acc[deptName]) acc[deptName] = [];
+                    acc[deptName].push(agent);
+                    return acc;
+                  }, {});
 
-                  return (
-                    <tr key={agent._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{agent.name}</div>
-                          <div className="text-sm text-gray-500">{agent.email}</div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {isEditing ? (
-                          <input
-                            type="number"
-                            value={targetValue}
-                            onChange={(e) => setTargetValue(e.target.value)}
-                            placeholder="Enter target"
-                            className="w-32 px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                          />
-                        ) : (
-                          <div className="text-sm font-medium text-gray-900">
-                            {agent.monthlyTarget > 0 ? formatCurrency(agent.monthlyTarget) : (
-                              <span className="text-gray-400">Not set</span>
-                            )}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatCurrency(agent.monthlySales)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {agent.monthlyTarget > 0 ? (
-                          <div className="w-full">
-                            <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
-                              <span>{progress.toFixed(0)}%</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div
-                                className={`h-2 rounded-full transition-all ${
-                                  progress >= 100 ? 'bg-green-500' :
-                                  progress >= 50 ? 'bg-blue-500' : 'bg-orange-400'
-                                }`}
-                                style={{ width: `${progress}%` }}
-                              />
-                            </div>
-                          </div>
-                        ) : (
-                          <span className="text-gray-400 text-sm">-</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {isEditing ? (
-                          <input
-                            type="number"
-                            value={commissionValue}
-                            onChange={(e) => setCommissionValue(e.target.value)}
-                            placeholder="Enter %"
-                            min="0"
-                            max="100"
-                            className="w-20 px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                          />
-                        ) : (
-                          <div className="text-sm font-medium text-gray-900">
-                            {agent.commissionRate > 0 ? `${agent.commissionRate}%` : (
-                              <span className="text-gray-400">Not set</span>
-                            )}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
-                        {formatCurrency(agent.commissionEarned)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {isEditing ? (
+                  return Object.entries(grouped).map(([deptName, deptAgents]) => (
+                    <React.Fragment key={deptName}>
+                      {/* Department Header */}
+                      <tr className="bg-gray-50">
+                        <td colSpan="9" className="px-6 py-3">
                           <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleSaveTarget(agent._id)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
-                            >
-                              <CheckCircle size={16} />
-                              Save
-                            </button>
-                            <button
-                              onClick={handleCancelEdit}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors"
-                            >
-                              <X size={16} />
-                              Cancel
-                            </button>
+                            <Users className="w-4 h-4 text-gray-600" />
+                            <span className="font-semibold text-gray-900">{deptName}</span>
+                            <span className="text-sm text-gray-500">({deptAgents.length} agents)</span>
                           </div>
-                        ) : (
-                          <button
-                            onClick={() => handleEditTarget(agent)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary-50 hover:bg-primary-100 text-primary-700 rounded-lg font-medium transition-colors"
-                          >
-                            <Edit2 size={16} />
-                            Edit
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
+                        </td>
+                      </tr>
+                      {/* Agent Rows */}
+                      {deptAgents.map((agent) => {
+                        const progress = calculateProgress(agent.monthlySales, agent.monthlyTarget);
+                        const isEditing = editingAgent === agent._id;
+
+                        return (
+                          <tr key={agent._id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div>
+                                <div className="text-sm font-medium text-gray-900">{agent.name}</div>
+                                <div className="text-sm text-gray-500">{agent.email}</div>
+                                {agent.team?.name && (
+                                  <div className="text-xs text-gray-400 mt-1">Team: {agent.team.name}</div>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {isEditing ? (
+                                <input
+                                  type="number"
+                                  value={targetValues.monthlyTargetDeals}
+                                  onChange={(e) => setTargetValues({...targetValues, monthlyTargetDeals: e.target.value})}
+                                  placeholder="Deals"
+                                  className="w-20 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                />
+                              ) : (
+                                <div className="text-sm font-medium text-gray-900">
+                                  {agent.monthlyTargetDeals > 0 ? agent.monthlyTargetDeals : (
+                                    <span className="text-gray-400">-</span>
+                                  )}
+                                </div>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {isEditing ? (
+                                <input
+                                  type="number"
+                                  value={targetValues.monthlyTargetAmount}
+                                  onChange={(e) => setTargetValues({...targetValues, monthlyTargetAmount: e.target.value})}
+                                  placeholder="Amount"
+                                  className="w-28 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                />
+                              ) : (
+                                <div className="text-sm font-medium text-gray-900">
+                                  {agent.monthlyTarget > 0 ? formatCurrency(agent.monthlyTarget) : (
+                                    <span className="text-gray-400">-</span>
+                                  )}
+                                </div>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {isEditing ? (
+                                <input
+                                  type="number"
+                                  value={targetValues.monthlyTargetClients}
+                                  onChange={(e) => setTargetValues({...targetValues, monthlyTargetClients: e.target.value})}
+                                  placeholder="Clients"
+                                  className="w-20 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                />
+                              ) : (
+                                <div className="text-sm font-medium text-gray-900">
+                                  {agent.monthlyTargetClients > 0 ? agent.monthlyTargetClients : (
+                                    <span className="text-gray-400">-</span>
+                                  )}
+                                </div>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {formatCurrency(agent.monthlySales)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {agent.monthlyTarget > 0 ? (
+                                <div className="w-full">
+                                  <div className="flex items-center justify-between text-xs text-gray-600 mb-1">
+                                    <span>{progress.toFixed(0)}%</span>
+                                  </div>
+                                  <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div
+                                      className={`h-2 rounded-full transition-all ${
+                                        progress >= 100 ? 'bg-green-500' :
+                                        progress >= 50 ? 'bg-blue-500' : 'bg-orange-400'
+                                      }`}
+                                      style={{ width: `${progress}%` }}
+                                    />
+                                  </div>
+                                </div>
+                              ) : (
+                                <span className="text-gray-400 text-sm">-</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {isEditing ? (
+                                <input
+                                  type="number"
+                                  value={commissionValue}
+                                  onChange={(e) => setCommissionValue(e.target.value)}
+                                  placeholder="Enter %"
+                                  min="0"
+                                  max="100"
+                                  className="w-20 px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                />
+                              ) : (
+                                <div className="text-sm font-medium text-gray-900">
+                                  {agent.commissionRate > 0 ? `${agent.commissionRate}%` : (
+                                    <span className="text-gray-400">Not set</span>
+                                  )}
+                                </div>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600">
+                              {formatCurrency(agent.commissionEarned)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                              {isEditing ? (
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => handleSaveTarget(agent._id)}
+                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+                                  >
+                                    <CheckCircle size={16} />
+                                    Save
+                                  </button>
+                                  <button
+                                    onClick={handleCancelEdit}
+                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors"
+                                  >
+                                    <X size={16} />
+                                    Cancel
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => handleEditTarget(agent)}
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary-50 hover:bg-primary-100 text-primary-700 rounded-lg font-medium transition-colors"
+                                >
+                                  <Edit2 size={16} />
+                                  Edit
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </React.Fragment>
+                  ));
+                })()}
               </tbody>
             </table>
           </div>
