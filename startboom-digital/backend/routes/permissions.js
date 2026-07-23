@@ -1,212 +1,249 @@
 import express from 'express';
 import Permission from '../models/Permission.js';
-import { tenantAuth } from '../middleware/tenantAuth.js';
-import AuditLog from '../models/AuditLog.js';
+import { tenantAuth, requireRole } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
-// Apply tenant authentication
-router.use(tenantAuth);
-
-
-// Apply tenant authentication
-router.use(tenantAuth);
-
-/**
- * GET /api/permissions
- * Fetch permissions for a specific role
- * Query params: role (required)
- */
-router.get('/', async (req, res) => {
+// Get all permissions (filtered by query params)
+router.get('/', tenantAuth, requireRole(['admin', 'manager']), async (req, res) => {
   try {
-    const { role } = req.query;
+    const { role, department, module } = req.query;
     
-    if (!role) {
-      return res.status(400).json({ message: 'Role parameter is required' });
-    }
-
-    // Fetch all permissions for this role and tenant
-    const permissions = await Permission.find({
-      tenant: req.tenantId,
-      role: role
-    }).lean();
-
-    res.json({ 
-      permissions,
-      role,
-      count: permissions.length 
-    });
+    const query = { tenant: req.tenantId };
+    if (role) query.role = role;
+    if (department) query.department = department;
+    if (module) query.module = module;
+    
+    const permissions = await Permission.find(query)
+      .populate('department', 'name')
+      .sort({ role: 1, module: 1 });
+    
+    res.json({ permissions });
   } catch (error) {
     console.error('Error fetching permissions:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Failed to fetch permissions', error: error.message });
   }
 });
 
-/**
- * POST /api/permissions/bulk
- * Save/update multiple permissions at once
- * Body: { role, permissions: [{ module, role, actions }] }
- */
-router.post('/bulk', async (req, res) => {
+// Get permission by ID
+router.get('/:id', tenantAuth, requireRole(['admin', 'manager']), async (req, res) => {
   try {
-    const { role, permissions } = req.body;
-
-    if (!role || !Array.isArray(permissions)) {
-      return res.status(400).json({ 
-        message: 'Role and permissions array are required' 
-      });
-    }
-
-    // Check admin permission
-    if (req.user.role !== 'admin' && req.user.role !== 'manager' && req.user.role !== 'superadmin') {
-      return res.status(403).json({ message: 'Insufficient permissions' });
-    }
-
-    const session = await Permission.startSession();
-    const savedPermissions = [];
-
-    try {
-      await session.withTransaction(async () => {
-        // Delete existing permissions for this role
-        await Permission.deleteMany({
-          tenant: req.tenantId,
-          role: role
-        }, { session });
-
-        // Insert new permissions
-        const permissionDocs = permissions.map(perm => ({
-          tenant: req.tenantId,
-          role: role,
-          module: perm.module,
-          actions: perm.actions || {}
-        }));
-
-        const created = await Permission.insertMany(permissionDocs, { session });
-        savedPermissions.push(...created);
-      });
-
-      // Create audit log
-      await AuditLog.create({
-        action: 'UPDATE_PERMISSION',
-        description: `Bulk permission update for role: ${role}`,
-        user: req.user.userId,
-        userName: req.user.name || '',
-        userEmail: req.user.email || '',
-        userRole: req.user.role,
-        tenant: req.tenantId,
-        entityType: 'Permission',
-        status: 'success',
-        metadata: { 
-          role, 
-          modulesUpdated: permissions.length,
-          modules: permissions.map(p => p.module)
-        }
-      });
-
-      res.json({ 
-        message: 'Permissions saved successfully',
-        permissions: savedPermissions,
-        count: savedPermissions.length
-      });
-    } catch (error) {
-      throw error;
-    } finally {
-      session.endSession();
-    }
-  } catch (error) {
-    console.error('Error saving permissions:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-/**
- * GET /api/permissions/roles
- * Get all available roles with their permission counts
- */
-router.get('/roles', async (req, res) => {
-  try {
-    const roles = ['manager', 'agent', 'finance_staff', 'hr_staff', 'support_staff'];
+    const permission = await Permission.findOne({
+      _id: req.params.id,
+      tenant: req.tenantId
+    }).populate('department', 'name');
     
-    const roleCounts = await Promise.all(
-      roles.map(async (role) => {
-        const count = await Permission.countDocuments({
-          tenant: req.tenantId,
-          role: role
-        });
-        return { role, permissionCount: count };
-      })
-    );
-
-    res.json({ roles: roleCounts });
-  } catch (error) {
-    console.error('Error fetching roles:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-/**
- * GET /api/permissions/module/:module
- * Get permissions for a specific module across all roles
- */
-router.get('/module/:module', async (req, res) => {
-  try {
-    const { module } = req.params;
-
-    const permissions = await Permission.find({
-      tenant: req.tenantId,
-      module: module
-    }).lean();
-
-    res.json({ 
-      module,
-      permissions,
-      count: permissions.length 
-    });
-  } catch (error) {
-    console.error('Error fetching module permissions:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-/**
- * DELETE /api/permissions/role/:role
- * Delete all permissions for a specific role
- */
-router.delete('/role/:role', async (req, res) => {
-  try {
-    const { role } = req.params;
-
-    // Check admin permission
-    if (req.user.role !== 'admin' && req.user.role !== 'manager' && req.user.role !== 'superadmin') {
-      return res.status(403).json({ message: 'Insufficient permissions' });
+    if (!permission) {
+      return res.status(404).json({ message: 'Permission not found' });
     }
+    
+    res.json({ permission });
+  } catch (error) {
+    console.error('Error fetching permission:', error);
+    res.status(500).json({ message: 'Failed to fetch permission', error: error.message });
+  }
+});
 
-    const result = await Permission.deleteMany({
+// Create or update permission
+router.post('/', tenantAuth, requireRole(['admin']), async (req, res) => {
+  try {
+    const { role, department, module, actions, restrictions, fieldPermissions } = req.body;
+    
+    // Validation
+    if (!role || !module) {
+      return res.status(400).json({ message: 'Role and module are required' });
+    }
+    
+    // Check if permission already exists
+    const existingPermission = await Permission.findOne({
       tenant: req.tenantId,
-      role: role
+      role,
+      module,
+      department: department || null
     });
-
-    // Create audit log
-    await AuditLog.create({
-      action: 'DELETE',
-      description: `Deleted all permissions for role: ${role}`,
-      user: req.user.userId,
-      userName: req.user.name || '',
-      userEmail: req.user.email || '',
-      userRole: req.user.role,
+    
+    if (existingPermission) {
+      // Update existing permission
+      existingPermission.actions = { ...existingPermission.actions, ...actions };
+      if (restrictions) existingPermission.restrictions = restrictions;
+      if (fieldPermissions) existingPermission.fieldPermissions = fieldPermissions;
+      existingPermission.updatedBy = req.user._id;
+      
+      await existingPermission.save();
+      
+      return res.json({
+        message: 'Permission updated successfully',
+        permission: existingPermission
+      });
+    }
+    
+    // Create new permission
+    const permission = new Permission({
       tenant: req.tenantId,
-      entityType: 'Permission',
-      status: 'success',
-      metadata: { role, deletedCount: result.deletedCount }
+      role,
+      department: department || null,
+      module,
+      actions: actions || {},
+      restrictions: restrictions || {},
+      fieldPermissions: fieldPermissions || {},
+      createdBy: req.user._id,
+      updatedBy: req.user._id
     });
-
-    res.json({ 
-      message: 'Permissions deleted successfully',
-      deletedCount: result.deletedCount 
+    
+    await permission.save();
+    
+    res.status(201).json({
+      message: 'Permission created successfully',
+      permission
     });
   } catch (error) {
-    console.error('Error deleting permissions:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('Error creating/updating permission:', error);
+    res.status(500).json({ message: 'Failed to save permission', error: error.message });
+  }
+});
+
+// Update permission
+router.put('/:id', tenantAuth, requireRole(['admin']), async (req, res) => {
+  try {
+    const { actions, restrictions, fieldPermissions, isActive } = req.body;
+    
+    const permission = await Permission.findOne({
+      _id: req.params.id,
+      tenant: req.tenantId
+    });
+    
+    if (!permission) {
+      return res.status(404).json({ message: 'Permission not found' });
+    }
+    
+    // Update fields
+    if (actions) permission.actions = { ...permission.actions, ...actions };
+    if (restrictions) permission.restrictions = restrictions;
+    if (fieldPermissions) permission.fieldPermissions = fieldPermissions;
+    if (typeof isActive !== 'undefined') permission.isActive = isActive;
+    permission.updatedBy = req.user._id;
+    
+    await permission.save();
+    
+    res.json({
+      message: 'Permission updated successfully',
+      permission
+    });
+  } catch (error) {
+    console.error('Error updating permission:', error);
+    res.status(500).json({ message: 'Failed to update permission', error: error.message });
+  }
+});
+
+// Delete permission
+router.delete('/:id', tenantAuth, requireRole(['admin']), async (req, res) => {
+  try {
+    const permission = await Permission.findOne({
+      _id: req.params.id,
+      tenant: req.tenantId
+    });
+    
+    if (!permission) {
+      return res.status(404).json({ message: 'Permission not found' });
+    }
+    
+    await permission.deleteOne();
+    
+    res.json({ message: 'Permission deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting permission:', error);
+    res.status(500).json({ message: 'Failed to delete permission', error: error.message });
+  }
+});
+
+// Get user's permissions (for frontend to check access)
+router.get('/user/me', tenantAuth, async (req, res) => {
+  try {
+    const permissions = await Permission.getUserPermissions(req.user);
+    res.json({ permissions });
+  } catch (error) {
+    console.error('Error fetching user permissions:', error);
+    res.status(500).json({ message: 'Failed to fetch user permissions', error: error.message });
+  }
+});
+
+// Bulk create default permissions for a role
+router.post('/bulk/defaults', tenantAuth, requireRole(['admin']), async (req, res) => {
+  try {
+    const { role, department } = req.body;
+    
+    if (!role) {
+      return res.status(400).json({ message: 'Role is required' });
+    }
+    
+    // Define default permissions by role
+    const defaultPermissions = {
+      agent: {
+        clients: { view: true, create: true, edit: true, viewOwn: true },
+        deals: { view: true, create: true, edit: true, viewOwn: true },
+        sales: { view: true, create: true, edit: true, viewOwn: true },
+        products: { view: true },
+        meetings: { view: true, create: true, edit: true, viewOwn: true }
+      },
+      manager: {
+        clients: { view: true, create: true, edit: true, viewDepartment: true },
+        deals: { view: true, create: true, edit: true, viewDepartment: true },
+        sales: { view: true, create: true, edit: true, viewDepartment: true },
+        products: { view: true, create: true, edit: true },
+        reports: { view: true, export: true },
+        analytics: { view: true },
+        users: { view: true, viewDepartment: true }
+      },
+      admin: {
+        clients: { view: true, create: true, edit: true, delete: true, export: true, viewAll: true },
+        deals: { view: true, create: true, edit: true, delete: true, export: true, viewAll: true },
+        sales: { view: true, create: true, edit: true, delete: true, export: true, viewAll: true },
+        products: { view: true, create: true, edit: true, delete: true, viewAll: true },
+        reports: { view: true, export: true, viewAll: true },
+        analytics: { view: true, viewAll: true },
+        users: { view: true, create: true, edit: true, delete: true, viewAll: true },
+        settings: { view: true, edit: true, viewAll: true }
+      }
+    };
+    
+    const rolePermissions = defaultPermissions[role];
+    if (!rolePermissions) {
+      return res.status(400).json({ message: 'Invalid role' });
+    }
+    
+    const created = [];
+    for (const [module, actions] of Object.entries(rolePermissions)) {
+      // Check if already exists
+      const existing = await Permission.findOne({
+        tenant: req.tenantId,
+        role,
+        module,
+        department: department || null
+      });
+      
+      if (!existing) {
+        const permission = new Permission({
+          tenant: req.tenantId,
+          role,
+          module,
+          department: department || null,
+          actions,
+          createdBy: req.user._id,
+          updatedBy: req.user._id
+        });
+        
+        await permission.save();
+        created.push(permission);
+      }
+    }
+    
+    res.json({
+      message: `Created ${created.length} default permissions for ${role}`,
+      created
+    });
+  } catch (error) {
+    console.error('Error creating default permissions:', error);
+    res.status(500).json({ message: 'Failed to create default permissions', error: error.message });
   }
 });
 
