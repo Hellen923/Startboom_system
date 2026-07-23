@@ -34,6 +34,8 @@ router.get('/', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), asy
     const users = await User.find(query)
       .select('-password -otp')
       .populate('tenant', 'name slug')
+      .populate('department', 'name')
+      .populate('team', 'name')
       .lean()
       .limit(limit ? parseInt(limit) : 1000)
       .sort({ createdAt: -1 });
@@ -191,14 +193,15 @@ router.post('/:id/resend-otp', tenantAuth, requireRole(['admin', 'manager', 'sup
 // Update user profile (admin only, tenant-scoped)
 router.put('/:id', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), async (req, res) => {
   try {
-    const { name, phone, profileImage, nin, isActive, status, department } = req.body;
+    const { name, phone, profileImage, nin, isActive, status, department, team } = req.body;
 
     const update = {};
     if (typeof name !== 'undefined') update.name = name;
     if (typeof phone !== 'undefined') update.phone = phone;
     if (typeof profileImage !== 'undefined') update.profileImage = profileImage;
     if (typeof nin !== 'undefined') update.nin = nin;
-    if (typeof department !== 'undefined') update.department = department;
+    if (typeof department !== 'undefined') update.department = department || null;
+    if (typeof team !== 'undefined') update.team = team || null;
     if (typeof isActive !== 'undefined') {
       update.isActive = isActive;
       if (isActive === false) update.status = 'offline';
@@ -211,7 +214,7 @@ router.put('/:id', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), 
       query,
       update,
       { new: true, runValidators: true }
-    ).select('-password -otp').populate('tenant', 'name slug');
+    ).select('-password -otp').populate('tenant', 'name slug').populate('department', 'name').populate('team', 'name');
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });

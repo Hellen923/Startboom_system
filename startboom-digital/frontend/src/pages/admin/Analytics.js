@@ -5,12 +5,16 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Ba
 import { useChartTheme, ANALYTICS_PALETTE } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
 import api from '../../services/api';
+import { departmentApi } from '../../services/enterpriseApi';
 import toast from 'react-hot-toast';
 
 const Analytics = () => {
   const [conversionData, setConversionData] = useState(null);
   const [clientActivity, setClientActivity] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [allLeaderboard, setAllLeaderboard] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [selectedDept, setSelectedDept] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,12 +32,30 @@ const Analytics = () => {
 
       setConversionData(conversion.data);
       setClientActivity(clients.data);
-      setLeaderboard(agents.data.leaderboard || []);
+      const board = agents.data.leaderboard || [];
+      setAllLeaderboard(board);
+      setLeaderboard(board);
+
+      try {
+        const deptRes = await departmentApi.getAll();
+        setDepartments(deptRes.data.departments || []);
+      } catch {}
     } catch (error) {
       console.error('Error fetching analytics:', error);
       toast.error('Failed to load analytics');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeptFilter = (deptId) => {
+    setSelectedDept(deptId);
+    if (!deptId) {
+      setLeaderboard(allLeaderboard);
+    } else {
+      setLeaderboard(allLeaderboard.filter(e =>
+        (e.agent?.department?._id || e.agent?.department) === deptId
+      ));
     }
   };
 
@@ -106,9 +128,23 @@ const Analytics = () => {
 
       {/* Leaderboard */}
       <div className={`rounded-lg shadow p-6 ${dm.card}`}>
-        <div className="flex items-center mb-6">
-          <Award className="w-6 h-6 text-secondary-500 mr-2" />
-          <h2 className={`text-xl font-bold ${dm.textPrimary}`}>Agent Leaderboard</h2>
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+          <div className="flex items-center">
+            <Award className="w-6 h-6 text-secondary-500 mr-2" />
+            <h2 className={`text-xl font-bold ${dm.textPrimary}`}>Agent Leaderboard</h2>
+          </div>
+          {departments.length > 0 && (
+            <select
+              value={selectedDept}
+              onChange={e => handleDeptFilter(e.target.value)}
+              className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+            >
+              <option value="">All Departments</option>
+              {departments.map(d => (
+                <option key={d._id} value={d._id}>{d.name}</option>
+              ))}
+            </select>
+          )}
         </div>
         <Leaderboard data={leaderboard} />
       </div>
