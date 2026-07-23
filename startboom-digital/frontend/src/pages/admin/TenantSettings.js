@@ -31,6 +31,7 @@ const TenantSettings = () => {
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState('general');
   const [tenant, setTenant] = useState(null);
   const [formData, setFormData] = useState({
@@ -143,6 +144,62 @@ const TenantSettings = () => {
     } catch (error) {
       console.error('Error toggling module:', error);
       toast.error('Failed to update module');
+    }
+  };
+
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+
+    try {
+      setUploading(true);
+      
+      // Create form data
+      const formDataToSend = new FormData();
+      formDataToSend.append('file', file);
+
+      // Upload file
+      const uploadResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formDataToSend
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const uploadData = await uploadResponse.json();
+      const logoUrl = uploadData.url || uploadData.path;
+
+      // Update form data with logo URL
+      setFormData({
+        ...formData,
+        branding: {
+          ...formData.branding,
+          logo: logoUrl
+        }
+      });
+
+      toast.success('Logo uploaded successfully');
+    } catch (error) {
+      console.error('Logo upload error:', error);
+      toast.error('Failed to upload logo');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -402,15 +459,85 @@ const TenantSettings = () => {
                 <Upload className="w-4 h-4 inline mr-2" />
                 Company Logo
               </label>
-              <div className={`border-2 border-dashed rounded-lg p-8 text-center ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
-                <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Click to upload or drag and drop
-                </p>
-                <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'} mt-1`}>
-                  PNG, JPG up to 2MB
-                </p>
-              </div>
+              
+              {formData.branding?.logo ? (
+                <div className="space-y-4">
+                  <div className={`border-2 rounded-lg p-4 ${isDark ? 'border-gray-600 bg-[#334155]' : 'border-gray-300 bg-gray-50'}`}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <img 
+                          src={formData.branding.logo} 
+                          alt="Company Logo" 
+                          className="h-16 w-auto object-contain"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            toast.error('Failed to load logo');
+                          }}
+                        />
+                        <div>
+                          <p className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>Current Logo</p>
+                          <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                            {formData.branding.logo.substring(formData.branding.logo.lastIndexOf('/') + 1)}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, branding: { ...formData.branding, logo: '' }})}
+                        className="px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                  <div className={`border-2 border-dashed rounded-lg p-4 text-center ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
+                    <input
+                      type="file"
+                      id="logo-upload"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                      disabled={uploading}
+                    />
+                    <label 
+                      htmlFor="logo-upload"
+                      className={`cursor-pointer ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                      <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                        {uploading ? 'Uploading...' : 'Upload new logo'}
+                      </p>
+                    </label>
+                  </div>
+                </div>
+              ) : (
+                <div className={`border-2 border-dashed rounded-lg p-8 text-center ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
+                  <input
+                    type="file"
+                    id="logo-upload"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="hidden"
+                    disabled={uploading}
+                  />
+                  <label 
+                    htmlFor="logo-upload"
+                    className={`cursor-pointer ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {uploading ? (
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+                    ) : (
+                      <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                    )}
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                      {uploading ? 'Uploading...' : 'Click to upload or drag and drop'}
+                    </p>
+                    <p className={`text-xs ${isDark ? 'text-gray-500' : 'text-gray-500'} mt-1`}>
+                      PNG, JPG up to 5MB
+                    </p>
+                  </label>
+                </div>
+              )}
             </div>
           </div>
         </div>
