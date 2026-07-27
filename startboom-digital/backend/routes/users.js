@@ -34,16 +34,24 @@ router.get('/', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), asy
     const users = await User.find(query)
       .select('-password -otp')
       .populate('tenant', 'name slug')
-      .populate('department', 'name')
-      .populate('team', 'name')
+      .populate({ path: 'department', select: 'name', match: { _id: { $exists: true } } })
+      .populate({ path: 'team', select: 'name', match: { _id: { $exists: true } } })
       .lean()
       .limit(limit ? parseInt(limit) : 1000)
       .sort({ createdAt: -1 });
 
-      res.json(users);
-    } catch {
-      res.status(500).json({ message: 'Server error' });
-    }
+    // Sanitize: null out department/team fields that failed to populate (were invalid ObjectIds)
+    const sanitized = users.map(u => ({
+      ...u,
+      department: u.department && typeof u.department === 'object' ? u.department : null,
+      team: u.team && typeof u.team === 'object' ? u.team : null
+    }));
+
+    res.json(sanitized);
+  } catch (error) {
+    console.error('GET /users error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
 });
 
 // Create new user with OTP (admin/superadmin only, with usage limits)
@@ -214,7 +222,9 @@ router.put('/:id', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), 
       query,
       update,
       { new: true, runValidators: true }
-    ).select('-password -otp').populate('tenant', 'name slug').populate('department', 'name').populate('team', 'name');
+    ).select('-password -otp').populate('tenant', 'name slug')
+      .populate({ path: 'department', select: 'name', match: { _id: { $exists: true } } })
+      .populate({ path: 'team', select: 'name', match: { _id: { $exists: true } } });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -399,12 +409,8 @@ router.delete('/:id', tenantAuth, requireRole(['admin', 'manager', 'superadmin']
       // Continue
     }
 
-    // 8. Delete user's audit logs (cannot null required user field)
-    try {
-      await AuditLog.deleteMany({ user: user._id, tenant: tenantId }).session(session);
-    } catch {
-      // Continue
-    }
+    // 8. Nullify audit log user references (AuditLog is immutable - cannot delete)
+    // We skip audit log cleanup intentionally; logs are immutable by design.
 
     // 9. Deactivate user's security blocks
     try {
