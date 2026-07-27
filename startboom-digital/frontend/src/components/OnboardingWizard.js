@@ -50,11 +50,11 @@ const MODULE_GROUPS = [
   {
     group: 'Admin Tools',
     modules: [
-      { id: 'goals',       label: 'Goals & Targets',         desc: 'Set monthly/quarterly targets per agent or team' },
-      { id: 'pipelines',   label: 'Pipeline Builder',        desc: 'Customize deal stages for your industry' },
-      { id: 'workflows',   label: 'Workflow Automation',     desc: 'Automate repetitive tasks and assignments' },
-      { id: 'departments', label: 'Departments & Teams',     desc: 'Organize users into departments and teams' },
-      { id: 'branches',    label: 'Branch Locations',        desc: 'Manage multiple office branches' },
+      { id: 'goals',         label: 'Goals & Targets',         desc: 'Set monthly/quarterly targets per agent or team' },
+      { id: 'workflows',     label: 'Workflow Automation',     desc: 'Automate repetitive tasks and assignments' },
+      { id: 'departments',   label: 'Departments & Teams',     desc: 'Organize users into departments and teams' },
+      { id: 'branches',      label: 'Branch Locations',        desc: 'Manage multiple office branches' },
+      { id: 'customFields',  label: 'Custom Fields',           desc: 'Industry-specific fields for clients, deals and sales' },
     ]
   },
 ];
@@ -306,7 +306,7 @@ const StepModules = ({ enabled, onToggle }) => (
   <div className="space-y-6">
     <div>
       <h2 className="text-xl font-bold text-gray-900">Choose your modules</h2>
-      <p className="text-gray-500 text-sm mt-1">Enable only what your business needs. You can change this anytime in Settings.</p>
+      <p className="text-gray-500 text-sm mt-1">Tick only the modules your business needs. You can enable or disable more anytime from Settings.</p>
     </div>
     {MODULE_GROUPS.map(group => (
       <div key={group.group}>
@@ -596,9 +596,9 @@ const OnboardingWizard = ({ onComplete }) => {
     branding: false, localization: false, team: false, client: false
   });
 
-  // Modules state — all on by default
+  // Modules state — all off by default, admin picks what they need
   const [modules, setModules] = useState(
-    Object.fromEntries(ALL_MODULES.map(m => [m.id, true]))
+    Object.fromEntries(ALL_MODULES.map(m => [m.id, false]))
   );
 
   // Branding state
