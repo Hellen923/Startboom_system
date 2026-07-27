@@ -112,6 +112,13 @@ export const TENANT_MODULES = [
     agentPaths: [],
   },
   {
+    id: 'pipelines',
+    label: 'Pipeline Builder',
+    description: 'Customize deal stages and pipeline structure for your industry.',
+    adminPaths: ['/admin/pipelines'],
+    agentPaths: [],
+  },
+  {
     id: 'customFields',
     label: 'Custom Fields',
     description: 'Company-specific fields for capturing industry-specific data.',

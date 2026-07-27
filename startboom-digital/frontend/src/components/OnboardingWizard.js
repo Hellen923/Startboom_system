@@ -51,6 +51,7 @@ const MODULE_GROUPS = [
     group: 'Admin Tools',
     modules: [
       { id: 'goals',         label: 'Goals & Targets',         desc: 'Set monthly/quarterly targets per agent or team' },
+      { id: 'pipelines',     label: 'Pipeline Builder',        desc: 'Customize deal stages for your industry' },
       { id: 'workflows',     label: 'Workflow Automation',     desc: 'Automate repetitive tasks and assignments' },
       { id: 'departments',   label: 'Departments & Teams',     desc: 'Organize users into departments and teams' },
       { id: 'branches',      label: 'Branch Locations',        desc: 'Manage multiple office branches' },
