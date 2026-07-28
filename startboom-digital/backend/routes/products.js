@@ -148,35 +148,31 @@ router.post('/bulk-upload', requireRole(['admin', 'manager']), upload.single('fi
     }
 
     if (productsToInsert.length === 0) {
-      return res.status(400).json({ error: 'No valid products to import', errors: errors.length, errorDetails: errors });
+      return res.json({ message: 'No valid rows to import', imported: 0, errors: errors.length, errorDetails: errors });
     }
 
-    const existingProducts = await Product.find({
-      ...req.tenantQuery,
-      sku: { $in: productsToInsert.map(p => p.sku) }
-    }).select('sku');
-    const existingSkus = new Set(existingProducts.map(p => p.sku));
+    // Upsert — update existing SKUs, insert new ones
+    let imported = 0;
+    for (const product of productsToInsert) {
+      await Product.findOneAndUpdate(
+        { tenant: req.tenantId || null, sku: product.sku },
+        { $set: product },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+      imported++;
+    }
 
-    const finalProducts = productsToInsert.filter((product, index) => {
-      if (existingSkus.has(product.sku)) {
-        errors.push({ line: index + 2, error: `SKU already exists: ${product.sku}`, data: product });
-        return false;
-      }
-      return true;
-    });
-
-    if (finalProducts.length > 0) {
-      await Product.insertMany(finalProducts);
+    try {
       await AuditLog.create({
-        tenant: req.tenantId,
+        tenant: req.tenantId || null,
         user: req.user.userId,
         action: 'product.bulk_upload',
         resource: 'Product',
-        details: { total: results.length, imported: finalProducts.length, errors: errors.length }
+        details: { total: results.length, imported, errors: errors.length }
       });
-    }
+    } catch (e) { /* non-critical */ }
 
-    res.json({ message: 'Bulk upload completed', imported: finalProducts.length, errors: errors.length, errorDetails: errors });
+    res.json({ message: 'Bulk upload completed', imported, errors: errors.length, errorDetails: errors });
   } catch (error) {
     console.error('Error in bulk upload:', error);
     res.status(500).json({ error: 'Server error during bulk upload' });
