@@ -50,14 +50,14 @@ const productSchema = new mongoose.Schema({
   currency: {
     type: String,
     default: 'UGX',
-    enum: ['UGX', 'USD', 'KES', 'TZS']
+    trim: true
   },
   
   // Inventory
   unit: {
     type: String,
     default: 'piece',
-    enum: ['piece', 'box', 'carton', 'kg', 'litre', 'bottle', 'packet', 'dozen']
+    trim: true
   },
   
   stockQuantity: {

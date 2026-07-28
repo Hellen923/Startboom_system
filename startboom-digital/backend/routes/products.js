@@ -92,9 +92,14 @@ router.post('/bulk-upload', requireRole(['admin', 'manager']), upload.single('fi
     const results = [];
     const errors = [];
 
+    // Detect separator — tab-separated (copied from spreadsheet) or comma-separated
+    const rawContent = fs.readFileSync(filePath, 'utf8');
+    const firstLine = rawContent.split('\n')[0];
+    const separator = firstLine.includes('\t') ? '\t' : ',';
+
     await new Promise((resolve, reject) => {
       fs.createReadStream(filePath)
-        .pipe(csv())
+        .pipe(csv({ separator }))
         .on('data', (row) => results.push(row))
         .on('end', resolve)
         .on('error', reject);

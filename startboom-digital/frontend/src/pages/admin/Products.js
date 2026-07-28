@@ -120,8 +120,12 @@ const ProductFormModal = ({ product, onClose, onSaved }) => {
               <select value={form.currency} onChange={set('currency')} className={inputCls}>
                 <option value="UGX">UGX</option>
                 <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
                 <option value="KES">KES</option>
+                <option value="TZS">TZS</option>
                 <option value="NGN">NGN</option>
+                <option value="RWF">RWF</option>
               </select>
             </div>
             <div>
