@@ -459,7 +459,7 @@ const Deals = () => {
           <div className="flex gap-4 flex-wrap">
             {/* Search */}
             <div className="relative">
-              <Search className="pointer-events-none absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-placeholder)]" size={20} />
+              <Search className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} size={20} />
               <input
                 type="text"
                 placeholder="Search deals..."

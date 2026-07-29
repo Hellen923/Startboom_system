@@ -373,7 +373,7 @@ const BulkOperations = () => {
               </div>
 
               <div className="relative">
-                <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} />
                 <input
                   type="text"
                   placeholder="Search clients..."
@@ -457,7 +457,7 @@ const BulkOperations = () => {
               </div>
 
               <div className="relative">
-                <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} />
                 <input
                   type="text"
                   placeholder="Search deals..."

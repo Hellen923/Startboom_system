@@ -34,7 +34,7 @@ const ScheduleFilters = ({ filters, onFiltersChange }) => {
   return (
     <div className="flex items-center space-x-4">
       <div className="relative">
-        <Search size={18} className="pointer-events-none absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        <Search className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} size={18} />
         <input
           type="text"
           placeholder="Search schedules..."
