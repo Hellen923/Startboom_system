@@ -524,48 +524,4 @@ router.post('/reset-password', authLimiter, async (req, res) => {
   }
 });
 
-// DEBUG: Reset admin password (Development only - remove in production)
-router.post('/reset-admin', async (req, res) => {
-  try {
-    // Find admin user
-    const admin = await User.findOne({ role: 'admin' });
-
-    if (!admin) {
-      // Create admin if doesn't exist
-      const newAdmin = new User({
-        name: 'System Administrator',
-        email: 'xtreative@crm.com',
-        password: 'admin123',
-        role: 'admin',
-        isFirstLogin: false,
-        isActive: true
-      });
-      await newAdmin.save();
-      return res.json({
-        message: 'Admin created successfully',
-        email: 'xtreative@crm.com',
-        password: 'admin123'
-      });
-    }
-
-    // Reset admin password to 'admin123'
-    admin.password = 'admin123';
-    admin.isFirstLogin = false;
-    admin.isActive = true;
-    admin.otp = null;
-    admin.otpExpires = null;
-    await admin.save();
-
-    res.json({
-      message: 'Admin password reset successfully',
-      email: admin.email,
-      password: 'admin123',
-      note: 'Please change this password after login'
-    });
-  } catch (error) {
-    console.error('Reset admin error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
 export { router as authRoutes };
