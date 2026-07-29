@@ -24,7 +24,8 @@ import {
   FileText,
   BarChart3,
   Calendar,
-  Settings
+  Settings,
+  Video
 } from 'lucide-react';
 import { MODULE_ROUTE_MAP, isModuleEnabled as isTenantModuleEnabled } from './moduleRegistry';
 
@@ -112,6 +113,7 @@ const ALL_NAV_ITEMS = {
       items: [
         { path: '/agent/schedules', icon: Calendar, label: 'Schedules & Calendar', requiredRole: ['agent'] },
         { path: '/agent/tasks', icon: ListTodo, label: 'Tasks', requiredRole: ['agent'] },
+        { path: '/agent/meetings', icon: Video, label: 'Meetings', requiredRole: ['agent'] },
         { path: '/agent/issues', icon: AlertTriangle, label: 'Issues & Support', requiredRole: ['agent'] },
         { path: '/agent/notes', icon: FileText, label: 'Notes', requiredRole: ['agent'] },
       ]

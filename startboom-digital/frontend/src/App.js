@@ -28,6 +28,7 @@ const Analytics = lazy(() => import('./pages/admin/Analytics'));
 const Settings = lazy(() => import('./pages/admin/Settings'));
 const AgentProducts = lazy(() => import('./pages/agent/Products'));
 const MyTerritory = lazy(() => import('./pages/agent/MyTerritory'));
+const AgentMeetings = lazy(() => import('./pages/agent/Meetings'));
 const Targets = lazy(() => import('./pages/admin/Targets'));
 const SuperAdminDashboardFull = lazy(() => import('./pages/superadmin/SuperAdminDashboard'));
 const TenantManagement = lazy(() => import('./pages/superadmin/TenantManagement'));
@@ -312,6 +313,11 @@ function App() {
                 <Route path="/agent/my-territory" element={
                   <ProtectedRoute allowedRoles={['agent']}>
                     <MyTerritory />
+                  </ProtectedRoute>
+                } />
+                <Route path="/agent/meetings" element={
+                  <ProtectedRoute allowedRoles={['agent']}>
+                    <AgentMeetings />
                   </ProtectedRoute>
                 } />
 
