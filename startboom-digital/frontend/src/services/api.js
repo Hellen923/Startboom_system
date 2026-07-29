@@ -287,6 +287,27 @@ export const issuesAPI = {
   delete: (id) => api.delete(`/issues/${id}`),
 };
 
+// Departments API
+export const departmentsAPI = {
+  getAll: (params) => api.get('/departments', { params }),
+  getById: (id) => api.get(`/departments/${id}`),
+  create: (data) => api.post('/departments', data),
+  update: (id, data) => api.put(`/departments/${id}`, data),
+  delete: (id) => api.delete(`/departments/${id}`),
+  getMembers: (id) => api.get(`/departments/${id}/members`),
+};
+
+// Teams API
+export const teamsAPI = {
+  getAll: (params) => api.get('/teams', { params }),
+  getById: (id) => api.get(`/teams/${id}`),
+  create: (data) => api.post('/teams', data),
+  update: (id, data) => api.put(`/teams/${id}`, data),
+  delete: (id) => api.delete(`/teams/${id}`),
+  addMember: (id, userId) => api.post(`/teams/${id}/members`, { userId }),
+  removeMember: (id, userId) => api.delete(`/teams/${id}/members/${userId}`),
+};
+
 // Products API
 export const productsAPI = {
   getAll: (params) => api.get('/products', { params }),

@@ -79,6 +79,8 @@ const ALL_NAV_ITEMS = {
     {
       title: 'Operations',
       items: [
+        { path: '/admin/targets', icon: Target, label: 'Targets', requiredRole: ['admin', 'manager'] },
+        { path: '/admin/tenant-settings', icon: Building2, label: 'Company Settings', requiredRole: ['admin', 'manager'] },
         { path: '/admin/bulk-operations', icon: ArrowLeftRight, label: 'Bulk Operations', requiredRole: ['admin', 'manager'] },
         { path: '/admin/settings', icon: Settings, label: 'Settings', requiredRole: ['admin', 'manager'] },
       ]
