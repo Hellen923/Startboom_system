@@ -29,9 +29,9 @@ const Settings = () => {
   const [profileData, setProfileData] = useState({
     name: user?.name || "",
     email: user?.email || "",
-    profilePicture: user?.profilePicture || "",
+    profileImage: user?.profileImage || "",
   });
-  const [profilePicturePreview, setProfilePicturePreview] = useState(user?.profilePicture || '');
+  const [profilePicturePreview, setProfilePicturePreview] = useState(user?.profileImage || '');
   const [uploadingProfilePicture, setUploadingProfilePicture] = useState(false);
 
   // Password change
@@ -139,10 +139,10 @@ const Settings = () => {
 
   // Sync profile picture when user updates
   useEffect(() => {
-    const pic = user?.profilePicture || '';
+    const pic = user?.profileImage || '';
     setProfilePicturePreview(pic);
-    setProfileData(prev => ({ ...prev, profilePicture: pic }));
-  }, [user?.profilePicture]); // eslint-disable-line
+    setProfileData(prev => ({ ...prev, profileImage: pic }));
+  }, [user?.profileImage]); // eslint-disable-line
 
   useEffect(() => {
     if (activeTab === 'security') loadAuditLogs();
@@ -295,16 +295,14 @@ const Settings = () => {
     }
     try {
       setUploadingProfilePicture(true);
-      const formData = new FormData();
-      formData.append('file', file);
-      const res = await uploadAPI.uploadFile(formData);
+      const res = await uploadAPI.uploadFile(file);
       const pictureUrl = res.data.url;
       setProfilePicturePreview(pictureUrl);
-      setProfileData(prev => ({ ...prev, profilePicture: pictureUrl }));
+      setProfileData(prev => ({ ...prev, profileImage: pictureUrl }));
       
       // Save to user immediately
       const userId = user?._id || user?.id;
-      const profileRes = await usersAPI.update(userId, { profilePicture: pictureUrl });
+      const profileRes = await usersAPI.update(userId, { profileImage: pictureUrl });
       
       // Refresh user so sidebar updates
       const meRes = await authAPI.getMe();
