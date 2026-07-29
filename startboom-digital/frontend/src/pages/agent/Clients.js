@@ -817,7 +817,7 @@ const Clients = () => {
           {/* Search */}
           <div className="flex-1">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="pointer-events-none absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-placeholder)] w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search clients by name, email, company, or phone..."
