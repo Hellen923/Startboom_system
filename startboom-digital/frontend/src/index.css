@@ -541,6 +541,22 @@ label {
 }
 .search-input::placeholder { color: var(--color-text-placeholder); }
 
+/* Search icon inside input wrappers — always use placeholder color */
+.search-icon-wrapper .search-icon,
+.relative > svg.search-icon,
+[class*="search"] > .lucide-search {
+  color: var(--color-text-placeholder) !important;
+}
+
+/* Tailwind focus:ring with CSS variable primary */
+.focus\:ring-primary-500:focus,
+.focus\:ring-2:focus {
+  --tw-ring-color: var(--primary-ring);
+}
+.focus\:border-primary-500:focus {
+  border-color: var(--primary-color) !important;
+}
+
 /* ============================================================
    DIVIDERS & TEXT UTILITIES
    ============================================================ */
