@@ -116,23 +116,17 @@ const Reports = () => {
     }
   }, [filters]);
 
-  // Load Agents List
-  const loadAgents = async () => {
-    try {
-      const res = await usersAPI.getAll();
-      const agents = res.data?.filter(u => u.role === 'agent') || [];
-      setAgentsList(agents);
-    } catch (error) {
-      console.error('Failed to load agents:', error);
-      toast.error('Failed to load agents list');
-    }
-  };
-
-  // Initial Load
+  // Initial Load — loadReports already fetches agents internally, no need to call loadAgents separately
   useEffect(() => {
     loadReports();
-    loadAgents();
-  }, []);
+  }, [filters]);
+
+  // Populate agentsList from detailedData once loaded
+  useEffect(() => {
+    if (detailedData.agents.length > 0) {
+      setAgentsList(detailedData.agents);
+    }
+  }, [detailedData.agents]);
 
   // Export to CSV (Tables Only)
   const handleExportCSV = () => {
