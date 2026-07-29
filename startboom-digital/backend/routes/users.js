@@ -202,9 +202,17 @@ router.post('/:id/resend-otp', tenantAuth, requireRole(['admin', 'manager', 'sup
    }
 });
 
-// Update user profile (admin only, tenant-scoped)
-router.put('/:id', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), async (req, res) => {
+// Update user profile — admins can update anyone in their tenant; agents can only update their own profile
+router.put('/:id', tenantAuth, async (req, res) => {
   try {
+    const isSelf = String(req.user.userId) === String(req.params.id);
+    const isAdminRole = ['admin', 'manager', 'superadmin'].includes(req.user.role);
+
+    // Agents can only update their own profile
+    if (!isAdminRole && !isSelf) {
+      return res.status(403).json({ message: 'Access denied. You can only update your own profile.' });
+    }
+
     const { name, phone, profileImage, nin, isActive, status, department, team } = req.body;
 
     const update = {};
@@ -212,13 +220,17 @@ router.put('/:id', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), 
     if (typeof phone !== 'undefined') update.phone = phone;
     if (typeof profileImage !== 'undefined') update.profileImage = profileImage;
     if (typeof nin !== 'undefined') update.nin = nin;
-    if (typeof department !== 'undefined') update.department = mongoose.isValidObjectId(department) ? department : null;
-    if (typeof team !== 'undefined') update.team = mongoose.isValidObjectId(team) ? team : null;
-    if (typeof isActive !== 'undefined') {
-      update.isActive = isActive;
-      if (isActive === false) update.status = 'offline';
+
+    // Only admins can change department, team, active status, role-sensitive fields
+    if (isAdminRole) {
+      if (typeof department !== 'undefined') update.department = mongoose.isValidObjectId(department) ? department : null;
+      if (typeof team !== 'undefined') update.team = mongoose.isValidObjectId(team) ? team : null;
+      if (typeof isActive !== 'undefined') {
+        update.isActive = isActive;
+        if (isActive === false) update.status = 'offline';
+      }
+      if (typeof status !== 'undefined') update.status = status;
     }
-    if (typeof status !== 'undefined') update.status = status;
 
     // Find and update user with tenant filtering
     const query = addTenantFilter(req, { _id: req.params.id });
