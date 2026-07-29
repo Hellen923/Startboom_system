@@ -34,8 +34,11 @@ router.post('/login', loginLimiter, async (req, res) => {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    // Check if user exists and populate tenant
-    const user = await User.findOne({ email: normalizedEmail }).populate('tenant');
+    // Check if user exists and populate tenant, department, team
+    const user = await User.findOne({ email: normalizedEmail })
+      .populate('tenant')
+      .populate('department', 'name')
+      .populate('team', 'name');
     if (!user) {
       try {
         const fallbackUser = await User.findOne({ role: 'superadmin' });
@@ -233,6 +236,8 @@ router.post('/login', loginLimiter, async (req, res) => {
       isActive: user.isActive,
       status: user.status,
       profileImage: user.profileImage || null,
+      department: user.department ? { _id: user.department._id, name: user.department.name } : null,
+      team: user.team ? { _id: user.team._id, name: user.team.name } : null,
       performanceScore: user.performanceScore,
       totalDeals: user.totalDeals,
       successfulDeals: user.successfulDeals,
@@ -350,7 +355,11 @@ router.get('/me', async (req, res) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
-    const user = await User.findById(decoded.userId).select('-password -otp').populate('tenant', 'name slug branding settings modules');
+    const user = await User.findById(decoded.userId)
+      .select('-password -otp')
+      .populate('tenant', 'name slug branding settings modules')
+      .populate('department', 'name')
+      .populate('team', 'name');
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });

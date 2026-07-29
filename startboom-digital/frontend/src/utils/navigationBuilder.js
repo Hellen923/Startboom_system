@@ -54,8 +54,8 @@ const ALL_NAV_ITEMS = {
       title: 'Workspace',
       items: [
         { path: '/admin', icon: PieChart, label: 'Dashboard', requiredRole: ['admin', 'manager'] },
-        { path: '/admin/users', icon: UserPlus, label: 'User Management', requiredRole: ['admin', 'manager'], requiredPermission: 'users:view' },
         { path: '/admin/departments', icon: Layers, label: 'Departments & Teams', requiredRole: ['admin', 'manager'], requiredPermission: 'departments:view' },
+        { path: '/admin/users', icon: UserPlus, label: 'User Management', requiredRole: ['admin', 'manager'], requiredPermission: 'users:view' },
         { path: '/admin/branches', icon: Building2, label: 'Branch Locations', requiredRole: ['admin', 'manager'], requiredPermission: 'branches:view' },
         { path: '/admin/pipelines', icon: GitBranch, label: 'Pipeline Builder', requiredRole: ['admin', 'manager'], requiredPermission: 'pipelines:view' },
         { path: '/admin/custom-fields', icon: Sliders, label: 'Custom Fields', requiredRole: ['admin', 'manager'], requiredPermission: 'custom_fields:view' },

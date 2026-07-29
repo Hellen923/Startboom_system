@@ -225,9 +225,11 @@ const agentNavSections = [
   };
 
   const SidebarHeader = () => {
-    const tenantLogo = !isSuperAdmin ? user?.tenant?.branding?.logo : null;
+    const tenantLogo = !isSuperAdmin
+      ? (user?.tenant?.branding?.logo || localStorage.getItem('tenant_logo'))
+      : null;
     const logo = isSuperAdmin ? PLATFORM_BRAND.logo : tenantLogo;
-    const tenantName = isSuperAdmin ? PLATFORM_BRAND.name : user?.tenant?.name || PLATFORM_BRAND.name;
+    const tenantName = isSuperAdmin ? PLATFORM_BRAND.name : (user?.tenant?.name || localStorage.getItem('tenantName') || PLATFORM_BRAND.name);
     const initial = tenantName.charAt(0).toUpperCase();
     return (
     <div className="flex items-center justify-between px-6 py-5 border-b sidebar-divider">
@@ -284,8 +286,13 @@ const agentNavSections = [
     <div className="sidebar-footer p-4">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white font-bold text-sm border border-white/20 overflow-hidden">
-          {user?.profilePicture ? (
-            <img src={user.profilePicture} alt={user?.name || 'User'} className="w-full h-full object-cover" />
+          {(user?.profileImage || user?.profilePicture || user?.photo) ? (
+            <img
+              src={user.profileImage || user.profilePicture || user.photo}
+              alt={user?.name || 'User'}
+              className="w-full h-full object-cover"
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
           ) : (
             userInitial
           )}
