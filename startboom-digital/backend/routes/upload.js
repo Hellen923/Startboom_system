@@ -1,75 +1,43 @@
 import express from 'express';
-import path from 'path';
-import fs from 'fs';
 import multer from 'multer';
-import { fileURLToPath } from 'url';
+import { v2 as cloudinary } from 'cloudinary';
+import { tenantAuth } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-import { tenantAuth } from '../middleware/tenantAuth.js';
-
-const uploadDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname || '').toLowerCase();
-    const safeExt = ext && ext.length <= 10 ? ext : '';
-    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    cb(null, `upload-${unique}${safeExt}`);
-  }
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const fileFilter = (req, file, cb) => {
-  if (!file?.mimetype?.startsWith('image/')) {
-    return cb(new Error('Only image uploads are allowed'));
-  }
-  return cb(null, true);
-};
-
+// Use memory storage — file goes to Cloudinary, never touches disk
 const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }
+  storage: multer.memoryStorage(),
+  fileFilter: (req, file, cb) => {
+    if (!file?.mimetype?.startsWith('image/')) {
+      return cb(new Error('Only image uploads are allowed'));
+    }
+    cb(null, true);
+  },
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
 });
 
 router.get('/', (req, res) => {
   res.json({ status: 'ok', route: 'upload' });
 });
 
-// Error handling middleware for multer errors
-const handleMulterError = (err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ message: 'File size exceeds 5MB limit' });
-    }
-    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-      return res.status(400).json({ message: 'Unexpected file field' });
-    }
-    return res.status(400).json({ message: 'File upload error', error: err.message });
-  }
-  if (err) {
-    // Handle fileFilter errors
-    if (err.message === 'Only image uploads are allowed') {
-      return res.status(400).json({ message: err.message });
-    }
-    return res.status(400).json({ message: 'Upload error', error: err.message });
-  }
-  next();
-};
-
 router.post('/', tenantAuth, (req, res, next) => {
   upload.single('file')(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ message: 'File size exceeds 5MB limit' });
+      }
+      return res.status(400).json({ message: 'File upload error', error: err.message });
+    }
     if (err) {
-      return handleMulterError(err, req, res, next);
+      return res.status(400).json({ message: err.message || 'Upload error' });
     }
     next();
   });
@@ -79,18 +47,29 @@ router.post('/', tenantAuth, (req, res, next) => {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    const publicPath = `/uploads/${req.file.filename}`;
-    const proto = (req.headers['x-forwarded-proto'] || req.protocol || 'https').toString();
-    const host = req.get('host');
-    const baseUrl = host ? `${proto}://${host}` : '';
+    // Upload buffer directly to Cloudinary
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'honeypot-crm',
+          resource_type: 'image',
+          transformation: [{ quality: 'auto', fetch_format: 'auto' }],
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
 
     return res.status(201).json({
-      filename: req.file.filename,
-      path: publicPath,
-      url: baseUrl ? `${baseUrl}${publicPath}` : publicPath
+      filename: result.public_id,
+      path: result.secure_url,
+      url: result.secure_url,
     });
   } catch (error) {
-    console.error('Upload error:', error);
+    console.error('Cloudinary upload error:', error);
     return res.status(500).json({ message: 'Upload failed', error: error.message });
   }
 });
