@@ -117,22 +117,6 @@ const userSchema = new mongoose.Schema({
      type: Number,
      default: 0
    },
-   monthlyTargetDeals: {
-     type: Number,
-     default: 0
-   },
-   monthlyTargetAmount: {
-     type: Number,
-     default: 0
-   },
-   monthlyTargetClients: {
-     type: Number,
-     default: 0
-   },
-  monthlySalesAmount: {
-    type: Number,
-    default: 0
-  },
   agentRank: {
     type: Number,
     default: 0
