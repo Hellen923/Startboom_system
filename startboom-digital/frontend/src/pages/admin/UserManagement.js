@@ -661,7 +661,7 @@ return (
         <div className="mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="flex-1 min-w-0 relative">
-              <Search className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} />
+              <Search size={18} className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} />
               <input
                 type="text"
                 placeholder="Search by name, email, or phone..."

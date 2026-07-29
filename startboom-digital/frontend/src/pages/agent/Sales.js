@@ -451,7 +451,7 @@ const Sales = () => {
               <p className="text-sm text-gray-500 mt-1">View and manage all sales transactions</p>
             </div>
             <div className="relative">
-              <Search className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} />
+              <Search size={18} className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} />
               <input
                 value={salesSearch}
                 onChange={e => { setSalesSearch(e.target.value); setSalesPage(1); }}
@@ -694,7 +694,7 @@ const Sales = () => {
 
                   <div className="relative">
                     <div className="relative">
-                      <Search className="pointer-events-none absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-placeholder)] w-5 h-5" />
+                      <Search size={18} className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} />
                       <input
                         type="text"
                         value={clientSearchTerm}

@@ -181,7 +181,7 @@ export default function Tasks() {
       <div className="bg-white rounded-2xl shadow-sm p-5">
         <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
           <div className="relative w-full lg:w-96">
-            <Search className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} size={18} />
+            <Search size={18} className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} />
             <input
               type="text"
               placeholder="Search tasks..."
@@ -330,7 +330,7 @@ export default function Tasks() {
                       value={form.clientId}
                       onChange={e => setForm({ ...form, clientId: e.target.value })}
                       required
-                      className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full border border-slate-200 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
                       <option value="">Select a client…</option>
                       {clients.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}

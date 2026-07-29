@@ -383,7 +383,7 @@ const Products = () => {
       {/* Toolbar */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="relative flex-1">
-          <Search className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} />
+          <Search size={18} className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} />
           <input
             value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
             placeholder="Search by name or SKU..."

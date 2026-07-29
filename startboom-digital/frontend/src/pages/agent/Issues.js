@@ -197,7 +197,7 @@ export default function Issues() {
       <div className="bg-white rounded-2xl shadow-sm p-5">
         <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
           <div className="relative w-full lg:w-96">
-            <Search className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} size={18} />
+            <Search size={18} className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} />
             <input
               type="text"
               placeholder="Search issues by client, type, or description…"
@@ -370,7 +370,7 @@ export default function Issues() {
                     <select
                       value={form.type}
                       onChange={e => setForm({ ...form, type: e.target.value })}
-                      className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      className="w-full border border-slate-200 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
                       {ISSUE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
