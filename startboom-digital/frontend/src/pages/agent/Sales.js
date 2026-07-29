@@ -427,12 +427,8 @@ const Sales = () => {
 
   return (
     <div className="p-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Sales</h1>
-          <p className="text-gray-600 mt-1">Track sales performance and revenue results</p>
-        </div>
+      {/* New Sale Button */}
+      <div className="flex justify-end mb-6">
         <button
           onClick={() => setShowModal(true)}
           className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors shadow-sm"
@@ -467,7 +463,7 @@ const Sales = () => {
         </div>
           {loading ? (
             <div className="p-16 text-center">
-              <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-primary-200 border-t-primary-600"></div>
+              <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-primary-200 border-t-[var(--primary-color)]"></div>
               <p className="mt-4 text-gray-600 font-medium">Loading sales...</p>
             </div>
           ) : sales.length === 0 ? (
@@ -727,7 +723,7 @@ const Sales = () => {
                         <div className="absolute z-50 w-full mt-2 bg-white border-2 border-gray-300 rounded-lg shadow-xl max-h-72 overflow-y-auto">
                           {loadingClients ? (
                             <div className="px-4 py-6 text-center">
-                              <div className="inline-block w-6 h-6 border-3 border-primary-200 border-t-primary-600 rounded-full animate-spin"></div>
+                              <div className="inline-block w-6 h-6 border-3 border-primary-200 border-t-[var(--primary-color)] rounded-full animate-spin"></div>
                               <p className="text-sm text-gray-500 mt-2">Loading clients...</p>
                             </div>
                           ) : filteredClients.length === 0 ? (

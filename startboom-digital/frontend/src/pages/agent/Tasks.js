@@ -150,7 +150,7 @@ export default function Tasks() {
   const isOverdue = (task) => !task.completed && task.dueDate && new Date(task.dueDate) < new Date();
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500" /></div>;
+    return <div className="flex items-center justify-center min-h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-color)]" /></div>;
   }
 
   return (
@@ -181,13 +181,13 @@ export default function Tasks() {
       <div className="bg-white rounded-2xl shadow-sm p-5">
         <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
           <div className="relative w-full lg:w-96">
-            <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-placeholder)]" size={18} />
             <input
               type="text"
               placeholder="Search tasks..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-slate-200 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
           <div className="flex gap-3 flex-wrap">
@@ -325,12 +325,12 @@ export default function Tasks() {
                 <div className="md:col-span-2">
                   <label className="block mb-2 font-medium text-slate-700">Client / Organization *</label>
                   <div className="relative">
-                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-placeholder)]" size={18} />
                     <select
                       value={form.clientId}
                       onChange={e => setForm({ ...form, clientId: e.target.value })}
                       required
-                      className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
                       <option value="">Select a client…</option>
                       {clients.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
@@ -344,7 +344,7 @@ export default function Tasks() {
                     value={form.contactPerson}
                     onChange={e => setForm({ ...form, contactPerson: e.target.value })}
                     placeholder="Main point of contact"
-                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div>
@@ -352,7 +352,7 @@ export default function Tasks() {
                   <select
                     value={form.subject}
                     onChange={e => setForm({ ...form, subject: e.target.value })}
-                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     {TASK_SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
@@ -373,7 +373,7 @@ export default function Tasks() {
                   <select
                     value={form.priority}
                     onChange={e => setForm({ ...form, priority: e.target.value })}
-                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     {TASK_PRIORITIES.map(p => <option key={p} value={p}>{p}</option>)}
                   </select>
@@ -383,7 +383,7 @@ export default function Tasks() {
                   <select
                     value={form.status}
                     onChange={e => setForm({ ...form, status: e.target.value })}
-                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     {TASK_STATUSES.map(s => <option key={s} value={s}>{statusMeta[s]?.label || s}</option>)}
                   </select>
@@ -394,7 +394,7 @@ export default function Tasks() {
                     type="date"
                     value={form.dueDate}
                     onChange={e => setForm({ ...form, dueDate: e.target.value })}
-                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
               </div>
@@ -405,7 +405,7 @@ export default function Tasks() {
                   onChange={e => setForm({ ...form, description: e.target.value })}
                   rows={3}
                   placeholder="Describe the task in detail…"
-                  className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
                 />
               </div>
               {/* Priority preview bar */}

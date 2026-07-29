@@ -160,7 +160,7 @@ export default function Issues() {
     setTimeout(() => { document.title = 'Issues'; }, 5000);
   };
 
-  if (loading) return <div className="flex items-center justify-center min-h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500" /></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-64"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-color)]" /></div>;
 
   return (
     <div className="p-6 space-y-6">
@@ -197,13 +197,13 @@ export default function Issues() {
       <div className="bg-white rounded-2xl shadow-sm p-5">
         <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
           <div className="relative w-full lg:w-96">
-            <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-placeholder)]" size={18} />
             <input
               type="text"
               placeholder="Search issues by client, type, or description…"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-slate-200 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
           <div className="flex gap-3 flex-wrap">
@@ -347,7 +347,7 @@ export default function Issues() {
                     value={form.clientId}
                     onChange={e => setForm({ ...form, clientId: e.target.value })}
                     required
-                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     <option value="">Select a client…</option>
                     {clients.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
@@ -360,17 +360,17 @@ export default function Issues() {
                     value={form.contactPerson}
                     onChange={e => setForm({ ...form, contactPerson: e.target.value })}
                     placeholder="Name of the contact on this issue"
-                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div>
                   <label className="block mb-2 font-medium text-slate-700">Type / Reason *</label>
                   <div className="relative">
-                    <AlertTriangle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <AlertTriangle className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-placeholder)]" size={18} />
                     <select
                       value={form.type}
                       onChange={e => setForm({ ...form, type: e.target.value })}
-                      className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      className="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     >
                       {ISSUE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
@@ -401,7 +401,7 @@ export default function Issues() {
                   required
                   rows={4}
                   placeholder="Describe the issue in detail so the support team can understand and act…"
-                  className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
                 />
               </div>
               <div className="flex justify-end gap-4 pt-4 border-t border-slate-100">
