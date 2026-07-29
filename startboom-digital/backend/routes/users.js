@@ -30,24 +30,27 @@ router.get('/', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), asy
       query.role = role;
     }
 
+    // Fix stale string values (e.g. "HR") that can't be cast to ObjectId — null them out first
+    await User.updateMany(
+      { ...query, department: { $type: 'string' } },
+      { $set: { department: null } }
+    ).catch(() => {});
+    await User.updateMany(
+      { ...query, team: { $type: 'string' } },
+      { $set: { team: null } }
+    ).catch(() => {});
+
     // Get users with tenant filtering
     const users = await User.find(query)
       .select('-password -otp')
       .populate('tenant', 'name slug')
-      .populate({ path: 'department', select: 'name', match: { _id: { $exists: true } } })
-      .populate({ path: 'team', select: 'name', match: { _id: { $exists: true } } })
+      .populate('department', 'name')
+      .populate('team', 'name')
       .lean()
       .limit(limit ? parseInt(limit) : 1000)
       .sort({ createdAt: -1 });
 
-    // Sanitize: null out department/team fields that failed to populate (were invalid ObjectIds)
-    const sanitized = users.map(u => ({
-      ...u,
-      department: u.department && typeof u.department === 'object' ? u.department : null,
-      team: u.team && typeof u.team === 'object' ? u.team : null
-    }));
-
-    res.json(sanitized);
+    res.json(users);
   } catch (error) {
     console.error('GET /users error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -57,7 +60,7 @@ router.get('/', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), asy
 // Create new user with OTP (admin/superadmin only, with usage limits)
 router.post('/', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), checkUsageLimit('users'), async (req, res) => {
   try {
-    const { name, email, phone, role = 'agent', nin = null, department = '' } = req.body;
+    const { name, email, phone, role = 'agent', nin = null, department = null, team = null } = req.body;
     const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
 
     if (!normalizedEmail) {
@@ -89,7 +92,8 @@ router.post('/', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), ch
       email: normalizedEmail,
       phone,
       nin,
-      department,
+      department: mongoose.isValidObjectId(department) ? department : null,
+      team: mongoose.isValidObjectId(team) ? team : null,
       password: otp,
       role,
       isFirstLogin: true,
@@ -208,8 +212,8 @@ router.put('/:id', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), 
     if (typeof phone !== 'undefined') update.phone = phone;
     if (typeof profileImage !== 'undefined') update.profileImage = profileImage;
     if (typeof nin !== 'undefined') update.nin = nin;
-    if (typeof department !== 'undefined') update.department = department || null;
-    if (typeof team !== 'undefined') update.team = team || null;
+    if (typeof department !== 'undefined') update.department = mongoose.isValidObjectId(department) ? department : null;
+    if (typeof team !== 'undefined') update.team = mongoose.isValidObjectId(team) ? team : null;
     if (typeof isActive !== 'undefined') {
       update.isActive = isActive;
       if (isActive === false) update.status = 'offline';
@@ -222,9 +226,7 @@ router.put('/:id', tenantAuth, requireRole(['admin', 'manager', 'superadmin']), 
       query,
       update,
       { new: true, runValidators: true }
-    ).select('-password -otp').populate('tenant', 'name slug')
-      .populate({ path: 'department', select: 'name', match: { _id: { $exists: true } } })
-      .populate({ path: 'team', select: 'name', match: { _id: { $exists: true } } });
+    ).select('-password -otp').populate('tenant', 'name slug').populate('department', 'name').populate('team', 'name');
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
