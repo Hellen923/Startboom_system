@@ -3,51 +3,68 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Never cache — always create a fresh transporter so Render spin-ups don't reuse dead connections
-const createTransporter = async () => {
-  // Option 1: Brevo/Sendinblue (recommended - free 300 emails/day, works on Render)
-  if (process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY) {
-    const apiKey = process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY;
-    const transporter = nodemailer.createTransport({
-      host: 'smtp-relay.brevo.com',
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.BREVO_SMTP_USER,
-        pass: apiKey
-      }
-    });
-    console.log('✅ Brevo transporter configured');
-    return transporter;
+// Send via Brevo HTTP API (port 443 — never blocked by Render)
+const sendViaBrevoAPI = async (mailOptions) => {
+  const apiKey = process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY;
+  if (!apiKey) return null; // not configured
+
+  const fromAddress = process.env.BREVO_FROM || process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@honeypotcrm.com';
+  const fromName = mailOptions.fromName || 'HoneyPot CRM';
+
+  const body = {
+    sender: { name: fromName, email: fromAddress },
+    to: [{ email: mailOptions.to }],
+    subject: mailOptions.subject,
+    htmlContent: mailOptions.html
+  };
+
+  if (mailOptions.attachments?.length) {
+    body.attachment = mailOptions.attachments.map(a => ({
+      name: a.filename,
+      content: Buffer.isBuffer(a.content) ? a.content.toString('base64') : Buffer.from(a.content).toString('base64')
+    }));
   }
 
-  // Option 2: SendGrid (alternative - free 100 emails/day)
+  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: { 'api-key': apiKey, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Brevo API error ${res.status}: ${err}`);
+  }
+
+  const data = await res.json();
+  return data.messageId || data.messageId || 'brevo-http-ok';
+};
+
+// Nodemailer transporter for SendGrid / Gmail fallback
+const createTransporter = async () => {
   if (process.env.SENDGRID_API_KEY) {
-    const transporter = nodemailer.createTransport({
+    console.log('✅ SendGrid transporter configured');
+    return nodemailer.createTransport({
       host: 'smtp.sendgrid.net',
       port: 587,
       secure: false,
       auth: { user: 'apikey', pass: process.env.SENDGRID_API_KEY }
     });
-    console.log('✅ SendGrid transporter configured');
-    return transporter;
   }
 
-  // Option 3: Gmail fallback
   if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-    const transporter = nodemailer.createTransport({
+    console.log('✅ Gmail transporter configured');
+    return nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
       secure: false,
       auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
       tls: { rejectUnauthorized: true }
     });
-    console.log('✅ Gmail transporter configured');
-    return transporter;
   }
 
   if (process.env.NODE_ENV === 'production') {
-    throw new Error('Email service is not configured. Set BREVO_SMTP_USER + BREVO_API_KEY in production.');
+    throw new Error('No email service configured.');
   }
 
   console.warn('⚠️ No email credentials — falling back to Ethereal');
@@ -482,21 +499,24 @@ export const sendEmail = async (to, templateName, templateData) => {
     if (!template) throw new Error(`Email template '${templateName}' not found`);
 
     const emailContent = template(templateData);
-    const transporter = await createTransporter();
-
-    // When using Brevo, EMAIL_FROM must be a verified sender in your Brevo account.
-    // BREVO_FROM overrides EMAIL_FROM so you can set the verified address separately.
-    const fromAddress = process.env.BREVO_FROM || process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@honeypotcrm.com';
     const fromName = templateData.companyName || 'HoneyPot CRM';
 
-    const mailOptions = {
+    // Try Brevo HTTP API first (works on Render — no SMTP port blocking)
+    const brevoMsgId = await sendViaBrevoAPI({ to, subject: emailContent.subject, html: emailContent.html, fromName });
+    if (brevoMsgId) {
+      console.log(`✅ Email sent via Brevo API to ${to}`);
+      return { success: true, messageId: brevoMsgId };
+    }
+
+    // Fallback: nodemailer (SendGrid / Gmail)
+    const fromAddress = process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@honeypotcrm.com';
+    const transporter = await createTransporter();
+    const result = await transporter.sendMail({
       from: `"${fromName}" <${fromAddress}>`,
       to,
       subject: emailContent.subject,
       html: emailContent.html
-    };
-
-    const result = await transporter.sendMail(mailOptions);
+    });
     console.log(`✅ Email sent to ${to} (${result.messageId})`);
     return { success: true, messageId: result.messageId };
   } catch (error) {
@@ -508,20 +528,16 @@ export const sendEmail = async (to, templateName, templateData) => {
 // Test email configuration
 export const testEmailConfig = async () => {
   try {
-    // Skip verification in production on Render (they block SMTP verification)
-    // Emails will still work when actually sent
-    if (process.env.RENDER || process.env.NODE_ENV === 'production') {
-      if (process.env.BREVO_API_KEY || process.env.SENDGRID_API_KEY || process.env.EMAIL_USER) {
-        console.log('⚠️ Email verification skipped in production (SMTP verification blocked by host)');
-        console.log('📧 Email service configured - emails will be sent when triggered');
-        return true;
-      }
+    if (process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY) {
+      console.log('✅ Brevo HTTP API configured (SMTP-free, works on Render)');
+      return true;
     }
-    
-    // Full verification for local development
-    const transporter = await createTransporter();
-    await transporter.verify();
-    return true;
+    if (process.env.SENDGRID_API_KEY || process.env.EMAIL_USER) {
+      console.log('✅ Fallback email service configured');
+      return true;
+    }
+    console.warn('⚠️ No email service configured');
+    return false;
   } catch (error) {
     console.error('❌ Email configuration error:', error);
     return false;
@@ -531,11 +547,17 @@ export const testEmailConfig = async () => {
 // Send email with attachment
 export const sendEmailWithAttachment = async (to, subject, htmlContent, attachments = []) => {
   try {
+    const brevoMsgId = await sendViaBrevoAPI({
+      to, subject,
+      html: htmlContent || '<p>Please find the attached report.</p>',
+      attachments
+    });
+    if (brevoMsgId) return { success: true, messageId: brevoMsgId };
+
     const transporter = await createTransporter();
     const result = await transporter.sendMail({
       from: `"HoneyPot CRM" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
-      to,
-      subject,
+      to, subject,
       html: htmlContent || '<p>Please find the attached report.</p>',
       attachments
     });
