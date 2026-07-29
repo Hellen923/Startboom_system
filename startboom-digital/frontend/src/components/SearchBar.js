@@ -51,9 +51,9 @@ const SearchBar = ({
           placeholder={placeholder}
           className={`w-full pl-12 pr-10 py-3 rounded-lg border transition-all ${
             isDark 
-              ? 'bg-[#1E293B] border-gray-700 text-white placeholder-gray-500 focus:border-indigo-500' 
-              : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-indigo-500'
-          } focus:outline-none focus:ring-2 focus:ring-indigo-500/20`}
+              ? 'bg-[#1E293B] border-gray-700 text-white placeholder-gray-500 focus:border-[var(--primary-color)]' 
+              : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-[var(--primary-color)]'
+          } focus:outline-none focus:ring-2 focus:ring-primary-500/20`}
         />
         {searchTerm && (
           <button
