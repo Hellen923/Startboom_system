@@ -8,7 +8,7 @@ import {
   Clock, AlertCircle, ChevronDown, Users, Building2
 } from 'lucide-react';
 import { usersAPI, rolesAPI } from '../../services/api';
-import { departmentApi, teamApi } from '../../services/enterpriseApi';
+import { departmentApi, teamApi, branchApi } from '../../services/enterpriseApi';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import Pagination from '../../components/Pagination';
@@ -38,6 +38,7 @@ const UserManagement = () => {
   const [customRoles, setCustomRoles] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [teams, setTeams] = useState([]);
+  const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -61,6 +62,7 @@ const UserManagement = () => {
     customRole: '',
     department: '',
     team: '',
+    branch: '',
     region: ''
   });
 
@@ -112,14 +114,16 @@ const UserManagement = () => {
 
   const loadDepartmentsAndTeams = async () => {
     try {
-      const [deptRes, teamRes] = await Promise.all([
+      const [deptRes, teamRes, branchRes] = await Promise.all([
         departmentApi.getAll(),
-        teamApi.getAll()
+        teamApi.getAll(),
+        branchApi.getAll()
       ]);
       setDepartments(deptRes.data.departments || []);
       setTeams(teamRes.data.teams || []);
+      setBranches(branchRes.data.branches || []);
     } catch (error) {
-      console.error('Failed to load departments/teams');
+      console.error('Failed to load departments/teams/branches');
     }
   };
 
@@ -221,7 +225,7 @@ const UserManagement = () => {
 
     setFormLoading(true);
     try {
-      const response = await usersAPI.registerAgent({ ...newUser, department: newUser.department || null, team: newUser.team || null });
+      const response = await usersAPI.registerAgent({ ...newUser, department: newUser.department || null, team: newUser.team || null, branch: newUser.branch || null });
 
       setSuccessInfo({
         emailSent: response.data.emailSent,
@@ -232,7 +236,7 @@ const UserManagement = () => {
       setShowSuccessModal(true);
 
       setShowAddModal(false);
-      setNewUser({ name: '', email: '', phone: '', role: isSuperAdmin ? 'manager' : 'agent', customRole: '', department: '', team: '', region: '' });
+      setNewUser({ name: '', email: '', phone: '', role: isSuperAdmin ? 'manager' : 'agent', customRole: '', department: '', team: '', branch: '', region: '' });
       setFormErrors({});
       loadUsers();
     } catch (error) {
@@ -278,7 +282,8 @@ const UserManagement = () => {
   const handleEditClick = (user) => {
     const deptId = user.department?._id || user.department || '';
     const teamId = user.team?._id || user.team || '';
-    setEditUser({ ...user, department: deptId, team: teamId });
+    const branchId = user.branch?._id || user.branch || '';
+    setEditUser({ ...user, department: deptId, team: teamId, branch: branchId });
     setShowEditModal(true);
   };
 
@@ -355,6 +360,7 @@ const UserManagement = () => {
         customRole: editUser.customRole || null,
         department: editUser.department || null,
         team: editUser.team || null,
+        branch: editUser.branch || null,
         region: editUser.region || ''
       };
       await usersAPI.update(editUser._id, payload);
@@ -1362,6 +1368,20 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   </div>
                 )}
 
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Branch</label>
+                    <select
+                      value={newUser.branch}
+                      onChange={(e) => setNewUser({ ...newUser, branch: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                    >
+                      <option value="">No Branch</option>
+                      {branches.map(b => (
+                        <option key={b._id} value={b._id}>{b.name}{b.code ? ` (${b.code})` : ''}</option>
+                      ))}
+                    </select>
+                  </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Region</label>
                   <select
@@ -1531,6 +1551,20 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                       </select>
                     </div>
                   )}
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Branch</label>
+                    <select
+                      value={editUser.branch || ''}
+                      onChange={(e) => setEditUser({ ...editUser, branch: e.target.value })}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
+                    >
+                      <option value="">No Branch</option>
+                      {branches.map(b => (
+                        <option key={b._id} value={b._id}>{b.name}{b.code ? ` (${b.code})` : ''}</option>
+                      ))}
+                    </select>
+                  </div>
 
                  <div>
                    <label className="block text-sm font-medium text-gray-700 mb-2">Region</label>
