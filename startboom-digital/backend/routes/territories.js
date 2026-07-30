@@ -133,9 +133,10 @@ router.post('/', requireRole(['admin', 'manager']), async (req, res) => {
     const territory = new Territory({ ...req.body, tenant: req.tenantId, createdBy: req.user.userId });
     await territory.save();
     await AuditLog.create({
-      tenant: req.tenantId, user: req.user.userId, action: 'territory.create',
-      resource: 'Territory', resourceId: territory._id,
-      details: { name: territory.name, location: territory.location?.displayName }
+      tenant: req.tenantId, user: req.user.userId, action: 'OTHER',
+      description: `Created territory: ${territory.name}`,
+      entityType: 'Territory', entityId: territory._id,
+      metadata: { name: territory.name, location: territory.location?.displayName }
     });
     res.status(201).json({ territory });
   } catch (error) {
@@ -154,8 +155,10 @@ router.put('/:id', requireRole(['admin', 'manager']), async (req, res) => {
     territory.updatedBy = req.user.userId;
     await territory.save();
     await AuditLog.create({
-      tenant: req.tenantId, user: req.user.userId, action: 'territory.update',
-      resource: 'Territory', resourceId: territory._id, details: { name: territory.name }
+      tenant: req.tenantId, user: req.user.userId, action: 'OTHER',
+      description: `Updated territory: ${territory.name}`,
+      entityType: 'Territory', entityId: territory._id,
+      metadata: { name: territory.name }
     });
     res.json({ territory });
   } catch (error) {
@@ -179,12 +182,12 @@ router.post('/:id/assign-agent', requireRole(['admin', 'manager']), async (req, 
     
     await territory.addAgent(userId);
     await AuditLog.create({
-      tenant: req.tenantId, 
-      user: req.user.userId, 
-      action: 'territory.assign_agent',
-      resource: 'Territory', 
-      resourceId: territory._id,
-      details: { territory: territory.name, assignedUser: user.name }
+      tenant: req.tenantId,
+      user: req.user.userId,
+      action: 'OTHER',
+      description: `Assigned ${user.name} to territory: ${territory.name}`,
+      entityType: 'Territory', entityId: territory._id,
+      metadata: { territory: territory.name, assignedUser: user.name }
     });
     res.json({ message: 'Agent assigned successfully', territory });
   } catch (error) {
@@ -204,12 +207,12 @@ router.post('/:id/remove-agent', requireRole(['admin', 'manager']), async (req, 
     
     await territory.removeAgent(userId);
     await AuditLog.create({
-      tenant: req.tenantId, 
-      user: req.user.userId, 
-      action: 'territory.remove_agent',
-      resource: 'Territory', 
-      resourceId: territory._id, 
-      details: { territory: territory.name }
+      tenant: req.tenantId,
+      user: req.user.userId,
+      action: 'OTHER',
+      description: `Removed agent from territory: ${territory.name}`,
+      entityType: 'Territory', entityId: territory._id,
+      metadata: { territory: territory.name }
     });
     res.json({ message: 'Agent removed successfully', territory });
   } catch (error) {
@@ -227,8 +230,10 @@ router.delete('/:id', requireRole(['admin']), async (req, res) => {
     territory.updatedBy = req.user.userId;
     await territory.save();
     await AuditLog.create({
-      tenant: req.tenantId, user: req.user.userId, action: 'territory.delete',
-      resource: 'Territory', resourceId: territory._id, details: { name: territory.name }
+      tenant: req.tenantId, user: req.user.userId, action: 'OTHER',
+      description: `Deleted territory: ${territory.name}`,
+      entityType: 'Territory', entityId: territory._id,
+      metadata: { name: territory.name }
     });
     res.json({ message: 'Territory deleted successfully' });
   } catch (error) {
