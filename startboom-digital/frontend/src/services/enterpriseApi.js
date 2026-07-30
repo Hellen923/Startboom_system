@@ -32,6 +32,7 @@ export const branchApi = {
   getHierarchy: (id) => api.get(`/branches/${id}/hierarchy`),
   create: (data) => api.post('/branches', data),
   update: (id, data) => api.put(`/branches/${id}`, data),
+  getStats: (id) => api.get(`/branches/${id}/stats`),
   updateStats: (id, stats) => api.patch(`/branches/${id}/stats`, stats),
   delete: (id) => api.delete(`/branches/${id}`),
 };

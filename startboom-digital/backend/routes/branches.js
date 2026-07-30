@@ -1,6 +1,10 @@
 // routes/branches.js
 import express from 'express';
+import mongoose from 'mongoose';
 import Branch from '../models/Branch.js';
+import User from '../models/User.js';
+import Client from '../models/Client.js';
+import Sale from '../models/Sale.js';
 import { tenantAuth, requireTenantModule } from '../middleware/tenantAuth.js';
 
 const router = express.Router();
@@ -262,46 +266,26 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Update branch stats
-router.patch('/:id/stats', async (req, res) => {
+// GET /api/branches/:id/stats — live aggregation
+router.get('/:id/stats', async (req, res) => {
   try {
-    if (!req.isSuperAdmin && req.user.role !== 'admin') {
-      return res.status(403).json({
-        message: 'Only administrators can update branch stats'
-      });
-    }
-    
-    const { totalUsers, totalClients, totalRevenue } = req.body;
-    
-    const branch = await Branch.findOne({
-      _id: req.params.id,
-      ...req.tenantQuery
-    });
-    
-    if (!branch) {
-      return res.status(404).json({
-        message: 'Branch not found'
-      });
-    }
-    
-    if (totalUsers !== undefined) branch.stats.totalUsers = totalUsers;
-    if (totalClients !== undefined) branch.stats.totalClients = totalClients;
-    if (totalRevenue !== undefined) branch.stats.totalRevenue = totalRevenue;
-    branch.stats.lastUpdated = new Date();
-    
-    await branch.save();
-    
-    res.json({
-      success: true,
-      message: 'Branch stats updated',
-      stats: branch.stats
-    });
+    const branchId = new mongoose.Types.ObjectId(req.params.id);
+    const tenantId = req.user.tenantId;
+
+    const [totalUsers, totalClients, revenueResult] = await Promise.all([
+      User.countDocuments({ tenant: tenantId, branch: branchId, isActive: true }),
+      Client.countDocuments({ tenant: tenantId, branch: branchId }),
+      Sale.aggregate([
+        { $match: { tenant: tenantId, branch: branchId } },
+        { $group: { _id: null, total: { $sum: '$finalAmount' } } }
+      ])
+    ]);
+
+    const totalRevenue = revenueResult[0]?.total || 0;
+    res.json({ success: true, stats: { totalUsers, totalClients, totalRevenue } });
   } catch (error) {
-    console.error('Update branch stats error:', error);
-    res.status(500).json({
-      message: 'Error updating branch stats',
-      error: error.message
-    });
+    console.error('Branch stats error:', error);
+    res.status(500).json({ message: 'Error fetching branch stats', error: error.message });
   }
 });
 

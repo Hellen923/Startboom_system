@@ -44,7 +44,20 @@ const Branches = () => {
     try {
       setLoading(true);
       const response = await branchApi.getAll();
-      setBranches(response.data.branches || []);
+      const rawBranches = response.data.branches || [];
+
+      // Fetch live stats for all branches in parallel
+      const withStats = await Promise.all(
+        rawBranches.map(async (b) => {
+          try {
+            const s = await branchApi.getStats(b._id);
+            return { ...b, stats: s.data.stats };
+          } catch {
+            return b;
+          }
+        })
+      );
+      setBranches(withStats);
     } catch (error) {
       console.error('Error fetching branches:', error);
       toast.error('Failed to load branches');
