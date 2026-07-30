@@ -1495,29 +1495,30 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden"
+              className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden"
             >
-              <div className="px-6 py-4 brand-header">
+              <div className="px-6 py-4 brand-header flex-shrink-0">
                 <h3 className="text-lg font-semibold text-white">Edit User</h3>
                 <p className="text-[#FEF3C7] text-sm mt-1">Update user information</p>
               </div>
               
-              <form onSubmit={handleUpdateUser} className="p-6 space-y-4">
+              <form onSubmit={handleUpdateUser} className="flex flex-col flex-1 overflow-hidden">
+                <div className="p-6 space-y-4 overflow-y-auto flex-1">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
                   <input
                     value={editUser.name}
                     onChange={(e) => setEditUser({ ...editUser, name: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-[#334155] text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone</label>
                   <input
                     value={editUser.phone || ''}
                     onChange={(e) => setEditUser({ ...editUser, phone: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-[#334155] text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
                   />
                 </div>
                 
@@ -1643,11 +1644,12 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   </div>
                 </div>
                 
-                <div className="flex space-x-3 pt-4">
+                </div>
+                <div className="flex space-x-3 px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-[#1E293B] flex-shrink-0">
                   <button
                     type="button"
                     onClick={() => { setShowEditModal(false); setEditUser(null); }}
-                    className="flex-1 py-3 px-4 border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-all"
+                    className="flex-1 py-3 px-4 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
                   >
                     Cancel
                   </button>
