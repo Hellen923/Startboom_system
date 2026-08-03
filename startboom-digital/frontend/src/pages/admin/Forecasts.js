@@ -26,7 +26,7 @@ const Forecasts = () => {
       setForecasts(response.data.forecasts || []);
     } catch (error) {
       console.error('Error fetching forecasts:', error);
-      toast.error('Failed to load forecasts');
+      toast.error(error.response?.data?.message || 'Failed to load forecasts');
     } finally {
       setLoading(false);
     }

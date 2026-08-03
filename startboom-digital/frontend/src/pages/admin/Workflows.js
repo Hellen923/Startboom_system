@@ -26,7 +26,7 @@ const Workflows = () => {
       setWorkflows(response.data.workflows || []);
     } catch (error) {
       console.error('Error fetching workflows:', error);
-      toast.error('Failed to load workflows');
+      toast.error(error.response?.data?.message || 'Failed to load workflows');
     } finally {
       setLoading(false);
     }

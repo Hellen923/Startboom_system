@@ -24,7 +24,7 @@ const CustomReports = () => {
       setReports(response.data.reports || []);
     } catch (error) {
       console.error('Error fetching reports:', error);
-      toast.error('Failed to load reports');
+      toast.error(error.response?.data?.message || 'Failed to load reports');
     } finally {
       setLoading(false);
     }
