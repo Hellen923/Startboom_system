@@ -26,7 +26,7 @@ const Notes = () => {
 
   const filteredNotes = notes.filter(note => {
     const q = search.toLowerCase();
-    return !q || 
+    return !q ||
       note.notes?.toLowerCase().includes(q) ||
       note.client?.name?.toLowerCase().includes(q) ||
       note.client?.company?.toLowerCase().includes(q);
@@ -46,20 +46,16 @@ const Notes = () => {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Notes</h1>
-          <p className="text-gray-600 mt-1">All notes you've added to clients</p>
-        </div>
+      {/* Search */}
+      <div className="flex justify-end">
         <div className="relative w-64">
-          <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-placeholder)]" />
           <input
             type="text"
             placeholder="Search notes..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-12 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+            className="w-full pl-12 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           />
         </div>
       </div>
@@ -96,8 +92,8 @@ const Notes = () => {
                   </div>
                 </div>
                 <a
-                  href={`/agent/clients`}
-                  className="flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700"
+                  href="/agent/clients"
+                  className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700"
                 >
                   <ExternalLink className="w-3 h-3" />
                   View Client

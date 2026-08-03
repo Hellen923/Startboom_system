@@ -170,6 +170,14 @@ export const customFieldApi = {
   delete: (id) => api.delete(`/custom-fields/${id}`),
 };
 
+// Predictive Analytics API
+export const predictiveAnalyticsApi = {
+  getSalesForecast: (params) => api.get('/predictive-analytics/sales-forecast', { params }),
+  getLeadScoring: () => api.get('/predictive-analytics/lead-scoring'),
+  getPerformancePrediction: (agentId) => api.get(`/predictive-analytics/performance-prediction/${agentId}`),
+  getChurnPrediction: () => api.get('/predictive-analytics/churn-prediction'),
+};
+
 export default {
   departments: departmentApi,
   teams: teamApi,
@@ -184,4 +192,5 @@ export default {
   customReports: customReportApi,
   pipelines: pipelineApi,
   customFields: customFieldApi,
+  predictiveAnalytics: predictiveAnalyticsApi,
 };

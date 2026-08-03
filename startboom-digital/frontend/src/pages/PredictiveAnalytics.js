@@ -1,144 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, Users, Target, AlertTriangle, BarChart3, PieChart, Activity, Zap } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart as RechartsPieChart, Cell, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-// import { predictiveAnalyticsAPI } from '../../services/api';
+import { predictiveAnalyticsApi } from '../../services/enterpriseApi';
+import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { useChartTheme, ANALYTICS_PALETTE } from '../utils/chartTheme';
 import dm from '../utils/darkModeClasses';
 
-// Mock API for development
-const predictiveAnalyticsAPI = {
-  getSalesForecast: async (params = {}) => {
-    console.log('Mock: getSalesForecast called with params:', params);
-    // Mock sales forecast data
-    return {
-      data: {
-        historicalData: [
-          { _id: { year: 2024, month: 1 }, totalRevenue: 45000, totalDeals: 12 },
-          { _id: { year: 2024, month: 2 }, totalRevenue: 52000, totalDeals: 15 },
-          { _id: { year: 2024, month: 3 }, totalRevenue: 48000, totalDeals: 13 },
-          { _id: { year: 2024, month: 4 }, totalRevenue: 61000, totalDeals: 18 },
-          { _id: { year: 2024, month: 5 }, totalRevenue: 55000, totalDeals: 16 }
-        ],
-        forecast: [
-          { month: 7, predictedRevenue: 58000, monthName: 'July' },
-          { month: 8, predictedRevenue: 62000, monthName: 'August' },
-          { month: 9, predictedRevenue: 59000, monthName: 'September' },
-          { month: 10, predictedRevenue: 65000, monthName: 'October' },
-          { month: 11, predictedRevenue: 68000, monthName: 'November' },
-          { month: 12, predictedRevenue: 72000, monthName: 'December' }
-        ],
-        confidence: 'high',
-        recommendations: [
-          'Strong growth trend - consider increasing sales targets',
-          'Focus on high-value deals to maintain momentum'
-        ]
-      }
-    };
-  },
-  getLeadScoring: async () => {
-    console.log('Mock: getLeadScoring called');
-    return {
-      data: {
-        leads: [
-          {
-            _id: '1',
-            name: 'John Smith',
-            company: 'TechCorp Inc',
-            leadScore: 85,
-            conversionProbability: 78,
-            recommendedAction: 'High priority - Schedule immediate follow-up',
-            scoreBreakdown: {
-              interactionFrequency: 22,
-              dealHistory: 28,
-              companySize: 15,
-              engagementLevel: 16,
-              timeSinceLastContact: 4
-            }
-          },
-          {
-            _id: '2',
-            name: 'Sarah Johnson',
-            company: 'StartupXYZ',
-            leadScore: 72,
-            conversionProbability: 65,
-            recommendedAction: 'Medium priority - Send personalized proposal',
-            scoreBreakdown: {
-              interactionFrequency: 18,
-              dealHistory: 24,
-              companySize: 12,
-              engagementLevel: 14,
-              timeSinceLastContact: 4
-            }
-          }
-        ],
-        scoringCriteria: {
-          interactionFrequency: 'Weight: 25%',
-          dealHistory: 'Weight: 30%',
-          companySize: 'Weight: 15%',
-          engagementLevel: 'Weight: 20%',
-          timeSinceLastContact: 'Weight: 10%'
-        }
-      }
-    };
-  },
-  getPerformancePrediction: async (agentId) => {
-    console.log('Mock: getPerformancePrediction called for agent:', agentId);
-    return {
-      data: {
-        agent: { id: agentId, name: 'Sales Agent', currentPerformance: 75 },
-        prediction: {
-          predictedScore: 82,
-          trend: 'improving',
-          confidence: 'high',
-          factors: {
-            dealVolume: 24,
-            conversionRate: 68,
-            averageDealSize: 12500
-          }
-        },
-        recommendations: [
-          'Continue current strategies - performance is trending upward',
-          'Focus on maintaining high conversion rates'
-        ]
-      }
-    };
-  },
-  getChurnPrediction: async () => {
-    console.log('Mock: getChurnPrediction called');
-    return {
-      data: {
-        predictions: [
-          {
-            clientId: '1',
-            clientName: 'ABC Corp',
-            churnRisk: 85,
-            riskLevel: 'high',
-            riskFactors: ['No contact in 90+ days', 'High proportion of lost deals'],
-            recommendedActions: ['Schedule immediate follow-up call', 'Send reactivation email'],
-            predictedChurnDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-          },
-          {
-            clientId: '2',
-            clientName: 'XYZ Ltd',
-            churnRisk: 45,
-            riskLevel: 'medium',
-            riskFactors: ['No contact in 30+ days'],
-            recommendedActions: ['Send personalized check-in email'],
-            predictedChurnDate: null
-          }
-        ],
-        summary: {
-          highRisk: 1,
-          mediumRisk: 1,
-          lowRisk: 3
-        }
-      }
-    };
-  }
-};
-
 const PredictiveAnalytics = () => {
+  const { user } = useAuth();
   const { grid, axis, tooltipStyle, labelStyle, itemStyle } = useChartTheme();
   const [activeTab, setActiveTab] = useState('forecast');
   const [salesForecast, setSalesForecast] = useState(null);
@@ -155,10 +25,10 @@ const PredictiveAnalytics = () => {
     setLoading(true);
     try {
       const [forecastRes, leadsRes, churnRes, performanceRes] = await Promise.all([
-        predictiveAnalyticsAPI.getSalesForecast(),
-        predictiveAnalyticsAPI.getLeadScoring(),
-        predictiveAnalyticsAPI.getChurnPrediction(),
-        predictiveAnalyticsAPI.getPerformancePrediction('current-user')
+        predictiveAnalyticsApi.getSalesForecast({ months: 6 }),
+        predictiveAnalyticsApi.getLeadScoring(),
+        predictiveAnalyticsApi.getChurnPrediction(),
+        predictiveAnalyticsApi.getPerformancePrediction(user?.id || 'current-user')
       ]);
 
       setSalesForecast(forecastRes.data);

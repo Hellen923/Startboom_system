@@ -160,12 +160,12 @@ const agentNavSections = [
     {
       title: 'Workspace',
       items: [
-        { path: '/agent',            icon: PieChart,   label: 'Dashboard', description: 'Your sales dashboard with performance and activity summaries.' },
-        { path: '/agent/clients',    icon: Users,      label: 'Clients & Organizations', description: 'View your client list and manage customer relationships.' },
-        { path: '/agent/contacts',   icon: BookUser,   label: 'Contacts', description: 'Manage your contact directory and communication details.' },
-        { path: '/agent/leads',      icon: UserCheck,  label: 'Leads', description: 'Track and manage sales leads in one place.' },
-        { path: '/agent/deals',      icon: Target,     label: 'Sales Pipeline', description: 'Review and progress your current deals.' },
-        { path: '/agent/sales',      icon: TrendingUp, label: 'Sales', description: 'Track sales performance and revenue results.' },
+        { path: '/agent',            icon: PieChart,   label: 'Dashboard', description: 'Welcome to HoneyPot CRM — where every opportunity finds its value.' },
+        { path: '/agent/clients',    icon: Users,      label: 'Clients & Organizations', description: 'Manage your client accounts, track engagement, and build lasting relationships.' },
+        { path: '/agent/contacts',   icon: BookUser,   label: 'Contacts', description: 'Your full contact directory — people, positions, and organisations in one place.' },
+        { path: '/agent/leads',      icon: UserCheck,  label: 'Leads', description: 'Capture, qualify, and convert prospects through your sales funnel.' },
+        { path: '/agent/deals',      icon: Target,     label: 'Sales Pipeline', description: 'Track every deal from first contact to close — table, kanban, or charts.' },
+        { path: '/agent/sales',      icon: TrendingUp, label: 'Sales', description: 'Record transactions, download receipts, and monitor your revenue.' },
         { path: '/agent/products',   icon: Package,    label: 'Product Catalogue', description: 'Browse available products and pricing to quote clients.' },
         { path: '/agent/my-territory', icon: MapPin,   label: 'My Territory', description: 'View your assigned territory and team members.' },
       ],
@@ -173,9 +173,9 @@ const agentNavSections = [
     {
       title: 'Activities',
       items: [
-        { path: '/agent/schedules',  icon: Calendar,   label: 'Calendar', description: 'Manage your meetings and calendar events.' },
-        { path: '/agent/tasks',      icon: ListTodo,   label: 'Tasks', description: 'Track tasks and stay on top of daily work items.' },
-        { path: '/agent/issues',     icon: AlertTriangle, label: 'Issues', description: 'Manage issues and support requests efficiently.' },
+        { path: '/agent/schedules',  icon: Calendar,   label: 'Schedules & Calendar', description: 'Plan meetings, calls, and follow-ups — list view or calendar.' },
+        { path: '/agent/tasks',      icon: ListTodo,   label: 'Tasks', description: 'Stay on top of your daily work items and client follow-ups.' },
+        { path: '/agent/issues',     icon: AlertTriangle, label: 'Issues & Support', description: 'Log and track client issues until they are fully resolved.' },
       ],
     },
  ];
@@ -366,7 +366,7 @@ const agentNavSections = [
             <div className="dashboard-page">
               <div className="space-y-2 mb-3">
                 <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{activeNavItem.label}</h1>
-                <p className="text-sm text-[var(--color-text-muted)] max-w-3xl leading-relaxed">{activeNavItem.description || 'Welcome to HoneyPot CRM — where every opportunity finds its value.'}</p>
+                <p className="text-sm text-[var(--color-text-muted)] max-w-3xl leading-relaxed">{activeNavItem.description || ''}</p>
               </div>
               {children}
             </div>
