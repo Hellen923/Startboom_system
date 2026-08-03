@@ -32,11 +32,57 @@ const CustomReports = () => {
 
   const handleExecute = async (id) => {
     try {
-      await customReportApi.execute(id);
+      const result = await customReportApi.execute(id);
       toast.success('Report executed successfully');
+      // Display results or download
+      if (result.data) {
+        console.log('Report results:', result.data);
+      }
     } catch (error) {
       toast.error('Failed to execute report');
     }
+  };
+
+  const handleExport = async (id, format = 'csv') => {
+    try {
+      toast.loading(`Generating ${format.toUpperCase()}...`, { id: 'export' });
+      const result = await customReportApi.execute(id);
+      
+      if (format === 'csv') {
+        const csvContent = convertToCSV(result.data);
+        downloadFile(csvContent, `report-${id}.csv`, 'text/csv');
+      } else if (format === 'json') {
+        const jsonContent = JSON.stringify(result.data, null, 2);
+        downloadFile(jsonContent, `report-${id}.json`, 'application/json');
+      }
+      
+      toast.success(`${format.toUpperCase()} exported successfully`, { id: 'export' });
+    } catch (error) {
+      toast.error('Failed to export report', { id: 'export' });
+    }
+  };
+
+  const convertToCSV = (data) => {
+    if (!data || !data.results || data.results.length === 0) return '';
+    
+    const headers = Object.keys(data.results[0]);
+    const rows = data.results.map(row => 
+      headers.map(header => JSON.stringify(row[header] || '')).join(',')
+    );
+    
+    return [headers.join(','), ...rows].join('\n');
+  };
+
+  const downloadFile = (content, filename, mimeType) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   };
 
   const handleDelete = async (id) => {
@@ -91,12 +137,21 @@ const CustomReports = () => {
                 <button
                   onClick={() => handleExecute(report._id)}
                   className="p-2 rounded-lg bg-indigo-100 text-[var(--primary-color)] hover:bg-indigo-200"
+                  title="Execute Report"
                 >
                   <Play className="w-4 h-4" />
                 </button>
                 <button
+                  onClick={() => handleExport(report._id, 'csv')}
+                  className="p-2 rounded-lg bg-green-100 text-green-600 hover:bg-green-200"
+                  title="Export as CSV"
+                >
+                  <Download className="w-4 h-4" />
+                </button>
+                <button
                   onClick={() => handleDelete(report._id)}
                   className="p-2 rounded-lg hover:bg-red-100 text-red-600"
+                  title="Delete Report"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
