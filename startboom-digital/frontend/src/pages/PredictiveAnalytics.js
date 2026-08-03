@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, Users, Target, AlertTriangle, BarChart3, PieChart, Activity, Zap } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart as RechartsPieChart, Cell, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { predictiveAnalyticsApi } from '../../services/enterpriseApi';
-import { useAuth } from '../../context/AuthContext';
+import { predictiveAnalyticsApi } from '../services/enterpriseApi';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { useChartTheme, ANALYTICS_PALETTE } from '../utils/chartTheme';
 import dm from '../utils/darkModeClasses';
