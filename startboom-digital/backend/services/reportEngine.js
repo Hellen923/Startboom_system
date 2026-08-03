@@ -9,8 +9,18 @@ export const executeReport = async (report) => {
   const startTime = Date.now();
   
   try {
+    // Validate report configuration
+    if (!report.dataSource || !report.dataSource.entity) {
+      throw new Error('Invalid report configuration: missing data source');
+    }
+
     // Get the model for the data source
-    const Model = mongoose.model(report.dataSource.entity);
+    let Model;
+    try {
+      Model = mongoose.model(report.dataSource.entity);
+    } catch (error) {
+      throw new Error(`Invalid data source entity: ${report.dataSource.entity}`);
+    }
     
     // Build query
     const query = buildQuery(report);
@@ -18,20 +28,29 @@ export const executeReport = async (report) => {
     // Build aggregation pipeline
     const pipeline = buildAggregationPipeline(report, query);
     
-    // Execute query
+    // Execute query with error handling
     let results;
-    if (pipeline.length > 0) {
-      results = await Model.aggregate(pipeline);
-    } else {
-      results = await Model.find(query)
-        .select(getFieldSelection(report.dataSource.fields))
-        .sort(getSortObject(report.dataSource.sortBy))
-        .limit(report.dataSource.limit);
+    try {
+      if (pipeline.length > 0) {
+        results = await Model.aggregate(pipeline);
+      } else {
+        results = await Model.find(query)
+          .select(getFieldSelection(report.dataSource.fields))
+          .sort(getSortObject(report.dataSource.sortBy))
+          .limit(report.dataSource.limit || 1000);
+      }
+    } catch (queryError) {
+      throw new Error(`Query execution failed: ${queryError.message}`);
     }
     
     // Apply calculated fields
     if (report.calculatedFields && report.calculatedFields.length > 0) {
-      results = applyCalculatedFields(results, report.calculatedFields);
+      try {
+        results = applyCalculatedFields(results, report.calculatedFields);
+      } catch (calcError) {
+        console.warn('Calculated fields error:', calcError);
+        // Continue with original results
+      }
     }
     
     // Format results
