@@ -124,7 +124,7 @@ router.post('/call/token', tenantAuth, async (req, res) => {
 router.use(tenantAuth, requireTenantModule('clients'));
 
 // Get all clients with pagination and filtering
-router.get('/', async (req, res) => {
+router.get('/', tenantAuth, async (req, res) => {
   try {
     const { page = 1, limit = 10, search, status, agent } = req.query;
 
