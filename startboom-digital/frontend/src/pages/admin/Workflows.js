@@ -62,9 +62,16 @@ const Workflows = () => {
       </div>
 
       <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
-        <h2 className={`text-xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          Workflows ({workflows.length})
-        </h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            Workflows ({workflows.length})
+          </h2>
+          <div className="flex items-center space-x-3">
+            <span className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              {workflows.filter(w => w.isActive).length} active
+            </span>
+          </div>
+        </div>
         <div className="space-y-3">
           {workflows.map(workflow => (
             <div key={workflow._id} className={`p-4 rounded-lg ${isDark ? 'bg-[#334155]' : 'bg-gray-50'} flex items-center justify-between`}>
@@ -75,6 +82,20 @@ const Workflows = () => {
                 <div>
                   <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>{workflow.name}</h3>
                   <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>{workflow.description}</p>
+                  <div className="flex items-center gap-3 mt-2">
+                    <span className={`text-xs px-2 py-1 rounded ${
+                      workflow.isActive 
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {workflow.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                    {workflow.executionCount > 0 && (
+                      <span className="text-xs text-gray-500">
+                        {workflow.executionCount} executions
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
