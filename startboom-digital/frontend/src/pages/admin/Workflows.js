@@ -1,6 +1,6 @@
 // Workflow Builder - Automate business processes
 import React, { useState, useEffect } from 'react';
-import { Zap, Plus, Edit2, Trash2, Play, Pause, Copy, TrendingUp } from 'lucide-react';
+import { Zap, Plus, Edit2, Trash2, Play, Pause, Copy, TrendingUp, Eye } from 'lucide-react';
 import { workflowApi } from '../../services/enterpriseApi';
 import PROFESSIONAL_COLORS from '../../utils/professionalColors';
 import { useTheme } from '../../context/ThemeContext';
@@ -12,6 +12,8 @@ const Workflows = () => {
   const isDark = theme.mode === 'dark';
   const [loading, setLoading] = useState(true);
   const [workflows, setWorkflows] = useState([]);
+  const [selectedWorkflow, setSelectedWorkflow] = useState(null);
+  const [showExecutions, setShowExecutions] = useState(false);
 
   useEffect(() => {
     fetchWorkflows();
@@ -38,6 +40,11 @@ const Workflows = () => {
     } catch (error) {
       toast.error('Failed to toggle workflow');
     }
+  };
+
+  const handleViewExecutions = async (workflow) => {
+    setSelectedWorkflow(workflow);
+    setShowExecutions(true);
   };
 
   if (loading) return <LoadingSpinner />;
@@ -102,9 +109,19 @@ const Workflows = () => {
                 <button
                   onClick={() => handleToggle(workflow._id)}
                   className={`p-2 rounded-lg ${workflow.isActive ? 'bg-green-100 text-green-600' : 'bg-gray-300 text-gray-600'}`}
+                  title={workflow.isActive ? 'Deactivate' : 'Activate'}
                 >
                   {workflow.isActive ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
                 </button>
+                {workflow.executionCount > 0 && (
+                  <button
+                    onClick={() => handleViewExecutions(workflow)}
+                    className="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200"
+                    title="View Execution History"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
           ))}
