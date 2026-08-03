@@ -25,6 +25,16 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Handle network errors
+    if (!error.response) {
+      console.error('Network error:', error.message);
+      return Promise.reject({
+        message: 'Network error. Please check your connection.',
+        error
+      });
+    }
+
+    // Handle 401 Unauthorized
     if (error.response?.status === 401) {
       const isLoginRequest = error.config?.url?.includes('/auth/login');
       if (!isLoginRequest) {
@@ -35,6 +45,17 @@ api.interceptors.response.use(
         window.location.href = '/login';
       }
     }
+
+    // Handle 403 Forbidden
+    if (error.response?.status === 403) {
+      console.error('Access denied:', error.response.data?.message);
+    }
+
+    // Handle 500 Server Errors
+    if (error.response?.status >= 500) {
+      console.error('Server error:', error.response.data?.message || 'Internal server error');
+    }
+
     return Promise.reject(error);
   }
 );
