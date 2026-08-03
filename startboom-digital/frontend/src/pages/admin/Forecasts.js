@@ -1,6 +1,7 @@
 // Forecasts Dashboard - Revenue forecasting and pipeline analysis
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, DollarSign, Target, Calendar, BarChart3, AlertCircle } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { forecastApi } from '../../services/enterpriseApi';
 import PROFESSIONAL_COLORS from '../../utils/professionalColors';
 import { useTheme } from '../../context/ThemeContext';
@@ -64,6 +65,52 @@ const Forecasts = () => {
         <StatCard title="Actual Revenue" value={`$${totalActual.toLocaleString()}`} icon={DollarSign} gradient={PROFESSIONAL_COLORS.gradients.green} isDark={isDark} />
         <StatCard title="Accuracy" value={`${accuracy}%`} icon={Target} gradient={PROFESSIONAL_COLORS.gradients.purple} isDark={isDark} />
         <StatCard title="Forecasts" value={forecasts.length} icon={BarChart3} gradient={PROFESSIONAL_COLORS.gradients.orange} isDark={isDark} />
+      </div>
+
+      <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg mb-8`}>
+        <h2 className={`text-xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          Forecast Trends
+        </h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={forecasts.filter(f => f.forecastAmount && f.actualAmount)}>
+            <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#374151' : '#E5E7EB'} />
+            <XAxis 
+              dataKey="name" 
+              stroke={isDark ? '#9CA3AF' : '#6B7280'}
+              style={{ fontSize: '12px' }}
+            />
+            <YAxis 
+              stroke={isDark ? '#9CA3AF' : '#6B7280'}
+              style={{ fontSize: '12px' }}
+              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: isDark ? '#1F2937' : '#FFFFFF',
+                border: `1px solid ${isDark ? '#374151' : '#E5E7EB'}`,
+                borderRadius: '8px'
+              }}
+              formatter={(value) => [`$${value?.toLocaleString()}`, '']}
+            />
+            <Legend />
+            <Line 
+              type="monotone" 
+              dataKey="forecastAmount" 
+              name="Forecast"
+              stroke={PROFESSIONAL_COLORS.primary.main} 
+              strokeWidth={2}
+              dot={{ fill: PROFESSIONAL_COLORS.primary.main }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="actualAmount" 
+              name="Actual"
+              stroke={PROFESSIONAL_COLORS.success.main} 
+              strokeWidth={2}
+              dot={{ fill: PROFESSIONAL_COLORS.success.main }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
 
       <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
