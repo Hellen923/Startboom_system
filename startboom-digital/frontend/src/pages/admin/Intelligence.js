@@ -6,12 +6,14 @@ import {
   BarChart3,
   Users,
   FileText,
-  TrendingUp
+  TrendingUp,
+  Download
 } from 'lucide-react';
 import { intelligenceApi } from '../../services/enterpriseApi';
 import PROFESSIONAL_COLORS, { getStatusColor } from '../../utils/professionalColors';
 import { useTheme } from '../../context/ThemeContext';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import toast from 'react-hot-toast';
 
 const Intelligence = () => {
   const { theme } = useTheme();
@@ -35,6 +37,32 @@ const Intelligence = () => {
       console.error('Error fetching intelligence:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleExportData = () => {
+    try {
+      const exportData = {
+        summary,
+        alerts,
+        details,
+        exportedAt: new Date().toISOString()
+      };
+      
+      const jsonStr = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `intelligence-report-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Intelligence data exported');
+    } catch (error) {
+      toast.error('Failed to export data');
     }
   };
 
@@ -105,12 +133,23 @@ const Intelligence = () => {
     <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-gray-50'}`}>
       {/* Header */}
       <div className="mb-8">
-        <h1 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-          Business Intelligence
-        </h1>
-        <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-          Proactive insights and alerts to keep your business on track
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              Business Intelligence
+            </h1>
+            <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              Proactive insights and alerts to keep your business on track
+            </p>
+          </div>
+          <button
+            onClick={handleExportData}
+            className="btn-brand flex items-center space-x-2"
+          >
+            <Download className="w-4 h-4" />
+            <span>Export Data</span>
+          </button>
+        </div>
       </div>
 
       {/* Critical Alerts Banner */}
