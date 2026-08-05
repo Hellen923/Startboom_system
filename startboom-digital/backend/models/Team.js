@@ -34,6 +34,23 @@ const teamSchema = new mongoose.Schema({
     ref: 'User'
   },
   
+  // Industry-specific fields (optional)
+  teamLead: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  targetType: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  metrics: {
+    type: Map,
+    of: mongoose.Schema.Types.Mixed,
+    default: {}
+  },
+  
   // Team members
   members: [{
     user: {
