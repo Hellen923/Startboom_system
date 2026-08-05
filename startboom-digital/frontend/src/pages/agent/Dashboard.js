@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 import DonutChart, { DealStatusChart, PaymentMethodChart, TaskStatusChart } from '../../components/charts/DonutChart';
 import { performanceAPI, dealsAPI, clientsAPI, salesAPI } from '../../services/api';
+import { metricsAPI } from '../../services/enterpriseApi';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import DashboardQuickActions from '../../components/DashboardQuickActions';
@@ -21,6 +22,7 @@ import Leaderboard from '../../components/Leaderboard';
 import TargetProgress from '../../components/TargetProgress';
 import { useChartTheme, ANALYTICS_PALETTE } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
+import { StatCard, WidgetContainer } from '../../components/dashboard/DashboardWidgets';
 const exportToCSV = (data, headers, filename) => {
   const csv = [headers, ...data].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -118,6 +120,13 @@ const AgentDashboard = () => {
   const [sortKey, setSortKey]           = useState('createdAt');
   const [sortDir, setSortDir]           = useState('desc');
 
+  // ── Cascading Metrics state ──
+  const [myMetrics, setMyMetrics]             = useState(null);
+  const [teamMetrics, setTeamMetrics]         = useState(null);
+  const [departmentMetrics, setDepartmentMetrics] = useState(null);
+  const [metricsLoading, setMetricsLoading]   = useState(true);
+  const [showCascade, setShowCascade]         = useState(false);
+
   const handleExport = (type) => {
     const headers = ['Name', 'Email', 'Phone', 'Company', 'Status', 'Priority'];
     const data = clients.map(c => [c.name || '', c.email || '', c.phone || '', c.company || '', c.status || '', c.priority || '']);
@@ -134,6 +143,57 @@ const AgentDashboard = () => {
   const PAGE_SIZE = 8;
   const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const formatUGX = (v) => `UGX ${Number(v || 0).toLocaleString('en-UG', { maximumFractionDigits: 0 })}`;
+
+  // ── Load Cascading Metrics ─────────────────────────────────────────────────
+  const loadCascadingMetrics = useCallback(async () => {
+    if (!user) return;
+    setMetricsLoading(true);
+    try {
+      // Get current month date range
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+      // Fetch my metrics
+      const myMetricsRes = await metricsAPI.getMyMetrics({
+        startDate: monthStart.toISOString(),
+        endDate: monthEnd.toISOString()
+      });
+      setMyMetrics(myMetricsRes.data?.metrics || null);
+
+      // Fetch team metrics if user has a team
+      if (user.team) {
+        try {
+          const teamId = typeof user.team === 'object' ? user.team._id : user.team;
+          const teamMetricsRes = await metricsAPI.getTeamMetrics(teamId, {
+            startDate: monthStart.toISOString(),
+            endDate: monthEnd.toISOString()
+          });
+          setTeamMetrics(teamMetricsRes.data?.metrics || null);
+        } catch (err) {
+          console.log('No team metrics available');
+        }
+      }
+
+      // Fetch department metrics if user has a department
+      if (user.department) {
+        try {
+          const deptId = typeof user.department === 'object' ? user.department._id : user.department;
+          const deptMetricsRes = await metricsAPI.getDepartmentMetrics(deptId, {
+            startDate: monthStart.toISOString(),
+            endDate: monthEnd.toISOString()
+          });
+          setDepartmentMetrics(deptMetricsRes.data?.metrics || null);
+        } catch (err) {
+          console.log('No department metrics available');
+        }
+      }
+    } catch (error) {
+      console.error('Error loading cascading metrics:', error);
+    } finally {
+      setMetricsLoading(false);
+    }
+  }, [user]);
 
   // ── Load KPI + chart data ──────────────────────────────────────────────────
   const loadKPIData = useCallback(async () => {
@@ -260,6 +320,7 @@ const AgentDashboard = () => {
 
   useEffect(() => { loadKPIData(); }, [loadKPIData]);
   useEffect(() => { loadClientTable(); }, [loadClientTable]);
+  useEffect(() => { loadCascadingMetrics(); }, [loadCascadingMetrics]);
 
   const handleSort = (key) => {
     if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
@@ -309,6 +370,128 @@ return (
           iconColor="text-purple-500"
         />
       </div>
+
+      {/* ── Cascading Metrics Section (Employee → Team → Department) ── */}
+      {!metricsLoading && (myMetrics || teamMetrics || departmentMetrics) && (
+        <WidgetContainer
+          title="Performance Metrics"
+          subtitle="Your contributions cascade up through your team and department"
+          action={{
+            label: showCascade ? 'Hide Details' : 'Show Details',
+            onClick: () => setShowCascade(!showCascade)
+          }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* My Metrics */}
+            {myMetrics && (
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                <div className="flex items-center gap-2 mb-3">
+                  <UserCheck className="w-5 h-5 text-blue-600" />
+                  <h4 className="font-semibold text-blue-900 dark:text-blue-100">My Performance</h4>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-blue-700 dark:text-blue-300">Revenue:</span>
+                    <span className="font-bold text-blue-900 dark:text-blue-100">{formatUGX(myMetrics.metrics?.totalRevenue || 0)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700 dark:text-blue-300">Won Deals:</span>
+                    <span className="font-bold text-blue-900 dark:text-blue-100">{myMetrics.metrics?.wonDeals || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-blue-700 dark:text-blue-300">Conversion:</span>
+                    <span className="font-bold text-blue-900 dark:text-blue-100">{(myMetrics.metrics?.conversionRate || 0).toFixed(1)}%</span>
+                  </div>
+                  {showCascade && (
+                    <>
+                      <div className="flex justify-between pt-2 border-t border-blue-300 dark:border-blue-700">
+                        <span className="text-blue-700 dark:text-blue-300">Clients:</span>
+                        <span className="font-bold text-blue-900 dark:text-blue-100">{myMetrics.metrics?.totalClients || 0}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-blue-700 dark:text-blue-300">Active Deals:</span>
+                        <span className="font-bold text-blue-900 dark:text-blue-100">{myMetrics.metrics?.activeDeals || 0}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Team Metrics */}
+            {teamMetrics && (
+              <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+                <div className="flex items-center gap-2 mb-3">
+                  <Users className="w-5 h-5 text-green-600" />
+                  <h4 className="font-semibold text-green-900 dark:text-green-100">Team: {teamMetrics.teamName}</h4>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-green-700 dark:text-green-300">Total Revenue:</span>
+                    <span className="font-bold text-green-900 dark:text-green-100">{formatUGX(teamMetrics.metrics?.totalRevenue || 0)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-green-700 dark:text-green-300">Won Deals:</span>
+                    <span className="font-bold text-green-900 dark:text-green-100">{teamMetrics.metrics?.wonDeals || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-green-700 dark:text-green-300">Team Members:</span>
+                    <span className="font-bold text-green-900 dark:text-green-100">{teamMetrics.memberCount || 0}</span>
+                  </div>
+                  {showCascade && (
+                    <>
+                      <div className="flex justify-between pt-2 border-t border-green-300 dark:border-green-700">
+                        <span className="text-green-700 dark:text-green-300">Avg per Member:</span>
+                        <span className="font-bold text-green-900 dark:text-green-100">{formatUGX(teamMetrics.metrics?.averageRevenuePerMember || 0)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-green-700 dark:text-green-300">Conversion:</span>
+                        <span className="font-bold text-green-900 dark:text-green-100">{(teamMetrics.metrics?.conversionRate || 0).toFixed(1)}%</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Department Metrics */}
+            {departmentMetrics && (
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                <div className="flex items-center gap-2 mb-3">
+                  <Target className="w-5 h-5 text-purple-600" />
+                  <h4 className="font-semibold text-purple-900 dark:text-purple-100">Dept: {departmentMetrics.departmentName}</h4>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-purple-700 dark:text-purple-300">Total Revenue:</span>
+                    <span className="font-bold text-purple-900 dark:text-purple-100">{formatUGX(departmentMetrics.metrics?.totalRevenue || 0)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-purple-700 dark:text-purple-300">Won Deals:</span>
+                    <span className="font-bold text-purple-900 dark:text-purple-100">{departmentMetrics.metrics?.wonDeals || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-purple-700 dark:text-purple-300">Teams:</span>
+                    <span className="font-bold text-purple-900 dark:text-purple-100">{departmentMetrics.teamCount || 0}</span>
+                  </div>
+                  {showCascade && (
+                    <>
+                      <div className="flex justify-between pt-2 border-t border-purple-300 dark:border-purple-700">
+                        <span className="text-purple-700 dark:text-purple-300">Avg per Team:</span>
+                        <span className="font-bold text-purple-900 dark:text-purple-100">{formatUGX(departmentMetrics.metrics?.averageRevenuePerTeam || 0)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-purple-700 dark:text-purple-300">Total Members:</span>
+                        <span className="font-bold text-purple-900 dark:text-purple-100">{departmentMetrics.metrics?.totalMembers || 0}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </WidgetContainer>
+      )}
 
       <DashboardQuickActions role={user?.role || 'agent'} />
 

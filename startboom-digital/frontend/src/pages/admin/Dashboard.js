@@ -6,9 +6,10 @@ import { useAuth } from '../../context/AuthContext';
 import { useChartTheme, getChartPalette, ANALYTICS_PALETTE } from '../../utils/chartTheme';
 import dm from '../../utils/darkModeClasses';
 import { dealsAPI, salesAPI, clientsAPI, usersAPI, tenantsAPI } from '../../services/api';
-import { departmentApi } from '../../services/enterpriseApi';
+import { departmentApi, metricsAPI } from '../../services/enterpriseApi';
 import OnboardingWizard from '../../components/OnboardingWizard';
 import DashboardQuickActions from '../../components/DashboardQuickActions';
+import { WidgetContainer } from '../../components/dashboard/DashboardWidgets';
 import toast from 'react-hot-toast';
 
 const PERIODS = ['daily', 'weekly', 'monthly', 'yearly'];
@@ -75,6 +76,12 @@ const AdminDashboard = () => {
   const [conversionRatesData, setConversionRatesData] = useState([]);
   const [salesCountData, setSalesCountData] = useState([]);
 
+  // ── Cascading Metrics state ──
+  const [companyMetrics, setCompanyMetrics] = useState(null);
+  const [departmentMetricsData, setDepartmentMetricsData] = useState([]);
+  const [metricsLoading, setMetricsLoading] = useState(true);
+  const [showDeptDetails, setShowDeptDetails] = useState(false);
+
   const formatUGX = (v) => `UGX ${Number(v || 0).toLocaleString('en-UG')}`;
 
   const computeRange = (p) => {
@@ -97,6 +104,42 @@ const AdminDashboard = () => {
     const start = new Date(now.getFullYear(), 0, 1);
     const end = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
     return { start: start.toISOString(), end: end.toISOString() };
+  };
+
+  // ── Load Cascading Metrics ─────────────────────────────────────────────────
+  const loadCascadingMetrics = async () => {
+    setMetricsLoading(true);
+    try {
+      const range = computeRange(period);
+      const startDate = range.start;
+      const endDate = range.end;
+
+      // Fetch company-wide metrics
+      const companyRes = await metricsAPI.getCompanyMetrics({
+        startDate,
+        endDate
+      });
+      setCompanyMetrics(companyRes.data?.metrics || null);
+
+      // Fetch metrics for each department (for drill-down)
+      if (companyRes.data?.metrics?.departments) {
+        const deptMetrics = companyRes.data.metrics.departments.map(dept => ({
+          id: dept.departmentId,
+          name: dept.departmentName,
+          revenue: dept.metrics?.totalRevenue || 0,
+          wonDeals: dept.metrics?.wonDeals || 0,
+          teamCount: dept.teamCount || 0,
+          memberCount: dept.memberCount || 0,
+          conversionRate: dept.metrics?.conversionRate || 0,
+          avgPerMember: dept.metrics?.averageRevenuePerMember || 0
+        }));
+        setDepartmentMetricsData(deptMetrics);
+      }
+    } catch (error) {
+      console.error('Error loading cascading metrics:', error);
+    } finally {
+      setMetricsLoading(false);
+    }
   };
 
   const loadData = async () => {
@@ -377,6 +420,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     loadData();
     loadDepartments();
+    loadCascadingMetrics();
   }, [period, selectedDept]);
 
   const loadDepartments = async () => {
@@ -432,6 +476,73 @@ const AdminDashboard = () => {
         <StatCard icon={Users} title="Users (All Time)" value={totalUsersAllTime} />
         <StatCard icon={Target} title="Deals" value={dealsCount} />
       </div>
+
+      {/* ── Company-Wide Cascading Metrics ── */}
+      {!metricsLoading && companyMetrics && (
+        <WidgetContainer
+          title="Company-Wide Performance"
+          subtitle="Aggregated metrics across all departments and teams"
+          action={{
+            label: showDeptDetails ? 'Hide Departments' : 'Show Departments',
+            onClick: () => setShowDeptDetails(!showDeptDetails)
+          }}
+        >
+          {/* Company Summary */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+              <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">Total Revenue</p>
+              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{formatUGX(companyMetrics.metrics?.totalRevenue || 0)}</p>
+            </div>
+            <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+              <p className="text-xs text-green-600 dark:text-green-400 font-medium mb-1">Won Deals</p>
+              <p className="text-2xl font-bold text-green-900 dark:text-green-100">{companyMetrics.metrics?.wonDeals || 0}</p>
+            </div>
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+              <p className="text-xs text-purple-600 dark:text-purple-400 font-medium mb-1">Departments</p>
+              <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">{companyMetrics.departmentCount || 0}</p>
+            </div>
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-lg p-4 border border-orange-200 dark:border-orange-800">
+              <p className="text-xs text-orange-600 dark:text-orange-400 font-medium mb-1">Employees</p>
+              <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">{companyMetrics.metrics?.totalMembers || 0}</p>
+            </div>
+          </div>
+
+          {/* Department Breakdown */}
+          {showDeptDetails && departmentMetricsData.length > 0 && (
+            <div className="mt-4">
+              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Department Breakdown</h4>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                    <tr>
+                      <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Department</th>
+                      <th className="px-4 py-2 text-right font-semibold text-gray-700 dark:text-gray-300">Revenue</th>
+                      <th className="px-4 py-2 text-right font-semibold text-gray-700 dark:text-gray-300">Won Deals</th>
+                      <th className="px-4 py-2 text-right font-semibold text-gray-700 dark:text-gray-300">Teams</th>
+                      <th className="px-4 py-2 text-right font-semibold text-gray-700 dark:text-gray-300">Members</th>
+                      <th className="px-4 py-2 text-right font-semibold text-gray-700 dark:text-gray-300">Conv. Rate</th>
+                      <th className="px-4 py-2 text-right font-semibold text-gray-700 dark:text-gray-300">Avg/Member</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    {departmentMetricsData.map(dept => (
+                      <tr key={dept.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                        <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{dept.name}</td>
+                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{formatUGX(dept.revenue)}</td>
+                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{dept.wonDeals}</td>
+                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{dept.teamCount}</td>
+                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{dept.memberCount}</td>
+                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{dept.conversionRate.toFixed(1)}%</td>
+                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{formatUGX(dept.avgPerMember)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </WidgetContainer>
+      )}
 
       <DashboardQuickActions role={user?.role || 'admin'} />
 
