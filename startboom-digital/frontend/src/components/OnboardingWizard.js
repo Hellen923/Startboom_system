@@ -5,12 +5,14 @@ import {
   ArrowRight, ArrowLeft, X, Upload, Loader2, Sparkles, LayoutGrid
 } from 'lucide-react';
 import { tenantsAPI, usersAPI, clientsAPI, uploadAPI, authAPI } from '../services/api';
+import { setupAPI } from '../services/enterpriseApi';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 // ─── Step definitions ─────────────────────────────────────────────────────────
 const STEPS = [
   { id: 'welcome',      label: 'Welcome',      icon: Sparkles    },
+  { id: 'industry',     label: 'Industry',     icon: Building2   },
   { id: 'branding',     label: 'Branding',     icon: Palette     },
   { id: 'localization', label: 'Localization', icon: Globe       },
   { id: 'modules',      label: 'Modules',      icon: LayoutGrid  },
@@ -142,6 +144,82 @@ const StepWelcome = ({ tenantName, onNext }) => (
     >
       Let's get started <ArrowRight className="w-4 h-4" />
     </button>
+  </div>
+);
+
+// ─── Step: Industry Selection ─────────────────────────────────────────────────
+const StepIndustry = ({ data, onChange, industries, loading }) => (
+  <div className="space-y-6">
+    <div>
+      <h2 className="text-xl font-bold text-gray-900">What industry are you in?</h2>
+      <p className="text-gray-500 text-sm mt-1">
+        We'll pre-configure departments, teams, and modules specific to your industry.
+      </p>
+    </div>
+
+    {loading ? (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
+      </div>
+    ) : (
+      <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {industries.map(industry => (
+            <button
+              key={industry.id}
+              type="button"
+              onClick={() => onChange('industryType', industry.id)}
+              className={`flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all ${
+                data.industryType === industry.id
+                  ? 'border-primary-500 bg-primary-50'
+                  : 'border-gray-200 bg-white hover:border-gray-300'
+              }`}
+            >
+              <div className={`text-2xl flex-shrink-0 ${
+                data.industryType === industry.id ? 'opacity-100' : 'opacity-60'
+              }`}>
+                {industry.icon === 'Building2' && '🏢'}
+                {industry.icon === 'Heart' && '❤️'}
+                {industry.icon === 'Code' && '💻'}
+                {industry.icon === 'Briefcase' && '💼'}
+                {industry.icon === 'Megaphone' && '📣'}
+                {industry.icon === 'TrendingUp' && '📈'}
+                {industry.icon === 'Award' && '🏆'}
+                {industry.icon === 'Building' && '🏗️'}
+              </div>
+              <div className="flex-1">
+                <p className={`text-sm font-semibold ${
+                  data.industryType === industry.id ? 'text-primary-700' : 'text-gray-700'
+                }`}>
+                  {industry.name}
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">{industry.description}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Organization Size</label>
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            {['1-10', '11-50', '51-200', '201-500', '500+'].map(size => (
+              <button
+                key={size}
+                type="button"
+                onClick={() => onChange('organizationSize', size)}
+                className={`py-2 px-3 rounded-xl border text-sm font-medium transition-colors ${
+                  data.organizationSize === size
+                    ? 'bg-primary-500 text-white border-primary-500'
+                    : 'bg-white text-gray-700 border-gray-300 hover:border-primary-300'
+                }`}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+        </div>
+      </>
+    )}
   </div>
 );
 
@@ -551,13 +629,14 @@ const StepDone = ({ stepsCompleted, onFinish }) => {
       </div>
       <h2 className="text-2xl font-bold text-gray-900 mb-2">You're all set!</h2>
       <p className="text-gray-500 max-w-sm mx-auto mb-6">
-        {completedCount === 4
+        {completedCount === 5
           ? 'You completed all setup steps. Your CRM is ready to go.'
-          : `You completed ${completedCount} of 4 steps. You can finish the rest from Settings anytime.`}
+          : `You completed ${completedCount} of 5 steps. You can finish the rest from Settings anytime.`}
       </p>
 
       <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto mb-8">
         {[
+          { key: 'industry',     label: 'Industry'     },
           { key: 'branding',     label: 'Branding'     },
           { key: 'localization', label: 'Localization' },
           { key: 'team',         label: 'Team'         },
@@ -593,8 +672,16 @@ const OnboardingWizard = ({ onComplete }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [saving, setSaving]             = useState(false);
   const [uploading, setUploading]       = useState(false);
+  const [industries, setIndustries]     = useState([]);
+  const [loadingIndustries, setLoadingIndustries] = useState(false);
   const [stepsCompleted, setStepsCompleted] = useState({
-    branding: false, localization: false, team: false, client: false
+    industry: false, branding: false, localization: false, team: false, client: false
+  });
+
+  // Industry state
+  const [industry, setIndustry] = useState({
+    industryType: '',
+    organizationSize: ''
   });
 
   // Modules state — all off by default, admin picks what they need
@@ -620,10 +707,24 @@ const OnboardingWizard = ({ onComplete }) => {
   useEffect(() => {
     const load = async () => {
       try {
+        // Load industry templates
+        setLoadingIndustries(true);
+        const industryRes = await setupAPI.getIndustryTemplates();
+        setIndustries(industryRes.data || []);
+        setLoadingIndustries(false);
+
+        // Load existing onboarding state
         const res = await tenantsAPI.getOnboarding();
         const d   = res.data;
         if (d.currentStep)    setCurrentIndex(d.currentStep);
         if (d.stepsCompleted) setStepsCompleted(d.stepsCompleted);
+        if (d.industryType) {
+          setIndustry(prev => ({
+            ...prev,
+            industryType: d.industryType,
+            organizationSize: d.organizationSize || ''
+          }));
+        }
         if (d.settings) {
           setBranding(prev => ({
             ...prev,
@@ -640,6 +741,7 @@ const OnboardingWizard = ({ onComplete }) => {
         }
       } catch {
         // Non-critical — use defaults
+        setLoadingIndustries(false);
       }
     };
     load();
@@ -691,7 +793,20 @@ const OnboardingWizard = ({ onComplete }) => {
     setSaving(true);
 
     try {
-      if (stepId === 'branding') {
+      if (stepId === 'industry') {
+        if (!industry.industryType) {
+          toast.error('Please select an industry type');
+          setSaving(false);
+          return;
+        }
+        // Initialize organization with industry template
+        await setupAPI.initializeOrganization({
+          industryId: industry.industryType,
+          organizationSize: industry.organizationSize
+        });
+        await saveStep('industry', true, industry);
+        toast.success('Organization configured successfully');
+      } else if (stepId === 'branding') {
         await saveStep('branding', true, {
           logo:         branding.logo,
           primaryColor: branding.primaryColor,
@@ -700,6 +815,8 @@ const OnboardingWizard = ({ onComplete }) => {
       } else if (stepId === 'localization') {
         await saveStep('localization', true, localization);
       }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to save step');
     } finally {
       setSaving(false);
     }
@@ -775,6 +892,14 @@ const OnboardingWizard = ({ onComplete }) => {
             >
               {stepId === 'welcome' && (
                 <StepWelcome tenantName={branding.companyName || 'there'} onNext={handleNext} />
+              )}
+              {stepId === 'industry' && (
+                <StepIndustry
+                  data={industry}
+                  onChange={(k, v) => setIndustry(prev => ({ ...prev, [k]: v }))}
+                  industries={industries}
+                  loading={loadingIndustries}
+                />
               )}
               {stepId === 'branding' && (
                 <StepBranding
