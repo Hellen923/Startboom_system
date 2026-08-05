@@ -178,6 +178,14 @@ export const predictiveAnalyticsApi = {
   getChurnPrediction: () => api.get('/predictive-analytics/churn-prediction'),
 };
 
+// Setup API
+export const setupAPI = {
+  getIndustryTemplates: () => api.get('/setup/industry-templates'),
+  getIndustryTemplate: (industryId) => api.get(`/setup/industry-templates/${industryId}`),
+  initializeOrganization: (data) => api.post('/setup/initialize-organization', data),
+  getStatus: () => api.get('/setup/status'),
+};
+
 export default {
   departments: departmentApi,
   teams: teamApi,
@@ -193,4 +201,5 @@ export default {
   pipelines: pipelineApi,
   customFields: customFieldApi,
   predictiveAnalytics: predictiveAnalyticsApi,
+  setup: setupAPI,
 };
