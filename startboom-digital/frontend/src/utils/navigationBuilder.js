@@ -73,14 +73,14 @@ const ALL_NAV_ITEMS = {
       title: 'Products & Territory',
       items: [
         { path: '/admin/products', icon: Package, label: 'Products', description: 'Manage your product catalogue, pricing, categories, and bulk CSV imports.', requiredRole: ['admin', 'manager'], requiredPermission: 'products:view' },
-        { path: '/admin/territories', icon: MapPin, label: 'Territories', description: 'Assign agents to geographic territories and manage location-based coverage.', requiredRole: ['admin', 'manager'], requiredPermission: 'territories:view' },
-        { path: '/admin/analytics', icon: TrendingUp, label: 'Analytics', description: 'Conversion rates, active vs dormant clients, and agent leaderboard by department.', requiredRole: ['admin', 'manager'] },
+        { path: '/admin/territories', icon: MapPin, label: 'Territories', description: 'Assign employees to geographic territories and manage location-based coverage.', requiredRole: ['admin', 'manager'], requiredPermission: 'territories:view' },
+        { path: '/admin/analytics', icon: TrendingUp, label: 'Analytics', description: 'Conversion rates, active vs dormant clients, and team leaderboard by department.', requiredRole: ['admin', 'manager'] },
       ]
     },
     {
       title: 'Operations',
       items: [
-        { path: '/admin/targets', icon: Target, label: 'Targets', description: 'Set monthly deal, revenue, and client targets with commission rates per agent.', requiredRole: ['admin', 'manager'] },
+        { path: '/admin/targets', icon: Target, label: 'Targets', description: 'Set monthly deal, revenue, and client targets with commission rates per employee.', requiredRole: ['admin', 'manager'] },
         { path: '/admin/tenant-settings', icon: Building2, label: 'Company Settings', description: 'Configure company profile, branding, module toggles, and advanced preferences.', requiredRole: ['admin', 'manager'] },
         { path: '/admin/bulk-operations', icon: ArrowLeftRight, label: 'Bulk Operations', description: 'Execute bulk tasks — reassign, update, or export records quickly and efficiently.', requiredRole: ['admin', 'manager'] },
         { path: '/admin/settings', icon: Settings, label: 'Settings', description: 'Update your profile, password, email templates, and security preferences.', requiredRole: ['admin', 'manager'] },
@@ -89,7 +89,7 @@ const ALL_NAV_ITEMS = {
     {
       title: 'Reports',
       items: [
-        { path: '/admin/reports', icon: PieChart, label: 'Reports', description: 'Review sales transactions, agent performance, and deal activity across the business.', requiredRole: ['admin', 'manager'], requiredPermission: 'reports:view' },
+        { path: '/admin/reports', icon: PieChart, label: 'Reports', description: 'Review sales transactions, team performance, and deal activity across the business.', requiredRole: ['admin', 'manager'], requiredPermission: 'reports:view' },
       ]
     }
   ],

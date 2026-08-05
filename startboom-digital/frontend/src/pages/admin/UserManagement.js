@@ -476,7 +476,7 @@ const UserManagement = () => {
       superadmin: { label: 'Super Admin', badge: 'bg-red-100 text-red-700', iconBg: 'bg-red-100', icon: Shield, iconColor: 'text-red-600' },
       manager: { label: 'Manager', badge: 'bg-[#FEF3C7] text-[var(--primary-color)]', iconBg: 'bg-[#FEF3C7]', icon: Shield, iconColor: 'text-[var(--primary-color)]' },
       admin: { label: 'Administrator', badge: 'bg-[#FEF3C7] text-[var(--primary-hover)]', iconBg: 'bg-[#FEF3C7]', icon: Shield, iconColor: 'text-[var(--primary-hover)]' },
-      agent: { label: 'Sales Agent', badge: 'bg-primary-100 text-primary-700', iconBg: 'bg-primary-100', icon: User, iconColor: 'text-primary-600' }
+      agent: { label: 'Employee', badge: 'bg-primary-100 text-primary-700', iconBg: 'bg-primary-100', icon: User, iconColor: 'text-primary-600' }
     };
     return roles[role] || roles.agent;
   };
@@ -1228,7 +1228,7 @@ return (
             >
               <div className="px-6 py-4 brand-header flex-shrink-0">
                 <h3 className="text-lg font-semibold text-white">
-                  {isSuperAdmin ? 'Register Platform Role' : 'Register New Agent'}
+                  {isSuperAdmin ? 'Register Platform Role' : 'Register Employee'}
                 </h3>
                 <p className="text-primary-100 text-sm mt-1">
                   {isSuperAdmin
@@ -1326,7 +1326,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                    >
                      <option value="admin">Administrator</option>
                      <option value="manager">Manager</option>
-                     <option value="agent">Sales Agent</option>
+                     <option value="agent">Employee</option>
                    </select>
                    {formErrors.role && (
                      <p className="text-red-500 text-sm mt-1 flex items-center">
@@ -1442,7 +1442,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                         <span>Registering...</span>
                       </div>
                     ) : (
-                      isSuperAdmin ? 'Register Role' : 'Register Agent'
+                      isSuperAdmin ? 'Register Role' : 'Register Employee'
                     )}
                   </button>
                 </div>
@@ -1466,7 +1466,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                 <CheckCircle className="w-8 h-8 text-emerald-600" />
               </div>
               
-              <h3 className="text-lg font-semibold text-gray-900 text-center">Agent Registered Successfully</h3>
+              <h3 className="text-lg font-semibold text-gray-900 text-center">Employee Registered Successfully</h3>
               <p className="mt-2 text-sm text-gray-600 text-center">
                 {successInfo.name} ({successInfo.email}) has been added to the system.
               </p>
@@ -1475,7 +1475,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                 <div className="mt-4 p-4 bg-emerald-50 rounded-xl">
                   <p className="text-sm text-emerald-700 flex items-center">
                     <Mail className="w-4 h-4 mr-2" />
-                    A welcome email with OTP has been sent to the agent.
+                    A welcome email with OTP has been sent to the employee.
                   </p>
                 </div>
               ) : (
@@ -1624,7 +1624,7 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                    >
                      <option value="admin">Administrator</option>
                      <option value="manager">Manager</option>
-                     <option value="agent">Sales Agent</option>
+                     <option value="agent">Employee</option>
                    </select>
                  </div>
 

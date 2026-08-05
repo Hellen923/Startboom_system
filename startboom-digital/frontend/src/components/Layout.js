@@ -182,8 +182,8 @@ const agentNavSections = [
 
   // Dynamic navigation is now set in useEffect above, remove the static assignment
   const navItems = navSections.flatMap(section => section.items);
-  const roleTitle = isSuperAdmin ? 'Platform Admin' : isAdmin ? 'Tenant Admin' : 'Sales Agent';
-  const roleSubtitle = isSuperAdmin ? 'Platform Control' : isAdmin ? 'Company Control' : 'Sales Workspace';
+  const roleTitle = isSuperAdmin ? 'Platform Admin' : isAdmin ? 'Tenant Admin' : 'Employee';
+  const roleSubtitle = isSuperAdmin ? 'Platform Control' : isAdmin ? 'Company Control' : 'Workspace';
   const userInitial = (user?.name || user?.email || 'U').trim().charAt(0).toUpperCase();
   const displayRole = isSuperAdmin ? 'Super Admin' : isAdmin ? 'Admin' : 'Agent';
 
