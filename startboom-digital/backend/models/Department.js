@@ -23,13 +23,28 @@ const departmentSchema = new mongoose.Schema({
   
   // Modules this department has access to
   modules: [{
-    type: String,
-    enum: [
-      'clients', 'deals', 'sales', 'products', 'territories',
-      'meetings', 'schedules', 'analytics', 'reports',
-      'finance', 'hr', 'marketing', 'support', 'inventory'
-    ]
+    type: String
   }],
+  
+  // Industry-specific fields (optional)
+  industryType: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  activeModules: [{
+    type: String,
+    trim: true
+  }],
+  defaultPermissions: {
+    type: Map,
+    of: Boolean,
+    default: {}
+  },
+  isCore: {
+    type: Boolean,
+    default: false
+  },
   
   icon: {
     type: String,
