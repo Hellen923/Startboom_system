@@ -183,6 +183,44 @@ const userSchema = new mongoose.Schema({
   lastLogin: {
     type: Date,
     default: null
+  },
+  
+  // Industry-specific fields (optional)
+  position: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  employeeId: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  isDepartmentHead: {
+    type: Boolean,
+    default: false
+  },
+  isTeamLead: {
+    type: Boolean,
+    default: false
+  },
+  assignedModules: [{
+    type: String,
+    trim: true
+  }],
+  industryRole: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  hireDate: {
+    type: Date,
+    default: null
+  },
+  reportingTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
   }
 }, {
   timestamps: true
