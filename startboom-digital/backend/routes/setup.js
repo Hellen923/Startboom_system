@@ -1,6 +1,5 @@
 import express from 'express';
 import { auth } from '../middleware/auth.js';
-import { requireRole } from '../middleware/permission.js';
 import { getIndustries, getIndustryTemplate, isValidIndustry } from '../config/industryTemplates.js';
 import Tenant from '../models/Tenant.js';
 import Department from '../models/Department.js';
@@ -8,6 +7,17 @@ import Team from '../models/Team.js';
 import User from '../models/User.js';
 
 const router = express.Router();
+
+// Simple role check middleware for setup routes
+const requireAdmin = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Authentication required' });
+  }
+  if (!['admin', 'superadmin'].includes(req.user.role)) {
+    return res.status(403).json({ message: 'Admin access required' });
+  }
+  next();
+};
 
 // Get all available industry templates
 router.get('/industry-templates', auth, async (req, res) => {
@@ -46,7 +56,7 @@ router.get('/industry-templates/:industryId', auth, async (req, res) => {
 });
 
 // Initialize organization with industry template
-router.post('/initialize-organization', auth, requireRole(['admin']), async (req, res) => {
+router.post('/initialize-organization', auth, requireAdmin, async (req, res) => {
   try {
     const { industryId, organizationSize, customDepartments } = req.body;
     const tenantId = req.user.tenant;
