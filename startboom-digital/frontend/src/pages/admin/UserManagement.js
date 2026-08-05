@@ -63,7 +63,8 @@ const UserManagement = () => {
     department: '',
     team: '',
     branch: '',
-    region: ''
+    region: '',
+    position: ''
   });
 
   // Filter teams by selected department
@@ -236,7 +237,7 @@ const UserManagement = () => {
       setShowSuccessModal(true);
 
       setShowAddModal(false);
-      setNewUser({ name: '', email: '', phone: '', role: isSuperAdmin ? 'manager' : 'agent', customRole: '', department: '', team: '', branch: '', region: '' });
+      setNewUser({ name: '', email: '', phone: '', role: isSuperAdmin ? 'manager' : 'agent', customRole: '', department: '', team: '', branch: '', region: '', position: '' });
       setFormErrors({});
       loadUsers();
     } catch (error) {
@@ -355,6 +356,7 @@ const UserManagement = () => {
       const payload = {
         name: editUser.name,
         phone: editUser.phone,
+        position: editUser.position || '',
         isActive: editUser.isActive,
         status: editUser.status,
         customRole: editUser.customRole || null,
@@ -483,7 +485,7 @@ const UserManagement = () => {
     total: users.length,
     admins: users.filter(u => u.role === 'admin').length,
     managers: users.filter(u => u.role === 'manager').length,
-    agents: users.filter(u => u.role === 'agent').length,
+    employees: users.filter(u => u.role === 'agent').length,
     pending: users.filter(u => u.isFirstLogin).length,
     active: users.filter(u => u.isActive !== false).length,
     inactive: users.filter(u => u.isActive === false).length
@@ -497,7 +499,7 @@ const UserManagement = () => {
             <div className="w-16 h-16 border-4 border-primary-200 rounded-full"></div>
             <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
           </div>
-          <p className="mt-4 text-lg text-gray-800 dark:text-gray-200 font-medium">Loading users...</p>
+          <p className="mt-4 text-lg text-gray-800 dark:text-gray-200 font-medium">Loading employees...</p>
           <p className="text-sm text-gray-600 dark:text-gray-400">Please wait while we fetch the data</p>
         </div>
       </div>
@@ -549,7 +551,7 @@ return (
                   className="btn-brand text-white px-6 py-2.5 rounded-xl flex items-center space-x-2 hover:opacity-90 transition-all shadow-lg shadow-[color:var(--primary-color)]/25 font-semibold"
                 >
                   <UserPlus className="w-5 h-5" />
-                  <span>{isSuperAdmin ? 'Register Platform Role' : 'Add New Agent'}</span>
+                  <span>{isSuperAdmin ? 'Register Platform Role' : 'Add Employee'}</span>
                 </motion.button>
               )}
             </div>
@@ -1281,6 +1283,19 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   )}
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Position / Job Title
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                    placeholder="e.g. Sales Manager, Marketing Coordinator"
+                    value={newUser.position}
+                    onChange={(e) => setNewUser({ ...newUser, position: e.target.value })}
+                  />
+                </div>
+
                 {isSuperAdmin && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1518,6 +1533,16 @@ className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary-5
                   <input
                     value={editUser.phone || ''}
                     onChange={(e) => setEditUser({ ...editUser, phone: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-[#334155] text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Position / Job Title</label>
+                  <input
+                    value={editUser.position || ''}
+                    onChange={(e) => setEditUser({ ...editUser, position: e.target.value })}
+                    placeholder="e.g. Sales Manager"
                     className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-[#334155] text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] transition-all"
                   />
                 </div>
