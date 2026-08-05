@@ -1018,7 +1018,7 @@ const Reports = () => {
               <table className="w-full text-sm">
                 <thead className="table-header">
                   <tr>
-                    <th className="px-4 py-3 text-left font-medium">Sales Agent Name</th>
+                    <th className="px-4 py-3 text-left font-medium">Employee Name</th>
                     <th className="px-4 py-3 text-left font-medium">Department</th>
                     <th className="px-4 py-3 text-left font-medium">Email</th>
                     <th className="px-4 py-3 text-left font-medium">Phone</th>
@@ -1201,7 +1201,7 @@ const Reports = () => {
 
       {/* Footer */}
       <div className="text-center text-xs text-gray-400 mt-8">
-        Report generated at {new Date().toLocaleString()} • Data reflects all sales agent activities
+        Report generated at {new Date().toLocaleString()} • Data reflects all employee activities
       </div>
     </div>
   );
