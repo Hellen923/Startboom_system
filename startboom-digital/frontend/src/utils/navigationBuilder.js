@@ -98,36 +98,37 @@ const ALL_NAV_ITEMS = {
     {
       title: 'Workspace',
       items: [
-        { path: '/agent', icon: PieChart, label: 'Dashboard', description: 'Welcome to HoneyPot CRM — where every opportunity finds its value.', requiredRole: ['agent'] },
-        { path: '/agent/clients', icon: Users, label: 'Clients & Organizations', description: 'Manage your client accounts, track engagement, and build lasting relationships.', requiredRole: ['agent'], requiredPermission: 'clients:view' },
-        { path: '/agent/contacts', icon: BookUser, label: 'Contacts', description: 'Your full contact directory — people, positions, and organisations in one place.', requiredRole: ['agent'], requiredPermission: 'contacts:view' },
-        { path: '/agent/leads', icon: UserCheck, label: 'Leads', description: 'Capture, qualify, and convert prospects through your sales funnel.', requiredRole: ['agent'], requiredPermission: 'leads:view' },
-        { path: '/agent/deals', icon: Target, label: 'Sales Pipeline', description: 'Track every deal from first contact to close — table, kanban, or charts.', requiredRole: ['agent'], requiredPermission: 'deals:view' },
-        { path: '/agent/sales', icon: TrendingUp, label: 'Sales', description: 'Record transactions, download receipts, and monitor your revenue performance.', requiredRole: ['agent'], requiredPermission: 'sales:view' },
-        { path: '/agent/products', icon: Package, label: 'Product Catalogue', description: 'Browse available products and pricing to quote clients accurately.', requiredRole: ['agent'], requiredPermission: 'products:view' },
-        { path: '/agent/my-territory', icon: MapPin, label: 'My Territory', description: 'View your assigned territory, coverage area, and team members in your zone.', requiredRole: ['agent'], requiredPermission: 'territories:view' },
+        { path: '/agent', icon: PieChart, label: 'Dashboard', description: 'Welcome to HoneyPot CRM — where every opportunity finds its value.', requiredRole: ['agent'], requiredModule: null },
+        { path: '/agent/clients', icon: Users, label: 'Clients & Organizations', description: 'Manage your client accounts, track engagement, and build lasting relationships.', requiredRole: ['agent'], requiredPermission: 'clients:view', requiredModule: 'clients' },
+        { path: '/agent/contacts', icon: BookUser, label: 'Contacts', description: 'Your full contact directory — people, positions, and organisations in one place.', requiredRole: ['agent'], requiredPermission: 'contacts:view', requiredModule: 'clients' },
+        { path: '/agent/leads', icon: UserCheck, label: 'Leads', description: 'Capture, qualify, and convert prospects through your sales funnel.', requiredRole: ['agent'], requiredPermission: 'leads:view', requiredModule: 'clients' },
+        { path: '/agent/deals', icon: Target, label: 'Sales Pipeline', description: 'Track every deal from first contact to close — table, kanban, or charts.', requiredRole: ['agent'], requiredPermission: 'deals:view', requiredModule: 'deals' },
+        { path: '/agent/sales', icon: TrendingUp, label: 'Sales', description: 'Record transactions, download receipts, and monitor your revenue performance.', requiredRole: ['agent'], requiredPermission: 'sales:view', requiredModule: 'sales' },
+        { path: '/agent/products', icon: Package, label: 'Product Catalogue', description: 'Browse available products and pricing to quote clients accurately.', requiredRole: ['agent'], requiredPermission: 'products:view', requiredModule: 'products' },
+        { path: '/agent/my-territory', icon: MapPin, label: 'My Territory', description: 'View your assigned territory, coverage area, and team members in your zone.', requiredRole: ['agent'], requiredPermission: 'territories:view', requiredModule: 'territories' },
       ]
     },
     {
       title: 'Activities',
       items: [
-        { path: '/agent/schedules', icon: Calendar, label: 'Schedules & Calendar', description: 'Plan meetings, calls, and follow-ups — list view or calendar.', requiredRole: ['agent'] },
-        { path: '/agent/tasks', icon: ListTodo, label: 'Tasks', description: 'Stay on top of your daily work items and client follow-ups.', requiredRole: ['agent'] },
-        { path: '/agent/meetings', icon: Video, label: 'Meetings', description: 'Schedule and track client meetings — in-person, Google Meet, Zoom, or phone.', requiredRole: ['agent'] },
-        { path: '/agent/issues', icon: AlertTriangle, label: 'Issues & Support', description: 'Log and track client issues until they are fully resolved.', requiredRole: ['agent'] },
-        { path: '/agent/notes', icon: FileText, label: 'Notes', description: 'Personal notes linked to clients — capture insights and follow-up reminders.', requiredRole: ['agent'] },
+        { path: '/agent/schedules', icon: Calendar, label: 'Schedules & Calendar', description: 'Plan meetings, calls, and follow-ups — list view or calendar.', requiredRole: ['agent'], requiredModule: 'schedules' },
+        { path: '/agent/tasks', icon: ListTodo, label: 'Tasks', description: 'Stay on top of your daily work items and client follow-ups.', requiredRole: ['agent'], requiredModule: 'schedules' },
+        { path: '/agent/meetings', icon: Video, label: 'Meetings', description: 'Schedule and track client meetings — in-person, Google Meet, Zoom, or phone.', requiredRole: ['agent'], requiredModule: 'meetings' },
+        { path: '/agent/issues', icon: AlertTriangle, label: 'Issues & Support', description: 'Log and track client issues until they are fully resolved.', requiredRole: ['agent'], requiredModule: 'issues' },
+        { path: '/agent/notes', icon: FileText, label: 'Notes', description: 'Personal notes linked to clients — capture insights and follow-up reminders.', requiredRole: ['agent'], requiredModule: null },
       ]
     }
   ]
 };
 
 /**
- * Generate navigation sections based on user role and permissions
+ * Generate navigation sections based on user role, permissions, and department modules
  * @param {Object} user - Current user object with role and permissions
  * @param {Object} permissions - User's permission map (optional)
+ * @param {Array} departmentModules - User's department enabled modules (optional)
  * @returns {Array} Filtered navigation sections
  */
-export const generateNavigation = (user, permissions = null) => {
+export const generateNavigation = (user, permissions = null, departmentModules = null) => {
   if (!user || !user.role) return [];
 
   let baseNav = [];
@@ -142,22 +143,44 @@ export const generateNavigation = (user, permissions = null) => {
   // Get enabled modules from tenant — if no modules set, everything is enabled
   const tenantModules = user.tenant?.modules || null;
 
-  const isModuleEnabled = (path) => {
+  const isTenantModuleEnabled = (path) => {
     if (!tenantModules) return true; // no restrictions set
     const moduleId = MODULE_ROUTE_MAP[path];
     if (!moduleId) return true; // not mapped = always show
     return isTenantModuleEnabled(tenantModules, moduleId);
   };
 
+  // Check if user's department allows the module
+  const isDepartmentModuleEnabled = (requiredModule) => {
+    // If no module requirement, always show
+    if (!requiredModule) return true;
+    
+    // If no department modules set (admin/superadmin), show all
+    if (!departmentModules || departmentModules.includes('all')) return true;
+    
+    // Check if department has the required module
+    return departmentModules.includes(requiredModule);
+  };
+
   const filteredNav = baseNav.map(section => ({
     ...section,
     items: section.items.filter(item => {
+      // Check role requirement
       if (item.requiredRole && !item.requiredRole.includes(user.role)) return false;
+      
+      // Check permission requirement
       if (item.requiredPermission && permissions) {
         const [module, action] = item.requiredPermission.split(':');
         if (permissions[module] && !permissions[module][action]) return false;
       }
-      return isModuleEnabled(item.path);
+      
+      // Check tenant module requirement
+      if (!isTenantModuleEnabled(item.path)) return false;
+      
+      // Check department module requirement
+      if (!isDepartmentModuleEnabled(item.requiredModule)) return false;
+      
+      return true;
     })
   })).filter(section => section.items.length > 0);
 

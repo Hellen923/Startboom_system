@@ -32,6 +32,7 @@ import {
    Building,
  } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useModules } from '../context/ModuleContext';
 import { notificationsAPI } from '../services/api';
 import { generateNavigation } from '../utils/navigationBuilder';
 import NotificationCenter from './NotificationCenter';
@@ -50,19 +51,21 @@ const Layout = ({ children }) => {
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [navSections, setNavSections] = useState([]);
   const { user, logout } = useAuth();
+  const { enabledModules, isUnrestricted } = useModules();
   const location = useLocation();
   const navigate = useNavigate();
 
   const isAdmin = user?.role === 'admin' || user?.role === 'manager';
   const isSuperAdmin = user?.role === 'superadmin';
   
-  // Generate dynamic navigation based on user role and permissions
+  // Generate dynamic navigation based on user role, permissions, and department modules
   useEffect(() => {
     if (user) {
-      const navigation = generateNavigation(user);
+      const departmentModules = isUnrestricted ? ['all'] : enabledModules;
+      const navigation = generateNavigation(user, null, departmentModules);
       setNavSections(navigation);
     }
-  }, [user]);
+  }, [user, enabledModules, isUnrestricted]);
   // Load unread notifications for all authenticated roles
   useEffect(() => {
     loadUnreadNotifications();

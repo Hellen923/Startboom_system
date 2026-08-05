@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { ModuleProvider } from './context/ModuleContext';
 import Layout from './components/Layout';
 
 // Lazy load pages for better performance
@@ -106,9 +107,10 @@ function App() {
     <Router>
       <ThemeProvider>
         <AuthProvider>
-          <div className="App min-h-screen bg-[var(--color-bg-page)]">
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
+          <ModuleProvider>
+            <div className="App min-h-screen bg-[var(--color-bg-page)]">
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
                 <Route path="/login" element={
                   <PublicRoute>
                     <Login />
@@ -361,9 +363,10 @@ function App() {
               }}
             />
           </div>
-        </AuthProvider>
-      </ThemeProvider>
-    </Router>
+        </ModuleProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  </Router>
   );
 }
 
