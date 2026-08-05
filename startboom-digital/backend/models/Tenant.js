@@ -264,6 +264,26 @@ const tenantSchema = new mongoose.Schema({
       client:       { type: Boolean, default: false }
     },
     completedAt: { type: Date, default: null }
+  },
+  
+  // Industry-specific fields (optional)
+  industryType: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  isConfigured: {
+    type: Boolean,
+    default: false
+  },
+  setupCompletedAt: {
+    type: Date,
+    default: null
+  },
+  organizationSize: {
+    type: String,
+    enum: ['', '1-10', '11-50', '51-200', '201-500', '500+'],
+    default: ''
   }
 }, {
   timestamps: true
