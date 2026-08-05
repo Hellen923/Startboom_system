@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import {
-  DollarSign, TrendingUp, Users, UserCheck,
+  DollarSign, TrendingUp, Users, UserCheck, Target,
   Filter, Eye, Mail, MessageSquare,
   ChevronDown, ChevronUp, Star, Clock, CheckCircle, AlertCircle, Award,
   Download, FileText, Plus
