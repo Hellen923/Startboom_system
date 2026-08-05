@@ -45,6 +45,7 @@ import commentRoutes from './routes/comments.js';
 import noteRoutes from './routes/notes.js';
 import reports2Routes from './routes/reports2.js';
 import permissionRoutes from './routes/permissions.js';
+import setupRoutes from './routes/setup.js';
 import { testEmailConfig } from './services/emailService.js';
 import { startTaskReminderJob } from './jobs/taskReminderJob.js';
 import { startScheduledExportJob } from './jobs/scheduledExportJob.js';
@@ -186,6 +187,7 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/notes', noteRoutes);
 app.use('/api/reports-custom', reports2Routes);
 app.use('/api/permissions', permissionRoutes);
+app.use('/api/setup', setupRoutes);
 
 // Lightweight health/version endpoints for deployed debugging
 app.get('/api/health', (req, res) => {
