@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ModuleProvider } from './context/ModuleContext';
+import { DashboardProvider } from './context/DashboardContext';
 import Layout from './components/Layout';
 
 // Lazy load pages for better performance
@@ -108,9 +109,10 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <ModuleProvider>
-            <div className="App min-h-screen bg-[var(--color-bg-page)]">
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
+            <DashboardProvider>
+              <div className="App min-h-screen bg-[var(--color-bg-page)]">
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
                 <Route path="/login" element={
                   <PublicRoute>
                     <Login />
@@ -363,10 +365,11 @@ function App() {
               }}
             />
           </div>
-        </ModuleProvider>
-      </AuthProvider>
-    </ThemeProvider>
-  </Router>
+        </DashboardProvider>
+      </ModuleProvider>
+    </AuthProvider>
+  </ThemeProvider>
+</Router>
   );
 }
 
