@@ -186,6 +186,17 @@ export const setupAPI = {
   getStatus: () => api.get('/setup/status'),
 };
 
+// Metrics API - Cascading metrics system
+export const metricsAPI = {
+  getMyMetrics: (params) => api.get('/metrics/my-metrics', { params }),
+  getUserMetrics: (userId, params) => api.get(`/metrics/user/${userId}`, { params }),
+  getTeamMetrics: (teamId, params) => api.get(`/metrics/team/${teamId}`, { params }),
+  getDepartmentMetrics: (departmentId, params) => api.get(`/metrics/department/${departmentId}`, { params }),
+  getCompanyMetrics: (params) => api.get('/metrics/company', { params }),
+  getHierarchyMetrics: (params) => api.get('/metrics/hierarchy', { params }),
+  getCascadeMetrics: (level, id, params) => api.get(`/metrics/cascade/${level}/${id}`, { params }),
+};
+
 export default {
   departments: departmentApi,
   teams: teamApi,
@@ -202,4 +213,5 @@ export default {
   customFields: customFieldApi,
   predictiveAnalytics: predictiveAnalyticsApi,
   setup: setupAPI,
+  metrics: metricsAPI,
 };
