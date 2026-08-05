@@ -439,6 +439,34 @@ const Departments = () => {
                 </div>
               </div>
 
+              {/* Department Modules */}
+              {dept.modules && dept.modules.length > 0 && (
+                <div className="mb-4 pb-4 border-b" style={{ borderColor: isDark ? '#334155' : '#E5E7EB' }}>
+                  <p className={`text-xs font-medium mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                    Modules ({dept.modules.length})
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {dept.modules.slice(0, 6).map((module, idx) => (
+                      <span
+                        key={idx}
+                        className={`px-2 py-1 rounded text-xs ${
+                          isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {module}
+                      </span>
+                    ))}
+                    {dept.modules.length > 6 && (
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                      }`}>
+                        +{dept.modules.length - 6} more
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Teams in Department */}
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -605,8 +633,38 @@ const DepartmentModal = ({ department, isDark, onSave, onClose }) => {
   const [formData, setFormData] = useState({
     name: department?.name || '',
     description: department?.description || '',
-    headOfDepartment: department?.headOfDepartment || ''
+    headOfDepartment: department?.headOfDepartment || '',
+    modules: department?.modules || [],
+    activeModules: department?.activeModules || []
   });
+
+  // Available modules that departments can have access to
+  const AVAILABLE_MODULES = [
+    { id: 'clients', label: 'Clients & Leads', icon: '👥' },
+    { id: 'deals', label: 'Deals & Pipeline', icon: '💼' },
+    { id: 'sales', label: 'Sales', icon: '💰' },
+    { id: 'products', label: 'Products', icon: '📦' },
+    { id: 'schedules', label: 'Schedules & Tasks', icon: '📅' },
+    { id: 'meetings', label: 'Meetings', icon: '🤝' },
+    { id: 'issues', label: 'Issues & Support', icon: '🎫' },
+    { id: 'reports', label: 'Reports', icon: '📊' },
+    { id: 'analytics', label: 'Analytics', icon: '📈' },
+    { id: 'forecasts', label: 'Forecasts', icon: '🔮' },
+    { id: 'goals', label: 'Goals & Targets', icon: '🎯' },
+    { id: 'activities', label: 'Activities', icon: '⚡' },
+    { id: 'workflows', label: 'Workflows', icon: '🔄' },
+    { id: 'customFields', label: 'Custom Fields', icon: '🔧' },
+    { id: 'dashboards', label: 'Dashboards', icon: '📱' }
+  ];
+
+  const toggleModule = (moduleId) => {
+    setFormData(prev => ({
+      ...prev,
+      modules: prev.modules.includes(moduleId)
+        ? prev.modules.filter(m => m !== moduleId)
+        : [...prev.modules, moduleId]
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -615,7 +673,7 @@ const DepartmentModal = ({ department, isDark, onSave, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`rounded-xl p-6 max-w-md w-full ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
+      <div className={`rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
         <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
           {department ? 'Edit Department' : 'New Department'}
         </h2>
@@ -643,6 +701,42 @@ const DepartmentModal = ({ department, isDark, onSave, onClose }) => {
               rows="3"
             />
           </div>
+
+          {/* Module Configuration */}
+          <div>
+            <label className={`block text-sm font-medium mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              Department Modules
+            </label>
+            <p className={`text-xs mb-3 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+              Select which modules this department needs access to
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-64 overflow-y-auto">
+              {AVAILABLE_MODULES.map(module => {
+                const isSelected = formData.modules.includes(module.id);
+                return (
+                  <button
+                    key={module.id}
+                    type="button"
+                    onClick={() => toggleModule(module.id)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
+                      isSelected
+                        ? isDark
+                          ? 'bg-primary-600 text-white'
+                          : 'bg-primary-100 text-primary-700 border-2 border-primary-500'
+                        : isDark
+                        ? 'bg-[#334155] text-gray-300 hover:bg-gray-600'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent'
+                    }`}
+                  >
+                    <span>{module.icon}</span>
+                    <span className="flex-1 text-left">{module.label}</span>
+                    {isSelected && <CheckCircle className="w-4 h-4" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="flex space-x-3 pt-4">
             <button
               type="button"
@@ -655,7 +749,7 @@ const DepartmentModal = ({ department, isDark, onSave, onClose }) => {
               type="submit"
               className="flex-1 px-4 py-2 btn-brand rounded-lg"
             >
-              Save
+              Save Department
             </button>
           </div>
         </form>
