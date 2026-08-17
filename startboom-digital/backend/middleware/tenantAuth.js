@@ -59,8 +59,10 @@ export const tenantAuth = async (req, res, next) => {
       });
     }
 
-    // Handle superadmin without tenant restrictions
+    // Handle superadmin - RESTRICTED to platform management only
     if (user.role === 'superadmin') {
+      // Superadmin should NOT have access to tenant-specific data
+      // They can only access platform-level endpoints
       req.user = {
         userId: user._id,
         email: user.email,
@@ -71,11 +73,14 @@ export const tenantAuth = async (req, res, next) => {
       req.tenant = null;
       req.isSuperAdmin = true;
       req.isPlatformManager = false;
-      req.tenantQuery = {};
-      req.canAddUsers = () => true;
-      req.canAddClients = () => true;
-      req.canAddDeals = () => true;
+      req.tenantQuery = {}; // Empty query means no data access
+      
+      // Superadmin cannot add tenant-specific data
+      req.canAddUsers = () => false;
+      req.canAddClients = () => false;
+      req.canAddDeals = () => false;
       req.updateTenantUsage = async () => {};
+      
       return next();
     }
 
@@ -202,9 +207,12 @@ export const requireRole = (allowedRoles) => {
       });
     }
 
-    // Super admin has access to everything
-    if (req.isSuperAdmin) {
-      return next();
+    // Superadmin CANNOT access company-level routes (security)
+    if (req.isSuperAdmin && !allowedRoles.includes('superadmin')) {
+      return res.status(403).json({ 
+        message: 'Superadmin cannot access company data. Please log in as company admin.',
+        code: 'SUPERADMIN_COMPANY_ACCESS_DENIED'
+      });
     }
 
     // Check if user has required role
@@ -417,8 +425,16 @@ export const requirePermission = (requiredPermission) => {
       return res.status(401).json({ message: 'Authentication required.' });
     }
 
-    // Super admin and tenant admins have full access
-    if (req.isSuperAdmin || req.user.role === 'admin') {
+    // Superadmin CANNOT access company data (security restriction)
+    if (req.isSuperAdmin) {
+      return res.status(403).json({ 
+        message: 'Superadmin cannot access company data. Please log in as company admin.',
+        code: 'SUPERADMIN_COMPANY_ACCESS_DENIED'
+      });
+    }
+
+    // Tenant admins have full access to their company
+    if (req.user.role === 'admin') {
       return next();
     }
 

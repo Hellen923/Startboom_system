@@ -132,9 +132,16 @@ export const generateNavigation = (user, permissions = null, departmentModules =
   if (!user || !user.role) return [];
 
   let baseNav = [];
+  
+  // Superadmin ONLY gets platform-level navigation (no company data access)
   if (user.role === 'superadmin') {
     baseNav = ALL_NAV_ITEMS.superadmin;
-  } else if (user.role === 'admin' || user.role === 'manager') {
+    // Return early - superadmin should NOT access company admin/agent routes
+    return baseNav;
+  }
+  
+  // Company-level roles
+  if (user.role === 'admin' || user.role === 'manager') {
     baseNav = ALL_NAV_ITEMS.admin;
   } else if (user.role === 'agent') {
     baseNav = ALL_NAV_ITEMS.agent;
