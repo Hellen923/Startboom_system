@@ -53,6 +53,7 @@ router.get('/', async (req, res) => {
     const skip = (page - 1) * limit;
 
     const sales = await Sale.find(query)
+      .lean() // Performance: return plain JS objects for read-only data
       .populate('agent', 'name email')
       .populate('client', 'name email phone')
       .populate('tasks.createdBy', 'name')

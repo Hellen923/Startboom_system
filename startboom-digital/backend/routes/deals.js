@@ -95,6 +95,7 @@ router.get('/', async (req, res) => {
     const skip = (page - 1) * limit;
 
     const deals = await Deal.find(query)
+      .lean() // Performance: return plain JS objects for read-only data
       .populate('client', 'name email phone')
       .populate('agent', 'name email')
       .populate('teamMembers', 'name email')

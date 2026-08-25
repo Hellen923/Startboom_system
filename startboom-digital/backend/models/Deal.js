@@ -174,5 +174,8 @@ dealSchema.index({ tenant: 1, agent: 1 });
 dealSchema.index({ tenant: 1, stage: 1 });
 dealSchema.index({ expectedCloseDate: 1 });
 dealSchema.index({ lastActivityDate: -1 });
+dealSchema.index({ createdAt: -1 }); // Date-based sorting
+dealSchema.index({ tenant: 1, createdAt: -1 }); // Tenant deals by date
+dealSchema.index({ closedAt: -1 }); // Won/lost deals by close date
 
 export default mongoose.model('Deal', dealSchema);

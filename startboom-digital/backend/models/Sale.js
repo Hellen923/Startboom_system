@@ -289,4 +289,14 @@ saleSchema.methods.updateCreditStatus = function() {
   }
 };
 
+// ─── INDEXES FOR PERFORMANCE ─────────────────────────────────────────────────
+saleSchema.index({ tenant: 1, saleDate: -1 }); // Most common query: sales by tenant and date
+saleSchema.index({ agent: 1, saleDate: -1 }); // Agent's sales by date
+saleSchema.index({ tenant: 1, agent: 1 }); // Tenant + agent combination
+saleSchema.index({ client: 1 }); // Client sales lookup
+saleSchema.index({ createdAt: -1 }); // Date-based sorting
+saleSchema.index({ paymentMethod: 1 }); // Filter by payment method
+saleSchema.index({ creditStatus: 1 }); // Filter by credit status
+saleSchema.index({ tenant: 1, paymentMethod: 1, saleDate: -1 }); // Cash vs credit reports
+
 export default mongoose.model('Sale', saleSchema);

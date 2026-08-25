@@ -160,6 +160,7 @@ router.get('/', tenantAuth, async (req, res) => {
     const skip = (page - 1) * limit;
 
     const clients = await Client.find(query)
+      .lean() // Performance: return plain JS objects for read-only data
       .populate('agent', 'name email')
       .sort({ createdAt: -1 })
       .skip(skip)
