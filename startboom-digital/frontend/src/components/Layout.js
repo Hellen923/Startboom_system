@@ -255,35 +255,58 @@ const agentNavSections = [
   );
   };
 
-  const SidebarNav = ({ onItemClick }) => (
-    <nav className="flex-1 px-3 py-6 overflow-y-auto scrollbar-thin">
-      {navSections.map((section, index) => (
-        <div key={section.title} className={index > 0 ? 'mt-6 border-t sidebar-divider pt-6' : ''}>
-          <p className="px-4 pb-3 sidebar-section-label">
-            {section.title}
-          </p>
-          <div className="space-y-1">
-            {section.items.map((item) => {
-              const isActive = location.pathname === item.path || (
-                item.path !== '/admin' &&
-                item.path !== '/agent' &&
-                item.path !== '/superadmin' &&
-                location.pathname.startsWith(item.path)
-              );
-              return (
-                <NavItem
-                  key={item.path}
-                  item={item}
-                  isActive={isActive}
-                  onClick={onItemClick}
-                />
-              );
-            })}
+  const SidebarNav = ({ onItemClick }) => {
+    const navRef = React.useRef(null);
+
+    // Restore sidebar scroll position on mount
+    React.useEffect(() => {
+      if (navRef.current) {
+        const savedScroll = sessionStorage.getItem('sidebarScrollPosition');
+        if (savedScroll) {
+          navRef.current.scrollTop = parseInt(savedScroll, 10);
+        }
+      }
+    }, []);
+
+    // Save sidebar scroll position on scroll
+    const handleScroll = (e) => {
+      sessionStorage.setItem('sidebarScrollPosition', e.target.scrollTop.toString());
+    };
+
+    return (
+      <nav 
+        ref={navRef}
+        className="flex-1 px-3 py-6 overflow-y-auto scrollbar-thin"
+        onScroll={handleScroll}
+      >
+        {navSections.map((section, index) => (
+          <div key={section.title} className={index > 0 ? 'mt-6 border-t sidebar-divider pt-6' : ''}>
+            <p className="px-4 pb-3 sidebar-section-label">
+              {section.title}
+            </p>
+            <div className="space-y-1">
+              {section.items.map((item) => {
+                const isActive = location.pathname === item.path || (
+                  item.path !== '/admin' &&
+                  item.path !== '/agent' &&
+                  item.path !== '/superadmin' &&
+                  location.pathname.startsWith(item.path)
+                );
+                return (
+                  <NavItem
+                    key={item.path}
+                    item={item}
+                    isActive={isActive}
+                    onClick={onItemClick}
+                  />
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
-    </nav>
-  );
+        ))}
+      </nav>
+    );
+  };
 
   const SidebarFooter = ({ mobile = false }) => (
     <div className="sidebar-footer p-4">

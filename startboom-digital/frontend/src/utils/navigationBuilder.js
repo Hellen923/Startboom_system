@@ -55,9 +55,9 @@ const ALL_NAV_ITEMS = {
       title: 'Workspace',
       items: [
         { path: '/admin', icon: PieChart, label: 'Dashboard', description: 'Welcome to HoneyPot CRM — your organisation summary with quick access to key metrics.', requiredRole: ['admin', 'manager'] },
+        { path: '/admin/branches', icon: Building2, label: 'Branch Locations', description: 'Manage multi-location offices and hierarchical branch structure.', requiredRole: ['admin', 'manager'], requiredPermission: 'branches:view' },
         { path: '/admin/departments', icon: Layers, label: 'Departments & Teams', description: 'Organise your company structure, manage teams, and assign custom roles.', requiredRole: ['admin', 'manager'], requiredPermission: 'departments:view' },
         { path: '/admin/users', icon: UserPlus, label: 'User Management', description: 'Add, edit, and manage users, roles, departments, and access permissions.', requiredRole: ['admin', 'manager'], requiredPermission: 'users:view' },
-        { path: '/admin/branches', icon: Building2, label: 'Branch Locations', description: 'Manage multi-location offices and hierarchical branch structure.', requiredRole: ['admin', 'manager'], requiredPermission: 'branches:view' },
         { path: '/admin/pipelines', icon: GitBranch, label: 'Pipeline Builder', description: 'Customise sales stages and business process workflows for your team.', requiredRole: ['admin', 'manager'], requiredPermission: 'pipelines:view' },
         { path: '/admin/custom-fields', icon: Sliders, label: 'Custom Fields', description: 'Add custom fields to capture industry-specific data across records.', requiredRole: ['admin', 'manager'], requiredPermission: 'custom_fields:view' },
         { path: '/admin/goals', icon: Target, label: 'Goals & Targets', description: 'Set and track progress on individual, team, and company goals.', requiredRole: ['admin', 'manager'], requiredPermission: 'goals:view' },

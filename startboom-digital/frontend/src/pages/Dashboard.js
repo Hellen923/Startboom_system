@@ -323,14 +323,6 @@ const Dashboard = () => {
 
           <DashboardQuickActions role={role === 'superadmin' ? 'superadmin' : 'admin'} />
 
-          {/* Second-row quick stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <KPICard icon={CheckCircle} title="Won Deals"          value={kpi.wonDeals || 0}        color="green"  />
-            <KPICard icon={AlertCircle} title="Pending Deals"       value={kpi.pendingDeals || 0}   color="primary" />
-            <KPICard icon={DollarSign}  title="Cash Sales"          value={formatUGX(kpi.cash)}     color="teal"   />
-            <KPICard icon={DollarSign}  title="Credit Sales"        value={formatUGX(kpi.credit)}   color="red"    />
-          </div>
-
           {/* Charts — 2 × 2 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white dark:bg-[#1A1D27] border border-gray-100 dark:border-[#3A3D52] rounded-xl shadow-sm p-6">

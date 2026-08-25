@@ -69,14 +69,6 @@ export const getQuickActions = (role) => {
           state: { openCreate: true },
         },
         {
-          label: 'Add Product',
-          description: 'Add a new product to the global catalogue.',
-          icon: Package,
-          color: 'yellow',
-          path: '/admin/products',
-          state: { openCreate: true },
-        },
-        {
           label: 'Platform Overview',
           description: 'View cross-tenant metrics and health.',
           icon: BarChart3,
@@ -100,14 +92,6 @@ export const getQuickActions = (role) => {
           icon: UserPlus,
           color: 'primary',
           path: '/admin/users',
-          state: { openCreate: true },
-        },
-        {
-          label: 'Add Product',
-          description: 'Add a new product to the catalogue.',
-          icon: Package,
-          color: 'yellow',
-          path: '/admin/products',
           state: { openCreate: true },
         },
         {

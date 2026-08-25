@@ -8,7 +8,6 @@ import dm from '../../utils/darkModeClasses';
 import { dealsAPI, salesAPI, clientsAPI, usersAPI, tenantsAPI } from '../../services/api';
 import { departmentApi, metricsAPI } from '../../services/enterpriseApi';
 import OnboardingWizard from '../../components/OnboardingWizard';
-import DashboardQuickActions from '../../components/DashboardQuickActions';
 import { WidgetContainer } from '../../components/dashboard/DashboardWidgets';
 import toast from 'react-hot-toast';
 
@@ -470,12 +469,13 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-      {/* Stats Cards — spec: Sales (Monthly), Users (All time), Deals */}
-      <div className="stat-grid">
+      {/* Stats Cards - Revenue and Users only */}
+      <div className="stat-grid cols-2">
         <StatCard icon={DollarSign} title="Sales (This Month)" value={`UGX ${Number(totalRevenue || 0).toLocaleString('en-UG')}`} />
         <StatCard icon={Users} title="Users (All Time)" value={totalUsersAllTime} />
-        <StatCard icon={Target} title="Deals" value={dealsCount} />
       </div>
+
+      {/* Note: Quick Actions only on main dashboards, not subpages */}
 
       {/* ── Company-Wide Cascading Metrics ── */}
       {!metricsLoading && companyMetrics && (
