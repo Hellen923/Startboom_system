@@ -48,6 +48,202 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// ─── OPTIMIZED DASHBOARD SUMMARY ENDPOINTS ───────────────────────────────────
+/**
+ * GET /api/dashboards/admin-summary
+ * Optimized endpoint for admin dashboard - uses aggregation instead of fetching all records
+ */
+router.get('/summary/admin', requireRole(['admin', 'manager']), async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const tenantQuery = req.isSuperAdmin ? {} : { tenant: req.tenantId };
+    
+    const dateFilter = {};
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      dateFilter.createdAt = { $gte: start, $lte: end };
+    }
+
+    // Use MongoDB aggregation for better performance
+    const [
+      salesAggregation,
+      dealsAggregation,
+      clientsCount,
+      usersCount,
+      monthlySalesRevenue
+    ] = await Promise.all([
+      // Total sales and revenue in period
+      Sale.aggregate([
+        { $match: { ...tenantQuery, ...(startDate && endDate ? { saleDate: { $gte: new Date(startDate), $lte: new Date(endDate) } } : {}) } },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: '$finalAmount' },
+            totalSales: { $sum: 1 }
+          }
+        }
+      ]),
+
+      // Deals summary
+      Deal.aggregate([
+        { $match: { ...tenantQuery, ...dateFilter } },
+        {
+          $group: {
+            _id: '$stage',
+            count: { $sum: 1 },
+            totalValue: { $sum: '$value' }
+          }
+        }
+      ]),
+
+      // Total clients count
+      Client.countDocuments({ ...tenantQuery }),
+
+      // Total users count
+      User.countDocuments({ ...tenantQuery }),
+
+      // Monthly sales revenue breakdown (last 12 months)
+      Sale.aggregate([
+        { $match: { ...tenantQuery, saleDate: { $exists: true } } },
+        {
+          $group: {
+            _id: { $month: '$saleDate' },
+            revenue: { $sum: '$finalAmount' },
+            count: { $sum: 1 }
+          }
+        },
+        { $sort: { '_id': 1 } }
+      ])
+    ]);
+
+    // Process sales data
+    const salesData = salesAggregation[0] || { totalRevenue: 0, totalSales: 0 };
+
+    // Process deals data
+    const dealsData = {
+      total: 0,
+      won: 0,
+      lost: 0,
+      pending: 0,
+      byStage: {}
+    };
+
+    dealsAggregation.forEach(item => {
+      const stage = (item._id || '').toLowerCase();
+      dealsData.total += item.count;
+      dealsData.byStage[stage] = {
+        count: item.count,
+        value: item.totalValue || 0
+      };
+
+      if (stage === 'won') dealsData.won = item.count;
+      else if (stage === 'lost') dealsData.lost = item.count;
+      else dealsData.pending += item.count;
+    });
+
+    // Process monthly sales revenue
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthlySalesData = monthNames.map((month, idx) => {
+      const monthData = monthlySalesRevenue.find(m => m._id === idx + 1);
+      return {
+        month,
+        revenue: monthData?.revenue || 0,
+        sales: monthData?.count || 0
+      };
+    });
+
+    res.json({
+      summary: {
+        sales: salesData,
+        deals: dealsData,
+        clients: clientsCount,
+        users: usersCount
+      },
+      charts: {
+        monthlySales: monthlySalesData
+      }
+    });
+
+  } catch (error) {
+    console.error('Dashboard summary error:', error);
+    res.status(500).json({ message: 'Failed to load dashboard summary', error: error.message });
+  }
+});
+
+/**
+ * GET /api/dashboards/agent-summary
+ * Optimized endpoint for agent dashboard
+ */
+router.get('/summary/agent', async (req, res) => {
+  try {
+    const agentId = req.user.userId;
+    const { startDate, endDate } = req.query;
+    const tenantQuery = req.isSuperAdmin ? {} : { tenant: req.tenantId };
+
+    const dateFilter = startDate && endDate
+      ? { $gte: new Date(startDate), $lte: new Date(endDate) }
+      : undefined;
+
+    const [salesData, dealsData, clientsCount] = await Promise.all([
+      // Agent's sales
+      Sale.aggregate([
+        { $match: { agent: agentId, ...tenantQuery, ...(dateFilter && { saleDate: dateFilter }) } },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: { $sum: '$finalAmount' },
+            totalSales: { $sum: 1 }
+          }
+        }
+      ]),
+
+      // Agent's deals
+      Deal.aggregate([
+        { $match: { agent: agentId, ...tenantQuery } },
+        {
+          $group: {
+            _id: '$stage',
+            count: { $sum: 1 }
+          }
+        }
+      ]),
+
+      // Agent's clients
+      Client.countDocuments({ agent: agentId, ...tenantQuery })
+    ]);
+
+    const sales = salesData[0] || { totalRevenue: 0, totalSales: 0 };
+    const deals = {
+      total: 0,
+      won: 0,
+      active: 0,
+      lost: 0
+    };
+
+    dealsData.forEach(item => {
+      const stage = (item._id || '').toLowerCase();
+      deals.total += item.count;
+
+      if (stage === 'won') deals.won = item.count;
+      else if (stage === 'lost') deals.lost = item.count;
+      else deals.active += item.count;
+    });
+
+    res.json({
+      sales,
+      deals,
+      clients: clientsCount
+    });
+
+  } catch (error) {
+    console.error('Agent dashboard summary error:', error);
+    res.status(500).json({ message: 'Failed to load agent summary', error: error.message });
+  }
+});
+
+// ─── END OPTIMIZED ENDPOINTS ─────────────────────────────────────────────────
+
 // Create new dashboard
 router.post('/', async (req, res) => {
   try {
