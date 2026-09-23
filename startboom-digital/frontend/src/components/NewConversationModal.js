@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { X, User, Users, Building } from 'lucide-react';
+import { X, User, Users, Building, MapPin } from 'lucide-react';
 import { usersAPI } from '../services/api';
-import { teamApi, departmentApi } from '../services/enterpriseApi';
+import { teamApi, departmentApi, branchApi } from '../services/enterpriseApi';
 import dm from '../utils/darkModeClasses';
 import toast from 'react-hot-toast';
 
 const NewConversationModal = ({ isOpen, onClose, onConversationCreated }) => {
-  const [conversationType, setConversationType] = useState('direct'); // direct, team, department
+  const [conversationType, setConversationType] = useState('direct'); // direct, team, department, branch
   const [users, setUsers] = useState([]);
   const [teams, setTeams] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [branches, setBranches] = useState([]);
   const [selectedUser, setSelectedUser] = useState('');
   const [selectedTeam, setSelectedTeam] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [selectedBranch, setSelectedBranch] = useState('');
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -34,10 +36,24 @@ const NewConversationModal = ({ isOpen, onClose, onConversationCreated }) => {
       } else if (conversationType === 'department') {
         const res = await departmentApi.getAll();
         setDepartments(res.data?.departments || []);
+      } else if (conversationType === 'branch') {
+        const res = await branchApi.getAll();
+        setBranches(res.data?.branches || []);
       }
     } catch (error) {
       console.error('Failed to load data:', error);
-      toast.error('Failed to load options');
+      console.error('Error details:', error.response?.data || error.message);
+      
+      // Check if it's an auth error
+      if (error.response?.status === 401) {
+        toast.error('Session expired. Please log in again.');
+      } else if (error.response?.status === 404) {
+        toast.error('API endpoint not found. Check backend is running.');
+      } else if (!error.response) {
+        toast.error('Cannot connect to server. Is backend running?');
+      } else {
+        toast.error('Failed to load options');
+      }
     }
   };
 
@@ -54,6 +70,10 @@ const NewConversationModal = ({ isOpen, onClose, onConversationCreated }) => {
       toast.error('Please select a department');
       return;
     }
+    if (conversationType === 'branch' && !selectedBranch) {
+      toast.error('Please select a branch');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -63,6 +83,8 @@ const NewConversationModal = ({ isOpen, onClose, onConversationCreated }) => {
         await onConversationCreated({ type: 'team', teamId: selectedTeam });
       } else if (conversationType === 'department') {
         await onConversationCreated({ type: 'department', departmentId: selectedDepartment });
+      } else if (conversationType === 'branch') {
+        await onConversationCreated({ type: 'branch', branchId: selectedBranch });
       }
       onClose();
     } catch (error) {
@@ -99,7 +121,7 @@ const NewConversationModal = ({ isOpen, onClose, onConversationCreated }) => {
           <label className={`block text-sm font-medium mb-2 ${dm.textPrimary}`}>
             Conversation Type
           </label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => setConversationType('direct')}
               className={`p-3 rounded-lg border-2 transition-colors ${
@@ -139,6 +161,20 @@ const NewConversationModal = ({ isOpen, onClose, onConversationCreated }) => {
               <Building className={`w-6 h-6 mx-auto mb-1 ${conversationType === 'department' ? 'text-primary-600 dark:text-primary-400' : dm.textMuted}`} />
               <span className={`text-xs font-medium ${conversationType === 'department' ? 'text-primary-600 dark:text-primary-400' : dm.textMuted}`}>
                 Department
+              </span>
+            </button>
+
+            <button
+              onClick={() => setConversationType('branch')}
+              className={`p-3 rounded-lg border-2 transition-colors ${
+                conversationType === 'branch'
+                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                  : `border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600`
+              }`}
+            >
+              <MapPin className={`w-6 h-6 mx-auto mb-1 ${conversationType === 'branch' ? 'text-primary-600 dark:text-primary-400' : dm.textMuted}`} />
+              <span className={`text-xs font-medium ${conversationType === 'branch' ? 'text-primary-600 dark:text-primary-400' : dm.textMuted}`}>
+                Branch
               </span>
             </button>
           </div>
@@ -212,6 +248,24 @@ const NewConversationModal = ({ isOpen, onClose, onConversationCreated }) => {
                 <option value="">Choose a department...</option>
                 {departments.map(dept => (
                   <option key={dept._id} value={dept._id}>{dept.name}</option>
+                ))}
+              </select>
+            </>
+          )}
+
+          {conversationType === 'branch' && (
+            <>
+              <label className={`block text-sm font-medium mb-2 ${dm.textPrimary}`}>
+                Select Branch
+              </label>
+              <select
+                value={selectedBranch}
+                onChange={(e) => setSelectedBranch(e.target.value)}
+                className={`w-full px-4 py-2 rounded-lg border ${dm.border} ${dm.inputBg} ${dm.textPrimary}`}
+              >
+                <option value="">Choose a branch...</option>
+                {branches.map(branch => (
+                  <option key={branch._id} value={branch._id}>{branch.name}</option>
                 ))}
               </select>
             </>

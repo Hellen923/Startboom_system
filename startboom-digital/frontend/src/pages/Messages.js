@@ -95,8 +95,17 @@ const Messages = () => {
         });
         conversation = response.data.conversation;
       } else if (data.type === 'department') {
-        toast.info('Department chat feature coming soon');
-        return;
+        // Send a welcome message to create the department conversation
+        const response = await messagesAPI.sendToDepartment(data.departmentId, {
+          content: 'Conversation started'
+        });
+        conversation = response.data.conversation;
+      } else if (data.type === 'branch') {
+        // Send a welcome message to create the branch conversation
+        const response = await messagesAPI.sendToBranch(data.branchId, {
+          content: 'Conversation started'
+        });
+        conversation = response.data.conversation;
       }
 
       if (conversation) {

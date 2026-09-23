@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, User, MessageSquare, Clock } from 'lucide-react';
+import { Users, User, MessageSquare, Building, MapPin, Clock } from 'lucide-react';
 import dm from '../utils/darkModeClasses';
 
 const ConversationList = ({ conversations, selectedConversation, onSelectConversation, currentUserId }) => {
@@ -21,7 +21,13 @@ const ConversationList = ({ conversations, selectedConversation, onSelectConvers
     } else if (conversation.type === 'department') {
       return {
         name: conversation.department?.name || conversation.name || 'Department Chat',
-        icon: Users,
+        icon: Building,
+        subtitle: `${conversation.participants?.length || 0} members`
+      };
+    } else if (conversation.type === 'branch') {
+      return {
+        name: conversation.branch?.name || conversation.name || 'Branch Chat',
+        icon: MapPin,
         subtitle: `${conversation.participants?.length || 0} members`
       };
     } else {

@@ -230,6 +230,12 @@ export const messagesAPI = {
   // Send message to entire team
   sendToTeam: (teamId, data) => api.post(`/messages/team/${teamId}`, data),
   
+  // Send message to entire department
+  sendToDepartment: (departmentId, data) => api.post(`/messages/department/${departmentId}`, data),
+  
+  // Send message to entire branch
+  sendToBranch: (branchId, data) => api.post(`/messages/branch/${branchId}`, data),
+  
   // Create or get direct conversation with a user
   createDirect: (recipientId) => api.post(`/messages/direct/${recipientId}`),
   
