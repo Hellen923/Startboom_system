@@ -215,12 +215,30 @@ export const calculateDepartmentMetrics = async (departmentId, startDate, endDat
  */
 export const calculateCompanyMetrics = async (tenantId, startDate, endDate) => {
   try {
-    const tenant = await Tenant.findById(tenantId);
-    if (!tenant) throw new Error('Tenant not found');
+    // Handle both string and ObjectId
+    const tenantObjectId = typeof tenantId === 'string' ? tenantId : tenantId.toString();
+    
+    const tenant = await Tenant.findById(tenantObjectId);
+    if (!tenant) {
+      console.error(`Tenant not found for ID: ${tenantObjectId}`);
+      // Return empty metrics instead of throwing error
+      return {
+        tenant: tenantObjectId,
+        metrics: {
+          totalRevenue: 0,
+          wonDeals: 0,
+          totalMembers: 0,
+          conversionRate: 0
+        },
+        departmentCount: 0,
+        teamCount: 0,
+        departments: []
+      };
+    }
 
     // Get all departments
     const departments = await Department.find({ 
-      tenant: tenantId, 
+      tenant: tenantObjectId, 
       isActive: true 
     });
 
