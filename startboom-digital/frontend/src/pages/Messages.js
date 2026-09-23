@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { messagesAPI } from '../services/enterpriseApi';
 import ConversationList from '../components/ConversationList';
 import ChatWindow from '../components/ChatWindow';
+import NewConversationModal from '../components/NewConversationModal';
 import toast from 'react-hot-toast';
 import dm from '../utils/darkModeClasses';
 
@@ -15,6 +16,7 @@ const Messages = () => {
   const [loading, setLoading] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showNewConversationModal, setShowNewConversationModal] = useState(false);
 
   // Load conversations
   const loadConversations = async () => {
@@ -78,6 +80,35 @@ const Messages = () => {
     loadMessages(conversation._id);
   };
 
+  // Create new conversation
+  const handleCreateConversation = async (data) => {
+    try {
+      let response;
+      
+      if (data.type === 'direct') {
+        response = await messagesAPI.createDirect(data.userId);
+      } else if (data.type === 'team') {
+        // For team chats, we'd need a new API endpoint or use existing conversation
+        toast.info('Team chat feature - backend implementation needed');
+        return;
+      } else if (data.type === 'department') {
+        toast.info('Department chat feature - backend implementation needed');
+        return;
+      }
+
+      if (response && response.data) {
+        const newConversation = response.data.conversation;
+        setConversations(prev => [newConversation, ...prev]);
+        setSelectedConversation(newConversation);
+        loadMessages(newConversation._id);
+        toast.success('Conversation started!');
+      }
+    } catch (error) {
+      console.error('Failed to create conversation:', error);
+      throw error;
+    }
+  };
+
   // Initial load
   useEffect(() => {
     loadConversations();
@@ -126,7 +157,7 @@ const Messages = () => {
           <div className="flex items-center gap-2 mb-3">
             <h1 className={`text-xl font-bold flex-1 ${dm.textPrimary}`}>Messages</h1>
             <button
-              onClick={() => toast.info('Create new conversation - Coming soon!')}
+              onClick={() => setShowNewConversationModal(true)}
               className="p-2 rounded-lg bg-primary-500 hover:bg-primary-600 text-white transition-colors"
               title="New conversation"
             >
@@ -172,6 +203,13 @@ const Messages = () => {
           />
         )}
       </div>
+
+      {/* New Conversation Modal */}
+      <NewConversationModal
+        isOpen={showNewConversationModal}
+        onClose={() => setShowNewConversationModal(false)}
+        onConversationCreated={handleCreateConversation}
+      />
     </div>
   );
 };
