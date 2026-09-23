@@ -20,6 +20,7 @@ import { useTheme } from '../context/ThemeContext';
 import { getSearchConfig } from '../utils/roleConfig';
 import { exportCurrentPage } from '../utils/pageExport';
 import dm from '../utils/darkModeClasses';
+import { messagesAPI } from '../services/enterpriseApi';
 
 const WhatsAppIcon = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -63,7 +64,6 @@ const Taskbar = ({
   onOpenProfile,
   onMenuClick,
   unreadNotifications = 0,
-  whatsappCount = 0,
 }) => {
   const { user } = useAuth();
   const { theme, updateTheme } = useTheme();
@@ -75,6 +75,7 @@ const Taskbar = ({
   const [dateLabel] = useState(() => formatMonthRange());
   const [exportOpen, setExportOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
 
   const role = user?.role || 'agent';
   const searchConfig = getSearchConfig(role);
@@ -91,6 +92,23 @@ const Taskbar = ({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Load unread messages count
+  useEffect(() => {
+    const loadUnreadMessages = async () => {
+      try {
+        const response = await messagesAPI.getUnreadCount();
+        setUnreadMessages(response.data.count || 0);
+      } catch (error) {
+        console.error('Failed to load unread messages count:', error);
+      }
+    };
+
+    loadUnreadMessages();
+    // Poll every 30 seconds
+    const interval = setInterval(loadUnreadMessages, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -127,13 +145,13 @@ const Taskbar = ({
 
   const calendarPath = role === 'agent' ? '/agent/schedules' : role === 'superadmin' ? '/superadmin' : '/admin/reports';
   
-  // WhatsApp navigation based on role
-  const whatsappPath = 
-    role === 'agent' ? '/agent/clients' : 
-    role === 'admin' ? '/admin/clients' : 
-    role === 'manager' ? '/admin/clients' : 
-    role === 'superadmin' ? '/admin/clients' : 
-    '/agent/clients'; // fallback
+  // Messages navigation based on role
+  const messagesPath = 
+    role === 'agent' ? '/agent/messages' : 
+    role === 'admin' ? '/admin/messages' : 
+    role === 'manager' ? '/admin/messages' : 
+    role === 'superadmin' ? '/admin/messages' : 
+    '/agent/messages'; // fallback
 
   return (
     <div className={`sticky top-0 z-30 -mx-3 sm:-mx-4 md:-mx-6 lg:-mx-8 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 pb-3 ${dm.taskbarShell}`}>
@@ -177,9 +195,9 @@ const Taskbar = ({
             <IconButton icon={Bell} badge={unreadNotifications} onClick={onOpenNotifications} title="Notifications" />
 
             <IconButton
-              onClick={() => navigate(whatsappPath, { state: { channel: 'whatsapp' } })}
-              title="WhatsApp follow-ups"
-              badge={whatsappCount}
+              onClick={() => navigate(messagesPath)}
+              title="Messages"
+              badge={unreadMessages}
             >
               <WhatsAppIcon className="h-[18px] w-[18px] text-green-500" />
             </IconButton>
