@@ -108,10 +108,10 @@ const CustomReports = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            Custom Report Builder
+            Custom Reports
           </h1>
           <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-            Build and execute custom reports with advanced filtering
+            Build and execute custom reports with advanced filtering and export options.
           </p>
         </div>
         <button
