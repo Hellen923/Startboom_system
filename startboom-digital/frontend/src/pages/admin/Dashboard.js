@@ -469,10 +469,11 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-      {/* Stats Cards - Revenue and Users only */}
-      <div className="stat-grid cols-2">
+      {/* Stats Cards - Revenue, Users, and Departments */}
+      <div className="stat-grid cols-3">
         <StatCard icon={DollarSign} title="Sales (This Month)" value={`UGX ${Number(totalRevenue || 0).toLocaleString('en-UG')}`} />
         <StatCard icon={Users} title="Users (All Time)" value={totalUsersAllTime} />
+        <StatCard icon={Building} title="Departments" value={departments.length} />
       </div>
 
       {/* Note: Quick Actions only on main dashboards, not subpages */}
