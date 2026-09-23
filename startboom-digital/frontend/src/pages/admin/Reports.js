@@ -587,27 +587,27 @@ const Reports = () => {
         </div>
 
         {/* Quick Filters */}
-        <div className="flex space-x-1 bg-white p-1 rounded-lg border border-gray-200">
-          <button onClick={() => setPeriod('thisMonth')} className="px-3 py-1 text-xs font-medium hover:bg-primary-50 hover:text-primary-600 rounded">Month</button>
-          <button onClick={() => setPeriod('lastMonth')} className="px-3 py-1 text-xs font-medium hover:bg-primary-50 hover:text-primary-600 rounded">Last Month</button>
-          <button onClick={() => setPeriod('thisYear')} className="px-3 py-1 text-xs font-medium hover:bg-primary-50 hover:text-primary-600 rounded">Year</button>
+        <div className="flex space-x-1 bg-white dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700">
+          <button onClick={() => setPeriod('thisMonth')} className="px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400 rounded">Month</button>
+          <button onClick={() => setPeriod('lastMonth')} className="px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400 rounded">Last Month</button>
+          <button onClick={() => setPeriod('thisYear')} className="px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400 rounded">Year</button>
         </div>
 
         {/* Date Range */}
-        <div className="flex items-center space-x-2 bg-white rounded-lg px-3 py-2 border border-gray-200">
+        <div className="flex items-center space-x-2 bg-white dark:bg-gray-800 rounded-lg px-3 py-2 border border-gray-200 dark:border-gray-700">
           <input
             type="date"
             value={filters.start}
             onChange={e => setFilters({ ...filters, start: e.target.value })}
-            className="px-3 py-1 text-sm border-0 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-3 py-1 text-sm border-0 bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 [color-scheme:light] dark:[color-scheme:dark]"
             placeholder="Start Date"
           />
-          <span className="text-gray-400">to</span>
+          <span className="text-gray-400 dark:text-gray-500">to</span>
           <input
             type="date"
             value={filters.end}
             onChange={e => setFilters({ ...filters, end: e.target.value })}
-            className="px-3 py-1 text-sm border-0 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-3 py-1 text-sm border-0 bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 [color-scheme:light] dark:[color-scheme:dark]"
             placeholder="End Date"
           />
         </div>
@@ -615,10 +615,10 @@ const Reports = () => {
         {/* Refresh Button */}
         <button
           onClick={loadReports}
-          className="p-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50"
+          className="p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
           title="Refresh Data"
         >
-          <RefreshCw className="w-5 h-5 text-gray-500" />
+          <RefreshCw className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         </button>
       </div>
 
