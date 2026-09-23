@@ -54,6 +54,7 @@ const Forecasts = lazy(() => import('./pages/admin/Forecasts'));
 const CustomReports = lazy(() => import('./pages/admin/CustomReports'));
 const PermissionManager = lazy(() => import('./pages/admin/PermissionManager'));
 const TenantSettings = lazy(() => import('./pages/admin/TenantSettings'));
+const Messages = lazy(() => import('./pages/Messages'));
 
 // Minimal loading component
 const PageLoader = () => (
@@ -252,6 +253,11 @@ function App() {
                     <TenantSettings />
                   </ProtectedRoute>
                 } />
+                <Route path="/admin/messages" element={
+                  <ProtectedRoute allowedRoles={['admin', 'manager']}>
+                    <Messages />
+                  </ProtectedRoute>
+                } />
 
                 {/* Agent Routes */}
                 <Route path="/change-password" element={
@@ -322,6 +328,11 @@ function App() {
                 <Route path="/agent/meetings" element={
                   <ProtectedRoute allowedRoles={['agent']}>
                     <AgentMeetings />
+                  </ProtectedRoute>
+                } />
+                <Route path="/agent/messages" element={
+                  <ProtectedRoute allowedRoles={['agent']}>
+                    <Messages />
                   </ProtectedRoute>
                 } />
 
