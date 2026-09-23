@@ -215,3 +215,30 @@ export default {
   setup: setupAPI,
   metrics: metricsAPI,
 };
+
+// Messages API
+export const messagesAPI = {
+  // Get all conversations for current user
+  getConversations: () => api.get('/messages/conversations'),
+  
+  // Get messages in a specific conversation
+  getConversation: (conversationId, params) => api.get(`/messages/conversation/${conversationId}`, { params }),
+  
+  // Send a message
+  send: (data) => api.post('/messages/send', data),
+  
+  // Send message to entire team
+  sendToTeam: (teamId, data) => api.post(`/messages/team/${teamId}`, data),
+  
+  // Create or get direct conversation with a user
+  createDirect: (recipientId) => api.post(`/messages/direct/${recipientId}`),
+  
+  // Mark message as read
+  markAsRead: (messageId) => api.put(`/messages/${messageId}/read`),
+  
+  // Get unread message count
+  getUnreadCount: () => api.get('/messages/unread-count'),
+  
+  // Delete a message (soft delete)
+  delete: (messageId) => api.delete(`/messages/${messageId}`)
+};

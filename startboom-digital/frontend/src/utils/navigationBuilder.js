@@ -25,7 +25,8 @@ import {
   BarChart3,
   Calendar,
   Settings,
-  Video
+  Video,
+  MessageSquare
 } from 'lucide-react';
 import { MODULE_ROUTE_MAP, isModuleEnabled as isTenantModuleEnabled } from './moduleRegistry';
 
@@ -87,6 +88,12 @@ const ALL_NAV_ITEMS = {
       ]
     },
     {
+      title: 'Communication',
+      items: [
+        { path: '/admin/messages', icon: MessageSquare, label: 'Messages', description: 'Internal team communication and direct messaging.', requiredRole: ['admin', 'manager'] },
+      ]
+    },
+    {
       title: 'Reports',
       items: [
         { path: '/admin/reports', icon: PieChart, label: 'Reports', description: 'Review sales transactions, team performance, and deal activity across the business.', requiredRole: ['admin', 'manager'], requiredPermission: 'reports:view' },
@@ -116,6 +123,12 @@ const ALL_NAV_ITEMS = {
         { path: '/agent/meetings', icon: Video, label: 'Meetings', description: 'Schedule and track client meetings — in-person, Google Meet, Zoom, or phone.', requiredRole: ['agent'], requiredModule: 'meetings' },
         { path: '/agent/issues', icon: AlertTriangle, label: 'Issues & Support', description: 'Log and track client issues until they are fully resolved.', requiredRole: ['agent'], requiredModule: 'issues' },
         { path: '/agent/notes', icon: FileText, label: 'Notes', description: 'Personal notes linked to clients — capture insights and follow-up reminders.', requiredRole: ['agent'], requiredModule: null },
+      ]
+    },
+    {
+      title: 'Communication',
+      items: [
+        { path: '/agent/messages', icon: MessageSquare, label: 'Messages', description: 'Chat with team members and collaborate on deals and tasks.', requiredRole: ['agent'] },
       ]
     }
   ]
