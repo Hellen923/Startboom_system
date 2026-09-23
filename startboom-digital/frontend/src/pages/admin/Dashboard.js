@@ -544,8 +544,6 @@ const AdminDashboard = () => {
         </WidgetContainer>
       )}
 
-      <DashboardQuickActions role={user?.role || 'admin'} />
-
       {/* Deals Won vs Lost */}
       <div className="chart-panel">
         <div className={`${dm.unifiedCardHeader} flex-wrap gap-2`}>
