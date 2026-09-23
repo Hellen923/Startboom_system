@@ -83,24 +83,38 @@ const Messages = () => {
   // Create new conversation
   const handleCreateConversation = async (data) => {
     try {
-      let response;
+      let conversation;
       
       if (data.type === 'direct') {
-        response = await messagesAPI.createDirect(data.userId);
+        const response = await messagesAPI.createDirect(data.userId);
+        conversation = response.data.conversation;
       } else if (data.type === 'team') {
-        // For team chats, we'd need a new API endpoint or use existing conversation
-        toast.info('Team chat feature - backend implementation needed');
-        return;
+        // Send a welcome message to create the team conversation
+        const response = await messagesAPI.sendToTeam(data.teamId, {
+          content: 'Conversation started'
+        });
+        conversation = response.data.conversation;
       } else if (data.type === 'department') {
-        toast.info('Department chat feature - backend implementation needed');
+        toast.info('Department chat feature coming soon');
         return;
       }
 
-      if (response && response.data) {
-        const newConversation = response.data.conversation;
-        setConversations(prev => [newConversation, ...prev]);
-        setSelectedConversation(newConversation);
-        loadMessages(newConversation._id);
+      if (conversation) {
+        // Check if conversation already exists in list
+        const existingIndex = conversations.findIndex(c => c._id === conversation._id);
+        if (existingIndex >= 0) {
+          // Update existing conversation
+          setConversations(prev => [
+            conversation,
+            ...prev.filter((_, i) => i !== existingIndex)
+          ]);
+        } else {
+          // Add new conversation
+          setConversations(prev => [conversation, ...prev]);
+        }
+        
+        setSelectedConversation(conversation);
+        loadMessages(conversation._id);
         toast.success('Conversation started!');
       }
     } catch (error) {
