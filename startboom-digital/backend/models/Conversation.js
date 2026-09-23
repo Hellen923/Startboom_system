@@ -11,7 +11,7 @@ const conversationSchema = new mongoose.Schema({
   
   type: {
     type: String,
-    enum: ['direct', 'team', 'department', 'group'],
+    enum: ['direct', 'team', 'department', 'branch', 'group'],
     default: 'direct',
     index: true
   },
@@ -34,6 +34,14 @@ const conversationSchema = new mongoose.Schema({
   department: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Department',
+    default: null,
+    index: true
+  },
+  
+  // For branch conversations
+  branch: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Branch',
     default: null,
     index: true
   },
@@ -111,6 +119,7 @@ const conversationSchema = new mongoose.Schema({
 conversationSchema.index({ tenant: 1, type: 1 });
 conversationSchema.index({ tenant: 1, team: 1 });
 conversationSchema.index({ tenant: 1, department: 1 });
+conversationSchema.index({ tenant: 1, branch: 1 });
 conversationSchema.index({ participants: 1 });
 conversationSchema.index({ lastMessageAt: -1 });
 
@@ -177,6 +186,48 @@ conversationSchema.statics.findOrCreateTeam = async function(tenantId, teamId, c
       team: teamId,
       createdBy: createdBy,
       name: `Team Chat` // Will be populated from team name in routes
+    });
+  }
+  
+  return conversation;
+};
+
+// Static method to find department conversation
+conversationSchema.statics.findOrCreateDepartment = async function(tenantId, departmentId, createdBy) {
+  let conversation = await this.findOne({
+    tenant: tenantId,
+    type: 'department',
+    department: departmentId
+  });
+  
+  if (!conversation) {
+    conversation = await this.create({
+      tenant: tenantId,
+      type: 'department',
+      department: departmentId,
+      createdBy: createdBy,
+      name: `Department Chat`
+    });
+  }
+  
+  return conversation;
+};
+
+// Static method to find branch conversation
+conversationSchema.statics.findOrCreateBranch = async function(tenantId, branchId, createdBy) {
+  let conversation = await this.findOne({
+    tenant: tenantId,
+    type: 'branch',
+    branch: branchId
+  });
+  
+  if (!conversation) {
+    conversation = await this.create({
+      tenant: tenantId,
+      type: 'branch',
+      branch: branchId,
+      createdBy: createdBy,
+      name: `Branch Chat`
     });
   }
   

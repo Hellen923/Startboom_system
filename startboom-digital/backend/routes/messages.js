@@ -16,13 +16,14 @@ router.get('/conversations', auth, tenantAuth, async (req, res) => {
     const userId = req.user.userId;
     const tenantId = req.user.tenantId;
     
-    // Find conversations where user is participant or part of team/department
+    // Find conversations where user is participant or part of team/department/branch
     const conversations = await Conversation.find({
       tenant: tenantId,
       $or: [
         { participants: userId }, // Direct messages
         { team: { $in: [req.user.team] } }, // Team chat
-        { department: { $in: [req.user.department] } } // Department chat
+        { department: { $in: [req.user.department] } }, // Department chat
+        { branch: { $in: [req.user.branch] } } // Branch chat
       ],
       isActive: true
     })
@@ -30,6 +31,7 @@ router.get('/conversations', auth, tenantAuth, async (req, res) => {
     .populate('participants', 'name email')
     .populate('team', 'name')
     .populate('department', 'name')
+    .populate('branch', 'name location')
     .sort({ lastMessageAt: -1 })
     .limit(50);
     
@@ -307,6 +309,158 @@ router.post('/direct/:recipientId', auth, tenantAuth, async (req, res) => {
   }
 });
 
+// Send message to entire department
+router.post('/department/:departmentId', auth, tenantAuth, async (req, res) => {
+  try {
+    const { departmentId } = req.params;
+    const { content } = req.body;
+    const userId = req.user.userId;
+    const tenantId = req.user.tenantId;
+    
+    if (!content) {
+      return res.status(400).json({ message: 'Message content is required' });
+    }
+    
+    const Department = (await import('../models/Department.js')).default;
+    const department = await Department.findOne({
+      _id: departmentId,
+      tenant: tenantId
+    });
+    
+    if (!department) {
+      return res.status(404).json({ message: 'Department not found' });
+    }
+    
+    // Find or create department conversation
+    const conversation = await Conversation.findOrCreateDepartment(tenantId, departmentId, userId);
+    conversation.name = `${department.name} Chat`;
+    await conversation.save();
+    
+    // Create message
+    const message = await Message.create({
+      tenant: tenantId,
+      conversation: conversation._id,
+      sender: userId,
+      content,
+      type: 'text',
+      status: 'sent'
+    });
+    
+    // Update conversation last message
+    conversation.lastMessage = message._id;
+    conversation.lastMessageAt = new Date();
+    await conversation.save();
+    
+    // Get all users in this department
+    const departmentUsers = await User.find({
+      tenant: tenantId,
+      department: departmentId,
+      isActive: true
+    }).select('_id');
+    
+    // Notify all department members except sender
+    const sender = await User.findById(userId).select('name');
+    const recipients = departmentUsers.filter(u => u._id.toString() !== userId.toString());
+    
+    const notificationPromises = recipients.map(u =>
+      Notification.create({
+        tenant: tenantId,
+        user: u._id,
+        type: 'team_message',
+        title: `${sender.name} in ${department.name}`,
+        message: content.substring(0, 100),
+        link: `/messages/${conversation._id}`,
+        relatedEntity: 'message',
+        entityId: message._id,
+        isRead: false
+      })
+    );
+    
+    await Promise.all(notificationPromises);
+    
+    res.status(201).json({ message, conversation });
+  } catch (error) {
+    console.error('Error sending department message:', error);
+    res.status(500).json({ message: 'Failed to send department message' });
+  }
+});
+
+// Send message to entire branch
+router.post('/branch/:branchId', auth, tenantAuth, async (req, res) => {
+  try {
+    const { branchId } = req.params;
+    const { content } = req.body;
+    const userId = req.user.userId;
+    const tenantId = req.user.tenantId;
+    
+    if (!content) {
+      return res.status(400).json({ message: 'Message content is required' });
+    }
+    
+    const Branch = (await import('../models/Branch.js')).default;
+    const branch = await Branch.findOne({
+      _id: branchId,
+      tenant: tenantId
+    });
+    
+    if (!branch) {
+      return res.status(404).json({ message: 'Branch not found' });
+    }
+    
+    // Find or create branch conversation
+    const conversation = await Conversation.findOrCreateBranch(tenantId, branchId, userId);
+    conversation.name = `${branch.name} Chat`;
+    await conversation.save();
+    
+    // Create message
+    const message = await Message.create({
+      tenant: tenantId,
+      conversation: conversation._id,
+      sender: userId,
+      content,
+      type: 'text',
+      status: 'sent'
+    });
+    
+    // Update conversation last message
+    conversation.lastMessage = message._id;
+    conversation.lastMessageAt = new Date();
+    await conversation.save();
+    
+    // Get all users in this branch
+    const branchUsers = await User.find({
+      tenant: tenantId,
+      branch: branchId,
+      isActive: true
+    }).select('_id');
+    
+    // Notify all branch members except sender
+    const sender = await User.findById(userId).select('name');
+    const recipients = branchUsers.filter(u => u._id.toString() !== userId.toString());
+    
+    const notificationPromises = recipients.map(u =>
+      Notification.create({
+        tenant: tenantId,
+        user: u._id,
+        type: 'team_message',
+        title: `${sender.name} in ${branch.name}`,
+        message: content.substring(0, 100),
+        link: `/messages/${conversation._id}`,
+        relatedEntity: 'message',
+        entityId: message._id,
+        isRead: false
+      })
+    );
+    
+    await Promise.all(notificationPromises);
+    
+    res.status(201).json({ message, conversation });
+  } catch (error) {
+    console.error('Error sending branch message:', error);
+    res.status(500).json({ message: 'Failed to send branch message' });
+  }
+});
+
 // Mark message as read
 router.put('/:messageId/read', auth, tenantAuth, async (req, res) => {
   try {
@@ -343,7 +497,8 @@ router.get('/unread-count', auth, tenantAuth, async (req, res) => {
       $or: [
         { participants: userId },
         { team: { $in: [req.user.team] } },
-        { department: { $in: [req.user.department] } }
+        { department: { $in: [req.user.department] } },
+        { branch: { $in: [req.user.branch] } }
       ],
       isActive: true
     });
