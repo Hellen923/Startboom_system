@@ -145,17 +145,23 @@ router.post('/send', auth, tenantAuth, async (req, res) => {
       status: 'sent'
     });
     
-    // Update conversation last message
-    await conversation.updateLastMessage(message._id);
+    // Update conversation last message and unread counts
+    conversation.lastMessage = message._id;
+    conversation.lastMessageAt = new Date();
     
     // Increment unread count for other participants
     const recipients = conversation.participants.filter(
       p => p.toString() !== userId.toString()
     );
     
-    await Promise.all(
-      recipients.map(recipientId => conversation.incrementUnread(recipientId))
-    );
+    recipients.forEach(recipientId => {
+      const recipientIdStr = recipientId.toString();
+      const current = conversation.unreadCounts.get(recipientIdStr) || 0;
+      conversation.unreadCounts.set(recipientIdStr, current + 1);
+    });
+    
+    // Save conversation once with all updates
+    await conversation.save();
     
     // Create notifications for recipients
     const sender = await User.findById(userId).select('name');
@@ -235,8 +241,10 @@ router.post('/team/:teamId', auth, tenantAuth, async (req, res) => {
       status: 'sent'
     });
     
-    // Update conversation
-    await conversation.updateLastMessage(message._id);
+    // Update conversation last message
+    conversation.lastMessage = message._id;
+    conversation.lastMessageAt = new Date();
+    await conversation.save();
     
     // Notify all team members except sender
     const sender = await User.findById(userId).select('name');
