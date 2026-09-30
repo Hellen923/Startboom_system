@@ -77,13 +77,21 @@ const ClientDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Client Portal
-              </h1>
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#FFD700] to-[#FFC700] rounded-lg flex items-center justify-center shadow-md">
+                <svg className="w-6 h-6 text-gray-900" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 4.17 4.42 9.92 6.24 12.11.4.48 1.13.48 1.53 0C14.58 18.92 19 13.17 19 9c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                  HoneyPot CRM
+                </h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Client Portal</p>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
@@ -91,7 +99,7 @@ const ClientDashboard = () => {
               </button>
               <button 
                 onClick={handleLogout}
-                className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Logout</span>
@@ -147,7 +155,7 @@ const ClientDashboard = () => {
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">
               Your Investments
             </h3>
-            <button className="text-primary-500 hover:text-primary-600 text-sm font-medium">
+            <button className="text-[#FFD700] hover:text-[#FFC700] text-sm font-medium transition-colors">
               View All
             </button>
           </div>
@@ -215,9 +223,9 @@ const ClientDashboard = () => {
 };
 
 const StatCard = ({ icon: Icon, title, value, color }) => (
-  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
     <div className="flex items-center justify-between mb-4">
-      <div className={`p-3 rounded-lg ${color}`}>
+      <div className={`p-3 rounded-lg ${color} shadow-sm`}>
         <Icon className="w-6 h-6 text-white" />
       </div>
     </div>
@@ -229,11 +237,11 @@ const StatCard = ({ icon: Icon, title, value, color }) => (
 const QuickAction = ({ icon: Icon, title, description, onClick }) => (
   <button
     onClick={onClick}
-    className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow text-left"
+    className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md hover:border-[#FFD700] transition-all text-left group"
   >
     <div className="flex items-center space-x-4">
-      <div className="p-3 bg-primary-50 dark:bg-primary-900/30 rounded-lg">
-        <Icon className="w-6 h-6 text-primary-500" />
+      <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg group-hover:bg-gradient-to-br group-hover:from-[#FFD700] group-hover:to-[#FFC700] transition-all">
+        <Icon className="w-6 h-6 text-[#FFD700] group-hover:text-gray-900 transition-colors" />
       </div>
       <div>
         <h4 className="font-semibold text-gray-900 dark:text-white mb-1">
