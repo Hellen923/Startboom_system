@@ -219,7 +219,22 @@ const Clients = () => {
       try {
         toast.loading('Enabling portal access...', { id: 'portal-enable' });
         const response = await clientsAPI.enablePortalAccess(clientId);
-        toast.success(`Portal access enabled for ${clientName}`, { id: 'portal-enable' });
+        
+        // Show success with password if provided
+        if (response.data.tempPassword) {
+          const password = response.data.tempPassword;
+          toast.success(
+            `Portal enabled! Password: ${password}\n\nEmail sent to client. Share password if email fails.`,
+            { id: 'portal-enable', duration: 15000 }
+          );
+          
+          // Also show in alert for easy copying
+          setTimeout(() => {
+            alert(`Portal Access Enabled!\n\nClient: ${clientName}\nEmail: Check client email\nPassword: ${password}\n\nThe password has been emailed to the client.\nSave this password in case email delivery fails.`);
+          }, 500);
+        } else {
+          toast.success(`Portal access enabled for ${clientName}`, { id: 'portal-enable' });
+        }
         
         // Refresh client data
         const updated = await clientsAPI.getById(clientId);

@@ -666,10 +666,11 @@ router.post('/:id/enable-portal', async (req, res) => {
 
     // Check if user account already exists
     let portalUser = await User.findOne({ email: client.email, tenant: req.user.tenantId });
+    let tempPassword = null;
 
     if (!portalUser) {
       // Generate random password
-      const tempPassword = Math.random().toString(36).slice(-8) + 'A1!';
+      tempPassword = Math.random().toString(36).slice(-8) + 'A1!';
       const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
       // Create portal user account
@@ -714,9 +715,9 @@ router.post('/:id/enable-portal', async (req, res) => {
     res.json({ 
       success: true,
       message: 'Portal access enabled successfully',
+      tempPassword: tempPassword, // Include password in response for admin to see
       client: {
-        ...client.toObject(),
-        tempPassword: portalUser ? undefined : 'Check invitation email'
+        ...client.toObject()
       }
     });
   } catch (error) {
