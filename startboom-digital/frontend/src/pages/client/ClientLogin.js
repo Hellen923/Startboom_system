@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, Sun, Moon } from 'lucide-react';
 import { authAPI } from '../../services/api';
 import toast from 'react-hot-toast';
+import { useTheme } from '../../context/ThemeContext';
+import sidebarLogo from '../../assets/sidebar.png';
 
 const ClientLogin = () => {
   const navigate = useNavigate();
+  const { theme, updateTheme } = useTheme();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const toggleTheme = () => {
+    updateTheme({ mode: theme.mode === 'dark' ? 'light' : 'dark' });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,12 +49,25 @@ const ClientLogin = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
+        {/* Theme Toggle - Top Right */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm"
+            title={theme.mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme.mode === 'dark' ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
+          </button>
+        </div>
+
         {/* Logo/Branding */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#FFD700] to-[#FFC700] rounded-xl mb-4 shadow-lg">
-            <svg className="w-8 h-8 text-gray-900" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 4.17 4.42 9.92 6.24 12.11.4.48 1.13.48 1.53 0C14.58 18.92 19 13.17 19 9c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-            </svg>
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#FFD700] to-[#FFC700] rounded-xl mb-4 shadow-lg p-2">
+            <img src={sidebarLogo} alt="HoneyPot CRM" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             HoneyPot CRM

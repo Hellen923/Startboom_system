@@ -2,17 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   TrendingUp, DollarSign, FileText, MessageSquare, 
-  LogOut, User, Bell, Settings, Download, BarChart3
+  LogOut, Bell, Download, BarChart3, Sun, Moon
 } from 'lucide-react';
 import { dealsAPI, clientsAPI } from '../../services/api';
 import toast from 'react-hot-toast';
+import { useTheme } from '../../context/ThemeContext';
+import sidebarLogo from '../../assets/sidebar.png';
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
+  const { theme, updateTheme } = useTheme();
   const [user, setUser] = useState(null);
   const [clientData, setClientData] = useState(null);
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const toggleTheme = () => {
+    updateTheme({ mode: theme.mode === 'dark' ? 'light' : 'dark' });
+  };
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem('user') || '{}');
@@ -81,10 +88,8 @@ const ClientDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#FFD700] to-[#FFC700] rounded-lg flex items-center justify-center shadow-md">
-                <svg className="w-6 h-6 text-gray-900" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 4.17 4.42 9.92 6.24 12.11.4.48 1.13.48 1.53 0C14.58 18.92 19 13.17 19 9c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                </svg>
+              <div className="w-10 h-10 bg-gradient-to-br from-[#FFD700] to-[#FFC700] rounded-lg flex items-center justify-center shadow-md p-1.5">
+                <img src={sidebarLogo} alt="HoneyPot CRM" className="w-full h-full object-contain" />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -93,9 +98,23 @@ const ClientDashboard = () => {
                 <p className="text-xs text-gray-500 dark:text-gray-400">Client Portal</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+            <div className="flex items-center space-x-2">
+              <button 
+                className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                title="Notifications"
+              >
                 <Bell className="w-5 h-5" />
+              </button>
+              <button 
+                onClick={toggleTheme}
+                className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                title={theme.mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {theme.mode === 'dark' ? (
+                  <Sun className="w-5 h-5" />
+                ) : (
+                  <Moon className="w-5 h-5" />
+                )}
               </button>
               <button 
                 onClick={handleLogout}
