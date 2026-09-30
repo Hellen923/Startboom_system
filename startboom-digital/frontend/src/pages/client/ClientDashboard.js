@@ -133,7 +133,7 @@ const ClientDashboard = () => {
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Welcome back, {user?.name || 'Client'}! 👋
+            Welcome back, {user?.name || 'Client'}!
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
             {clientData?.company || 'Your account overview'}
@@ -146,25 +146,25 @@ const ClientDashboard = () => {
             icon={DollarSign}
             title="Total Investment"
             value={`UGX ${stats.totalInvestment.toLocaleString()}`}
-            color="bg-blue-500"
+            color="from-blue-500 to-blue-600"
           />
           <StatCard
             icon={BarChart3}
             title="Active Deals"
             value={stats.activeDeals}
-            color="bg-green-500"
+            color="from-green-500 to-green-600"
           />
           <StatCard
             icon={FileText}
             title="Documents"
             value={stats.documents}
-            color="bg-purple-500"
+            color="from-purple-500 to-purple-600"
           />
           <StatCard
             icon={TrendingUp}
             title="Returns"
             value={`+${stats.returns}%`}
-            color="bg-orange-500"
+            color="from-orange-500 to-orange-600"
           />
         </div>
 
@@ -244,8 +244,8 @@ const ClientDashboard = () => {
 const StatCard = ({ icon: Icon, title, value, color }) => (
   <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
     <div className="flex items-center justify-between mb-4">
-      <div className={`p-3 rounded-lg ${color} shadow-sm`}>
-        <Icon className="w-6 h-6 text-white" />
+      <div className={`p-3 rounded-lg bg-gradient-to-br ${color} shadow-lg`}>
+        <Icon className="w-6 h-6 text-white" strokeWidth={2.5} />
       </div>
     </div>
     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{title}</p>
