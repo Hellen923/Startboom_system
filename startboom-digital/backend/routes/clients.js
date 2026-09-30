@@ -742,15 +742,17 @@ router.post('/:id/disable-portal', async (req, res) => {
       return res.status(400).json({ message: 'Portal access is not enabled for this client' });
     }
 
-    // Disable portal access
-    client.portalEnabled = false;
-    await client.save();
-
-    // Optionally deactivate the user account
+    // Delete the portal user account completely (so re-enabling creates a fresh account)
     if (client.portalUser) {
       const User = (await import('../models/User.js')).default;
-      await User.findByIdAndUpdate(client.portalUser, { isActive: false });
+      await User.findByIdAndDelete(client.portalUser);
+      console.log(`🗑️ Deleted portal user account for ${client.name}`);
     }
+
+    // Disable portal access and clear portal user reference
+    client.portalEnabled = false;
+    client.portalUser = null;
+    await client.save();
 
     await logAction(req, 'DISABLE_CLIENT_PORTAL', `Disabled portal access for ${client.name}`, { 
       entityType: 'Client', 
