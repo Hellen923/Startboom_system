@@ -66,7 +66,7 @@ const ClientLogin = () => {
 
         {/* Logo/Branding */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#FFD700] to-[#FFC700] rounded-xl mb-4 shadow-lg p-2">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#FFD700] to-[#FFC700] rounded-xl mb-4 shadow-lg overflow-hidden">
             <img src={sidebarLogo} alt="HoneyPot CRM" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">

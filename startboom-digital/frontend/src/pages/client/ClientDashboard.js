@@ -88,7 +88,7 @@ const ClientDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#FFD700] to-[#FFC700] rounded-lg flex items-center justify-center shadow-md p-1.5">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#FFD700] to-[#FFC700] rounded-lg flex items-center justify-center shadow-md overflow-hidden">
                 <img src={sidebarLogo} alt="HoneyPot CRM" className="w-full h-full object-contain" />
               </div>
               <div>
