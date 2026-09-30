@@ -56,6 +56,10 @@ const PermissionManager = lazy(() => import('./pages/admin/PermissionManager'));
 const TenantSettings = lazy(() => import('./pages/admin/TenantSettings'));
 const Messages = lazy(() => import('./pages/Messages'));
 
+// Client Portal
+const ClientLogin = lazy(() => import('./pages/client/ClientLogin'));
+const ClientDashboard = lazy(() => import('./pages/client/ClientDashboard'));
+
 // Minimal loading component
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -348,6 +352,18 @@ function App() {
                   <ProtectedRoute allowedRoles={['admin', 'manager']}>
                     <PredictiveAnalytics />
                   </ProtectedRoute>
+                } />
+
+                {/* Client Portal Routes */}
+                <Route path="/client-portal/login" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <ClientLogin />
+                  </Suspense>
+                } />
+                <Route path="/client/dashboard" element={
+                  <Suspense fallback={<PageLoader />}>
+                    <ClientDashboard />
+                  </Suspense>
                 } />
 
                 <Route path="/" element={
