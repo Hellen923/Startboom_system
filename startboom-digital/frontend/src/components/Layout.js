@@ -30,6 +30,7 @@ import {
    BarChart3,
    Shield,
    Building,
+   MessageSquare,
  } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useModules } from '../context/ModuleContext';
