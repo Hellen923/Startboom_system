@@ -264,6 +264,25 @@ const clientSchema = new mongoose.Schema({
     type: String,
     enum: ['Cold', 'Warm', 'Hot', ''],
     default: 'Cold'
+  },
+  
+  // Client Portal Access
+  portalUser: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  portalEnabled: {
+    type: Boolean,
+    default: false
+  },
+  portalInvitedAt: {
+    type: Date,
+    default: null
+  },
+  portalActivatedAt: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true
