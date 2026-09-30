@@ -121,6 +121,7 @@ const Layout = ({ children }) => {
       items: [
         { path: '/admin', icon: PieChart, label: 'Dashboard', description: 'Your organization summary with quick access to key metrics.' },
         { path: '/admin/users', icon: UserPlus, label: 'User Management', description: 'Manage users, roles, and permissions for your team.' },
+        { path: '/admin/clients', icon: Users, label: 'Clients', description: 'View and manage all client accounts and enable portal access.' },
         { path: '/admin/departments', icon: Layers, label: 'Departments & Teams', description: 'Organize your company structure and manage teams.' },
         { path: '/admin/branches', icon: Building2, label: 'Branch Locations', description: 'Manage multi-location offices and hierarchical structure.' },
         { path: '/admin/pipelines', icon: GitBranch, label: 'Pipeline Builder', description: 'Customize sales stages and business process workflows.' },
@@ -132,6 +133,12 @@ const Layout = ({ children }) => {
         { path: '/predictive-analytics', icon: Zap, label: 'Predictive Analytics', description: 'Use AI insights to make smarter decisions and forecasts.' },
         { path: '/admin/intelligence', icon: Brain, label: 'Business Intelligence', description: 'Proactive alerts and insights for your business.' },
         { path: '/admin/custom-reports', icon: FileText, label: 'Custom Reports', description: 'Build and execute custom reports with advanced filtering.' },
+      ],
+    },
+    {
+      title: 'Communication',
+      items: [
+        { path: '/admin/messages', icon: MessageSquare, label: 'Messages', description: 'Internal communication with your team and departments.' },
       ],
     },
     {
