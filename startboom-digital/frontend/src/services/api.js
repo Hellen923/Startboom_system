@@ -102,6 +102,8 @@ export const clientsAPI = {
   getNotes: () => api.get('/clients/notes/my'),
   exportPDF: (params) => api.get('/clients/export/pdf', { params, responseType: 'blob' }),
   exportCSV: (params) => api.get('/clients/export/csv', { params, responseType: 'blob' }),
+  enablePortalAccess: (id) => api.post(`/clients/${id}/enable-portal`),
+  disablePortalAccess: (id) => api.post(`/clients/${id}/disable-portal`),
 };
 
 // Deals API

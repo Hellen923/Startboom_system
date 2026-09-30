@@ -646,6 +646,128 @@ router.get('/export/pdf', async (req, res) => {
   }
 });
 
+// Enable portal access for a client
+router.post('/:id/enable-portal', async (req, res) => {
+  try {
+    const client = await Client.findOne({ _id: req.params.id, ...req.tenantQuery });
+
+    if (!client) {
+      return res.status(404).json({ message: 'Client not found' });
+    }
+
+    // Check if portal is already enabled
+    if (client.portalEnabled) {
+      return res.status(400).json({ message: 'Portal access is already enabled for this client' });
+    }
+
+    // Import User model
+    const User = (await import('../models/User.js')).default;
+    const bcrypt = (await import('bcryptjs')).default;
+
+    // Check if user account already exists
+    let portalUser = await User.findOne({ email: client.email, tenant: req.user.tenantId });
+
+    if (!portalUser) {
+      // Generate random password
+      const tempPassword = Math.random().toString(36).slice(-8) + 'A1!';
+      const hashedPassword = await bcrypt.hash(tempPassword, 10);
+
+      // Create portal user account
+      portalUser = await User.create({
+        name: client.name,
+        email: client.email,
+        phone: client.phone,
+        password: hashedPassword,
+        role: 'client',
+        tenant: req.user.tenantId,
+        isActive: true
+      });
+
+      // Send invitation email (if email service is configured)
+      try {
+        await sendEmail({
+          to: client.email,
+          subject: 'Welcome to Your Client Portal',
+          html: `
+            <h2>Welcome to Your Client Portal</h2>
+            <p>Hello ${client.name},</p>
+            <p>Your portal account has been activated. You can now access your account using the following credentials:</p>
+            <p><strong>Email:</strong> ${client.email}<br/>
+            <strong>Temporary Password:</strong> ${tempPassword}</p>
+            <p>Please change your password after your first login.</p>
+            <p><a href="${process.env.FRONTEND_URL}/client-portal/login">Login to Portal</a></p>
+          `
+        });
+      } catch (emailError) {
+        console.error('Error sending invitation email:', emailError);
+        // Continue anyway - admin can manually share credentials
+      }
+    }
+
+    // Update client record
+    client.portalUser = portalUser._id;
+    client.portalEnabled = true;
+    client.portalInvitedAt = new Date();
+    client.portalActivatedAt = new Date();
+    await client.save();
+
+    await logAction(req, 'ENABLE_CLIENT_PORTAL', `Enabled portal access for ${client.name}`, { 
+      entityType: 'Client', 
+      entityId: client._id 
+    });
+
+    res.json({ 
+      success: true,
+      message: 'Portal access enabled successfully',
+      client: {
+        ...client.toObject(),
+        tempPassword: portalUser ? undefined : 'Check invitation email'
+      }
+    });
+  } catch (error) {
+    console.error('Error enabling portal access:', error);
+    res.status(500).json({ message: 'Failed to enable portal access', error: error.message });
+  }
+});
+
+// Disable portal access for a client
+router.post('/:id/disable-portal', async (req, res) => {
+  try {
+    const client = await Client.findOne({ _id: req.params.id, ...req.tenantQuery });
+
+    if (!client) {
+      return res.status(404).json({ message: 'Client not found' });
+    }
+
+    if (!client.portalEnabled) {
+      return res.status(400).json({ message: 'Portal access is not enabled for this client' });
+    }
+
+    // Disable portal access
+    client.portalEnabled = false;
+    await client.save();
+
+    // Optionally deactivate the user account
+    if (client.portalUser) {
+      const User = (await import('../models/User.js')).default;
+      await User.findByIdAndUpdate(client.portalUser, { isActive: false });
+    }
+
+    await logAction(req, 'DISABLE_CLIENT_PORTAL', `Disabled portal access for ${client.name}`, { 
+      entityType: 'Client', 
+      entityId: client._id 
+    });
+
+    res.json({ 
+      success: true,
+      message: 'Portal access disabled successfully'
+    });
+  } catch (error) {
+    console.error('Error disabling portal access:', error);
+    res.status(500).json({ message: 'Failed to disable portal access', error: error.message });
+  }
+});
+
 export { router as clientRoutes };
 
 // Get all notes/interactions of type 'other' for the agent
