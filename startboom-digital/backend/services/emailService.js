@@ -489,6 +489,132 @@ const emailTemplates = {
         </html>
       `
     };
+  },
+
+  clientPortalWelcome: (templateData) => {
+    const { clientName, email, tempPassword, portalUrl, companyName = 'HoneyPot CRM' } = templateData;
+    const loginUrl = portalUrl || `${process.env.FRONTEND_URL || 'https://honeypot-crm.vercel.app'}/client-portal/login`;
+
+    return {
+      subject: `Welcome to Your ${companyName} Client Portal`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #1E293B; margin: 0; padding: 0; background: #F1F5F9; }
+            .wrapper { max-width: 600px; margin: 30px auto; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+            .header { background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%); color: #1E293B; padding: 40px 32px; text-align: center; }
+            .header h1 { margin: 0 0 8px; font-size: 28px; font-weight: 700; }
+            .header p  { margin: 0; font-size: 14px; opacity: 0.8; }
+            .body { padding: 40px 32px; }
+            .welcome-box { background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%); border: 1px solid #E2E8F0; border-left: 4px solid #FFD700; border-radius: 12px; padding: 24px; margin: 24px 0; }
+            .credentials-card { background: #FFFBEB; border: 2px solid #FFD700; border-radius: 12px; padding: 24px; margin: 24px 0; }
+            .credentials-card h3 { margin: 0 0 16px; font-size: 16px; color: #1E293B; font-weight: 700; display: flex; align-items: center; }
+            .credentials-card p { margin: 8px 0; font-size: 14px; color: #475569; }
+            .credential-item { background: white; padding: 12px 16px; border-radius: 8px; margin: 8px 0; border: 1px solid #E2E8F0; }
+            .credential-label { font-size: 12px; color: #64748B; text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+            .credential-value { font-size: 15px; color: #0F172A; font-weight: 600; font-family: 'Courier New', monospace; }
+            .warning { background: #FEF2F2; border-left: 4px solid #EF4444; padding: 16px; border-radius: 8px; margin: 24px 0; }
+            .warning p { margin: 4px 0; font-size: 14px; color: #991B1B; }
+            .cta { text-align: center; margin: 32px 0; }
+            .cta a { background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%); color: #1E293B; padding: 16px 40px; border-radius: 12px; text-decoration: none; font-size: 16px; font-weight: 700; display: inline-block; box-shadow: 0 4px 16px rgba(255, 215, 0, 0.4); transition: all 0.3s; }
+            .features { margin: 32px 0; }
+            .feature-item { display: flex; align-items: start; margin: 16px 0; }
+            .feature-icon { width: 40px; height: 40px; background: #FFFBEB; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 16px; font-size: 20px; }
+            .feature-content h4 { margin: 0 0 4px; font-size: 15px; color: #0F172A; }
+            .feature-content p { margin: 0; font-size: 13px; color: #64748B; }
+            .footer { text-align: center; padding: 24px 32px; font-size: 12px; color: #94A3B8; border-top: 1px solid #F1F5F9; background: #F8FAFC; }
+            .footer .brand { font-weight: 700; color: #FFD700; }
+          </style>
+        </head>
+        <body>
+          <div class="wrapper">
+            <div class="header">
+              <h1>🎉 Welcome to Your Client Portal</h1>
+              <p>${companyName}</p>
+            </div>
+            <div class="body">
+              <div class="welcome-box">
+                <p style="margin:0;font-size:16px;">Hi <strong>${clientName}</strong>,</p>
+                <p style="margin:12px 0 0;">Your client portal account has been activated! You now have 24/7 access to your account information, documents, and communication history.</p>
+              </div>
+
+              <div class="credentials-card">
+                <h3>🔑 Your Login Credentials</h3>
+                <p style="margin-bottom:16px;">Use these credentials to access your portal:</p>
+                
+                <div class="credential-item">
+                  <div class="credential-label">Email Address</div>
+                  <div class="credential-value">${email}</div>
+                </div>
+                
+                <div class="credential-item">
+                  <div class="credential-label">Temporary Password</div>
+                  <div class="credential-value">${tempPassword}</div>
+                </div>
+              </div>
+
+              <div class="warning">
+                <p style="font-weight:700;">⚠️ Important Security Notice:</p>
+                <p>Please change your password immediately after your first login. Never share your credentials with anyone.</p>
+              </div>
+
+              <div class="cta">
+                <a href="${loginUrl}">Login to Your Portal</a>
+              </div>
+
+              <div class="features">
+                <h3 style="font-size:18px;color:#0F172A;margin-bottom:20px;">What You Can Do:</h3>
+                
+                <div class="feature-item">
+                  <div class="feature-icon">📊</div>
+                  <div class="feature-content">
+                    <h4>View Your Account Status</h4>
+                    <p>Access your account details, engagement score, and current status</p>
+                  </div>
+                </div>
+
+                <div class="feature-item">
+                  <div class="feature-icon">💼</div>
+                  <div class="feature-content">
+                    <h4>Track Your Deals</h4>
+                    <p>Monitor all active deals and opportunities in one place</p>
+                  </div>
+                </div>
+
+                <div class="feature-item">
+                  <div class="feature-icon">📞</div>
+                  <div class="feature-content">
+                    <h4>Direct Communication</h4>
+                    <p>Message your account manager and view interaction history</p>
+                  </div>
+                </div>
+
+                <div class="feature-item">
+                  <div class="feature-icon">📄</div>
+                  <div class="feature-content">
+                    <h4>Access Documents</h4>
+                    <p>View and download important documents and reports</p>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background:#F8FAFC;border-radius:12px;padding:20px;margin-top:32px;text-align:center;">
+                <p style="margin:0;color:#64748B;font-size:14px;">Need help? Contact your account manager or our support team.</p>
+              </div>
+              
+              <div class="footer">
+                <p style="margin:8px 0;"><span class="brand">${companyName}</span></p>
+                <p style="margin:8px 0;">This is an automated message. Please do not reply to this email.</p>
+                <p style="margin:16px 0 0;color:#94A3B8;">© ${new Date().getFullYear()} ${companyName}. All rights reserved.</p>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+    };
   }
 };
 

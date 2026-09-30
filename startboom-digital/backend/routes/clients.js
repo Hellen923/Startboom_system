@@ -685,19 +685,14 @@ router.post('/:id/enable-portal', async (req, res) => {
 
       // Send invitation email (if email service is configured)
       try {
-        await sendEmail({
-          to: client.email,
-          subject: 'Welcome to Your Client Portal',
-          html: `
-            <h2>Welcome to Your Client Portal</h2>
-            <p>Hello ${client.name},</p>
-            <p>Your portal account has been activated. You can now access your account using the following credentials:</p>
-            <p><strong>Email:</strong> ${client.email}<br/>
-            <strong>Temporary Password:</strong> ${tempPassword}</p>
-            <p>Please change your password after your first login.</p>
-            <p><a href="${process.env.FRONTEND_URL}/client-portal/login">Login to Portal</a></p>
-          `
+        await sendEmail(client.email, 'clientPortalWelcome', {
+          clientName: client.name,
+          email: client.email,
+          tempPassword: tempPassword,
+          portalUrl: `${process.env.FRONTEND_URL || 'https://honeypot-crm.vercel.app'}/client-portal/login`,
+          companyName: req.user.tenantName || 'HoneyPot CRM'
         });
+        console.log(`✅ Portal invitation email sent to ${client.email}`);
       } catch (emailError) {
         console.error('Error sending invitation email:', emailError);
         // Continue anyway - admin can manually share credentials

@@ -5,7 +5,7 @@ import {
   Plus, Search, Filter, Download, Mail, MapPin, Building, User, Star,
   Calendar, Edit, Trash2, Eye, Users, FileText, Tag, MessageCircle,
   ChevronDown, ChevronUp, X, Globe, Briefcase, AlertCircle, CheckCircle,
-  Clock, Award, MessageSquare, Send
+  Clock, Award, MessageSquare, Send, Key, UserCheck, UserX
 } from 'lucide-react';
 import { clientsAPI, emailTemplatesAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext'; 
@@ -214,6 +214,42 @@ const Clients = () => {
     }
   };
 
+  const handleEnablePortalAccess = async (clientId, clientName) => {
+    if (window.confirm(`Enable portal access for ${clientName}?\n\nThis will create a client portal account and send invitation credentials to their email.`)) {
+      try {
+        toast.loading('Enabling portal access...', { id: 'portal-enable' });
+        const response = await clientsAPI.enablePortalAccess(clientId);
+        toast.success(`Portal access enabled for ${clientName}`, { id: 'portal-enable' });
+        
+        // Refresh client data
+        const updated = await clientsAPI.getById(clientId);
+        setSelectedClient(updated.data);
+        loadClients();
+      } catch (error) {
+        const errorMsg = error.response?.data?.message || 'Failed to enable portal access';
+        toast.error(errorMsg, { id: 'portal-enable' });
+      }
+    }
+  };
+
+  const handleDisablePortalAccess = async (clientId, clientName) => {
+    if (window.confirm(`Disable portal access for ${clientName}?\n\nThe client will no longer be able to log in to their portal.`)) {
+      try {
+        toast.loading('Disabling portal access...', { id: 'portal-disable' });
+        await clientsAPI.disablePortalAccess(clientId);
+        toast.success(`Portal access disabled for ${clientName}`, { id: 'portal-disable' });
+        
+        // Refresh client data
+        const updated = await clientsAPI.getById(clientId);
+        setSelectedClient(updated.data);
+        loadClients();
+      } catch (error) {
+        const errorMsg = error.response?.data?.message || 'Failed to disable portal access';
+        toast.error(errorMsg, { id: 'portal-disable' });
+      }
+    }
+  };
+
   const getStatusColor = (status) => {
     const colors = {
       prospect: 'bg-blue-100 text-blue-800',
@@ -271,9 +307,36 @@ const Clients = () => {
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">{client.name}</h2>
                 <p className="text-gray-600 capitalize">{client.position}</p>
+                {client.portalEnabled && (
+                  <div className="flex items-center space-x-1 mt-1">
+                    <UserCheck className="w-4 h-4 text-green-600" />
+                    <span className="text-sm text-green-600 font-medium">Portal Access Enabled</span>
+                  </div>
+                )}
               </div>
             </div>
             <div className="flex items-center space-x-2">
+              {user.role === 'admin' && (
+                client.portalEnabled ? (
+                  <button
+                    onClick={() => handleDisablePortalAccess(client._id, client.name)}
+                    className="flex items-center space-x-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                    title="Disable portal access"
+                  >
+                    <UserX className="w-4 h-4" />
+                    <span className="text-sm font-medium">Disable Portal</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleEnablePortalAccess(client._id, client.name)}
+                    className="flex items-center space-x-2 px-4 py-2 bg-primary-50 text-primary-600 rounded-lg hover:bg-primary-100 transition-colors"
+                    title="Enable portal access"
+                  >
+                    <Key className="w-4 h-4" />
+                    <span className="text-sm font-medium">Enable Portal</span>
+                  </button>
+                )
+              )}
               <button
                 onClick={onClose}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -388,6 +451,28 @@ const Clients = () => {
                 <div className="bg-white border border-gray-200 rounded-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Details</h3>
                   <div className="space-y-3">
+                    {/* Portal Access Status */}
+                    <div>
+                      <span className="text-sm text-gray-600">Portal Access</span>
+                      <div className="flex items-center space-x-2 mt-1">
+                        {client.portalEnabled ? (
+                          <>
+                            <UserCheck className="w-4 h-4 text-green-600" />
+                            <span className="text-sm font-medium text-green-600">Enabled</span>
+                          </>
+                        ) : (
+                          <>
+                            <UserX className="w-4 h-4 text-gray-400" />
+                            <span className="text-sm font-medium text-gray-500">Disabled</span>
+                          </>
+                        )}
+                      </div>
+                      {client.portalActivatedAt && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Activated: {new Date(client.portalActivatedAt).toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
                     {client.dateOfBirth && (
                       <div>
                         <span className="text-sm text-gray-600">Date of Birth</span>
