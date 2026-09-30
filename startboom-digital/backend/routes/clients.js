@@ -681,7 +681,10 @@ router.post('/:id/enable-portal', async (req, res) => {
         password: hashedPassword,
         role: 'client',
         tenant: req.user.tenantId,
-        isActive: true
+        isActive: true,
+        isFirstLogin: false, // Set to false so they can login with password immediately
+        otp: null, // Clear any OTP
+        otpExpires: null
       });
 
       // Send invitation email (if email service is configured)
