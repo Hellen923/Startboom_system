@@ -199,6 +199,13 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+// Deployment readiness must verify the database, not just the HTTP process.
+app.get('/api/ready', (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const connected = mongoose.connection.readyState === 1;
+  res.status(connected ? 200 : 503).json({ status: connected ? 'ready' : 'not ready' });
+});
+
 
 app.get('/api/version', (req, res) => {
   res.set('Cache-Control', 'no-store');

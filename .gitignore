@@ -57,6 +57,8 @@ data/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+!startboom-digital/frontend/package-lock.json
+!startboom-digital/backend/package-lock.json
 
 # Vercel
 .vercel

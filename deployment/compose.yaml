@@ -1,0 +1,45 @@
+name: coremintcrm
+services:
+  mongodb:
+    image: mongo:8.0
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:?required}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?required}
+    volumes:
+      - mongodb_data:/data/db
+    networks: [database]
+    mem_limit: 1536m
+    command: [mongod, --wiredTigerCacheSizeGB, '0.5']
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '3'}
+  app:
+    image: ghcr.io/hellen923/startboom_system-crm:${APP_VERSION:?required}
+    restart: unless-stopped
+    env_file: /etc/coremintcrm/app.env
+    environment:
+      NODE_ENV: production
+      PORT: '5000'
+      SERVE_FRONTEND: 'true'
+    ports: ['127.0.0.1:8096:5000']
+    networks: [database, outgoing]
+    volumes:
+      - uploads:/app/backend/uploads
+      - logs:/app/backend/logs
+    depends_on: [mongodb]
+    mem_limit: 1536m
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: '3'}
+networks:
+  database:
+    internal: true
+  outgoing: {}
+volumes:
+  mongodb_data:
+    name: coremintcrm_mongodb_data
+  uploads:
+    name: coremintcrm_uploads
+  logs:
+    name: coremintcrm_logs

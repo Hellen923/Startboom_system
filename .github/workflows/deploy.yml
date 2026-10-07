@@ -1,0 +1,68 @@
+name: Deploy CoreMint CRM
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+concurrency:
+  group: coremintcrm-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and publish
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deployment/Dockerfile
+          push: true
+          tags: ghcr.io/hellen923/startboom_system-crm:${{ github.sha }}
+          labels: org.opencontainers.image.source=https://github.com/Hellen923/Startboom_system
+          provenance: false
+          sbom: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Deploy and check readiness
+        id: release
+        env:
+          DEPLOY_KEY: ${{ secrets.COREMINT_DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.COREMINT_SSH_KNOWN_HOSTS }}
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/coremint
+          chmod 600 ~/.ssh/coremint
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf '%s\n' "$REGISTRY_TOKEN" | ssh -i ~/.ssh/coremint -o BatchMode=yes -o StrictHostKeyChecking=yes coremintci@213.210.20.181 "deploy $RELEASE" | tee release-result.txt
+          grep '^retained_versions=' release-result.txt >> "$GITHUB_OUTPUT"
+      - name: Keep current and previous successful images
+        uses: actions/github-script@v7
+        env:
+          RETAINED: ${{ steps.release.outputs.retained_versions }}
+        with:
+          script: |
+            const keep = process.env.RETAINED.split(',').filter(Boolean);
+            if (!keep.length) throw new Error('Missing protected deployment versions');
+            const versions = await github.paginate('GET /users/{username}/packages/container/{package_name}/versions', {
+              username: 'Hellen923', package_name: 'startboom_system-crm', per_page: 100
+            });
+            for (const version of versions) {
+              const tags = version.metadata?.container?.tags || [];
+              if (tags.some(tag => keep.includes(tag))) continue;
+              await github.request('DELETE /users/{username}/packages/container/{package_name}/versions/{package_version_id}', {
+                username: 'Hellen923', package_name: 'startboom_system-crm', package_version_id: version.id
+              });
+            }
