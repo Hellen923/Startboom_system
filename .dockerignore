@@ -1,0 +1,12 @@
+.git
+**/node_modules
+**/build
+**/dist
+**/.env
+**/.env.*
+**/uploads
+**/logs
+**/*.log
+**/*.dump
+**/*.pem
+**/*.key
