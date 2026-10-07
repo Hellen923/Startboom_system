@@ -8,7 +8,7 @@ import { tenantAuth, requireRole, requireTenantModule } from '../middleware/tena
 const router = express.Router();
 
 const NOMINATIM_BASE_URL = 'https://nominatim.openstreetmap.org';
-const NOMINATIM_USER_AGENT = process.env.NOMINATIM_USER_AGENT || 'Swavelink SalesApp/1.0';
+const NOMINATIM_USER_AGENT = process.env.NOMINATIM_USER_AGENT || 'CoreMint CRM/1.0';
 
 // Apply tenant-aware auth to ALL routes
 router.use(tenantAuth, requireTenantModule('territories'));
