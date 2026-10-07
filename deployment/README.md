@@ -35,3 +35,9 @@ In GitHub **Settings → Secrets and variables → Actions**, set:
 Brevo is used when its key is present; otherwise Gmail is used. After editing
 settings, push to `main` or choose **Actions → Deploy CoreMint CRM → Run workflow**.
 Credentials stay out of the source code and Docker image.
+
+## Cloudinary settings
+
+Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET`
+in GitHub Actions secrets. Push to `main` or run the deployment workflow to apply
+them to the VPS. These credentials are needed while uploads use Cloudinary.

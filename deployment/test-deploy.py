@@ -36,7 +36,7 @@ esac
         (root / "log").write_text("")
         original_settings = "MONGODB_URI=test-database\nJWT_SECRET=unchanged\nEMAIL_FROM=old@example.com\n"
         (root / "app.env").write_text(original_settings)
-        settings = {"BREVO_API_KEY": "test-key", "EMAIL_PASS": "test$#password", "EMAIL_USER": "test@example.com", "EMAIL_FROM": "sender@example.com"}
+        settings = {"BREVO_API_KEY": "test-key", "EMAIL_PASS": "test$#password", "EMAIL_USER": "test@example.com", "EMAIL_FROM": "sender@example.com", "CLOUDINARY_CLOUD_NAME": "test-cloud", "CLOUDINARY_API_KEY": "test-api-key", "CLOUDINARY_API_SECRET": "test-api-secret"}
         payload = base64.b64encode(json.dumps(settings).encode()).decode()
         result = subprocess.run(["bash", str(script), new], input="test-token\n" + payload + "\n",
                                 text=True, capture_output=True,
@@ -46,6 +46,7 @@ esac
             assert result.returncode == 0, result.stderr
             updated = (root / "app.env").read_text()
             assert "MONGODB_URI=test-database\nJWT_SECRET=unchanged\n" in updated
+            assert 'CLOUDINARY_API_SECRET="test-api-secret"' in updated
             assert 'EMAIL_PASS="test$$#password"' in updated
             assert (root / "app.env").stat().st_mode & 0o777 == 0o600
             assert (root / "current-version").read_text().strip() == new
