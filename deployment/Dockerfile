@@ -1,4 +1,5 @@
 FROM node:22-bookworm-slim AS frontend
+RUN npm install -g npm@11.7.0 --no-audit --no-fund
 WORKDIR /build
 COPY startboom-digital/frontend/package*.json ./
 RUN npm ci --no-audit --no-fund
@@ -8,6 +9,7 @@ ENV REACT_APP_NAME="CoreMint CRM"
 RUN npm run build
 
 FROM node:22-bookworm-slim AS runtime
+RUN npm install -g npm@11.7.0 --no-audit --no-fund
 ENV NODE_ENV=production PORT=5000 SERVE_FRONTEND=true
 WORKDIR /app/backend
 COPY startboom-digital/backend/package*.json ./
