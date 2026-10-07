@@ -8,7 +8,7 @@ const sendViaBrevoAPI = async (mailOptions) => {
   const apiKey = process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY;
   if (!apiKey) return null; // not configured
 
-  const fromAddress = process.env.BREVO_FROM || process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@honeypotcrm.com';
+  const fromAddress = process.env.BREVO_FROM || process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@coremintcrm.com';
   const fromName = mailOptions.fromName || 'HoneyPot CRM';
 
   const body = {
@@ -635,7 +635,7 @@ export const sendEmail = async (to, templateName, templateData) => {
     }
 
     // Fallback: nodemailer (SendGrid / Gmail)
-    const fromAddress = process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@honeypotcrm.com';
+    const fromAddress = process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@coremintcrm.com';
     const transporter = await createTransporter();
     const result = await transporter.sendMail({
       from: `"${fromName}" <${fromAddress}>`,

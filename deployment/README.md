@@ -25,3 +25,13 @@ response fields, authentication, and file limits. Push to `main` to deploy.
 The uploads folder persists across deployments. Daily local backups include
 MongoDB and uploads, retained for 14 days. Existing Cloudinary files and their
 database URLs need migration separately.
+
+## Email settings
+
+In GitHub **Settings → Secrets and variables → Actions**, set:
+- Secrets: `BREVO_API_KEY` for Brevo, or `GMAIL_APP_PASSWORD` for Gmail.
+- Variables: `EMAIL_FROM` (verified sender), and `EMAIL_USER` for Gmail.
+
+Brevo is used when its key is present; otherwise Gmail is used. After editing
+settings, push to `main` or choose **Actions → Deploy CoreMint CRM → Run workflow**.
+Credentials stay out of the source code and Docker image.
