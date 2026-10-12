@@ -47,7 +47,7 @@ const ClientLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Theme Toggle - Top Right */}
         <div className="flex justify-end mb-4">
@@ -66,14 +66,14 @@ const ClientLogin = () => {
 
         {/* Logo/Branding */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#FFD700] to-[#FFC700] rounded-xl mb-4 shadow-lg overflow-hidden">
-            <img src={sidebarLogo} alt="HoneyPot CRM" className="w-full h-full object-contain" />
+          <div className="inline-flex items-center justify-center bg-white dark:bg-gray-800 rounded-2xl p-4 mb-4 shadow-lg overflow-hidden">
+            <img src={sidebarLogo} alt="CoreMint CRM" className="h-16 w-auto object-contain" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            HoneyPot CRM
+            Client Portal
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Client Portal - Access your account information
+            Access your account information
           </p>
         </div>
 
