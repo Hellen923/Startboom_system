@@ -82,7 +82,7 @@ const Login = () => {
           {/* Header */}
           <div className="text-center lg:text-left">
             <div className="flex items-center justify-center lg:justify-start mb-8">
-              <img src={PLATFORM_BRAND.logo} alt="CoreMint" className="h-20 w-auto object-contain" />
+              <img src={PLATFORM_BRAND.logo} alt="CoreMint" className="h-16 w-auto object-contain" />
             </div>
 
             <h2 className="text-3xl font-bold text-[var(--color-text-primary)] mb-2">
@@ -203,7 +203,7 @@ const Login = () => {
             className="text-center text-white relative z-10"
           >
             <div className="mb-8">
-              <img src={PLATFORM_BRAND.logo} alt="CoreMint" className="w-32 h-32 mx-auto mb-6 object-contain opacity-90" />
+              <img src={PLATFORM_BRAND.logo} alt="CoreMint" className="w-28 h-28 mx-auto mb-6 object-contain" />
               <p className="text-[#94A3B8] text-lg max-w-md mx-auto">
                 Streamline your sales process, manage clients efficiently, and boost your team's performance with our next-generation CRM solution.
               </p>
