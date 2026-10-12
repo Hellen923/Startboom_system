@@ -1,6 +1,6 @@
 export const PLATFORM_BRAND = {
   name: 'CoreMint',
-  logo: `${process.env.PUBLIC_URL || ''}/honeypot-icon.png`, // Will be replaced with CoreMint logo
+  logo: `${process.env.PUBLIC_URL || ''}/coremint.jpg`,
   primaryColor: '#4F19C7', // CoreMint purple
 };
 

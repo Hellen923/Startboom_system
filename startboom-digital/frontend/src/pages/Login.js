@@ -81,12 +81,8 @@ const Login = () => {
         >
           {/* Header */}
           <div className="text-center lg:text-left">
-            <div className="flex items-center justify-center lg:justify-start space-x-4 mb-8">
-              <img src={PLATFORM_BRAND.logo} alt="CoreMint Logo" className="w-16 h-16 object-contain" />
-              <div>
-                <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">CoreMint</h1>
-                <p className="text-sm text-[var(--primary-color)] font-medium">Next-Generation CRM</p>
-              </div>
+            <div className="flex items-center justify-center lg:justify-start mb-8">
+              <img src={PLATFORM_BRAND.logo} alt="CoreMint" className="h-20 w-auto object-contain" />
             </div>
 
             <h2 className="text-3xl font-bold text-[var(--color-text-primary)] mb-2">
@@ -207,8 +203,7 @@ const Login = () => {
             className="text-center text-white relative z-10"
           >
             <div className="mb-8">
-              <img src={PLATFORM_BRAND.logo} alt="CoreMint Logo" className="w-24 h-24 mx-auto mb-6 object-contain opacity-90" />
-              <h3 className="text-4xl font-bold mb-4">CoreMint</h3>
+              <img src={PLATFORM_BRAND.logo} alt="CoreMint" className="w-32 h-32 mx-auto mb-6 object-contain opacity-90" />
               <p className="text-[#94A3B8] text-lg max-w-md mx-auto">
                 Streamline your sales process, manage clients efficiently, and boost your team's performance with our next-generation CRM solution.
               </p>

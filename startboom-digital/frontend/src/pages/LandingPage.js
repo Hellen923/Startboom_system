@@ -96,17 +96,13 @@ const LandingPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="flex items-center gap-6 mb-8"
+                className="mb-8"
               >
                 <img
                   src={PLATFORM_BRAND.logo}
                   alt="CoreMint"
-                  className="h-32 w-32 lg:h-40 lg:w-40 object-contain"
+                  className="h-32 w-auto lg:h-40 lg:w-auto object-contain mb-8"
                 />
-                <div>
-                  <h1 className="text-4xl lg:text-5xl font-bold text-white">CoreMint</h1>
-                  <p className="text-lg lg:text-xl text-[#A78BFA] font-medium">Next-Generation CRM</p>
-                </div>
               </motion.div>
 
               <motion.h1
@@ -362,12 +358,8 @@ const LandingPage = () => {
               <img
                 src={PLATFORM_BRAND.logo}
                 alt="CoreMint"
-                className="h-10 w-10 object-contain"
+                className="h-12 w-auto object-contain"
               />
-              <div>
-                <div className="text-white font-bold">CoreMint</div>
-                <div className="text-sm text-gray-400">Next-Generation CRM</div>
-              </div>
             </div>
             
             <div className="text-gray-400 text-sm text-center md:text-right">
