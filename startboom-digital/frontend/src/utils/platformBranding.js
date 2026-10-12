@@ -1,7 +1,7 @@
 export const PLATFORM_BRAND = {
-  name: 'HoneyPot',
-  logo: `${process.env.PUBLIC_URL || ''}/honeypot-icon.png`,
-  primaryColor: '#D89A00',
+  name: 'CoreMint',
+  logo: `${process.env.PUBLIC_URL || ''}/honeypot-icon.png`, // Will be replaced with CoreMint logo
+  primaryColor: '#4F19C7', // CoreMint purple
 };
 
 export const canUseTenantBranding = (account) => (
