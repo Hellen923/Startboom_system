@@ -6,76 +6,76 @@
 @import 'leaflet/dist/leaflet.css';
 
 /* ============================================================
-   HONEYPOT CRM — ENTERPRISE DESIGN SYSTEM
-   "Sweeten Every Sale" - Where every opportunity finds its value
+   COREMINT CRM — ENTERPRISE DESIGN SYSTEM
+   "Next-Generation CRM" - Professional purple-led aesthetic
    ThemeContext.applyTheme() sets all --color-* tokens on :root.
-   Enterprise Spec: #F8FAFC backgrounds, #182233 sidebar, #D89A00 accent
+   Enterprise Spec: #F8F7FC backgrounds, #F0E9FF sidebar, #4F19C7 accent
    ============================================================ */
 
 /* ---------- Enterprise Brand Colors ---------- */
 :root {
-  /* Honey Gold - Strategic Accent (Enterprise Specification) */
-  --primary-color: #D89A00;
-  --primary-hover: #B87900;
-  --primary-ring: rgba(216, 154, 0, 0.1);
+  /* CoreMint Purple - Strategic Accent (Enterprise Specification) */
+  --primary-color: #4F19C7;
+  --primary-hover: #3D0FA0;
+  --primary-ring: rgba(79, 25, 199, 0.1);
   
   /* Workspace - Enterprise Soft Off-white */
-  --workspace-bg: #F8FAFC;
-  --color-bg-page: #F8FAFC;
+  --workspace-bg: #F8F7FC;
+  --color-bg-page: #F8F7FC;
   --color-bg-card: #FFFFFF;
   --color-bg-surface: #FFFFFF;
-  --color-bg-elevated: #FAFBFC;
+  --color-bg-elevated: #F5F3F8;
   --color-bg-input: #FFFFFF;
-  --color-bg-input-subtle: #FAFBFC;
-  --color-bg-row-hover: #F8FAFC;
-  --color-bg-hover: #F1F5F9;
-  --color-bg-muted: #F1F5F9;
-  --color-bg-icon-btn: #F1F5F9;
+  --color-bg-input-subtle: #F5F3F8;
+  --color-bg-row-hover: #F5F3F8;
+  --color-bg-hover: #E8E5F0;
+  --color-bg-muted: #E8E5F0;
+  --color-bg-icon-btn: #E8E5F0;
   
-  /* Borders - Enterprise Slate */
-  --color-border: #E2E8F0;
-  --color-border-strong: #CBD5E1;
-  --color-border-subtle: #F1F5F9;
+  /* Borders - Enterprise Lavender/Gray */
+  --color-border: #E8E5F0;
+  --color-border-strong: #64748B;
+  --color-border-subtle: #F5F3F8;
   
-  /* Text - Enterprise Slate */
-  --color-text-primary: #0F172A;
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748B;
+  /* Text - Enterprise Midnight Navy */
+  --color-text-primary: #17143D;
+  --color-text-secondary: #64748B;
+  --color-text-muted: #94A3B8;
   --color-text-placeholder: #94A3B8;
   
   /* Charts - Enterprise Specification */
-  --color-chart-grid: rgba(226, 232, 240, 0.5);
+  --color-chart-grid: rgba(232, 229, 240, 0.5);
   --color-chart-axis: #94A3B8;
   
   /* Tooltips */
   --color-tooltip-bg: #FFFFFF;
-  --color-tooltip-border: #E2E8F0;
+  --color-tooltip-border: #E8E5F0;
   --color-tooltip-label: #64748B;
-  --color-tooltip-value: #0F172A;
+  --color-tooltip-value: #17143D;
   
   /* System Colors */
-  --color-overlay: rgba(15, 23, 42, 0.6);
-  --color-shadow: rgba(15, 23, 42, 0.06);
-  --color-shadow-strong: rgba(15, 23, 42, 0.12);
-  --color-accent-surface: rgba(216, 154, 0, 0.08);
-  --color-scrollbar: #CBD5E1;
-  --color-tab-inactive: #F1F5F9;
+  --color-overlay: rgba(23, 20, 61, 0.6);
+  --color-shadow: rgba(79, 25, 199, 0.08);
+  --color-shadow-strong: rgba(79, 25, 199, 0.12);
+  --color-accent-surface: rgba(79, 25, 199, 0.08);
+  --color-scrollbar: #E8E5F0;
+  --color-tab-inactive: #F5F3F8;
   --color-tab-active-bg: #FFFFFF;
   
-  /* Brand Gradients (Honey Gold) */
-  --brand-header-bg: linear-gradient(135deg, #D89A00 0%, #B87900 100%);
-  --btn-brand-bg: linear-gradient(135deg, #D89A00 0%, #B87900 100%);
+  /* Brand Gradients (CoreMint Purple) */
+  --brand-header-bg: linear-gradient(135deg, #4F19C7 0%, #3D0FA0 100%);
+  --btn-brand-bg: linear-gradient(135deg, #4F19C7 0%, #3D0FA0 100%);
   --brand-header-text: #FFFFFF;
-  --brand-header-solid: #B87900;
-  --gradient-from: #D89A00;
-  --gradient-to: #B87900;
+  --brand-header-solid: #3D0FA0;
+  --gradient-from: #4F19C7;
+  --gradient-to: #3D0FA0;
   
-  /* Sidebar - Warm Dark (matches landing page) */
-  --sidebar-bg: linear-gradient(180deg, #1F1D1A 0%, #2D2A26 50%, #1F1D1A 100%);
-  --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-nav-active: rgba(216, 154, 0, 0.15);
-  --sidebar-nav-hover: rgba(216, 154, 0, 0.08);
-  --sidebar-section-label: rgba(255, 255, 255, 0.5);
+  /* Sidebar - Soft Lavender (Enterprise Specification) */
+  --sidebar-bg: #F0E9FF;
+  --sidebar-border: rgba(79, 25, 199, 0.1);
+  --sidebar-nav-active: rgba(79, 25, 199, 0.15);
+  --sidebar-nav-hover: rgba(79, 25, 199, 0.08);
+  --sidebar-section-label: rgba(23, 20, 61, 0.5);
   
   /* Status Colors - Enterprise Specification */
   --color-success: #10B981;
@@ -136,8 +136,8 @@ textarea:focus-visible {
 }
 
 /* ============================================================
-   SIDEBAR — Dark Charcoal Professional (HoneyPot)
-   Restrained honey gold accent for active items
+   SIDEBAR — Soft Lavender Professional (CoreMint)
+   Purple accent for active items, midnight navy text
    ============================================================ */
 .sidebar-shell {
   background: var(--sidebar-bg);
@@ -146,7 +146,7 @@ textarea:focus-visible {
 }
 
 .sidebar-divider { 
-  border-color: rgba(232, 227, 213, 0.1); 
+  border-color: rgba(79, 25, 199, 0.1); 
 }
 .dark .sidebar-divider { 
   border-color: rgba(255,255,255,0.1); 
@@ -162,33 +162,42 @@ textarea:focus-visible {
 }
 
 .sidebar-item {
-  color: #E8E3D5;
+  color: #17143D;  /* Midnight navy */
   border-left: 3px solid transparent;
   transition: all 0.2s ease;
 }
 .sidebar-item:hover {
   background-color: var(--sidebar-nav-hover);
-  color: #FFFFFF;
+  color: #17143D;
 }
 .sidebar-item:hover .sidebar-item-icon {
   opacity: 1;
+  color: #4F19C7;  /* Purple on hover */
 }
 .sidebar-item.active {
   background-color: var(--sidebar-nav-active);
   border-left-color: var(--primary-color);
-  color: #FFFFFF;
+  color: #17143D;
 }
 .sidebar-item.active .sidebar-item-icon { 
   color: var(--primary-color);
   opacity: 1;
 }
 .sidebar-item-icon {
+  color: #64748B;  /* Slate gray default */
   opacity: 0.85;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, color 0.2s ease;
 }
 
+.dark .sidebar-item {
+  color: #CBD5E1;
+}
+.dark .sidebar-item:hover {
+  color: #F8FAFC;
+}
 .dark .sidebar-item.active {
   border-left-color: var(--primary-color);
+  color: #F8FAFC;
 }
 .dark .sidebar-item.active .sidebar-item-icon {
   color: var(--primary-color);
@@ -198,8 +207,8 @@ textarea:focus-visible {
 }
 
 .sidebar-footer {
-  border-top: 1px solid rgba(232, 227, 213, 0.1);
-  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(79, 25, 199, 0.1);
+  background: rgba(79, 25, 199, 0.05);
 }
 .dark .sidebar-footer { 
   background: rgba(0, 0, 0, 0.3); 
@@ -403,11 +412,11 @@ label {
   font-size: 0.875rem; font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease-out;
-  box-shadow: 0 2px 8px rgba(216, 154, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(79, 25, 199, 0.2);
 }
 .btn-primary:hover { 
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(216, 154, 0, 0.3); 
+  box-shadow: 0 4px 12px rgba(79, 25, 199, 0.3); 
 }
 .btn-primary:disabled { 
   opacity: 0.5; 
