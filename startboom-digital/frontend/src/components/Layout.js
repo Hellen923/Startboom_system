@@ -249,14 +249,14 @@ const agentNavSections = [
           {logo ? (
             <img src={logo} alt={`${tenantName} logo`} className="max-w-full max-h-full object-contain" />
           ) : (
-            <span className="text-white font-bold text-2xl leading-none">{initial}</span>
+            <span className="text-[#4F19C7] font-bold text-2xl leading-none">{initial}</span>
           )}
         </div>
         <div className="min-w-0">
-          <h2 className="text-base font-bold text-white leading-tight truncate">
+          <h2 className="text-base font-bold text-[#17143D] leading-tight truncate">
             {tenantName}
           </h2>
-          <p className="text-[10px] font-semibold tracking-wider uppercase text-white/70 mt-0.5">{roleSubtitle}</p>
+          <p className="text-[10px] font-semibold tracking-wider uppercase text-[#64748B] mt-0.5">{roleSubtitle}</p>
         </div>
       </div>
     </div>
@@ -319,7 +319,7 @@ const agentNavSections = [
   const SidebarFooter = ({ mobile = false }) => (
     <div className="sidebar-footer p-4">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white font-bold text-sm border border-white/20 overflow-hidden">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4F19C7]/15 text-[#4F19C7] font-bold text-sm border border-[#4F19C7]/20 overflow-hidden">
           {(user?.profileImage || user?.profilePicture || user?.photo) ? (
             <img
               src={user.profileImage || user.profilePicture || user.photo}
@@ -332,8 +332,8 @@ const agentNavSections = [
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-white">{user?.name || 'Admin'}</p>
-          <p className="text-xs text-white/70">{displayRole}</p>
+          <p className="truncate text-sm font-semibold text-[#17143D]">{user?.name || 'Admin'}</p>
+          <p className="text-xs text-[#64748B]">{displayRole}</p>
         </div>
         <button
           type="button"
@@ -341,7 +341,7 @@ const agentNavSections = [
             if (mobile) setSidebarOpen(false);
             handleLogout();
           }}
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 text-white transition-colors duration-150 hover:bg-white/10"
+          className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#4F19C7]/20 text-[#64748B] transition-colors duration-150 hover:bg-[#4F19C7]/10 hover:text-[#4F19C7]"
           title="Sign out"
         >
           <LogOut className="w-4 h-4" />
