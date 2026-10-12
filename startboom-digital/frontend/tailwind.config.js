@@ -21,17 +21,17 @@ module.exports = {
         },
         // CoreMint purple (static for utilities)
         purple: {
-          DEFAULT: '#4F19C7',
+          DEFAULT: '#7C3AED',
           50:  '#F0E9FF',
           100: '#E5D9FF',
           200: '#D1B3FF',
           300: '#B589FF',
           400: '#8B5CF6',
-          500: '#4F19C7',
-          600: '#3D0FA0',
-          700: '#310C7F',
-          800: '#23095C',
-          900: '#17063D',
+          500: '#7C3AED',
+          600: '#6D28D9',
+          700: '#5B21B6',
+          800: '#4C1D95',
+          900: '#17143D',
         },
         blue: {
           DEFAULT: '#7C3AED',  // Primary lavender-purple
@@ -88,9 +88,9 @@ module.exports = {
         xl: '10px', '2xl': '12px', '3xl': '16px',
       },
       boxShadow: {
-        card: '0 1px 3px rgba(79, 25, 199, 0.06), 0 1px 2px rgba(79, 25, 199, 0.04)',
-        'card-hover': '0 4px 12px rgba(79, 25, 199, 0.08)',
-        modal: '0 20px 60px rgba(79, 25, 199, 0.15)',
+        card: '0 1px 3px rgba(124, 58, 237, 0.06), 0 1px 2px rgba(124, 58, 237, 0.04)',
+        'card-hover': '0 4px 12px rgba(124, 58, 237, 0.08)',
+        modal: '0 20px 60px rgba(124, 58, 237, 0.15)',
       },
     },
   },
