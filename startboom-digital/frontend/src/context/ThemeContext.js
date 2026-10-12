@@ -1,105 +1,106 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { getStoredTenantBrandColor, PLATFORM_BRAND } from '../utils/platformBranding';
+import { COREMINT_COLORS } from '../config/coremintTheme';
 
 const ThemeContext = createContext();
 
 export const ACCENT_PRESETS = [
-  { id: 'honeypot', label: 'HoneyPot Gold', color: PLATFORM_BRAND.primaryColor },
-  { id: 'sage',     label: 'Sage Green',    color: '#10B981' },
-  { id: 'slate',    label: 'Slate Blue',    color: '#64748B' },
-  { id: 'sky',      label: 'Sky Blue',      color: '#0EA5E9' },
-  { id: 'purple',   label: 'Deep Purple',   color: '#8B5CF6' },
-  { id: 'teal',     label: 'Teal',          color: '#06B6D4' },
+  { id: 'coremint', label: 'CoreMint Purple', color: PLATFORM_BRAND.primaryColor },
+  { id: 'sage',     label: 'Sage Green',      color: '#10B981' },
+  { id: 'slate',    label: 'Slate Blue',      color: '#64748B' },
+  { id: 'sky',      label: 'Sky Blue',        color: '#0EA5E9' },
+  { id: 'purple',   label: 'Deep Purple',     color: '#8B5CF6' },
+  { id: 'teal',     label: 'Teal',            color: '#06B6D4' },
 ];
 
 const DEFAULT_THEME = {
   mode: 'light',
-  primaryColor: PLATFORM_BRAND.primaryColor,  // HoneyPot Gold (Enterprise Spec)
-  accentPreset: 'honeypot',
+  primaryColor: PLATFORM_BRAND.primaryColor,  // CoreMint Purple
+  accentPreset: 'coremint',
 };
 
 /** Full light/dark token sets — applied to :root via applyTheme() */
 const THEME_TOKENS = {
   light: {
-    // Enterprise Specification: Soft off-white backgrounds, slate text, strategic honey gold
-    '--workspace-bg':          '#F8FAFC',  // Soft Off-white
-    '--color-bg-page':         '#F8FAFC',  // Soft Off-white
-    '--color-bg-card':         '#FFFFFF',  // Pure white cards
-    '--color-bg-surface':      '#FFFFFF',
-    '--color-bg-elevated':     '#FAFBFC',  // Subtle elevated surface
-    '--color-bg-input':        '#FFFFFF',
-    '--color-bg-input-subtle': '#FAFBFC',
-    '--color-bg-row-hover':    '#F8FAFC',  // Subtle hover
-    '--color-bg-hover':        '#F1F5F9',
-    '--color-bg-muted':        '#F1F5F9',
-    '--color-bg-icon-btn':     '#F1F5F9',
-    '--color-border':          '#E2E8F0',  // Enterprise border
-    '--color-border-strong':   '#CBD5E1',
-    '--color-border-subtle':   '#F1F5F9',
-    '--color-text-primary':    '#0F172A',  // Deep slate
-    '--color-text-secondary':  '#475569',  // Slate gray
-    '--color-text-muted':      '#64748B',
-    '--color-text-placeholder':'#94A3B8',
-    '--color-chart-grid':      'rgba(226,232,240,0.5)',
-    '--color-chart-axis':      '#94A3B8',
-    '--color-tooltip-bg':      '#FFFFFF',
-    '--color-tooltip-border':  '#E2E8F0',
-    '--color-tooltip-label':   '#64748B',
-    '--color-tooltip-value':   '#0F172A',
-    '--color-overlay':         'rgba(15, 23, 42, 0.6)',
-    '--color-shadow':          'rgba(15, 23, 42, 0.06)',
-    '--color-shadow-strong':   'rgba(15, 23, 42, 0.12)',
-    '--color-accent-surface':  'rgba(216, 154, 0, 0.08)',  // Subtle honey tint
-    '--color-scrollbar':       '#CBD5E1',
-    '--color-tab-inactive':    '#F1F5F9',
-    '--color-tab-active-bg':   '#FFFFFF',
-    '--brand-header-text':     '#FFFFFF',
-    '--brand-header-solid':    'var(--primary-hover)',  // Honey hover state
-    '--sidebar-bg':            'linear-gradient(180deg, #182233 0%, #0F172A 100%)',  // Deep Slate (Enterprise Spec)
-    '--sidebar-border':        'rgba(255, 255, 255, 0.08)',
-    '--sidebar-nav-active':    'rgba(216, 154, 0, 0.15)',  // Honey gold tint
-    '--sidebar-nav-hover':     'rgba(216, 154, 0, 0.08)',
-    '--sidebar-section-label': 'rgba(255, 255, 255, 0.5)',
+    // CoreMint Specification: Soft off-white backgrounds, midnight navy text, strategic purple
+    '--workspace-bg':          COREMINT_COLORS.canvas,     // #F8F7FC - Soft off-white
+    '--color-bg-page':         COREMINT_COLORS.canvas,
+    '--color-bg-card':         COREMINT_COLORS.surface,    // #FFFFFF - Pure white cards
+    '--color-bg-surface':      COREMINT_COLORS.surface,
+    '--color-bg-elevated':     COREMINT_COLORS.softGray,   // #F5F3F8 - Subtle elevated surface
+    '--color-bg-input':        COREMINT_COLORS.surface,
+    '--color-bg-input-subtle': COREMINT_COLORS.softGray,
+    '--color-bg-row-hover':    COREMINT_COLORS.softGray,
+    '--color-bg-hover':        COREMINT_COLORS.lightGray,  // #E8E5F0
+    '--color-bg-muted':        COREMINT_COLORS.lightGray,
+    '--color-bg-icon-btn':     COREMINT_COLORS.lightGray,
+    '--color-border':          COREMINT_COLORS.lightGray,  // #E8E5F0 - Professional border
+    '--color-border-strong':   COREMINT_COLORS.slateGray,
+    '--color-border-subtle':   COREMINT_COLORS.softGray,
+    '--color-text-primary':    COREMINT_COLORS.midnight,   // #17143D - Midnight navy
+    '--color-text-secondary':  COREMINT_COLORS.slateGray,  // #64748B - Slate gray
+    '--color-text-muted':      COREMINT_COLORS.mutedGray,
+    '--color-text-placeholder':COREMINT_COLORS.mutedGray,
+    '--color-chart-grid':      'rgba(232, 229, 240, 0.5)',
+    '--color-chart-axis':      COREMINT_COLORS.mutedGray,
+    '--color-tooltip-bg':      COREMINT_COLORS.surface,
+    '--color-tooltip-border':  COREMINT_COLORS.lightGray,
+    '--color-tooltip-label':   COREMINT_COLORS.slateGray,
+    '--color-tooltip-value':   COREMINT_COLORS.midnight,
+    '--color-overlay':         'rgba(23, 20, 61, 0.6)',
+    '--color-shadow':          'rgba(79, 25, 199, 0.08)',
+    '--color-shadow-strong':   'rgba(79, 25, 199, 0.12)',
+    '--color-accent-surface':  'rgba(79, 25, 199, 0.08)',  // Subtle purple tint
+    '--color-scrollbar':       COREMINT_COLORS.lightGray,
+    '--color-tab-inactive':    COREMINT_COLORS.softGray,
+    '--color-tab-active-bg':   COREMINT_COLORS.surface,
+    '--brand-header-text':     COREMINT_COLORS.surface,
+    '--brand-header-solid':    'var(--primary-hover)',     // Purple hover state
+    '--sidebar-bg':            COREMINT_COLORS.lavender,   // #F0E9FF - Soft lavender
+    '--sidebar-border':        'rgba(79, 25, 199, 0.1)',
+    '--sidebar-nav-active':    'rgba(79, 25, 199, 0.15)',  // Purple tint
+    '--sidebar-nav-hover':     'rgba(79, 25, 199, 0.08)',
+    '--sidebar-section-label': 'rgba(23, 20, 61, 0.5)',
   },
   dark: {
-    // Dark mode: Enterprise slate backgrounds, strategic honey gold accent
-    '--workspace-bg':          '#0F172A',  // Deep slate
-    '--color-bg-page':         '#0F172A',
-    '--color-bg-card':         '#1E293B',
-    '--color-bg-surface':      '#1E293B',
-    '--color-bg-elevated':     '#334155',
-    '--color-bg-input':        '#1E293B',
-    '--color-bg-input-subtle': '#1E293B',
-    '--color-bg-row-hover':    '#0F172A',
-    '--color-bg-hover':        '#334155',
-    '--color-bg-muted':        '#334155',
-    '--color-bg-icon-btn':     'rgba(255,255,255,0.05)',
-    '--color-border':          '#334155',
-    '--color-border-strong':   '#475569',
-    '--color-border-subtle':   '#1E293B',
-    '--color-text-primary':    '#F8FAFC',
-    '--color-text-secondary':  '#CBD5E1',
-    '--color-text-muted':      '#94A3B8',
-    '--color-text-placeholder':'#64748B',
-    '--color-chart-grid':      'rgba(51,65,85,0.5)',
-    '--color-chart-axis':      '#64748B',
-    '--color-tooltip-bg':      '#1E293B',
-    '--color-tooltip-border':  '#334155',
-    '--color-tooltip-label':   '#94A3B8',
-    '--color-tooltip-value':   '#F8FAFC',
-    '--color-overlay':         'rgba(0,0,0,0.7)',
-    '--color-shadow':          'rgba(0,0,0,0.4)',
-    '--color-shadow-strong':   'rgba(0,0,0,0.6)',
-    '--color-accent-surface':  'rgba(216, 154, 0, 0.1)',  // Subtle honey
-    '--color-scrollbar':       '#334155',
-    '--color-tab-inactive':    '#334155',
-    '--color-tab-active-bg':   '#1E293B',
-    '--brand-header-text':     '#FFFFFF',
-    '--brand-header-solid':    'var(--primary-hover)',  // Honey hover
-    '--sidebar-bg':            'linear-gradient(180deg, #182233 0%, #0F172A 100%)',  // Deep Slate (Enterprise Spec)
-    '--sidebar-border':        '#334155',
-    '--sidebar-nav-active':    'rgba(216, 154, 0, 0.2)',  // Honey gold tint
-    '--sidebar-nav-hover':     'rgba(216, 154, 0, 0.1)',
+    // Dark mode: Deep slate backgrounds, strategic purple accent
+    '--workspace-bg':          COREMINT_COLORS.dark.bg,
+    '--color-bg-page':         COREMINT_COLORS.dark.bg,
+    '--color-bg-card':         COREMINT_COLORS.dark.card,
+    '--color-bg-surface':      COREMINT_COLORS.dark.card,
+    '--color-bg-elevated':     COREMINT_COLORS.dark.elevated,
+    '--color-bg-input':        COREMINT_COLORS.dark.card,
+    '--color-bg-input-subtle': COREMINT_COLORS.dark.card,
+    '--color-bg-row-hover':    COREMINT_COLORS.dark.bg,
+    '--color-bg-hover':        COREMINT_COLORS.dark.elevated,
+    '--color-bg-muted':        COREMINT_COLORS.dark.elevated,
+    '--color-bg-icon-btn':     'rgba(255, 255, 255, 0.05)',
+    '--color-border':          COREMINT_COLORS.dark.border,
+    '--color-border-strong':   COREMINT_COLORS.dark.hover,
+    '--color-border-subtle':   COREMINT_COLORS.dark.card,
+    '--color-text-primary':    COREMINT_COLORS.dark.text,
+    '--color-text-secondary':  COREMINT_COLORS.dark.textSecondary,
+    '--color-text-muted':      COREMINT_COLORS.dark.textMuted,
+    '--color-text-placeholder':COREMINT_COLORS.slateGray,
+    '--color-chart-grid':      'rgba(51, 65, 85, 0.5)',
+    '--color-chart-axis':      COREMINT_COLORS.slateGray,
+    '--color-tooltip-bg':      COREMINT_COLORS.dark.card,
+    '--color-tooltip-border':  COREMINT_COLORS.dark.elevated,
+    '--color-tooltip-label':   COREMINT_COLORS.dark.textMuted,
+    '--color-tooltip-value':   COREMINT_COLORS.dark.text,
+    '--color-overlay':         'rgba(0, 0, 0, 0.7)',
+    '--color-shadow':          'rgba(0, 0, 0, 0.4)',
+    '--color-shadow-strong':   'rgba(0, 0, 0, 0.6)',
+    '--color-accent-surface':  'rgba(79, 25, 199, 0.1)',   // Subtle purple
+    '--color-scrollbar':       COREMINT_COLORS.dark.elevated,
+    '--color-tab-inactive':    COREMINT_COLORS.dark.elevated,
+    '--color-tab-active-bg':   COREMINT_COLORS.dark.card,
+    '--brand-header-text':     COREMINT_COLORS.surface,
+    '--brand-header-solid':    'var(--primary-hover)',     // Purple hover
+    '--sidebar-bg':            COREMINT_COLORS.dark.card,  // #1E293B
+    '--sidebar-border':        COREMINT_COLORS.dark.elevated,
+    '--sidebar-nav-active':    'rgba(79, 25, 199, 0.2)',   // Purple tint
+    '--sidebar-nav-hover':     'rgba(79, 25, 199, 0.1)',
     '--sidebar-section-label': 'rgba(255, 255, 255, 0.5)',
   },
 };
@@ -176,7 +177,7 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('honeypot_theme');
+      const saved = localStorage.getItem('coremint_theme');
       const parsed = saved ? JSON.parse(saved) : DEFAULT_THEME;
       const merged = { ...DEFAULT_THEME, ...parsed };
       setTheme(merged);
@@ -189,7 +190,7 @@ export const ThemeProvider = ({ children }) => {
   const updateTheme = (partial) => {
     const next = { ...theme, ...partial };
     setTheme(next);
-    localStorage.setItem('honeypot_theme', JSON.stringify(next));
+    localStorage.setItem('coremint_theme', JSON.stringify(next));
     applyTheme(next); // tenant color is read from localStorage inside applyTheme
   };
 
