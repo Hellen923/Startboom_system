@@ -34,17 +34,17 @@ module.exports = {
           900: '#17063D',
         },
         blue: {
-          DEFAULT: '#3B82F6',
-          50:  '#EFF6FF',
-          100: '#DBEAFE',
-          200: '#BFDBFE',
-          300: '#93C5FD',
-          400: '#60A5FA',
-          500: '#3B82F6',
-          600: '#2563EB',
-          700: '#1D4ED8',
-          800: '#1E40AF',
-          900: '#1E3A8A',
+          DEFAULT: '#7C3AED',  // Primary lavender-purple
+          50:  '#F8F7FC',      // Pale lavender background
+          100: '#EDE5FF',      // Light lavender
+          200: '#DDD4FF',
+          300: '#C4B5FD',
+          400: '#A78BFA',
+          500: '#7C3AED',      // Primary lavender-purple
+          600: '#4F19C7',      // Deep Coremint purple
+          700: '#3D0FA0',
+          800: '#310C7F',
+          900: '#17143D',      // Dark navy text
         },
         secondary: {
           DEFAULT: '#17143D',  // Midnight navy

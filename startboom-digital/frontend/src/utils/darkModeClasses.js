@@ -68,9 +68,9 @@ export const dm = {
   badgeGreen:   'bg-green-100 text-green-700 dark:bg-[#14532D] dark:text-[#22C55E] px-2 py-0.5 rounded-full text-xs font-semibold',
   badgeRed:     'bg-red-100 text-red-700 dark:bg-[#450A0A] dark:text-[#EF4444] px-2 py-0.5 rounded-full text-xs font-semibold',
   badgeYellow:  'bg-yellow-100 text-yellow-700 dark:bg-[#451A03] dark:text-[#F59E0B] px-2 py-0.5 rounded-full text-xs font-semibold',
-  badgeBlue:    'bg-blue-100 text-blue-700 dark:bg-[#193A52] dark:text-[#1795CC] px-2 py-0.5 rounded-full text-xs font-semibold',
+  badgePurple:  'bg-purple-100 text-[var(--primary-color)] dark:bg-[#2a1a3a] dark:text-[#A78BFA] px-2 py-0.5 rounded-full text-xs font-semibold',
   badgeGray:    'bg-gray-100 text-gray-600 dark:bg-[#3A3D52] dark:text-[#A0AEC0] px-2 py-0.5 rounded-full text-xs font-semibold',
-  badgePrimary: 'bg-primary-100 text-primary-700 dark:bg-[#193A52] dark:text-[#1795CC] px-2 py-0.5 rounded-full text-xs font-semibold',
+  badgePrimary: 'bg-primary-100 text-primary-700 dark:bg-[#2a1a3a] dark:text-[#A78BFA] px-2 py-0.5 rounded-full text-xs font-semibold',
 
   // Modals
   modalOverlay: 'modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4',

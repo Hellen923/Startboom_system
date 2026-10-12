@@ -21,9 +21,9 @@ import {
 const ICON_COLORS = {
   primary: { bg: 'bg-primary-50', text: 'text-primary-600', hover: 'hover:border-primary-300' },
   green: { bg: 'bg-green-50', text: 'text-green-600', hover: 'hover:border-green-300' },
-  blue: { bg: 'bg-blue-50', text: 'text-blue-600', hover: 'hover:border-blue-300' },
-  yellow: { bg: 'bg-yellow-50', text: 'text-yellow-600', hover: 'hover:border-yellow-300' },
   purple: { bg: 'bg-purple-50', text: 'text-[var(--primary-color)]', hover: 'hover:border-purple-300' },
+  yellow: { bg: 'bg-yellow-50', text: 'text-yellow-600', hover: 'hover:border-yellow-300' },
+  lavender: { bg: 'bg-purple-50', text: 'text-[var(--primary-color)]', hover: 'hover:border-purple-300' },
   red: { bg: 'bg-red-50', text: 'text-red-600', hover: 'hover:border-red-300' },
 };
 

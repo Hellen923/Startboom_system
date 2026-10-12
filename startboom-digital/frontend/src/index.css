@@ -81,7 +81,14 @@
   --color-success: #10B981;
   --color-danger: #EF4444;
   --color-warning: #F59E0B;
-  --color-info: #3B82F6;
+  --color-info: #7C3AED;  /* Changed from blue to lavender-purple */
+  
+  /* Lavender-Purple Scale (CoreMint Official Palette) */
+  --lavender-purple: #7C3AED;
+  --deep-purple: #4F19C7;
+  --light-lavender: #EDE5FF;
+  --pale-lavender-bg: #F8F7FC;
+  --lavender-border: #E5DFF0;
 }
 
 /* ---------- View transition (theme toggle) ---------- */
@@ -923,4 +930,219 @@ label {
   );
   background-size: 1000px 100%;
   animation: shimmer 2s infinite;
+}
+
+
+/* ============================================================
+   COREMINT GLOBAL BLUE-TO-LAVENDER OVERRIDE
+   NO BLUE BUTTONS OR INTERACTIVE ELEMENTS ALLOWED
+   All blue Tailwind classes map to CoreMint lavender-purple
+   ============================================================ */
+
+/* Background Colors - Blue to Lavender-Purple */
+.bg-blue-50 {
+  background-color: #F8F7FC !important; /* Pale lavender background */
+}
+.bg-blue-100 {
+  background-color: #EDE5FF !important; /* Light lavender */
+}
+.bg-blue-200 {
+  background-color: #DDD4FF !important;
+}
+.bg-blue-300 {
+  background-color: #C4B5FD !important;
+}
+.bg-blue-400 {
+  background-color: #A78BFA !important;
+}
+.bg-blue-500 {
+  background-color: #7C3AED !important; /* Primary lavender-purple */
+}
+.bg-blue-600 {
+  background-color: #4F19C7 !important; /* Deep Coremint purple */
+}
+.bg-blue-700 {
+  background-color: #3D0FA0 !important;
+}
+.bg-blue-800 {
+  background-color: #310C7F !important;
+}
+.bg-blue-900 {
+  background-color: #17143D !important; /* Dark navy text */
+}
+
+/* Text Colors - Blue to Lavender-Purple */
+.text-blue-50 {
+  color: #F8F7FC !important;
+}
+.text-blue-100 {
+  color: #EDE5FF !important;
+}
+.text-blue-200 {
+  color: #DDD4FF !important;
+}
+.text-blue-300 {
+  color: #C4B5FD !important;
+}
+.text-blue-400 {
+  color: #A78BFA !important;
+}
+.text-blue-500 {
+  color: #7C3AED !important; /* Primary lavender-purple */
+}
+.text-blue-600 {
+  color: #4F19C7 !important; /* Deep Coremint purple */
+}
+.text-blue-700 {
+  color: #3D0FA0 !important;
+}
+.text-blue-800 {
+  color: #310C7F !important;
+}
+.text-blue-900 {
+  color: #17143D !important;
+}
+
+/* Border Colors - Blue to Lavender-Purple */
+.border-blue-50 {
+  border-color: #F8F7FC !important;
+}
+.border-blue-100 {
+  border-color: #EDE5FF !important;
+}
+.border-blue-200 {
+  border-color: #DDD4FF !important;
+}
+.border-blue-300 {
+  border-color: #C4B5FD !important;
+}
+.border-blue-400 {
+  border-color: #A78BFA !important;
+}
+.border-blue-500 {
+  border-color: #7C3AED !important;
+}
+.border-blue-600 {
+  border-color: #4F19C7 !important;
+}
+.border-blue-700 {
+  border-color: #3D0FA0 !important;
+}
+.border-blue-800 {
+  border-color: #310C7F !important;
+}
+.border-blue-900 {
+  border-color: #17143D !important;
+}
+
+/* Hover States - Blue to Lavender-Purple */
+.hover\:bg-blue-50:hover {
+  background-color: #F8F7FC !important;
+}
+.hover\:bg-blue-100:hover {
+  background-color: #EDE5FF !important;
+}
+.hover\:bg-blue-200:hover {
+  background-color: #DDD4FF !important;
+}
+.hover\:bg-blue-500:hover {
+  background-color: #7C3AED !important;
+}
+.hover\:bg-blue-600:hover {
+  background-color: #4F19C7 !important;
+}
+.hover\:bg-blue-700:hover {
+  background-color: #3D0FA0 !important;
+}
+
+.hover\:text-blue-500:hover {
+  color: #7C3AED !important;
+}
+.hover\:text-blue-600:hover {
+  color: #4F19C7 !important;
+}
+.hover\:text-blue-700:hover {
+  color: #3D0FA0 !important;
+}
+.hover\:text-blue-800:hover {
+  color: #310C7F !important;
+}
+
+.hover\:border-blue-300:hover {
+  border-color: #C4B5FD !important;
+}
+.hover\:border-blue-500:hover {
+  border-color: #7C3AED !important;
+}
+.hover\:border-blue-600:hover {
+  border-color: #4F19C7 !important;
+}
+
+/* Focus States - Blue to Lavender-Purple */
+.focus\:bg-blue-50:focus {
+  background-color: #F8F7FC !important;
+}
+.focus\:border-blue-500:focus {
+  border-color: #7C3AED !important;
+}
+.focus\:border-blue-600:focus {
+  border-color: #4F19C7 !important;
+}
+.focus\:ring-blue-500:focus {
+  --tw-ring-color: rgba(124, 58, 237, 0.5) !important;
+}
+.focus\:ring-blue-600:focus {
+  --tw-ring-color: rgba(79, 25, 199, 0.5) !important;
+}
+.focus\:text-blue-600:focus {
+  color: #4F19C7 !important;
+}
+
+/* Ring Colors - Blue to Lavender-Purple */
+.ring-blue-500 {
+  --tw-ring-color: rgba(124, 58, 237, 0.5) !important;
+}
+.ring-blue-600 {
+  --tw-ring-color: rgba(79, 25, 199, 0.5) !important;
+}
+
+/* From/To Gradient Colors - Blue to Lavender-Purple */
+.from-blue-500 {
+  --tw-gradient-from: #7C3AED !important;
+  --tw-gradient-to: rgb(124 58 237 / 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+.from-blue-600 {
+  --tw-gradient-from: #4F19C7 !important;
+  --tw-gradient-to: rgb(79 25 199 / 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+.to-blue-500 {
+  --tw-gradient-to: #7C3AED !important;
+}
+.to-blue-600 {
+  --tw-gradient-to: #4F19C7 !important;
+}
+.to-blue-700 {
+  --tw-gradient-to: #3D0FA0 !important;
+}
+
+/* Dark Mode Variants */
+.dark .bg-blue-50 {
+  background-color: #2a1a3a !important;
+}
+.dark .bg-blue-100 {
+  background-color: #3a2a4a !important;
+}
+.dark .text-blue-500 {
+  color: #A78BFA !important;
+}
+.dark .text-blue-600 {
+  color: #C4B5FD !important;
+}
+.dark .text-blue-700 {
+  color: #DDD4FF !important;
+}
+.dark .border-blue-500 {
+  border-color: #7C3AED !important;
 }
