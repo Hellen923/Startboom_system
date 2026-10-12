@@ -21,29 +21,29 @@ module.exports = {
         },
         // CoreMint purple (static for utilities)
         purple: {
-          DEFAULT: '#7C3AED',
-          50:  '#F0E9FF',
-          100: '#E5D9FF',
-          200: '#D1B3FF',
-          300: '#B589FF',
-          400: '#8B5CF6',
-          500: '#7C3AED',
-          600: '#6D28D9',
-          700: '#5B21B6',
-          800: '#4C1D95',
+          DEFAULT: '#DA7CD6',
+          50:  '#F8F7FC',
+          100: '#F3EAFF',
+          200: '#E9D5FF',
+          300: '#E0C5FF',
+          400: '#DA7CD6',
+          500: '#DA7CD6',
+          600: '#C865C4',
+          700: '#B055B0',
+          800: '#984598',
           900: '#17143D',
         },
         blue: {
-          DEFAULT: '#7C3AED',  // Primary lavender-purple
+          DEFAULT: '#DA7CD6',  // Orchid
           50:  '#F8F7FC',      // Pale lavender background
-          100: '#EDE5FF',      // Light lavender
-          200: '#DDD4FF',
-          300: '#C4B5FD',
-          400: '#A78BFA',
-          500: '#7C3AED',      // Primary lavender-purple
-          600: '#4F19C7',      // Deep Coremint purple
-          700: '#3D0FA0',
-          800: '#310C7F',
+          100: '#F3EAFF',      // Light lavender
+          200: '#E9D5FF',
+          300: '#E0C5FF',
+          400: '#DA7CD6',
+          500: '#DA7CD6',      // Orchid
+          600: '#C865C4',      // Deep orchid
+          700: '#B055B0',
+          800: '#984598',
           900: '#17143D',      // Dark navy text
         },
         secondary: {
@@ -88,9 +88,9 @@ module.exports = {
         xl: '10px', '2xl': '12px', '3xl': '16px',
       },
       boxShadow: {
-        card: '0 1px 3px rgba(124, 58, 237, 0.06), 0 1px 2px rgba(124, 58, 237, 0.04)',
-        'card-hover': '0 4px 12px rgba(124, 58, 237, 0.08)',
-        modal: '0 20px 60px rgba(124, 58, 237, 0.15)',
+        card: '0 1px 3px rgba(218, 124, 214, 0.06), 0 1px 2px rgba(218, 124, 214, 0.04)',
+        'card-hover': '0 4px 12px rgba(218, 124, 214, 0.08)',
+        modal: '0 20px 60px rgba(218, 124, 214, 0.15)',
       },
     },
   },
