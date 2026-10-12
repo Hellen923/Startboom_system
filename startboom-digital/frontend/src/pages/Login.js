@@ -17,7 +17,7 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // Force default HoneyPot branding on login page
+  // Force default CoreMint branding on login page
   useEffect(() => {
     clearTenantBranding();
   }, []);
@@ -82,10 +82,10 @@ const Login = () => {
           {/* Header */}
           <div className="text-center lg:text-left">
             <div className="flex items-center justify-center lg:justify-start space-x-4 mb-8">
-              <img src={PLATFORM_BRAND.logo} alt="HoneyPot Logo" className="w-16 h-16 object-contain" />
+              <img src={PLATFORM_BRAND.logo} alt="CoreMint Logo" className="w-16 h-16 object-contain" />
               <div>
-                <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">HoneyPot</h1>
-                <p className="text-sm text-[var(--primary-color)] font-medium">CRM & Sales Platform</p>
+                <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">CoreMint</h1>
+                <p className="text-sm text-[var(--primary-color)] font-medium">Next-Generation CRM</p>
               </div>
             </div>
 
@@ -186,7 +186,7 @@ const Login = () => {
           <div className="mt-8 text-center">
             <p className="text-sm text-[#64748B]">
               Need help?{' '}
-              <a href="mailto:support@honeypot.com" className="text-[var(--primary-color)] hover:text-[var(--primary-hover)] font-medium transition-colors">
+              <a href="mailto:support@coremintcrm.com" className="text-[var(--primary-color)] hover:text-[var(--primary-hover)] font-medium transition-colors">
                 Contact support
               </a>
             </p>
@@ -195,10 +195,10 @@ const Login = () => {
       </div>
 
       {/* Right Side - Illustration */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#1F1D1A] via-[#2D2A26] to-[#1F1D1A]">
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-[#17143D] via-[#2D2850] to-[#17143D]">
         <div className="flex-1 flex items-center justify-center p-12 relative">
-          {/* Subtle honey accent overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#D99A00]/5"></div>
+          {/* Subtle purple accent overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#4F19C7]/5"></div>
           
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -207,10 +207,10 @@ const Login = () => {
             className="text-center text-white relative z-10"
           >
             <div className="mb-8">
-              <img src={PLATFORM_BRAND.logo} alt="HoneyPot Logo" className="w-24 h-24 mx-auto mb-6 object-contain opacity-90" />
-              <h3 className="text-4xl font-bold mb-4">HoneyPot</h3>
+              <img src={PLATFORM_BRAND.logo} alt="CoreMint Logo" className="w-24 h-24 mx-auto mb-6 object-contain opacity-90" />
+              <h3 className="text-4xl font-bold mb-4">CoreMint</h3>
               <p className="text-[#94A3B8] text-lg max-w-md mx-auto">
-                Streamline your sales process, manage clients efficiently, and boost your team's performance with our powerful sales management solution.
+                Streamline your sales process, manage clients efficiently, and boost your team's performance with our next-generation CRM solution.
               </p>
             </div>
 
