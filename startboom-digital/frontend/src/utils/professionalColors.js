@@ -1,10 +1,10 @@
-// HoneyPot CRM - Professional Color Palette
+// CoreMint CRM - Professional Color Palette
 // Primary colors use CSS variables so they respond to tenant branding
 
 export const PROFESSIONAL_COLORS = {
   primary: {
-    main: 'var(--primary-color)',
-    light: '#F59E0B',
+    main: 'var(--primary-color)',      // CoreMint Purple
+    light: '#A78BFA',
     dark: 'var(--primary-hover)',
     gradient: 'var(--btn-brand-bg)'
   },
