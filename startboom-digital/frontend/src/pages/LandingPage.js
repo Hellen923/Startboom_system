@@ -10,7 +10,7 @@ import { PLATFORM_BRAND, clearTenantBranding } from '../utils/platformBranding';
 const LandingPage = () => {
   const navigate = useNavigate();
 
-  // Force default HoneyPot branding on landing page
+  // Force default CoreMint branding on landing page
   useEffect(() => {
     clearTenantBranding();
   }, []);
@@ -64,7 +64,7 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1F1D1A] via-[#2D2A26] to-[#1F1D1A]">
+    <div className="min-h-screen bg-gradient-to-br from-[#17143D] via-[#2D2850] to-[#17143D]">
       
       {/* Hero Section */}
       <section className="relative pt-20 pb-20 px-6 lg:px-12 overflow-hidden">
@@ -75,7 +75,7 @@ const LandingPage = () => {
             rotate: [0, 90, 0],
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#D99A00]/20 rounded-full blur-3xl"
+          className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#4F19C7]/20 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
@@ -83,7 +83,7 @@ const LandingPage = () => {
             rotate: [90, 0, 90],
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F59E0B]/20 rounded-full blur-3xl"
+          className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#8B5CF6]/20 rounded-full blur-3xl"
         />
 
         <div className="container mx-auto relative z-10">
@@ -100,12 +100,12 @@ const LandingPage = () => {
               >
                 <img
                   src={PLATFORM_BRAND.logo}
-                  alt="HoneyPot"
+                  alt="CoreMint"
                   className="h-32 w-32 lg:h-40 lg:w-40 object-contain"
                 />
                 <div>
-                  <h1 className="text-4xl lg:text-5xl font-bold text-white">HoneyPot</h1>
-                  <p className="text-lg lg:text-xl text-[#D99A00] font-medium">CRM & Sales Platform</p>
+                  <h1 className="text-4xl lg:text-5xl font-bold text-white">CoreMint</h1>
+                  <p className="text-lg lg:text-xl text-[#A78BFA] font-medium">Next-Generation CRM</p>
                 </div>
               </motion.div>
 
@@ -115,10 +115,10 @@ const LandingPage = () => {
                 transition={{ duration: 0.7, delay: 0.1 }}
                 className="text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight"
               >
-                Sweeten Every Sale,
+                Build Relationships,
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D99A00] to-[#F59E0B]">
-                  Grow Every Day
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#A78BFA] to-[#8B5CF6]">
+                  Close More Deals
                 </span>
               </motion.h1>
 
@@ -157,7 +157,7 @@ const LandingPage = () => {
               className="relative"
             >
               {/* Glow effect */}
-              <div className="absolute inset-0 bg-[#D99A00]/20 rounded-3xl blur-3xl" />
+              <div className="absolute inset-0 bg-[#4F19C7]/20 rounded-3xl blur-3xl" />
               
               <div className="relative grid grid-cols-2 gap-4">
                 {features.slice(0, 4).map((feature, index) => (
@@ -169,8 +169,8 @@ const LandingPage = () => {
                     whileHover={{ y: -8, scale: 1.02 }}
                     className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all group"
                   >
-                    <div className="w-12 h-12 bg-[#D99A00]/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#D99A00]/30 transition-colors">
-                      <feature.icon className="w-6 h-6 text-[#D99A00]" />
+                    <div className="w-12 h-12 bg-[#4F19C7]/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#4F19C7]/30 transition-colors">
+                      <feature.icon className="w-6 h-6 text-[#A78BFA]" />
                     </div>
                     <h3 className="text-white font-bold mb-2">{feature.title}</h3>
                     <p className="text-sm text-gray-400">{feature.description}</p>
@@ -195,7 +195,7 @@ const LandingPage = () => {
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <div className="text-4xl lg:text-5xl font-bold text-[#D99A00] mb-2">{stat.value}</div>
+                <div className="text-4xl lg:text-5xl font-bold text-[#A78BFA] mb-2">{stat.value}</div>
                 <div className="text-gray-400">{stat.label}</div>
               </motion.div>
             ))}
@@ -214,7 +214,7 @@ const LandingPage = () => {
           >
             <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
               Everything You Need to
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D99A00] to-[#F59E0B]"> Manage Sales</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#A78BFA] to-[#8B5CF6]"> Manage Sales</span>
             </h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
               From lead generation to commission tracking, we've got you covered
@@ -230,10 +230,10 @@ const LandingPage = () => {
                 transition={{ delay: index * 0.1 }}
                 viewport={{ once: true }}
                 whileHover={{ y: -8 }}
-                className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 hover:border-[#D99A00]/50 transition-all group"
+                className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 hover:border-[#4F19C7]/50 transition-all group"
               >
-                <div className="w-14 h-14 bg-[#D99A00]/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#D99A00]/30 group-hover:scale-110 transition-all">
-                  <feature.icon className="w-7 h-7 text-[#D99A00]" />
+                <div className="w-14 h-14 bg-[#4F19C7]/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#4F19C7]/30 group-hover:scale-110 transition-all">
+                  <feature.icon className="w-7 h-7 text-[#A78BFA]" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
                 <p className="text-gray-400 leading-relaxed">{feature.description}</p>
@@ -244,7 +244,7 @@ const LandingPage = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 px-6 lg:px-12 bg-gradient-to-br from-[#D99A00]/10 to-transparent">
+      <section className="py-20 px-6 lg:px-12 bg-gradient-to-br from-[#4F19C7]/10 to-transparent">
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -253,7 +253,7 @@ const LandingPage = () => {
               viewport={{ once: true }}
             >
               <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
-                Why Choose HoneyPot?
+                Why Choose CoreMint?
               </h2>
               <p className="text-xl text-gray-300 mb-8">
                 Built for modern businesses with powerful CRM features, 
@@ -270,8 +270,8 @@ const LandingPage = () => {
                     viewport={{ once: true }}
                     className="flex items-center gap-3"
                   >
-                    <div className="flex-shrink-0 w-6 h-6 bg-[#D99A00]/20 rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-4 h-4 text-[#D99A00]" />
+                    <div className="flex-shrink-0 w-6 h-6 bg-[#4F19C7]/20 rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 text-[#A78BFA]" />
                     </div>
                     <span className="text-gray-300">{benefit}</span>
                   </motion.div>
@@ -285,7 +285,7 @@ const LandingPage = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="absolute inset-0 bg-[#D99A00]/30 rounded-3xl blur-3xl" />
+              <div className="absolute inset-0 bg-[#4F19C7]/30 rounded-3xl blur-3xl" />
               <div className="relative backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8">
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
@@ -293,14 +293,14 @@ const LandingPage = () => {
                       <div className="text-3xl font-bold text-white mb-1">1,000+</div>
                       <div className="text-gray-400">Sales Recorded</div>
                     </div>
-                    <LineChart className="w-12 h-12 text-[#D99A00]" />
+                    <LineChart className="w-12 h-12 text-[#A78BFA]" />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="text-3xl font-bold text-white mb-1">50+</div>
                       <div className="text-gray-400">Active Agents</div>
                     </div>
-                    <Users className="w-12 h-12 text-[#F59E0B]" />
+                    <Users className="w-12 h-12 text-[#8B5CF6]" />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
@@ -328,7 +328,7 @@ const LandingPage = () => {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute top-0 right-0 w-64 h-64 bg-[#D99A00]/30 rounded-full blur-3xl"
+              className="absolute top-0 right-0 w-64 h-64 bg-[#4F19C7]/30 rounded-full blur-3xl"
             />
             
             <div className="relative z-10">
@@ -336,7 +336,7 @@ const LandingPage = () => {
                 Ready to Grow Your Business?
               </h2>
               <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                Join businesses using HoneyPot to manage their sales pipeline, 
+                Join businesses using CoreMint to manage their sales pipeline, 
                 nurture customer relationships, and grow their revenue.
               </p>
               
@@ -361,19 +361,19 @@ const LandingPage = () => {
             <div className="flex items-center gap-3">
               <img
                 src={PLATFORM_BRAND.logo}
-                alt="HoneyPot"
+                alt="CoreMint"
                 className="h-10 w-10 object-contain"
               />
               <div>
-                <div className="text-white font-bold">HoneyPot</div>
-                <div className="text-sm text-gray-400">CRM & Sales Platform</div>
+                <div className="text-white font-bold">CoreMint</div>
+                <div className="text-sm text-gray-400">Next-Generation CRM</div>
               </div>
             </div>
             
             <div className="text-gray-400 text-sm text-center md:text-right">
-              © 2026 HoneyPot. All rights reserved.
+              © 2026 CoreMint. All rights reserved.
               <br />
-              Sweeten Every Sale
+              Where every opportunity finds its value
             </div>
           </div>
         </div>
