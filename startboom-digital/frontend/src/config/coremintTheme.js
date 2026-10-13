@@ -7,8 +7,8 @@
  */
 export const COREMINT_COLORS = {
   // Primary Brand Colors
-  corePurple: '#5521B5',        // Deep vibrant purple - primary actions
-  purpleHover: '#4419A0',       // Darker purple for hover states
+  corePurple: '#7C3AED',        // Bright vibrant purple - primary actions
+  purpleHover: '#6D28D9',       // Darker purple for hover states
   lavender: '#F0E9FF',          // Soft lavender - sidebar, subtle backgrounds
   lightPurple: '#E5D9FF',       // Light purple - hover states
   
@@ -33,9 +33,9 @@ export const COREMINT_COLORS = {
   info: '#3B82F6',              // Blue
   infoLight: '#DBEAFE',         // Pale blue background
   
-  // Chart Colors (Deep Purple-led with variety)
+  // Chart Colors (Bright Purple-led with variety)
   charts: {
-    primary: '#5521B5',         // Deep vibrant purple
+    primary: '#7C3AED',         // Bright vibrant purple
     secondary: '#818CF8',       // Light purple
     tertiary: '#10B981',        // Emerald
     quaternary: '#F59E0B',      // Amber
@@ -45,7 +45,7 @@ export const COREMINT_COLORS = {
   
   // Chart Palette (for multi-series)
   chartPalette: [
-    '#5521B5', // Deep vibrant purple
+    '#7C3AED', // Bright vibrant purple
     '#818CF8', // Light purple
     '#10B981', // Emerald
     '#F59E0B', // Amber
@@ -110,9 +110,9 @@ export const COREMINT_THEME_TOKENS = {
     
     // Misc
     '--color-overlay': 'rgba(23, 20, 61, 0.6)',
-    '--color-shadow': 'rgba(85, 33, 181, 0.08)',
-    '--color-shadow-strong': 'rgba(85, 33, 181, 0.12)',
-    '--color-accent-surface': 'rgba(85, 33, 181, 0.08)',
+    '--color-shadow': 'rgba(124, 58, 237, 0.08)',
+    '--color-shadow-strong': 'rgba(124, 58, 237, 0.12)',
+    '--color-accent-surface': 'rgba(124, 58, 237, 0.08)',
     '--color-scrollbar': COREMINT_COLORS.lightGray,
     
     // Tabs
@@ -125,9 +125,9 @@ export const COREMINT_THEME_TOKENS = {
     
     // Sidebar (Soft Lavender)
     '--sidebar-bg': COREMINT_COLORS.lavender,
-    '--sidebar-border': 'rgba(85, 33, 181, 0.1)',
-    '--sidebar-nav-active': 'rgba(85, 33, 181, 0.15)',
-    '--sidebar-nav-hover': 'rgba(85, 33, 181, 0.08)',
+    '--sidebar-border': 'rgba(124, 58, 237, 0.1)',
+    '--sidebar-nav-active': 'rgba(124, 58, 237, 0.15)',
+    '--sidebar-nav-hover': 'rgba(124, 58, 237, 0.08)',
     '--sidebar-section-label': 'rgba(23, 20, 61, 0.5)',
   },
   
@@ -184,8 +184,8 @@ export const COREMINT_THEME_TOKENS = {
     // Sidebar (Dark Mode)
     '--sidebar-bg': COREMINT_COLORS.dark.card,
     '--sidebar-border': COREMINT_COLORS.dark.elevated,
-    '--sidebar-nav-active': 'rgba(85, 33, 181, 0.2)',
-    '--sidebar-nav-hover': 'rgba(85, 33, 181, 0.1)',
+    '--sidebar-nav-active': 'rgba(124, 58, 237, 0.2)',
+    '--sidebar-nav-hover': 'rgba(124, 58, 237, 0.1)',
     '--sidebar-section-label': 'rgba(255, 255, 255, 0.5)',
   },
 };
@@ -194,12 +194,12 @@ export const COREMINT_THEME_TOKENS = {
  * BUTTON STYLES
  */
 export const COREMINT_BUTTON_STYLES = {
-  // Primary (Deep Vibrant Purple - main actions)
+  // Primary (Bright Vibrant Purple - main actions)
   primary: {
     bg: COREMINT_COLORS.corePurple,
     hover: COREMINT_COLORS.purpleHover,
     text: '#FFFFFF',
-    classes: 'bg-[#5521B5] hover:bg-[#4419A0] text-white font-medium px-4 py-2 rounded-lg transition-colors duration-150',
+    classes: 'bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-medium px-4 py-2 rounded-lg transition-colors duration-150',
   },
   
   // Secondary (Outlined)
@@ -233,10 +233,10 @@ export const COREMINT_BUTTON_STYLES = {
  */
 export const COREMINT_FORM_STYLES = {
   label: 'block text-sm font-medium text-[#17143D] mb-1.5',
-  input: 'w-full px-4 py-2.5 border border-[#E8E5F0] rounded-lg bg-white text-[#17143D] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#5521B5] focus:ring-opacity-25 focus:border-[#5521B5] transition-colors duration-150',
+  input: 'w-full px-4 py-2.5 border border-[#E8E5F0] rounded-lg bg-white text-[#17143D] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:ring-opacity-25 focus:border-[#7C3AED] transition-colors duration-150',
   inputError: 'border-[#EF4444] focus:ring-[#EF4444]',
   errorMessage: 'text-sm text-[#EF4444] mt-1',
-  select: 'w-full px-4 py-2.5 border border-[#E8E5F0] rounded-lg bg-white text-[#17143D] focus:outline-none focus:ring-2 focus:ring-[#5521B5] focus:ring-opacity-25 focus:border-[#5521B5] transition-colors duration-150',
+  select: 'w-full px-4 py-2.5 border border-[#E8E5F0] rounded-lg bg-white text-[#17143D] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:ring-opacity-25 focus:border-[#7C3AED] transition-colors duration-150',
 };
 
 /**
