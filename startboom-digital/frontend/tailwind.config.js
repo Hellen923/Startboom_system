@@ -21,29 +21,29 @@ module.exports = {
         },
         // CoreMint purple (static for utilities)
         purple: {
-          DEFAULT: '#5521B5',
+          DEFAULT: '#7C3AED',
           50:  '#F8F7FC',
           100: '#EDE5FF',
           200: '#D4C5F9',
           300: '#B8A0F3',
           400: '#8B5CF6',
-          500: '#5521B5',
-          600: '#4419A0',
-          700: '#36148B',
-          800: '#2A1070',
+          500: '#7C3AED',
+          600: '#6D28D9',
+          700: '#5B21B6',
+          800: '#4C1D95',
           900: '#17143D',
         },
         blue: {
-          DEFAULT: '#5521B5',  // Deep vibrant purple
+          DEFAULT: '#7C3AED',  // Bright vibrant purple
           50:  '#F8F7FC',      // Pale lavender background
           100: '#EDE5FF',      // Light lavender
           200: '#D4C5F9',
           300: '#B8A0F3',
           400: '#8B5CF6',
-          500: '#5521B5',      // Deep vibrant purple
-          600: '#4419A0',      // Darker purple
-          700: '#36148B',
-          800: '#2A1070',
+          500: '#7C3AED',      // Bright vibrant purple
+          600: '#6D28D9',      // Darker purple
+          700: '#5B21B6',
+          800: '#4C1D95',
           900: '#17143D',      // Dark navy text
         },
         secondary: {
@@ -73,8 +73,8 @@ module.exports = {
           'text-primary':  '#FFFFFF',
           'text-secondary':'#CBD5E1',
           'text-muted':    '#94A3B8',
-          accent:       '#4F19C7',
-          'accent-hover':'#3D0FA0',
+          accent:       '#7C3AED',
+          'accent-hover':'#6D28D9',
           'accent-surface':'#F0E9FF',
         },
         success: '#10B981',
@@ -88,9 +88,9 @@ module.exports = {
         xl: '10px', '2xl': '12px', '3xl': '16px',
       },
       boxShadow: {
-        card: '0 1px 3px rgba(85, 33, 181, 0.06), 0 1px 2px rgba(85, 33, 181, 0.04)',
-        'card-hover': '0 4px 12px rgba(85, 33, 181, 0.08)',
-        modal: '0 20px 60px rgba(85, 33, 181, 0.15)',
+        card: '0 1px 3px rgba(124, 58, 237, 0.06), 0 1px 2px rgba(124, 58, 237, 0.04)',
+        'card-hover': '0 4px 12px rgba(124, 58, 237, 0.08)',
+        modal: '0 20px 60px rgba(124, 58, 237, 0.15)',
       },
     },
   },
