@@ -21,29 +21,29 @@ module.exports = {
         },
         // CoreMint purple (static for utilities)
         purple: {
-          DEFAULT: '#DA7CD6',
+          DEFAULT: '#5521B5',
           50:  '#F8F7FC',
-          100: '#F3EAFF',
-          200: '#E9D5FF',
-          300: '#E0C5FF',
-          400: '#DA7CD6',
-          500: '#DA7CD6',
-          600: '#C865C4',
-          700: '#B055B0',
-          800: '#984598',
+          100: '#EDE5FF',
+          200: '#D4C5F9',
+          300: '#B8A0F3',
+          400: '#8B5CF6',
+          500: '#5521B5',
+          600: '#4419A0',
+          700: '#36148B',
+          800: '#2A1070',
           900: '#17143D',
         },
         blue: {
-          DEFAULT: '#DA7CD6',  // Orchid
+          DEFAULT: '#5521B5',  // Deep vibrant purple
           50:  '#F8F7FC',      // Pale lavender background
-          100: '#F3EAFF',      // Light lavender
-          200: '#E9D5FF',
-          300: '#E0C5FF',
-          400: '#DA7CD6',
-          500: '#DA7CD6',      // Orchid
-          600: '#C865C4',      // Deep orchid
-          700: '#B055B0',
-          800: '#984598',
+          100: '#EDE5FF',      // Light lavender
+          200: '#D4C5F9',
+          300: '#B8A0F3',
+          400: '#8B5CF6',
+          500: '#5521B5',      // Deep vibrant purple
+          600: '#4419A0',      // Darker purple
+          700: '#36148B',
+          800: '#2A1070',
           900: '#17143D',      // Dark navy text
         },
         secondary: {
@@ -88,9 +88,9 @@ module.exports = {
         xl: '10px', '2xl': '12px', '3xl': '16px',
       },
       boxShadow: {
-        card: '0 1px 3px rgba(218, 124, 214, 0.06), 0 1px 2px rgba(218, 124, 214, 0.04)',
-        'card-hover': '0 4px 12px rgba(218, 124, 214, 0.08)',
-        modal: '0 20px 60px rgba(218, 124, 214, 0.15)',
+        card: '0 1px 3px rgba(85, 33, 181, 0.06), 0 1px 2px rgba(85, 33, 181, 0.04)',
+        'card-hover': '0 4px 12px rgba(85, 33, 181, 0.08)',
+        modal: '0 20px 60px rgba(85, 33, 181, 0.15)',
       },
     },
   },

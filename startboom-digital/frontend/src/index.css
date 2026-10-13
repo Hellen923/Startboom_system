@@ -15,9 +15,9 @@
 /* ---------- Enterprise Brand Colors ---------- */
 :root {
   /* CoreMint Purple - Strategic Accent (Enterprise Specification) */
-  --primary-color: #DA7CD6;
-  --primary-hover: #C865C4;
-  --primary-ring: rgba(218, 124, 214, 0.1);
+  --primary-color: #5521B5;
+  --primary-hover: #4419A0;
+  --primary-ring: rgba(85, 33, 181, 0.1);
   
   /* Workspace - Enterprise Soft Off-white */
   --workspace-bg: #F8F7FC;
@@ -55,26 +55,26 @@
   
   /* System Colors */
   --color-overlay: rgba(23, 20, 61, 0.6);
-  --color-shadow: rgba(218, 124, 214, 0.08);
-  --color-shadow-strong: rgba(218, 124, 214, 0.12);
-  --color-accent-surface: rgba(218, 124, 214, 0.08);
+  --color-shadow: rgba(85, 33, 181, 0.08);
+  --color-shadow-strong: rgba(85, 33, 181, 0.12);
+  --color-accent-surface: rgba(85, 33, 181, 0.08);
   --color-scrollbar: #E8E5F0;
   --color-tab-inactive: #F5F3F8;
   --color-tab-active-bg: #FFFFFF;
   
-  /* Brand Gradients (CoreMint Orchid) */
-  --brand-header-bg: linear-gradient(135deg, #DA7CD6 0%, #C865C4 100%);
-  --btn-brand-bg: linear-gradient(135deg, #DA7CD6 0%, #C865C4 100%);
+  /* Brand Gradients (CoreMint Deep Purple) */
+  --brand-header-bg: linear-gradient(135deg, #5521B5 0%, #4419A0 100%);
+  --btn-brand-bg: linear-gradient(135deg, #5521B5 0%, #4419A0 100%);
   --brand-header-text: #FFFFFF;
-  --brand-header-solid: #C865C4;
-  --gradient-from: #DA7CD6;
-  --gradient-to: #C865C4;
+  --brand-header-solid: #4419A0;
+  --gradient-from: #5521B5;
+  --gradient-to: #4419A0;
   
   /* Sidebar - Soft Lavender (Enterprise Specification) */
   --sidebar-bg: #F0E9FF;
-  --sidebar-border: rgba(218, 124, 214, 0.1);
-  --sidebar-nav-active: rgba(218, 124, 214, 0.15);
-  --sidebar-nav-hover: rgba(218, 124, 214, 0.08);
+  --sidebar-border: rgba(85, 33, 181, 0.1);
+  --sidebar-nav-active: rgba(85, 33, 181, 0.15);
+  --sidebar-nav-hover: rgba(85, 33, 181, 0.08);
   --sidebar-section-label: rgba(23, 20, 61, 0.5);
   
   /* Status Colors - Enterprise Specification */
@@ -84,8 +84,8 @@
   --color-info: #7C3AED;  /* Changed from blue to lavender-purple */
   
   /* Lavender-Purple Scale (CoreMint Official Palette) */
-  --lavender-purple: #DA7CD6;
-  --deep-purple: #C865C4;
+  --lavender-purple: #5521B5;
+  --deep-purple: #4419A0;
   --light-lavender: #EDE5FF;
   --pale-lavender-bg: #F8F7FC;
   --lavender-border: #E5DFF0;
@@ -153,7 +153,7 @@ textarea:focus-visible {
 }
 
 .sidebar-divider { 
-  border-color: rgba(218, 124, 214, 0.1); 
+  border-color: rgba(85, 33, 181, 0.1); 
 }
 .dark .sidebar-divider { 
   border-color: rgba(255,255,255,0.1); 
@@ -179,7 +179,7 @@ textarea:focus-visible {
 }
 .sidebar-item:hover .sidebar-item-icon {
   opacity: 1;
-  color: #DA7CD6;  /* Orchid on hover */
+  color: #5521B5;  /* Deep purple on hover */
 }
 .sidebar-item.active {
   background-color: var(--sidebar-nav-active);
@@ -214,8 +214,8 @@ textarea:focus-visible {
 }
 
 .sidebar-footer {
-  border-top: 1px solid rgba(218, 124, 214, 0.1);
-  background: rgba(218, 124, 214, 0.05);
+  border-top: 1px solid rgba(85, 33, 181, 0.1);
+  background: rgba(85, 33, 181, 0.05);
 }
 .dark .sidebar-footer { 
   background: rgba(0, 0, 0, 0.3); 
@@ -419,11 +419,11 @@ label {
   font-size: 0.875rem; font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease-out;
-  box-shadow: 0 2px 8px rgba(218, 124, 214, 0.2);
+  box-shadow: 0 2px 8px rgba(85, 33, 181, 0.2);
 }
 .btn-primary:hover { 
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(218, 124, 214, 0.3); 
+  box-shadow: 0 4px 12px rgba(85, 33, 181, 0.3); 
 }
 .btn-primary:disabled { 
   opacity: 0.5; 
