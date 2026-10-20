@@ -3,16 +3,25 @@
 
 /**
  * COREMINT BRAND COLORS
- * Deep purple primary with lavender accents, professional neutrals
+ * Strategic purple accent with enterprise-grade neutrals
+ * Landing: Dark gradient with terracotta header
+ * Dashboard: Soft off-white with lavender sidebar
  */
 export const COREMINT_COLORS = {
-  // Primary Brand Colors
+  // Primary Brand Colors (Unified Purple - connects both experiences)
   corePurple: '#7C3AED',        // Bright vibrant purple - primary actions
   purpleHover: '#6D28D9',       // Darker purple for hover states
   lavender: '#F0E9FF',          // Soft lavender - sidebar, subtle backgrounds
   lightPurple: '#E5D9FF',       // Light purple - hover states
   
-  // Neutral Base (Professional)
+  // Landing Page Colors (Dark Gradient Hero)
+  landingHeader: '#8B4513',     // Terracotta header strip
+  gradientStart: '#1a1a2e',     // Deep navy (gradient start)
+  gradientMid: '#2d1b3d',       // Dark purple (gradient middle)
+  gradientEnd: '#4a2c4a',       // Deep plum (gradient end)
+  landingAccent: '#E5D9FF',     // Lavender accents for landing
+  
+  // Dashboard Colors (Light & Professional)
   canvas: '#F8F7FC',            // Off-white page background
   surface: '#FFFFFF',           // Pure white cards
   softGray: '#F5F3F8',          // Subtle hover states
@@ -191,7 +200,8 @@ export const COREMINT_THEME_TOKENS = {
 };
 
 /**
- * BUTTON STYLES
+ * BUTTON STYLES - Enterprise Specification
+ * 48px height, 12px radius, consistent purple accent
  */
 export const COREMINT_BUTTON_STYLES = {
   // Primary (Bright Vibrant Purple - main actions)
@@ -199,7 +209,9 @@ export const COREMINT_BUTTON_STYLES = {
     bg: COREMINT_COLORS.corePurple,
     hover: COREMINT_COLORS.purpleHover,
     text: '#FFFFFF',
-    classes: 'bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-medium px-4 py-2 rounded-lg transition-colors duration-150',
+    height: '48px',
+    radius: '12px',
+    classes: 'inline-flex items-center justify-center h-12 px-6 bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-semibold rounded-xl transition-all duration-150 shadow-sm hover:shadow-md',
   },
   
   // Secondary (Outlined)
@@ -208,7 +220,9 @@ export const COREMINT_BUTTON_STYLES = {
     hover: COREMINT_COLORS.softGray,
     text: COREMINT_COLORS.midnight,
     border: COREMINT_COLORS.lightGray,
-    classes: 'bg-transparent hover:bg-[#F5F3F8] text-[#17143D] border border-[#E8E5F0] font-medium px-4 py-2 rounded-lg transition-colors duration-150',
+    height: '48px',
+    radius: '12px',
+    classes: 'inline-flex items-center justify-center h-12 px-6 bg-transparent hover:bg-[#F5F3F8] text-[#17143D] border border-[#E8E5F0] font-semibold rounded-xl transition-all duration-150',
   },
   
   // Destructive (Red)
@@ -216,7 +230,9 @@ export const COREMINT_BUTTON_STYLES = {
     bg: COREMINT_COLORS.danger,
     hover: '#DC2626',
     text: '#FFFFFF',
-    classes: 'bg-[#EF4444] hover:bg-[#DC2626] text-white font-medium px-4 py-2 rounded-lg transition-colors duration-150',
+    height: '48px',
+    radius: '12px',
+    classes: 'inline-flex items-center justify-center h-12 px-6 bg-[#EF4444] hover:bg-[#DC2626] text-white font-semibold rounded-xl transition-all duration-150 shadow-sm hover:shadow-md',
   },
   
   // Success (Green)
@@ -224,19 +240,23 @@ export const COREMINT_BUTTON_STYLES = {
     bg: COREMINT_COLORS.success,
     hover: '#059669',
     text: '#FFFFFF',
-    classes: 'bg-[#10B981] hover:bg-[#059669] text-white font-medium px-4 py-2 rounded-lg transition-colors duration-150',
+    height: '48px',
+    radius: '12px',
+    classes: 'inline-flex items-center justify-center h-12 px-6 bg-[#10B981] hover:bg-[#059669] text-white font-semibold rounded-xl transition-all duration-150 shadow-sm hover:shadow-md',
   },
 };
 
 /**
- * FORM STYLES
+ * FORM STYLES - Enterprise Specification
+ * 48px height inputs, 12px radius, consistent validation
  */
 export const COREMINT_FORM_STYLES = {
-  label: 'block text-sm font-medium text-[#17143D] mb-1.5',
-  input: 'w-full px-4 py-2.5 border border-[#E8E5F0] rounded-lg bg-white text-[#17143D] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:ring-opacity-25 focus:border-[#7C3AED] transition-colors duration-150',
+  label: 'block text-sm font-semibold text-[#17143D] mb-2',
+  input: 'w-full h-12 px-4 border border-[#E8E5F0] rounded-xl bg-white text-[#17143D] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:ring-opacity-25 focus:border-[#7C3AED] transition-all duration-150',
   inputError: 'border-[#EF4444] focus:ring-[#EF4444]',
-  errorMessage: 'text-sm text-[#EF4444] mt-1',
-  select: 'w-full px-4 py-2.5 border border-[#E8E5F0] rounded-lg bg-white text-[#17143D] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:ring-opacity-25 focus:border-[#7C3AED] transition-colors duration-150',
+  errorMessage: 'text-sm text-[#EF4444] mt-1.5 flex items-center gap-1',
+  select: 'w-full h-12 px-4 border border-[#E8E5F0] rounded-xl bg-white text-[#17143D] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:ring-opacity-25 focus:border-[#7C3AED] transition-all duration-150',
+  textarea: 'w-full px-4 py-3 border border-[#E8E5F0] rounded-xl bg-white text-[#17143D] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:ring-opacity-25 focus:border-[#7C3AED] transition-all duration-150 resize-vertical min-h-[120px]',
 };
 
 /**
