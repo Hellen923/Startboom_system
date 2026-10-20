@@ -19,6 +19,14 @@
   --primary-hover: #6D28D9;
   --primary-ring: rgba(124, 58, 237, 0.1);
   
+  /* Landing Page Colors (Dark Gradient Experience) */
+  --landing-header: #8B4513;
+  --landing-gradient-start: #1a1a2e;
+  --landing-gradient-mid: #2d1b3d;
+  --landing-gradient-end: #4a2c4a;
+  --landing-accent: #E5D9FF;
+  --landing-text-light: #F8F7FC;
+  
   /* Workspace - Enterprise Soft Off-white */
   --workspace-bg: #F8F7FC;
   --color-bg-page: #F8F7FC;
@@ -349,7 +357,7 @@ thead.table-header th,
 
 /* ============================================================
    INPUTS & SELECTS — Enterprise Specification
-   48px height, 12px radius, Honey Gold focus ring
+   48px height, 12px radius, Purple focus ring
    ============================================================ */
 .form-input,
 input[type="text"]:not([class*="bg-"]),
@@ -408,7 +416,7 @@ label {
 
 /* ============================================================
    BUTTONS — Enterprise Specification
-   48px height, 12px radius, Honey Gold accent
+   48px height, 12px radius, consistent purple accent
    ============================================================ */
 .btn-primary {
   display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
@@ -808,6 +816,96 @@ label {
    RESPONSIVE
    ============================================================ */
 @media (max-width: 640px) { * { -webkit-tap-highlight-color: transparent; } }
+
+
+/* ============================================================
+   LANDING PAGE — Dark Gradient Experience
+   Terracotta header, deep purple gradient, lavender accents
+   ============================================================ */
+.landing-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, 
+    var(--landing-gradient-start) 0%, 
+    var(--landing-gradient-mid) 50%, 
+    var(--landing-gradient-end) 100%
+  );
+}
+
+.landing-header-strip {
+  height: 8px;
+  background-color: var(--landing-header);
+  width: 100%;
+}
+
+.landing-hero {
+  background: linear-gradient(180deg, 
+    var(--landing-gradient-start) 0%, 
+    var(--landing-gradient-mid) 100%
+  );
+  color: var(--landing-text-light);
+}
+
+.landing-feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.landing-feature-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(124, 58, 237, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(124, 58, 237, 0.2);
+}
+
+.landing-cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 56px;
+  padding: 0 2rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+}
+
+.landing-cta-button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(124, 58, 237, 0.5);
+}
+
+.landing-secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 56px;
+  padding: 0 2rem;
+  background: transparent;
+  color: var(--landing-accent);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.landing-secondary-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
 
 
 /* ============================================================
