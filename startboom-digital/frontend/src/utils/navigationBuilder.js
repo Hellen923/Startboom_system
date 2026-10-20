@@ -1,4 +1,5 @@
 // Dynamic Navigation Builder - Generate menu based on user role and permissions
+// Now supports hierarchical module structure with collapsible main modules
 import {
   Home,
   PieChart,
@@ -28,7 +29,464 @@ import {
   Video,
   MessageSquare
 } from 'lucide-react';
-import { MODULE_ROUTE_MAP, isModuleEnabled as isTenantModuleEnabled } from './moduleRegistry';
+import { 
+  MODULE_ROUTE_MAP, 
+  isModuleEnabled as isTenantModuleEnabled, 
+  MODULE_HIERARCHY,
+  isHierarchicalModuleEnabled 
+} from './moduleRegistry';
+
+// Icon mapping for module hierarchy
+const ICON_MAP = {
+  PieChart, Users, UserPlus, Target, TrendingUp, Building2, ShieldCheck,
+  ArrowLeftRight, Zap, UserCheck, BookUser, ListTodo, AlertTriangle,
+  Package, MapPin, Brain, Layers, Trophy, GitBranch, Sliders, FileText,
+  BarChart3, Calendar, Settings, Video, MessageSquare, Home
+};
+
+/**
+ * Generate hierarchical navigation with collapsible main modules
+ * @param {Object} user - Current user object with role and tenant info
+ * @param {Object} permissions - User's permission map (optional)
+ * @param {Array} departmentModules - User's department enabled modules (optional)
+ * @returns {Array} Navigation sections with hierarchical modules
+ */
+export const generateHierarchicalNavigation = (user, permissions = null, departmentModules = null) => {
+  if (!user || !user.role) return [];
+
+  // Superadmin gets platform-level navigation only (no hierarchical modules)
+  if (user.role === 'superadmin') {
+    return ALL_NAV_ITEMS.superadmin;
+  }
+
+  const isAdmin = user.role === 'admin' || user.role === 'manager';
+  const isAgent = user.role === 'agent';
+  const tenantModules = user.tenant?.modules || null;
+  
+  const navigation = [];
+
+  // ========== WORKSPACE SECTION (Core Always-Visible + Optional Main Modules) ==========
+  const workspaceItems = [];
+
+  // 1. Dashboard (always visible)
+  if (isAdmin) {
+    workspaceItems.push({
+      path: '/admin',
+      icon: PieChart,
+      label: 'Dashboard',
+      description: 'Your organization summary with quick access to key metrics.',
+      isMainModule: false,
+    });
+  } else if (isAgent) {
+    workspaceItems.push({
+      path: '/agent',
+      icon: PieChart,
+      label: 'Dashboard',
+      description: 'Welcome to CoreMint CRM — where every opportunity finds its value.',
+      isMainModule: false,
+    });
+  }
+
+  // 2. User Management (always visible for admins, with optional sub-modules)
+  if (isAdmin) {
+    const userMgmtSubModules = [];
+    
+    // Users (always)
+    userMgmtSubModules.push({
+      path: '/admin/users',
+      icon: UserPlus,
+      label: 'Users',
+      description: 'Add, edit, and manage users, roles, and access permissions.',
+    });
+    
+    // Departments (always)
+    userMgmtSubModules.push({
+      path: '/admin/departments',
+      icon: Layers,
+      label: 'Departments & Teams',
+      description: 'Organize your company structure and manage teams.',
+    });
+    
+    // Branches (optional)
+    if (isHierarchicalModuleEnabled(tenantModules, 'branches')) {
+      userMgmtSubModules.push({
+        path: '/admin/branches',
+        icon: Building2,
+        label: 'Branch Locations',
+        description: 'Manage multi-location offices and hierarchical structure.',
+      });
+    }
+    
+    // Territories (optional)
+    if (isHierarchicalModuleEnabled(tenantModules, 'territories')) {
+      userMgmtSubModules.push({
+        path: '/admin/territories',
+        icon: MapPin,
+        label: 'Territories',
+        description: 'Assign employees to geographic territories.',
+      });
+    }
+
+    workspaceItems.push({
+      id: 'user_management',
+      icon: Users,
+      label: 'User Management',
+      description: 'Users, departments, branches, and territories',
+      isMainModule: true,
+      isCollapsible: true,
+      subModules: userMgmtSubModules,
+    });
+  }
+
+  // 3. Clients (always visible)
+  if (isAdmin) {
+    workspaceItems.push({
+      path: '/admin/clients',
+      icon: Users,
+      label: 'Clients',
+      description: 'View and manage all client accounts and enable portal access.',
+      isMainModule: false,
+    });
+  } else if (isAgent) {
+    const clientsSubModules = [
+      {
+        path: '/agent/clients',
+        icon: Users,
+        label: 'Clients & Organizations',
+        description: 'Manage your client accounts and build lasting relationships.',
+      },
+      {
+        path: '/agent/contacts',
+        icon: BookUser,
+        label: 'Contacts',
+        description: 'Your full contact directory in one place.',
+      },
+      {
+        path: '/agent/leads',
+        icon: UserCheck,
+        label: 'Leads',
+        description: 'Capture, qualify, and convert prospects.',
+      },
+    ];
+
+    workspaceItems.push({
+      id: 'clients',
+      icon: Users,
+      label: 'Clients',
+      description: 'Client organizations, contacts, and leads',
+      isMainModule: true,
+      isCollapsible: true,
+      subModules: clientsSubModules,
+    });
+  }
+
+  // 4. OPTIONAL: Sales & Pipeline
+  if (isHierarchicalModuleEnabled(tenantModules, 'sales_pipeline') || isHierarchicalModuleEnabled(tenantModules, 'deals')) {
+    const salesSubModules = [];
+    
+    if (isAdmin) {
+      if (isHierarchicalModuleEnabled(tenantModules, 'deals')) {
+        salesSubModules.push({
+          path: '/admin/pipelines',
+          icon: GitBranch,
+          label: 'Pipeline Builder',
+          description: 'Customize sales stages and business workflows.',
+        });
+      }
+      if (isHierarchicalModuleEnabled(tenantModules, 'forecasts')) {
+        salesSubModules.push({
+          path: '/admin/forecasts',
+          icon: BarChart3,
+          label: 'Revenue Forecasts',
+          description: 'Weighted pipeline forecasting and revenue predictions.',
+        });
+      }
+    } else if (isAgent) {
+      if (isHierarchicalModuleEnabled(tenantModules, 'deals')) {
+        salesSubModules.push({
+          path: '/agent/deals',
+          icon: Target,
+          label: 'Sales Pipeline',
+          description: 'Track every deal from first contact to close.',
+        });
+      }
+      if (isHierarchicalModuleEnabled(tenantModules, 'sales')) {
+        salesSubModules.push({
+          path: '/agent/sales',
+          icon: TrendingUp,
+          label: 'Sales',
+          description: 'Record transactions and monitor revenue performance.',
+        });
+      }
+    }
+
+    if (salesSubModules.length > 0) {
+      workspaceItems.push({
+        id: 'sales_pipeline',
+        icon: TrendingUp,
+        label: 'Sales & Pipeline',
+        description: 'Deal management, pipeline stages, and sales tracking',
+        isMainModule: true,
+        isCollapsible: true,
+        subModules: salesSubModules,
+      });
+    }
+  }
+
+  // 5. OPTIONAL: Products & Inventory
+  if (isHierarchicalModuleEnabled(tenantModules, 'products_inventory') || isHierarchicalModuleEnabled(tenantModules, 'products')) {
+    const productsSubModules = [];
+    
+    if (isAdmin) {
+      productsSubModules.push({
+        path: '/admin/products',
+        icon: Package,
+        label: 'Products',
+        description: 'Manage product catalogue, pricing, and inventory.',
+      });
+    } else if (isAgent) {
+      productsSubModules.push({
+        path: '/agent/products',
+        icon: Package,
+        label: 'Product Catalogue',
+        description: 'Browse available products and pricing.',
+      });
+    }
+
+    if (productsSubModules.length > 0) {
+      workspaceItems.push({
+        id: 'products_inventory',
+        icon: Package,
+        label: 'Products & Inventory',
+        description: 'Product catalog and stock management',
+        isMainModule: true,
+        isCollapsible: true,
+        subModules: productsSubModules,
+      });
+    }
+  }
+
+  // 6. OPTIONAL: Performance & Analytics
+  if (isAdmin && (isHierarchicalModuleEnabled(tenantModules, 'performance_analytics') || 
+      isHierarchicalModuleEnabled(tenantModules, 'reports') || 
+      isHierarchicalModuleEnabled(tenantModules, 'analytics'))) {
+    const analyticsSubModules = [];
+    
+    if (isHierarchicalModuleEnabled(tenantModules, 'reports')) {
+      analyticsSubModules.push({
+        path: '/admin/reports',
+        icon: FileText,
+        label: 'Reports',
+        description: 'Review performance and activity reports.',
+      });
+      analyticsSubModules.push({
+        path: '/admin/custom-reports',
+        icon: FileText,
+        label: 'Custom Reports',
+        description: 'Build custom reports with advanced filtering.',
+      });
+    }
+    
+    if (isHierarchicalModuleEnabled(tenantModules, 'analytics')) {
+      analyticsSubModules.push({
+        path: '/admin/analytics',
+        icon: BarChart3,
+        label: 'Analytics',
+        description: 'Performance metrics and conversion tracking.',
+      });
+      analyticsSubModules.push({
+        path: '/predictive-analytics',
+        icon: Zap,
+        label: 'Predictive Analytics',
+        description: 'AI-driven insights and forecasts.',
+      });
+      analyticsSubModules.push({
+        path: '/admin/intelligence',
+        icon: Brain,
+        label: 'Business Intelligence',
+        description: 'Proactive alerts and insights.',
+      });
+    }
+    
+    if (isHierarchicalModuleEnabled(tenantModules, 'goals')) {
+      analyticsSubModules.push({
+        path: '/admin/goals',
+        icon: Target,
+        label: 'Goals & Targets',
+        description: 'Set and track individual, team, and company goals.',
+      });
+    }
+
+    if (analyticsSubModules.length > 0) {
+      workspaceItems.push({
+        id: 'performance_analytics',
+        icon: BarChart3,
+        label: 'Performance & Analytics',
+        description: 'Reports, analytics, and business intelligence',
+        isMainModule: true,
+        isCollapsible: true,
+        subModules: analyticsSubModules,
+      });
+    }
+  }
+
+  // 7. OPTIONAL: Automation
+  if (isAdmin && (isHierarchicalModuleEnabled(tenantModules, 'automation') || 
+      isHierarchicalModuleEnabled(tenantModules, 'workflows'))) {
+    const automationSubModules = [];
+    
+    if (isHierarchicalModuleEnabled(tenantModules, 'workflows')) {
+      automationSubModules.push({
+        path: '/admin/workflows',
+        icon: Zap,
+        label: 'Workflow Automation',
+        description: 'Automate repetitive tasks and business processes.',
+      });
+    }
+    
+    if (isHierarchicalModuleEnabled(tenantModules, 'custom_fields') || isHierarchicalModuleEnabled(tenantModules, 'customFields')) {
+      automationSubModules.push({
+        path: '/admin/custom-fields',
+        icon: Sliders,
+        label: 'Custom Fields',
+        description: 'Industry-specific custom fields.',
+      });
+    }
+
+    if (automationSubModules.length > 0) {
+      workspaceItems.push({
+        id: 'automation',
+        icon: Zap,
+        label: 'Automation',
+        description: 'Workflow automation and business rules',
+        isMainModule: true,
+        isCollapsible: true,
+        subModules: automationSubModules,
+      });
+    }
+  }
+
+  // 8. OPTIONAL: Activities & Scheduling
+  if (isHierarchicalModuleEnabled(tenantModules, 'activities_scheduling') || 
+      isHierarchicalModuleEnabled(tenantModules, 'schedules')) {
+    const activitiesSubModules = [];
+    
+    if (isAgent) {
+      if (isHierarchicalModuleEnabled(tenantModules, 'schedules')) {
+        activitiesSubModules.push({
+          path: '/agent/schedules',
+          icon: Calendar,
+          label: 'Schedules & Calendar',
+          description: 'Plan meetings, calls, and follow-ups.',
+        });
+      }
+      
+      if (isHierarchicalModuleEnabled(tenantModules, 'tasks')) {
+        activitiesSubModules.push({
+          path: '/agent/tasks',
+          icon: ListTodo,
+          label: 'Tasks',
+          description: 'Stay on top of daily work items.',
+        });
+      }
+      
+      if (isHierarchicalModuleEnabled(tenantModules, 'meetings')) {
+        activitiesSubModules.push({
+          path: '/agent/meetings',
+          icon: Video,
+          label: 'Meetings',
+          description: 'Schedule and track client meetings.',
+        });
+      }
+      
+      if (isHierarchicalModuleEnabled(tenantModules, 'issues')) {
+        activitiesSubModules.push({
+          path: '/agent/issues',
+          icon: AlertTriangle,
+          label: 'Issues & Support',
+          description: 'Log and track client issues.',
+        });
+      }
+    }
+
+    if (activitiesSubModules.length > 0) {
+      workspaceItems.push({
+        id: 'activities_scheduling',
+        icon: Calendar,
+        label: 'Activities & Scheduling',
+        description: 'Meetings, tasks, and calendar management',
+        isMainModule: true,
+        isCollapsible: true,
+        subModules: activitiesSubModules,
+      });
+    }
+  }
+
+  // Add Workspace section
+  if (workspaceItems.length > 0) {
+    navigation.push({
+      title: 'Workspace',
+      items: workspaceItems,
+    });
+  }
+
+  // ========== SETTINGS SECTION (Always visible) ==========
+  const settingsItems = [];
+  
+  if (isAdmin) {
+    settingsItems.push({
+      path: '/admin/tenant-settings',
+      icon: Building2,
+      label: 'Company Settings',
+      description: 'Configure company profile, branding, and modules.',
+      isMainModule: false,
+    });
+    settingsItems.push({
+      path: '/admin/settings',
+      icon: Settings,
+      label: 'Settings',
+      description: 'Update account preferences and system settings.',
+      isMainModule: false,
+    });
+  }
+
+  if (settingsItems.length > 0) {
+    navigation.push({
+      title: 'Settings',
+      items: settingsItems,
+    });
+  }
+
+  // ========== COMMUNICATION SECTION (Always visible) ==========
+  const communicationItems = [];
+  
+  if (isAdmin) {
+    communicationItems.push({
+      path: '/admin/messages',
+      icon: MessageSquare,
+      label: 'Messages',
+      description: 'Internal team communication.',
+      isMainModule: false,
+    });
+  } else if (isAgent) {
+    communicationItems.push({
+      path: '/agent/messages',
+      icon: MessageSquare,
+      label: 'Messages',
+      description: 'Chat with team members.',
+      isMainModule: false,
+    });
+  }
+
+  if (communicationItems.length > 0) {
+    navigation.push({
+      title: 'Communication',
+      items: communicationItems,
+    });
+  }
+
+  return navigation;
+};
 
 // Define all possible navigation items with required permissions
 const ALL_NAV_ITEMS = {
@@ -137,75 +595,17 @@ const ALL_NAV_ITEMS = {
 
 /**
  * Generate navigation sections based on user role, permissions, and department modules
+ * Now uses hierarchical module structure with collapsible main modules
  * @param {Object} user - Current user object with role and permissions
  * @param {Object} permissions - User's permission map (optional)
  * @param {Array} departmentModules - User's department enabled modules (optional)
  * @returns {Array} Filtered navigation sections
  */
 export const generateNavigation = (user, permissions = null, departmentModules = null) => {
-  if (!user || !user.role) return [];
-
-  let baseNav = [];
+  // Use new hierarchical navigation by default
+  return generateHierarchicalNavigation(user, permissions, departmentModules);
   
-  // Superadmin ONLY gets platform-level navigation (no company data access)
-  if (user.role === 'superadmin') {
-    baseNav = ALL_NAV_ITEMS.superadmin;
-    // Return early - superadmin should NOT access company admin/agent routes
-    return baseNav;
-  }
-  
-  // Company-level roles
-  if (user.role === 'admin' || user.role === 'manager') {
-    baseNav = ALL_NAV_ITEMS.admin;
-  } else if (user.role === 'agent') {
-    baseNav = ALL_NAV_ITEMS.agent;
-  }
-
-  // Get enabled modules from tenant — if no modules set, everything is enabled
-  const tenantModules = user.tenant?.modules || null;
-
-  const isTenantModuleEnabled = (path) => {
-    if (!tenantModules) return true; // no restrictions set
-    const moduleId = MODULE_ROUTE_MAP[path];
-    if (!moduleId) return true; // not mapped = always show
-    return isTenantModuleEnabled(tenantModules, moduleId);
-  };
-
-  // Check if user's department allows the module
-  const isDepartmentModuleEnabled = (requiredModule) => {
-    // If no module requirement, always show
-    if (!requiredModule) return true;
-    
-    // If no department modules set (admin/superadmin), show all
-    if (!departmentModules || departmentModules.includes('all')) return true;
-    
-    // Check if department has the required module
-    return departmentModules.includes(requiredModule);
-  };
-
-  const filteredNav = baseNav.map(section => ({
-    ...section,
-    items: section.items.filter(item => {
-      // Check role requirement
-      if (item.requiredRole && !item.requiredRole.includes(user.role)) return false;
-      
-      // Check permission requirement
-      if (item.requiredPermission && permissions) {
-        const [module, action] = item.requiredPermission.split(':');
-        if (permissions[module] && !permissions[module][action]) return false;
-      }
-      
-      // Check tenant module requirement
-      if (!isTenantModuleEnabled(item.path)) return false;
-      
-      // Check department module requirement
-      if (!isDepartmentModuleEnabled(item.requiredModule)) return false;
-      
-      return true;
-    })
-  })).filter(section => section.items.length > 0);
-
-  return filteredNav;
+  // Legacy flat navigation is preserved below for reference but not used
 };
 
 /**
@@ -250,6 +650,7 @@ export const getUserHomeRoute = (user) => {
 // eslint-disable-next-line
 export default {
   generateNavigation,
+  generateHierarchicalNavigation,
   canAccessRoute,
   getUserHomeRoute
 };
