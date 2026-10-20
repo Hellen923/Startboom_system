@@ -179,9 +179,9 @@ const LandingPage = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 px-6 lg:px-12 border-y border-white/10 backdrop-blur-sm bg-white/5">
+      <section className="py-20 px-6 lg:px-12 border-y border-white/10 bg-black/20">
         <div className="container mx-auto">
-          <div className="grid grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
@@ -191,8 +191,8 @@ const LandingPage = () => {
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <div className="text-4xl lg:text-5xl font-bold text-[#C4B5FD] mb-2">{stat.value}</div>
-                <div className="text-gray-400">{stat.label}</div>
+                <div className="text-5xl lg:text-6xl font-bold text-purple-300 mb-3">{stat.value}</div>
+                <div className="text-lg text-gray-400">{stat.label}</div>
               </motion.div>
             ))}
           </div>
