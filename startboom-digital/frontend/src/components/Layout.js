@@ -31,6 +31,7 @@ import {
    Shield,
    Building,
    MessageSquare,
+   ChevronRight,
  } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useModules } from '../context/ModuleContext';
@@ -51,6 +52,15 @@ const Layout = ({ children }) => {
   const [showQuickActions, setShowQuickActions] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [navSections, setNavSections] = useState([]);
+  const [expandedModules, setExpandedModules] = useState(() => {
+    // Load expanded state from sessionStorage
+    try {
+      const saved = sessionStorage.getItem('expandedModules');
+      return saved ? JSON.parse(saved) : ['user_management', 'clients']; // Default expanded
+    } catch {
+      return ['user_management', 'clients'];
+    }
+  });
   const { user, logout } = useAuth();
   const { enabledModules, isUnrestricted } = useModules();
   const location = useLocation();
@@ -58,6 +68,19 @@ const Layout = ({ children }) => {
 
   const isAdmin = user?.role === 'admin' || user?.role === 'manager';
   const isSuperAdmin = user?.role === 'superadmin';
+  
+  // Toggle expanded state for collapsible modules
+  const toggleModuleExpansion = (moduleId) => {
+    setExpandedModules(prev => {
+      const newExpanded = prev.includes(moduleId)
+        ? prev.filter(id => id !== moduleId)
+        : [...prev, moduleId];
+      
+      // Save to sessionStorage
+      sessionStorage.setItem('expandedModules', JSON.stringify(newExpanded));
+      return newExpanded;
+    });
+  };
   
   // Generate dynamic navigation based on user role, permissions, and department modules
   useEffect(() => {
@@ -216,23 +239,71 @@ const agentNavSections = [
 
   const activeNavItem = getActiveNavItem();
 
-  const NavItem = ({ item, isActive, onClick }) => {
+  const NavItem = ({ item, isActive, onClick, isSubModule = false }) => {
     const Icon = item.icon;
-    return (
-      <Link
-        to={item.path}
-        onClick={onClick}
-        className={`sidebar-item flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 group ${isActive ? 'active' : ''}`}
-      >
-        <Icon className={`sidebar-item-icon w-5 h-5 shrink-0 transition-all duration-150 ${isActive ? '' : 'text-white/80 group-hover:text-white'}`} strokeWidth={2} />
-        <div className="flex-1 min-w-0">
-          <div className="font-medium text-[13px]">{item.label}</div>
+    const isExpanded = item.isCollapsible && expandedModules.includes(item.id);
+    
+    // Main module with sub-modules (collapsible)
+    if (item.isMainModule && item.isCollapsible) {
+      return (
+        <div>
+          <button
+            onClick={() => toggleModuleExpansion(item.id)}
+            className={`sidebar-item flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 group w-full ${isActive ? 'active' : ''}`}
+          >
+            <Icon className={`sidebar-item-icon w-5 h-5 shrink-0 transition-all duration-150`} strokeWidth={2} />
+            <div className="flex-1 min-w-0 text-left">
+              <div className="font-medium text-[13px]">{item.label}</div>
+            </div>
+            <ChevronRight 
+              className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}
+              strokeWidth={2}
+            />
+          </button>
+          
+          {/* Sub-modules */}
+          {isExpanded && item.subModules && (
+            <div className="ml-4 mt-1 space-y-1">
+              {item.subModules.map((subItem, index) => (
+                <NavItem
+                  key={index}
+                  item={subItem}
+                  isActive={location.pathname === subItem.path || (
+                    subItem.path !== '/admin' &&
+                    subItem.path !== '/agent' &&
+                    location.pathname.startsWith(subItem.path)
+                  )}
+                  onClick={onClick}
+                  isSubModule={true}
+                />
+              ))}
+            </div>
+          )}
         </div>
-        {isActive && (
-          <div className="w-1.5 h-1.5 rounded-full sidebar-active-dot" style={{ backgroundColor: 'var(--primary-color)' }} />
-        )}
-      </Link>
-    );
+      );
+    }
+    
+    // Regular navigation item (with or without path)
+    if (item.path) {
+      return (
+        <Link
+          to={item.path}
+          onClick={onClick}
+          className={`sidebar-item flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-150 group ${isActive ? 'active' : ''} ${isSubModule ? 'pl-8' : ''}`}
+        >
+          <Icon className={`sidebar-item-icon w-5 h-5 shrink-0 transition-all duration-150 ${isActive ? '' : 'text-white/80 group-hover:text-white'}`} strokeWidth={2} />
+          <div className="flex-1 min-w-0">
+            <div className="font-medium text-[13px]">{item.label}</div>
+          </div>
+          {isActive && (
+            <div className="w-1.5 h-1.5 rounded-full sidebar-active-dot" style={{ backgroundColor: 'var(--primary-color)' }} />
+          )}
+        </Link>
+      );
+    }
+    
+    // Fallback for items without path
+    return null;
   };
 
   const SidebarHeader = () => {
