@@ -154,3 +154,100 @@ export const isModuleEnabled = (modules, moduleId) => {
   if (typeof value === 'object' && value !== null) return value.enabled !== false && value.enabled !== 'false';
   return value !== false && value !== 'false';
 };
+
+/**
+ * Check if a hierarchical module is enabled
+ * @param {Object} tenantModules - Tenant module configuration
+ * @param {String} mainModuleId - Main module ID (e.g., 'sales_pipeline')
+ * @param {String} subModuleId - Optional sub-module ID (e.g., 'deals')
+ * @returns {Boolean}
+ */
+export const isHierarchicalModuleEnabled = (tenantModules, mainModuleId, subModuleId = null) => {
+  if (!tenantModules) return true; // No restrictions
+  
+  // Check if main module is enabled
+  const mainEnabled = isModuleEnabled(tenantModules, mainModuleId);
+  if (!mainEnabled) return false;
+  
+  // If checking sub-module
+  if (subModuleId) {
+    const subEnabled = isModuleEnabled(tenantModules, subModuleId);
+    return subEnabled;
+  }
+  
+  return true;
+};
+
+/**
+ * Get all enabled modules from hierarchy for a tenant
+ * @param {Object} tenantModules - Tenant module configuration
+ * @returns {Array} List of enabled module IDs (flat)
+ */
+export const getEnabledModuleIds = (tenantModules) => {
+  if (!tenantModules) {
+    // Return all module IDs if no restrictions
+    const allIds = ['dashboard', 'user_management', 'users', 'departments', 'branches', 'territories', 'clients', 'settings', 'messages'];
+    
+    // Add all optional modules (hardcoded since MODULE_HIERARCHY is defined before this)
+    const optionalModuleIds = [
+      'sales_pipeline', 'deals', 'sales', 'forecasts',
+      'products_inventory', 'products',
+      'performance_analytics', 'reports', 'analytics', 'goals',
+      'automation', 'workflows', 'custom_fields', 'customFields',
+      'activities_scheduling', 'schedules', 'tasks', 'meetings', 'issues'
+    ];
+    allIds.push(...optionalModuleIds);
+    
+    return allIds;
+  }
+  
+  const enabled = ['dashboard', 'user_management', 'users', 'departments', 'clients', 'settings', 'messages']; // Always visible core
+  
+  // Check optional branches and territories
+  if (isModuleEnabled(tenantModules, 'branches')) enabled.push('branches');
+  if (isModuleEnabled(tenantModules, 'territories')) enabled.push('territories');
+  
+  // Check optional main modules and their sub-modules
+  // Sales & Pipeline
+  if (isModuleEnabled(tenantModules, 'sales_pipeline')) {
+    enabled.push('sales_pipeline');
+    if (isModuleEnabled(tenantModules, 'deals')) enabled.push('deals');
+    if (isModuleEnabled(tenantModules, 'sales')) enabled.push('sales');
+    if (isModuleEnabled(tenantModules, 'forecasts')) enabled.push('forecasts');
+  }
+  
+  // Products & Inventory
+  if (isModuleEnabled(tenantModules, 'products_inventory') || isModuleEnabled(tenantModules, 'products')) {
+    enabled.push('products_inventory');
+    enabled.push('products');
+  }
+  
+  // Performance & Analytics
+  if (isModuleEnabled(tenantModules, 'performance_analytics')) {
+    enabled.push('performance_analytics');
+    if (isModuleEnabled(tenantModules, 'reports')) enabled.push('reports');
+    if (isModuleEnabled(tenantModules, 'analytics')) enabled.push('analytics');
+    if (isModuleEnabled(tenantModules, 'goals')) enabled.push('goals');
+  }
+  
+  // Automation
+  if (isModuleEnabled(tenantModules, 'automation')) {
+    enabled.push('automation');
+    if (isModuleEnabled(tenantModules, 'workflows')) enabled.push('workflows');
+    if (isModuleEnabled(tenantModules, 'custom_fields') || isModuleEnabled(tenantModules, 'customFields')) {
+      enabled.push('custom_fields');
+      enabled.push('customFields');
+    }
+  }
+  
+  // Activities & Scheduling
+  if (isModuleEnabled(tenantModules, 'activities_scheduling')) {
+    enabled.push('activities_scheduling');
+    if (isModuleEnabled(tenantModules, 'schedules')) enabled.push('schedules');
+    if (isModuleEnabled(tenantModules, 'tasks')) enabled.push('tasks');
+    if (isModuleEnabled(tenantModules, 'meetings')) enabled.push('meetings');
+    if (isModuleEnabled(tenantModules, 'issues')) enabled.push('issues');
+  }
+  
+  return enabled;
+};
