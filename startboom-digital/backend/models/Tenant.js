@@ -75,28 +75,51 @@ const tenantSchema = new mongoose.Schema({
     secondaryColor: { type: String, default: '#10B981' } // Green default
   },
 
-  // Modules (enable/disable features)
+  // Modules (enable/disable features) - Hierarchical structure
   modules: {
     type: Map,
-    of: Boolean,
+    of: mongoose.Schema.Types.Mixed, // Allow flexible structure for sub-modules
     default: {
-      clients: true,
-      sales: true,
-      deals: true,
-      products: true,
+      // ========== CORE (Always Visible) ==========
+      // Optional sub-modules of core features
+      branches: true,
       territories: true,
+      
+      // ========== OPTIONAL MAIN MODULES ==========
+      // Sales & Pipeline
+      sales_pipeline: true,
+      deals: true,
+      sales: true,
+      forecasts: false,
+      
+      // Products & Inventory
+      products_inventory: true,
+      products: true,
+      
+      // Performance & Analytics
+      performance_analytics: true,
+      reports: true,
+      analytics: true,
+      goals: false,
+      
+      // Automation
+      automation: false,
+      workflows: true,
+      customFields: false,
+      custom_fields: false,
+      
+      // Activities & Scheduling
+      activities_scheduling: true,
       schedules: true,
       tasks: true,
+      meetings: false,
       issues: true,
+      
+      // Legacy module names (for backward compatibility)
+      clients: true,
       departments: true,
-      branches: true,
-      goals: true,
       activities: true,
-      workflows: true,
-      forecasts: true,
-      analytics: true,
-      reports: true,
-      customFields: true
+      pipelines: true,
     }
   },
   
@@ -333,6 +356,41 @@ tenantSchema.methods.canAddClient = function() {
 tenantSchema.methods.canAddDeal = function() {
   const maxDeals = this.hasFeature('maxDeals') || this.settings.features.maxDeals;
   return this.usage.totalDeals < maxDeals;
+};
+
+// Method to check if a hierarchical module is enabled
+tenantSchema.methods.isModuleEnabled = function(moduleId) {
+  if (!moduleId) return true;
+  
+  // Check in modules Map
+  if (this.modules && this.modules.get) {
+    const value = this.modules.get(moduleId);
+    if (value !== undefined) {
+      // Handle boolean values
+      if (typeof value === 'boolean') return value;
+      // Handle object values with 'enabled' property
+      if (typeof value === 'object' && value.enabled !== undefined) {
+        return value.enabled;
+      }
+    }
+  }
+  
+  // Default to true if not found (backward compatibility)
+  return true;
+};
+
+// Method to check main module and its sub-module
+tenantSchema.methods.isHierarchicalModuleEnabled = function(mainModuleId, subModuleId = null) {
+  // Check main module first
+  const mainEnabled = this.isModuleEnabled(mainModuleId);
+  if (!mainEnabled) return false;
+  
+  // If checking sub-module
+  if (subModuleId) {
+    return this.isModuleEnabled(subModuleId);
+  }
+  
+  return true;
 };
 
 // Pre-save middleware to generate slug if not provided
