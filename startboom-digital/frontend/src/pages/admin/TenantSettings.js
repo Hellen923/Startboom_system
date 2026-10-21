@@ -543,52 +543,379 @@ const TenantSettings = () => {
         </div>
       )}
 
-      {/* Modules Tab */}
+      {/* Modules Tab - Hierarchical Structure */}
       {activeTab === 'modules' && (
         <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
-          <h2 className={`text-xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            Enable/Disable Modules
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {TENANT_MODULES.map(module => {
-              const isEnabled = isModuleEnabled(tenant?.modules, module.id);
-              return (
-                <div
-                  key={module.id}
-                  className={`p-4 rounded-lg border-2 transition ${
-                    isEnabled 
-                      ? 'bg-[var(--color-accent-surface)]'
-                      : isDark ? 'border-gray-600 bg-[#334155]' : 'border-gray-300 bg-gray-50'
-                  }`}
-                  style={isEnabled ? { borderColor: 'var(--primary-color)' } : {}}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start space-x-3">
+          <div className="mb-6">
+            <h2 className={`text-xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              Module Configuration
+            </h2>
+            <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+              Enable or disable modules to customize your CRM workspace. Main modules can have sub-modules that depend on them.
+            </p>
+          </div>
+
+          {/* Always Visible Modules */}
+          <div className="mb-8">
+            <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              Core Modules (Always Visible)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Dashboard */}
+              <div className={`p-4 rounded-lg border-2 bg-[var(--color-accent-surface)]`} style={{ borderColor: 'var(--primary-color)' }}>
+                <div className="flex items-start space-x-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent-surface)] text-xs font-bold text-[var(--primary-color)]">
+                    DA
+                  </span>
+                  <div>
+                    <h4 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Dashboard</h4>
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Overview and key metrics</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* User Management with optional sub-modules */}
+              <div className={`p-4 rounded-lg border-2 bg-[var(--color-accent-surface)]`} style={{ borderColor: 'var(--primary-color)' }}>
+                <div className="space-y-3">
+                  <div className="flex items-start space-x-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent-surface)] text-xs font-bold text-[var(--primary-color)]">
+                      UM
+                    </span>
+                    <div className="flex-1">
+                      <h4 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>User Management</h4>
+                      <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Users, departments (always enabled)</p>
+                    </div>
+                  </div>
+                  
+                  {/* Optional sub-modules */}
+                  <div className="ml-12 space-y-2">
+                    <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                      <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Branches</span>
+                      <input
+                        type="checkbox"
+                        checked={isModuleEnabled(tenant?.modules, 'branches')}
+                        onChange={() => handleModuleToggle('branches')}
+                        className="h-4 w-4 rounded"
+                      />
+                    </label>
+                    <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                      <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Territories</span>
+                      <input
+                        type="checkbox"
+                        checked={isModuleEnabled(tenant?.modules, 'territories')}
+                        onChange={() => handleModuleToggle('territories')}
+                        className="h-4 w-4 rounded"
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Clients */}
+              <div className={`p-4 rounded-lg border-2 bg-[var(--color-accent-surface)]`} style={{ borderColor: 'var(--primary-color)' }}>
+                <div className="flex items-start space-x-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent-surface)] text-xs font-bold text-[var(--primary-color)]">
+                    CL
+                  </span>
+                  <div>
+                    <h4 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Clients</h4>
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Clients, contacts, and leads</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Settings & Messages */}
+              <div className={`p-4 rounded-lg border-2 bg-[var(--color-accent-surface)]`} style={{ borderColor: 'var(--primary-color)' }}>
+                <div className="flex items-start space-x-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent-surface)] text-xs font-bold text-[var(--primary-color)]">
+                    SM
+                  </span>
+                  <div>
+                    <h4 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Settings & Messages</h4>
+                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>System settings and communication</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Optional Modules */}
+          <div>
+            <h3 className={`text-lg font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              Optional Modules
+            </h3>
+            <div className="space-y-4">
+              {/* Sales & Pipeline */}
+              <div className={`p-4 rounded-lg border-2 transition ${
+                isModuleEnabled(tenant?.modules, 'sales_pipeline')
+                  ? 'bg-[var(--color-accent-surface)]'
+                  : isDark ? 'border-gray-600 bg-[#334155]' : 'border-gray-300 bg-gray-50'
+              }`} style={isModuleEnabled(tenant?.modules, 'sales_pipeline') ? { borderColor: 'var(--primary-color)' } : {}}>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent-surface)] text-xs font-bold text-[var(--primary-color)]">
-                        {module.label.slice(0, 2).toUpperCase()}
+                        SP
                       </span>
                       <div>
-                        <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                          {module.label}
-                        </h3>
-                        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {module.description}
-                        </p>
+                        <h4 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Sales & Pipeline</h4>
+                        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Deal management and sales tracking</p>
                       </div>
                     </div>
                     <button
-                      onClick={() => handleModuleToggle(module.id)}
+                      onClick={() => handleModuleToggle('sales_pipeline')}
                       className={`p-2 rounded-lg transition text-white ${
-                        isEnabled ? '' : isDark ? 'bg-gray-600' : 'bg-gray-300'
+                        isModuleEnabled(tenant?.modules, 'sales_pipeline') ? '' : isDark ? 'bg-gray-600' : 'bg-gray-300'
                       }`}
-                      style={isEnabled ? { background: 'var(--btn-brand-bg)' } : {}}
+                      style={isModuleEnabled(tenant?.modules, 'sales_pipeline') ? { background: 'var(--btn-brand-bg)' } : {}}
                     >
-                      {isEnabled ? <CheckCircle className="w-5 h-5" /> : <X className="w-5 h-5" />}
+                      {isModuleEnabled(tenant?.modules, 'sales_pipeline') ? <CheckCircle className="w-5 h-5" /> : <X className="w-5 h-5" />}
                     </button>
                   </div>
+                  
+                  {isModuleEnabled(tenant?.modules, 'sales_pipeline') && (
+                    <div className="ml-12 space-y-2 pt-2 border-t border-white/10">
+                      <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Deals (required)</span>
+                        <input type="checkbox" checked disabled className="h-4 w-4 rounded opacity-50" />
+                      </label>
+                      <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Sales</span>
+                        <input
+                          type="checkbox"
+                          checked={isModuleEnabled(tenant?.modules, 'sales')}
+                          onChange={() => handleModuleToggle('sales')}
+                          className="h-4 w-4 rounded"
+                        />
+                      </label>
+                      <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Forecasts</span>
+                        <input
+                          type="checkbox"
+                          checked={isModuleEnabled(tenant?.modules, 'forecasts')}
+                          onChange={() => handleModuleToggle('forecasts')}
+                          className="h-4 w-4 rounded"
+                        />
+                      </label>
+                    </div>
+                  )}
                 </div>
-              );
-            })}
+              </div>
+
+              {/* Products & Inventory */}
+              <div className={`p-4 rounded-lg border-2 transition ${
+                isModuleEnabled(tenant?.modules, 'products_inventory')
+                  ? 'bg-[var(--color-accent-surface)]'
+                  : isDark ? 'border-gray-600 bg-[#334155]' : 'border-gray-300 bg-gray-50'
+              }`} style={isModuleEnabled(tenant?.modules, 'products_inventory') ? { borderColor: 'var(--primary-color)' } : {}}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent-surface)] text-xs font-bold text-[var(--primary-color)]">
+                      PI
+                    </span>
+                    <div>
+                      <h4 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Products & Inventory</h4>
+                      <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Product catalog and stock management</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleModuleToggle('products_inventory')}
+                    className={`p-2 rounded-lg transition text-white ${
+                      isModuleEnabled(tenant?.modules, 'products_inventory') ? '' : isDark ? 'bg-gray-600' : 'bg-gray-300'
+                    }`}
+                    style={isModuleEnabled(tenant?.modules, 'products_inventory') ? { background: 'var(--btn-brand-bg)' } : {}}
+                  >
+                    {isModuleEnabled(tenant?.modules, 'products_inventory') ? <CheckCircle className="w-5 h-5" /> : <X className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Performance & Analytics */}
+              <div className={`p-4 rounded-lg border-2 transition ${
+                isModuleEnabled(tenant?.modules, 'performance_analytics')
+                  ? 'bg-[var(--color-accent-surface)]'
+                  : isDark ? 'border-gray-600 bg-[#334155]' : 'border-gray-300 bg-gray-50'
+              }`} style={isModuleEnabled(tenant?.modules, 'performance_analytics') ? { borderColor: 'var(--primary-color)' } : {}}>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent-surface)] text-xs font-bold text-[var(--primary-color)]">
+                        PA
+                      </span>
+                      <div>
+                        <h4 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Performance & Analytics</h4>
+                        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Reports and business intelligence</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleModuleToggle('performance_analytics')}
+                      className={`p-2 rounded-lg transition text-white ${
+                        isModuleEnabled(tenant?.modules, 'performance_analytics') ? '' : isDark ? 'bg-gray-600' : 'bg-gray-300'
+                      }`}
+                      style={isModuleEnabled(tenant?.modules, 'performance_analytics') ? { background: 'var(--btn-brand-bg)' } : {}}
+                    >
+                      {isModuleEnabled(tenant?.modules, 'performance_analytics') ? <CheckCircle className="w-5 h-5" /> : <X className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  
+                  {isModuleEnabled(tenant?.modules, 'performance_analytics') && (
+                    <div className="ml-12 space-y-2 pt-2 border-t border-white/10">
+                      <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Reports</span>
+                        <input
+                          type="checkbox"
+                          checked={isModuleEnabled(tenant?.modules, 'reports')}
+                          onChange={() => handleModuleToggle('reports')}
+                          className="h-4 w-4 rounded"
+                        />
+                      </label>
+                      <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Analytics</span>
+                        <input
+                          type="checkbox"
+                          checked={isModuleEnabled(tenant?.modules, 'analytics')}
+                          onChange={() => handleModuleToggle('analytics')}
+                          className="h-4 w-4 rounded"
+                        />
+                      </label>
+                      <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Goals & Targets</span>
+                        <input
+                          type="checkbox"
+                          checked={isModuleEnabled(tenant?.modules, 'goals')}
+                          onChange={() => handleModuleToggle('goals')}
+                          className="h-4 w-4 rounded"
+                        />
+                      </label>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Automation */}
+              <div className={`p-4 rounded-lg border-2 transition ${
+                isModuleEnabled(tenant?.modules, 'automation')
+                  ? 'bg-[var(--color-accent-surface)]'
+                  : isDark ? 'border-gray-600 bg-[#334155]' : 'border-gray-300 bg-gray-50'
+              }`} style={isModuleEnabled(tenant?.modules, 'automation') ? { borderColor: 'var(--primary-color)' } : {}}>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent-surface)] text-xs font-bold text-[var(--primary-color)]">
+                        AU
+                      </span>
+                      <div>
+                        <h4 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Automation</h4>
+                        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Workflow automation and custom fields</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleModuleToggle('automation')}
+                      className={`p-2 rounded-lg transition text-white ${
+                        isModuleEnabled(tenant?.modules, 'automation') ? '' : isDark ? 'bg-gray-600' : 'bg-gray-300'
+                      }`}
+                      style={isModuleEnabled(tenant?.modules, 'automation') ? { background: 'var(--btn-brand-bg)' } : {}}
+                    >
+                      {isModuleEnabled(tenant?.modules, 'automation') ? <CheckCircle className="w-5 h-5" /> : <X className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  
+                  {isModuleEnabled(tenant?.modules, 'automation') && (
+                    <div className="ml-12 space-y-2 pt-2 border-t border-white/10">
+                      <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Workflows</span>
+                        <input
+                          type="checkbox"
+                          checked={isModuleEnabled(tenant?.modules, 'workflows')}
+                          onChange={() => handleModuleToggle('workflows')}
+                          className="h-4 w-4 rounded"
+                        />
+                      </label>
+                      <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Custom Fields</span>
+                        <input
+                          type="checkbox"
+                          checked={isModuleEnabled(tenant?.modules, 'customFields') || isModuleEnabled(tenant?.modules, 'custom_fields')}
+                          onChange={() => handleModuleToggle('customFields')}
+                          className="h-4 w-4 rounded"
+                        />
+                      </label>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Activities & Scheduling */}
+              <div className={`p-4 rounded-lg border-2 transition ${
+                isModuleEnabled(tenant?.modules, 'activities_scheduling')
+                  ? 'bg-[var(--color-accent-surface)]'
+                  : isDark ? 'border-gray-600 bg-[#334155]' : 'border-gray-300 bg-gray-50'
+              }`} style={isModuleEnabled(tenant?.modules, 'activities_scheduling') ? { borderColor: 'var(--primary-color)' } : {}}>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent-surface)] text-xs font-bold text-[var(--primary-color)]">
+                        AS
+                      </span>
+                      <div>
+                        <h4 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>Activities & Scheduling</h4>
+                        <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Meetings, tasks, and calendar</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleModuleToggle('activities_scheduling')}
+                      className={`p-2 rounded-lg transition text-white ${
+                        isModuleEnabled(tenant?.modules, 'activities_scheduling') ? '' : isDark ? 'bg-gray-600' : 'bg-gray-300'
+                      }`}
+                      style={isModuleEnabled(tenant?.modules, 'activities_scheduling') ? { background: 'var(--btn-brand-bg)' } : {}}
+                    >
+                      {isModuleEnabled(tenant?.modules, 'activities_scheduling') ? <CheckCircle className="w-5 h-5" /> : <X className="w-5 h-5" />}
+                    </button>
+                  </div>
+                  
+                  {isModuleEnabled(tenant?.modules, 'activities_scheduling') && (
+                    <div className="ml-12 space-y-2 pt-2 border-t border-white/10">
+                      <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Schedules</span>
+                        <input
+                          type="checkbox"
+                          checked={isModuleEnabled(tenant?.modules, 'schedules')}
+                          onChange={() => handleModuleToggle('schedules')}
+                          className="h-4 w-4 rounded"
+                        />
+                      </label>
+                      <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Tasks</span>
+                        <input
+                          type="checkbox"
+                          checked={isModuleEnabled(tenant?.modules, 'tasks')}
+                          onChange={() => handleModuleToggle('tasks')}
+                          className="h-4 w-4 rounded"
+                        />
+                      </label>
+                      <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Meetings</span>
+                        <input
+                          type="checkbox"
+                          checked={isModuleEnabled(tenant?.modules, 'meetings')}
+                          onChange={() => handleModuleToggle('meetings')}
+                          className="h-4 w-4 rounded"
+                        />
+                      </label>
+                      <label className="flex items-center justify-between p-2 rounded hover:bg-black/5">
+                        <span className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Issues</span>
+                        <input
+                          type="checkbox"
+                          checked={isModuleEnabled(tenant?.modules, 'issues')}
+                          onChange={() => handleModuleToggle('issues')}
+                          className="h-4 w-4 rounded"
+                        />
+                      </label>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
