@@ -1,4 +1,4 @@
-# HoneyPot CRM
+# CoreMint CRM
 
 Enterprise Multi-Tenant Customer Relationship Management System
 
@@ -6,7 +6,7 @@ Enterprise Multi-Tenant Customer Relationship Management System
 
 ## Overview
 
-HoneyPot CRM is a comprehensive, full-stack CRM platform built for investment firms, sales organizations, and service companies. The system features complete multi-tenancy, role-based access control, client portal functionality, real-time messaging, and advanced analytics.
+CoreMint CRM is a comprehensive, full-stack CRM platform built for investment firms, sales organizations, and service companies. The system features complete multi-tenancy, role-based access control, client portal functionality, real-time messaging, and advanced analytics.
 
 **Status:** Production-ready and deployed
 
@@ -185,7 +185,7 @@ Create a `.env` file in the `frontend` directory:
 
 ```env
 REACT_APP_API_URL=http://localhost:5000/api
-REACT_APP_NAME=HoneyPot CRM
+REACT_APP_NAME=CoreMint CRM
 ```
 
 Start the frontend development server:
@@ -276,7 +276,7 @@ CORS_ORIGINS=https://your-frontend-domain.vercel.app
 Set these in the Vercel project settings:
 ```
 REACT_APP_API_URL=https://your-backend.onrender.com/api
-REACT_APP_NAME=HoneyPot CRM
+REACT_APP_NAME=CoreMint CRM
 ```
 
 ---
