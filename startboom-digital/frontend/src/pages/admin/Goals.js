@@ -136,7 +136,7 @@ const Goals = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-[#F8F7FC]'}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -152,7 +152,7 @@ const Goals = () => {
             setEditingGoal(null);
             setShowModal(true);
           }}
-          className="btn-brand flex items-center space-x-2 px-6 py-3 rounded-lg"
+          className="btn-brand flex items-center space-x-2 h-12 px-6 rounded-xl"
         >
           <Plus className="w-5 h-5" />
           <span className="font-semibold">New Goal</span>
@@ -199,7 +199,7 @@ const Goals = () => {
       </div>
 
       {/* Filters */}
-      <div className={`rounded-xl p-6 mb-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
+      <div className={`rounded-xl p-6 mb-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-sm`}>
         <div className="flex items-center space-x-2 mb-4">
           <Filter className="w-5 h-5" style={{ color: 'var(--primary-color)' }} />
           <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -210,7 +210,7 @@ const Goals = () => {
           <select
             value={filters.assignmentType}
             onChange={(e) => setFilters({ ...filters, assignmentType: e.target.value })}
-            className={`px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+            className={`h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
           >
             <option value="all">All Levels</option>
             <option value="company">Company</option>
@@ -223,7 +223,7 @@ const Goals = () => {
           <select
             value={filters.type}
             onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-            className={`px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+            className={`h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
           >
             <option value="all">All Types</option>
             <option value="revenue">Revenue</option>
@@ -238,7 +238,7 @@ const Goals = () => {
           <select
             value={filters.period}
             onChange={(e) => setFilters({ ...filters, period: e.target.value })}
-            className={`px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+            className={`h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
           >
             <option value="all">All Periods</option>
             <option value="daily">Daily</option>
@@ -251,7 +251,7 @@ const Goals = () => {
           <select
             value={filters.status}
             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-            className={`px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+            className={`h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -279,7 +279,7 @@ const Goals = () => {
                 setEditingGoal(null);
                 setShowModal(true);
               }}
-              className="btn-brand px-6 py-3 rounded-lg"
+              className="btn-brand h-12 px-6 rounded-xl"
             >
               Create Goal
             </button>
@@ -321,10 +321,9 @@ const Goals = () => {
 // Stat Card Component
 const StatCard = ({ title, value, icon: Icon, gradient, isDark }) => (
   <div
-    className="rounded-xl p-6"
+    className="rounded-xl p-6 shadow-sm"
     style={{
-      background: isDark ? gradient : 'white',
-      border: isDark ? 'none' : '1px solid #E5E7EB'
+      background: isDark ? gradient : 'white'
     }}
   >
     <div className="flex items-center justify-between mb-3">
@@ -347,7 +346,7 @@ const GoalCard = ({ goal, isDark, getStatusIcon, getAssignmentIcon, onEdit, onDe
     PROFESSIONAL_COLORS.danger.main;
 
   return (
-    <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
+    <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-sm`}>
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-start space-x-3 flex-1">
@@ -481,7 +480,7 @@ const GoalModal = ({ goal, isDark, onSave, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className={`rounded-xl p-6 max-w-2xl w-full my-8 ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
+      <div className={`rounded-2xl shadow-2xl p-6 max-w-2xl w-full my-8 ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
         <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
           {goal ? 'Edit Goal' : 'New Goal'}
         </h2>
@@ -495,7 +494,7 @@ const GoalModal = ({ goal, isDark, onSave, onClose }) => {
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 required
               />
             </div>
@@ -507,7 +506,7 @@ const GoalModal = ({ goal, isDark, onSave, onClose }) => {
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                className={`w-full px-4 py-2 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 rows="2"
               />
             </div>
@@ -519,7 +518,7 @@ const GoalModal = ({ goal, isDark, onSave, onClose }) => {
               <select
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 required
               >
                 <option value="revenue">Revenue</option>
@@ -540,7 +539,7 @@ const GoalModal = ({ goal, isDark, onSave, onClose }) => {
               <select
                 value={formData.assignmentType}
                 onChange={(e) => setFormData({ ...formData, assignmentType: e.target.value })}
-                className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 required
               >
                 <option value="company">Company</option>
@@ -558,7 +557,7 @@ const GoalModal = ({ goal, isDark, onSave, onClose }) => {
               <select
                 value={formData.period}
                 onChange={(e) => setFormData({ ...formData, period: e.target.value })}
-                className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 required
               >
                 <option value="daily">Daily</option>
@@ -577,7 +576,7 @@ const GoalModal = ({ goal, isDark, onSave, onClose }) => {
                 type="number"
                 value={formData.target}
                 onChange={(e) => setFormData({ ...formData, target: Number(e.target.value) })}
-                className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 required
                 min="0"
               />
@@ -591,7 +590,7 @@ const GoalModal = ({ goal, isDark, onSave, onClose }) => {
                 type="date"
                 value={formData.startDate}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 required
               />
             </div>
@@ -604,7 +603,7 @@ const GoalModal = ({ goal, isDark, onSave, onClose }) => {
                 type="date"
                 value={formData.endDate}
                 onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 required
               />
             </div>
@@ -614,13 +613,13 @@ const GoalModal = ({ goal, isDark, onSave, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className={`flex-1 px-4 py-2 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}
+              className={`flex-1 h-12 px-4 rounded-xl ${isDark ? 'bg-gray-700' : 'bg-white border border-gray-200'}`}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-brand flex-1 px-4 py-2 rounded-lg"
+              className="btn-brand flex-1 h-12 px-4 rounded-xl"
             >
               Save Goal
             </button>

@@ -131,7 +131,7 @@ const Branches = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-[#F8F7FC]'}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -145,7 +145,7 @@ const Branches = () => {
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setTreeView(!treeView)}
-            className={`px-4 py-2 rounded-lg ${isDark ? 'bg-[#1E293B]' : 'bg-white'} border ${isDark ? 'border-gray-700' : 'border-gray-300'}`}
+            className={`h-12 px-4 rounded-xl ${isDark ? 'bg-[#1E293B] border-gray-700' : 'bg-white border-gray-200'} border`}
           >
             {treeView ? 'Grid View' : 'Tree View'}
           </button>
@@ -154,7 +154,7 @@ const Branches = () => {
               setEditingBranch(null);
               setShowModal(true);
             }}
-            className="btn-brand flex items-center space-x-2 px-6 py-3 rounded-lg"
+            className="btn-brand flex items-center space-x-2 h-12 px-6 rounded-xl"
           >
             <Plus className="w-5 h-5" />
             <span className="font-semibold">New Branch</span>
@@ -241,10 +241,9 @@ const Branches = () => {
 // Stat Card Component
 const StatCard = ({ title, value, icon: Icon, gradient, isDark }) => (
   <div
-    className="rounded-xl p-6"
+    className="rounded-xl p-6 shadow-sm"
     style={{
-      background: isDark ? gradient : 'white',
-      border: isDark ? 'none' : '1px solid #E5E7EB'
+      background: isDark ? gradient : 'white'
     }}
   >
     <div className="flex items-center justify-between mb-3">
@@ -259,7 +258,7 @@ const StatCard = ({ title, value, icon: Icon, gradient, isDark }) => (
 
 // Tree View Component
 const TreeView = ({ branches, expandedNodes, toggleNode, isDark, onEdit, onDelete, onSelect }) => (
-  <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
+  <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-sm`}>
     <h2 className={`text-xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
       Branch Hierarchy
     </h2>
@@ -427,7 +426,7 @@ const GridView = ({ branches, isDark, onEdit, onDelete }) => (
       branches.map(branch => (
         <div
           key={branch._id}
-          className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}
+          className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-sm`}
         >
           {/* Header */}
           <div className="flex items-start justify-between mb-4">
@@ -560,7 +559,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className={`rounded-xl p-6 max-w-3xl w-full my-8 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} max-h-[90vh] overflow-y-auto`}>
+      <div className={`rounded-2xl shadow-2xl p-6 max-w-3xl w-full my-8 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} max-h-[90vh] overflow-y-auto`}>
         <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
           {branch ? 'Edit Branch' : 'New Branch'}
         </h2>
@@ -579,7 +578,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                   required
                 />
               </div>
@@ -592,7 +591,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                   type="text"
                   value={formData.code}
                   onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                   placeholder="e.g., NYC, LON"
                 />
               </div>
@@ -604,7 +603,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                   required
                 >
                   <option value="headquarters">Headquarters</option>
@@ -623,7 +622,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                 <select
                   value={formData.parentBranch}
                   onChange={(e) => setFormData({ ...formData, parentBranch: e.target.value })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 >
                   <option value="">None (Top Level)</option>
                   {branches
@@ -641,7 +640,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full px-4 py-2 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                   rows="2"
                 />
               </div>
@@ -666,7 +665,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                     ...formData, 
                     address: { ...formData.address, street: e.target.value }
                   })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 />
               </div>
 
@@ -681,7 +680,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                     ...formData, 
                     address: { ...formData.address, city: e.target.value }
                   })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 />
               </div>
 
@@ -696,7 +695,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                     ...formData, 
                     address: { ...formData.address, state: e.target.value }
                   })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 />
               </div>
 
@@ -711,7 +710,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                     ...formData, 
                     address: { ...formData.address, country: e.target.value }
                   })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 />
               </div>
 
@@ -726,7 +725,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                     ...formData, 
                     address: { ...formData.address, postalCode: e.target.value }
                   })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 />
               </div>
             </div>
@@ -750,7 +749,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                     ...formData, 
                     contact: { ...formData.contact, phone: e.target.value }
                   })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 />
               </div>
 
@@ -765,7 +764,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                     ...formData, 
                     contact: { ...formData.contact, email: e.target.value }
                   })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 />
               </div>
 
@@ -777,7 +776,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                   type="text"
                   value={formData.timezone}
                   onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                   placeholder="e.g., America/New_York"
                 />
               </div>
@@ -790,7 +789,7 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
                   type="text"
                   value={formData.currency}
                   onChange={(e) => setFormData({ ...formData, currency: e.target.value.toUpperCase() })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                   placeholder="e.g., USD, EUR"
                 />
               </div>
@@ -801,6 +800,25 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
             <button
               type="button"
               onClick={onClose}
+              className={`flex-1 h-12 px-4 rounded-xl ${isDark ? 'bg-gray-700' : 'bg-white border border-gray-200'}`}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="btn-brand flex-1 h-12 px-4 rounded-xl"
+            >
+              {branch ? 'Update Branch' : 'Create Branch'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Branches;
+={onClose}
               className={`flex-1 px-4 py-2 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}
             >
               Cancel

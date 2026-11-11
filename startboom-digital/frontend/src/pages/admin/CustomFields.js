@@ -104,7 +104,7 @@ const CustomFields = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-[#F8F7FC]'}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -119,7 +119,7 @@ const CustomFields = () => {
           <select
             value={selectedEntity}
             onChange={(e) => setSelectedEntity(e.target.value)}
-            className={`px-4 py-2 rounded-lg ${isDark ? 'bg-[#1E293B] text-white' : 'bg-white'} border ${isDark ? 'border-gray-700' : 'border-gray-300'}`}
+            className={`h-12 px-4 rounded-xl ${isDark ? 'bg-[#1E293B] text-white border-gray-700' : 'bg-white border-gray-200'} border`}
           >
             <option value="client">Clients</option>
             <option value="deal">Deals</option>
@@ -133,7 +133,7 @@ const CustomFields = () => {
               setEditingField(null);
               setShowModal(true);
             }}
-            className="btn-brand flex items-center space-x-2 px-6 py-3 rounded-lg"
+            className="btn-brand flex items-center space-x-2 h-12 px-6 rounded-xl"
           >
             <Plus className="w-5 h-5" />
             <span className="font-semibold">Add Field</span>
@@ -142,7 +142,7 @@ const CustomFields = () => {
       </div>
 
       {/* Fields List */}
-      <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
+      <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-sm`}>
         <div className="flex items-center justify-between mb-6">
           <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Custom Fields for {selectedEntity.charAt(0).toUpperCase() + selectedEntity.slice(1)}s ({fields.length})
@@ -163,7 +163,7 @@ const CustomFields = () => {
                 setEditingField(null);
                 setShowModal(true);
               }}
-              className="btn-brand px-6 py-3 rounded-lg"
+              className="btn-brand h-12 px-6 rounded-xl"
             >
               Add First Field
             </button>
@@ -297,7 +297,7 @@ const CustomFieldModal = ({ field, entityType, isDark, onSave, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className={`rounded-xl p-6 max-w-2xl w-full my-8 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} max-h-[90vh] overflow-y-auto`}>
+      <div className={`rounded-2xl shadow-2xl p-6 max-w-2xl w-full my-8 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} max-h-[90vh] overflow-y-auto`}>
         <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
           {field ? 'Edit Custom Field' : 'New Custom Field'}
         </h2>
@@ -316,7 +316,7 @@ const CustomFieldModal = ({ field, entityType, isDark, onSave, onClose }) => {
                   type="text"
                   value={formData.fieldLabel}
                   onChange={(e) => setFormData({ ...formData, fieldLabel: e.target.value })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                   placeholder="e.g., Policy Number"
                   required
                 />
@@ -330,7 +330,7 @@ const CustomFieldModal = ({ field, entityType, isDark, onSave, onClose }) => {
                   type="text"
                   value={formData.fieldName}
                   onChange={(e) => setFormData({ ...formData, fieldName: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                   placeholder="e.g., policy_number"
                   required
                 />
@@ -343,7 +343,7 @@ const CustomFieldModal = ({ field, entityType, isDark, onSave, onClose }) => {
                 <select
                   value={formData.fieldType}
                   onChange={(e) => setFormData({ ...formData, fieldType: e.target.value })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                   required
                 >
                   <option value="text">Text</option>
@@ -378,13 +378,13 @@ const CustomFieldModal = ({ field, entityType, isDark, onSave, onClose }) => {
                   value={newOption}
                   onChange={(e) => setNewOption(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addOption())}
-                  className={`flex-1 px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`flex-1 h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                   placeholder="Add option..."
                 />
                 <button
                   type="button"
                   onClick={addOption}
-                  className="btn-brand px-4 py-2 rounded-lg"
+                  className="btn-brand h-12 px-4 rounded-xl"
                 >
                   Add
                 </button>
@@ -440,7 +440,7 @@ const CustomFieldModal = ({ field, entityType, isDark, onSave, onClose }) => {
                         ...formData,
                         validation: { ...formData.validation, minLength: e.target.value }
                       })}
-                      className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                      className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                     />
                   </div>
                   <div>
@@ -454,7 +454,7 @@ const CustomFieldModal = ({ field, entityType, isDark, onSave, onClose }) => {
                         ...formData,
                         validation: { ...formData.validation, maxLength: e.target.value }
                       })}
-                      className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                      className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                     />
                   </div>
                 </div>
@@ -479,7 +479,7 @@ const CustomFieldModal = ({ field, entityType, isDark, onSave, onClose }) => {
                     ...formData,
                     ui: { ...formData.ui, placeholder: e.target.value }
                   })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 />
               </div>
 
@@ -494,7 +494,7 @@ const CustomFieldModal = ({ field, entityType, isDark, onSave, onClose }) => {
                     ...formData,
                     ui: { ...formData.ui, helpText: e.target.value }
                   })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 />
               </div>
 
@@ -508,7 +508,7 @@ const CustomFieldModal = ({ field, entityType, isDark, onSave, onClose }) => {
                     ...formData,
                     ui: { ...formData.ui, width: e.target.value }
                   })}
-                  className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+                  className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-700' : 'border-gray-200'} border`}
                 >
                   <option value="full">Full Width</option>
                   <option value="half">Half Width</option>
@@ -523,13 +523,13 @@ const CustomFieldModal = ({ field, entityType, isDark, onSave, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className={`flex-1 px-4 py-2 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}
+              className={`flex-1 h-12 px-4 rounded-xl ${isDark ? 'bg-gray-700' : 'bg-white border border-gray-200'}`}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-brand flex-1 px-4 py-2 rounded-lg"
+              className="btn-brand flex-1 h-12 px-4 rounded-xl"
             >
               Save Field
             </button>

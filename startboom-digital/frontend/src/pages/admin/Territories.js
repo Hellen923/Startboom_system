@@ -163,7 +163,7 @@ const AssignAgentsModal = ({ territory, onClose, onUpdated }) => {
             <Search size={18} className="pointer-events-none" style={{position:"absolute",left:"1rem",top:"50%",transform:"translateY(-50%)",color:"var(--color-text-placeholder)"}} />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search agents by name or email..."
-              className="w-full pl-12 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+              className="w-full h-12 pl-12 pr-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
           </div>
         </div>
 
@@ -177,7 +177,7 @@ const AssignAgentsModal = ({ territory, onClose, onUpdated }) => {
               const isAssigned = assignedIds.has(String(agent._id));
               const isSaving = saving === String(agent._id);
               return (
-                <div key={agent._id} className={`flex items-center justify-between p-3 rounded-xl border transition-colors ${isAssigned ? 'border-primary-200 bg-primary-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
+                <div key={agent._id} className={`flex items-center justify-between p-3 rounded-xl transition-colors shadow-sm ${isAssigned ? 'bg-primary-50' : 'bg-white hover:bg-gray-50'}`}>
                   <div className="flex items-center gap-3 min-w-0">
                     <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${isAssigned ? 'bg-primary-500 text-white' : 'bg-gray-200 text-gray-600'}`}>
                       {agent.name?.charAt(0).toUpperCase() || 'A'}
@@ -277,15 +277,15 @@ const CreateTerritoryModal = ({ onClose, onSuccess }) => {
             <div className="flex gap-2">
               <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && searchLocation()}
-                placeholder="e.g. Kampala, Mukono, Entebbe" className={`${inputCls} flex-1`} />
+                placeholder="e.g. Kampala, Mukono, Entebbe" className={`${inputCls} flex-1 h-12 rounded-xl border-gray-200 border`} />
               <button onClick={searchLocation} disabled={searching}
-                className="px-4 py-2 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600 disabled:opacity-50 shrink-0">
+                className="h-12 px-4 bg-primary-500 text-white rounded-xl text-sm font-medium hover:bg-primary-600 disabled:opacity-50 shrink-0">
                 {searching ? '...' : 'Search'}
               </button>
             </div>
           </div>
           {searchResults.length > 0 && (
-            <div className="max-h-48 overflow-y-auto border border-gray-300 rounded-xl divide-y divide-gray-100">
+            <div className="max-h-48 overflow-y-auto rounded-xl divide-y divide-gray-100 shadow-sm">
               {searchResults.map((loc, i) => (
                 <button key={i} onClick={() => { setSelectedLocation(loc); setSearchResults([]); }}
                   className="w-full text-left p-3 hover:bg-primary-50 transition-colors">
@@ -296,15 +296,15 @@ const CreateTerritoryModal = ({ onClose, onSuccess }) => {
             </div>
           )}
           {selectedLocation && (
-            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-xl text-sm">
+            <div className="flex items-center gap-2 p-3 bg-green-50 rounded-xl text-sm shadow-sm">
               <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
               <span className="text-green-800 font-medium">{selectedLocation.displayName}</span>
             </div>
           )}
           <div className="flex gap-3 pt-2 border-t border-gray-100">
-            <button onClick={onClose} className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
+            <button onClick={onClose} className="flex-1 h-12 px-4 rounded-xl text-sm font-medium text-gray-700 bg-white border border-gray-200 hover:bg-gray-50">Cancel</button>
             <button onClick={handleCreate} disabled={creating || !form.name || !selectedLocation}
-              className="flex-1 px-4 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg text-sm font-medium disabled:opacity-50">
+              className="flex-1 h-12 px-4 bg-primary-500 hover:bg-primary-600 text-white rounded-xl text-sm font-medium disabled:opacity-50">
               {creating ? 'Creating...' : 'Create Territory'}
             </button>
           </div>
@@ -319,7 +319,7 @@ const TerritoryCard = ({ territory, onManageAgents, onUpdate }) => {
   const activeAgents = (territory.assignedAgents || []).filter(a => a.isActive);
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-5">
+      className="bg-white rounded-2xl shadow-sm p-5">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -437,7 +437,7 @@ const Territories = () => {
           { label: 'Total Agents Placed', value: stats.totalAgents, color: 'text-primary-600' },
           { label: 'Unassigned', value: stats.unassigned, color: 'text-yellow-600' },
         ].map(s => (
-          <div key={s.label} className="bg-white rounded-xl border border-gray-200 px-4 py-3">
+          <div key={s.label} className="bg-white rounded-xl shadow-sm px-4 py-3">
             <p className="text-xs text-gray-500">{s.label}</p>
             <p className={`text-2xl font-bold mt-0.5 ${s.color}`}>{s.value}</p>
           </div>
@@ -497,7 +497,7 @@ const Territories = () => {
             const activeAgents = (t.assignedAgents || []).filter(a => a.isActive);
             return (
               <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+                className="bg-white rounded-2xl shadow-sm p-5">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center">
@@ -510,7 +510,7 @@ const Territories = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <button onClick={() => setManageTerritory(t)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 btn-brand text-white rounded-lg text-sm font-medium">
+                      className="flex items-center gap-1.5 h-12 px-3 btn-brand text-white rounded-xl text-sm font-medium">
                       <UserPlus className="w-4 h-4" /> Manage Agents
                     </button>
                     <button onClick={() => setSelectedId(null)} className="p-1.5 hover:bg-gray-100 rounded-lg">
@@ -562,12 +562,12 @@ const Territories = () => {
 
       {/* Empty state — shown in both views when no territories exist */}
       {!loading && territories.length === 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
+        <div className="bg-white rounded-xl shadow-sm p-16 text-center">
           <MapPin className="w-14 h-14 mx-auto text-gray-300 mb-4" />
           <h3 className="text-lg font-semibold text-gray-700 mb-1">No territories yet</h3>
           <p className="text-gray-400 text-sm mb-5">Create your first territory and assign agents to it.</p>
           <button onClick={() => setShowCreateModal(true)}
-            className="px-5 py-2.5 btn-brand text-white rounded-lg text-sm font-medium">
+            className="h-12 px-5 btn-brand text-white rounded-xl text-sm font-medium">
             Create Territory
           </button>
         </div>
