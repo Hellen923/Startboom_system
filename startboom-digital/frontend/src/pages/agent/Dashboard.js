@@ -62,16 +62,16 @@ const KPICard = ({ icon: Icon, title, value, subtitle, iconBg, iconColor }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="bg-white dark:bg-[#1E293B] rounded-2xl p-6 shadow-[0_8px_30px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_40px_rgba(15,23,42,0.08)] transition-shadow duration-200"
+    className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
   >
     <div className="flex items-center justify-between">
       <div className="flex-1">
-        <p className="text-xs font-medium uppercase tracking-wide text-[#64748B] dark:text-[#94A3B8] mb-2">{title}</p>
-        <p className="text-3xl font-bold text-[#0F172A] dark:text-[#F8FAFC]">{value}</p>
-        {subtitle && <p className="text-sm mt-2 text-[#64748B] dark:text-[#94A3B8]">{subtitle}</p>}
+        <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
+        <p className="text-3xl font-bold text-gray-900 mb-1">{value}</p>
+        {subtitle && <p className="text-sm text-gray-500">{subtitle}</p>}
       </div>
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${iconBg}`}>
-        <Icon className={`w-6 h-6 ${iconColor}`} strokeWidth={2} />
+      <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${iconBg || 'bg-purple-50'}`}>
+        <Icon className={`w-7 h-7 ${iconColor || 'text-purple-600'}`} strokeWidth={2} />
       </div>
     </div>
   </motion.div>
@@ -334,16 +334,16 @@ const AgentDashboard = () => {
       : <ChevronDown className="w-3 h-3 inline ml-1" />;
 
 return (
-    <div className="dashboard-page pt-4">
+    <div className="space-y-6 pt-4 px-6 min-h-screen bg-[#F8F7FC]">
       {/* ── 4 KPI Cards (spec: Sales Value, Pipeline, Total Clients, Leads) ── */}
-      <div className="stat-grid cols-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard
           icon={DollarSign}
           title="Sales Value"
           value={formatUGX(salesValue)}
           subtitle="This month's revenue"
-          iconBg="bg-primary-50"
-          iconColor="text-primary-500"
+          iconBg="bg-purple-50"
+          iconColor="text-purple-600"
         />
         <KPICard
           icon={TrendingUp}
@@ -351,7 +351,7 @@ return (
           value={pipelineCount}
           subtitle="Active deals in progress"
           iconBg="bg-blue-50"
-          iconColor="text-blue-500"
+          iconColor="text-blue-600"
         />
         <KPICard
           icon={Users}
@@ -359,58 +359,65 @@ return (
           value={totalClients}
           subtitle="All time"
           iconBg="bg-green-50"
-          iconColor="text-green-500"
+          iconColor="text-green-600"
         />
         <KPICard
           icon={UserCheck}
           title="Leads"
           value={leadsCount}
           subtitle="Prospects to follow up"
-          iconBg="bg-purple-50"
-          iconColor="text-purple-500"
+          iconBg="bg-orange-50"
+          iconColor="text-orange-600"
         />
       </div>
 
       {/* ── Cascading Metrics Section (Employee → Team → Department) ── */}
       {!metricsLoading && (myMetrics || teamMetrics || departmentMetrics) && (
-        <WidgetContainer
-          title="Performance Metrics"
-          subtitle="Your contributions cascade up through your team and department"
-          action={{
-            label: showCascade ? 'Hide Details' : 'Show Details',
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Performance Metrics</h3>
+              <p className="text-sm text-gray-500 mt-1">Your contributions cascade up through your team and department</p>
+            </div>
+            <button
+              onClick={() => setShowCascade(!showCascade)}
+              className="px-4 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
+            >
+              {showCascade ? 'Hide Details' : 'Show Details'}
+            </button>
             onClick: () => setShowCascade(!showCascade)
           }}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* My Metrics */}
             {myMetrics && (
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-200">
                 <div className="flex items-center gap-2 mb-3">
                   <UserCheck className="w-5 h-5 text-blue-600" />
-                  <h4 className="font-semibold text-blue-900 dark:text-blue-100">My Performance</h4>
+                  <h4 className="font-semibold text-blue-900">My Performance</h4>
                 </div>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-blue-700 dark:text-blue-300">Revenue:</span>
-                    <span className="font-bold text-blue-900 dark:text-blue-100">{formatUGX(myMetrics.metrics?.totalRevenue || 0)}</span>
+                    <span className="text-blue-700">Revenue:</span>
+                    <span className="font-bold text-blue-900">{formatUGX(myMetrics.metrics?.totalRevenue || 0)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-blue-700 dark:text-blue-300">Won Deals:</span>
-                    <span className="font-bold text-blue-900 dark:text-blue-100">{myMetrics.metrics?.wonDeals || 0}</span>
+                    <span className="text-blue-700">Won Deals:</span>
+                    <span className="font-bold text-blue-900">{myMetrics.metrics?.wonDeals || 0}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-blue-700 dark:text-blue-300">Conversion:</span>
-                    <span className="font-bold text-blue-900 dark:text-blue-100">{(myMetrics.metrics?.conversionRate || 0).toFixed(1)}%</span>
+                    <span className="text-blue-700">Conversion:</span>
+                    <span className="font-bold text-blue-900">{(myMetrics.metrics?.conversionRate || 0).toFixed(1)}%</span>
                   </div>
                   {showCascade && (
                     <>
-                      <div className="flex justify-between pt-2 border-t border-blue-300 dark:border-blue-700">
-                        <span className="text-blue-700 dark:text-blue-300">Clients:</span>
-                        <span className="font-bold text-blue-900 dark:text-blue-100">{myMetrics.metrics?.totalClients || 0}</span>
+                      <div className="flex justify-between pt-2 border-t border-blue-300">
+                        <span className="text-blue-700">Clients:</span>
+                        <span className="font-bold text-blue-900">{myMetrics.metrics?.totalClients || 0}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-blue-700 dark:text-blue-300">Active Deals:</span>
-                        <span className="font-bold text-blue-900 dark:text-blue-100">{myMetrics.metrics?.activeDeals || 0}</span>
+                        <span className="text-blue-700">Active Deals:</span>
+                        <span className="font-bold text-blue-900">{myMetrics.metrics?.activeDeals || 0}</span>
                       </div>
                     </>
                   )}
@@ -420,33 +427,33 @@ return (
 
             {/* Team Metrics */}
             {teamMetrics && (
-              <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-5 border border-green-200">
                 <div className="flex items-center gap-2 mb-3">
                   <Users className="w-5 h-5 text-green-600" />
-                  <h4 className="font-semibold text-green-900 dark:text-green-100">Team: {teamMetrics.teamName}</h4>
+                  <h4 className="font-semibold text-green-900">Team: {teamMetrics.teamName}</h4>
                 </div>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-green-700 dark:text-green-300">Total Revenue:</span>
-                    <span className="font-bold text-green-900 dark:text-green-100">{formatUGX(teamMetrics.metrics?.totalRevenue || 0)}</span>
+                    <span className="text-green-700">Total Revenue:</span>
+                    <span className="font-bold text-green-900">{formatUGX(teamMetrics.metrics?.totalRevenue || 0)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-green-700 dark:text-green-300">Won Deals:</span>
-                    <span className="font-bold text-green-900 dark:text-green-100">{teamMetrics.metrics?.wonDeals || 0}</span>
+                    <span className="text-green-700">Won Deals:</span>
+                    <span className="font-bold text-green-900">{teamMetrics.metrics?.wonDeals || 0}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-green-700 dark:text-green-300">Team Members:</span>
-                    <span className="font-bold text-green-900 dark:text-green-100">{teamMetrics.memberCount || 0}</span>
+                    <span className="text-green-700">Team Members:</span>
+                    <span className="font-bold text-green-900">{teamMetrics.memberCount || 0}</span>
                   </div>
                   {showCascade && (
                     <>
-                      <div className="flex justify-between pt-2 border-t border-green-300 dark:border-green-700">
-                        <span className="text-green-700 dark:text-green-300">Avg per Member:</span>
-                        <span className="font-bold text-green-900 dark:text-green-100">{formatUGX(teamMetrics.metrics?.averageRevenuePerMember || 0)}</span>
+                      <div className="flex justify-between pt-2 border-t border-green-300">
+                        <span className="text-green-700">Avg per Member:</span>
+                        <span className="font-bold text-green-900">{formatUGX(teamMetrics.metrics?.averageRevenuePerMember || 0)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-green-700 dark:text-green-300">Conversion:</span>
-                        <span className="font-bold text-green-900 dark:text-green-100">{(teamMetrics.metrics?.conversionRate || 0).toFixed(1)}%</span>
+                        <span className="text-green-700">Conversion:</span>
+                        <span className="font-bold text-green-900">{(teamMetrics.metrics?.conversionRate || 0).toFixed(1)}%</span>
                       </div>
                     </>
                   )}
@@ -456,33 +463,33 @@ return (
 
             {/* Department Metrics */}
             {departmentMetrics && (
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-5 border border-purple-200">
                 <div className="flex items-center gap-2 mb-3">
                   <Target className="w-5 h-5 text-purple-600" />
-                  <h4 className="font-semibold text-purple-900 dark:text-purple-100">Dept: {departmentMetrics.departmentName}</h4>
+                  <h4 className="font-semibold text-purple-900">Dept: {departmentMetrics.departmentName}</h4>
                 </div>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-purple-700 dark:text-purple-300">Total Revenue:</span>
-                    <span className="font-bold text-purple-900 dark:text-purple-100">{formatUGX(departmentMetrics.metrics?.totalRevenue || 0)}</span>
+                    <span className="text-purple-700">Total Revenue:</span>
+                    <span className="font-bold text-purple-900">{formatUGX(departmentMetrics.metrics?.totalRevenue || 0)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-purple-700 dark:text-purple-300">Won Deals:</span>
-                    <span className="font-bold text-purple-900 dark:text-purple-100">{departmentMetrics.metrics?.wonDeals || 0}</span>
+                    <span className="text-purple-700">Won Deals:</span>
+                    <span className="font-bold text-purple-900">{departmentMetrics.metrics?.wonDeals || 0}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-purple-700 dark:text-purple-300">Teams:</span>
-                    <span className="font-bold text-purple-900 dark:text-purple-100">{departmentMetrics.teamCount || 0}</span>
+                    <span className="text-purple-700">Teams:</span>
+                    <span className="font-bold text-purple-900">{departmentMetrics.teamCount || 0}</span>
                   </div>
                   {showCascade && (
                     <>
-                      <div className="flex justify-between pt-2 border-t border-purple-300 dark:border-purple-700">
-                        <span className="text-purple-700 dark:text-purple-300">Avg per Team:</span>
-                        <span className="font-bold text-purple-900 dark:text-purple-100">{formatUGX(departmentMetrics.metrics?.averageRevenuePerTeam || 0)}</span>
+                      <div className="flex justify-between pt-2 border-t border-purple-300">
+                        <span className="text-purple-700">Avg per Team:</span>
+                        <span className="font-bold text-purple-900">{formatUGX(departmentMetrics.metrics?.averageRevenuePerTeam || 0)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-purple-700 dark:text-purple-300">Total Members:</span>
-                        <span className="font-bold text-purple-900 dark:text-purple-100">{departmentMetrics.metrics?.totalMembers || 0}</span>
+                        <span className="text-purple-700">Total Members:</span>
+                        <span className="font-bold text-purple-900">{departmentMetrics.metrics?.totalMembers || 0}</span>
                       </div>
                     </>
                   )}
@@ -490,37 +497,37 @@ return (
               </div>
             )}
           </div>
-        </WidgetContainer>
+          </div>
+        </div>
       )}
 
       <DashboardQuickActions role={user?.role || 'agent'} />
 
       {/* ── Target Progress & Leaderboard ── */}
-      <div className="chart-grid">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <TargetProgress salesValue={salesValue} />
         <Leaderboard />
       </div>
 
-      {/* ── Customer Table with Search & Filter ── */}
-      {/*
-        WHY THIS IS HERE: The spec says the landing page must have a customer table
-        with search & filter so agents can immediately find and act on clients
-        without navigating to a separate page. This is the agent's primary workspace.
-      */}
       {/* ── Charts Row 1: Monthly Sales + Deal Status ── */}
-      <div className="chart-grid">
-        <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] overflow-hidden">
-          <div className="px-6 py-5 border-b border-[#F1F5F9] dark:border-[#334155]">
-            <h3 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">Monthly Sales Revenue</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="px-6 py-5 border-b border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900">Monthly Sales Revenue</h3>
+            <p className="text-sm text-gray-500 mt-1">Track your sales performance</p>
           </div>
           <div className="p-6">
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={monthlySalesData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-                <XAxis dataKey="month" stroke={axis} style={{ fontSize: '12px' }} />
-                <YAxis stroke={axis} style={{ fontSize: '12px' }} />
-                <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-                <Bar dataKey="sales" fill={ANALYTICS_PALETTE.revenue} radius={[4,4,0,0]} name="Sales" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <XAxis dataKey="month" stroke="#6B7280" style={{ fontSize: '12px' }} />
+                <YAxis stroke="#6B7280" style={{ fontSize: '12px' }} />
+                <Tooltip 
+                  formatter={v => formatUGX(v)} 
+                  contentStyle={{ backgroundColor: '#FFF', border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '12px' }}
+                  labelStyle={{ color: '#374151', fontWeight: 600 }}
+                />
+                <Bar dataKey="sales" fill="#7C3AED" radius={[4,4,0,0]} name="Sales" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -530,35 +537,45 @@ return (
       </div>
 
       {/* ── Charts Row 2: Revenue Over Time + Pipeline Value ── */}
-      <div className="chart-grid">
-        <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] overflow-hidden">
-          <div className="px-6 py-5 border-b border-[#F1F5F9] dark:border-[#334155]">
-            <h3 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">Revenue Over Time</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="px-6 py-5 border-b border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900">Revenue Over Time</h3>
+            <p className="text-sm text-gray-500 mt-1">Monthly revenue trend</p>
           </div>
           <div className="p-6">
             <ResponsiveContainer width="100%" height={260}>
               <AreaChart data={revenueOverTimeData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-                <XAxis dataKey="month" stroke={axis} style={{ fontSize: '12px' }} />
-                <YAxis stroke={axis} style={{ fontSize: '12px' }} />
-                <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-                <Area type="monotone" dataKey="revenue" stroke={ANALYTICS_PALETTE.revenue} fill={`${ANALYTICS_PALETTE.revenue}1A`} strokeWidth={2} name="Revenue" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <XAxis dataKey="month" stroke="#6B7280" style={{ fontSize: '12px' }} />
+                <YAxis stroke="#6B7280" style={{ fontSize: '12px' }} />
+                <Tooltip 
+                  formatter={v => formatUGX(v)} 
+                  contentStyle={{ backgroundColor: '#FFF', border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '12px' }}
+                  labelStyle={{ color: '#374151', fontWeight: 600 }}
+                />
+                <Area type="monotone" dataKey="revenue" stroke="#7C3AED" fill="#7C3AED1A" strokeWidth={2} name="Revenue" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] overflow-hidden">
-          <div className="px-6 py-5 border-b border-[#F1F5F9] dark:border-[#334155]">
-            <h3 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">Pipeline Value by Stage</h3>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="px-6 py-5 border-b border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900">Pipeline Value by Stage</h3>
+            <p className="text-sm text-gray-500 mt-1">Deal value across stages</p>
           </div>
           <div className="p-6">
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={pipelineValueData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-                <XAxis dataKey="stage" stroke={axis} style={{ fontSize: '12px' }} />
-                <YAxis stroke={axis} style={{ fontSize: '12px' }} />
-                <Tooltip formatter={v => formatUGX(v)} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <XAxis dataKey="stage" stroke="#6B7280" style={{ fontSize: '12px' }} />
+                <YAxis stroke="#6B7280" style={{ fontSize: '12px' }} />
+                <Tooltip 
+                  formatter={v => formatUGX(v)} 
+                  contentStyle={{ backgroundColor: '#FFF', border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '12px' }}
+                  labelStyle={{ color: '#374151', fontWeight: 600 }}
+                />
                 <Bar dataKey="value" radius={[4,4,0,0]} name="Value">
                   {pipelineValueData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -571,7 +588,7 @@ return (
       </div>
 
       {/* ── Charts Row 3: Cash vs Credit + Follow-up Status ── */}
-      <div className="chart-grid">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PaymentMethodChart 
           data={creditVsCashData} 
           formatCurrency={formatUGX}
@@ -582,20 +599,20 @@ return (
         <TaskStatusChart 
           data={followUpData} 
           height={260}
-title="Follow-up Task Status"
+          title="Follow-up Task Status"
         />
       </div>
 
       {/* My Clients Table */}
-      <div className="bg-white dark:bg-[#1E293B] rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.06)] overflow-hidden">
-        <div className="px-6 py-5 border-b border-[#F1F5F9] dark:border-[#334155]">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="px-6 py-5 border-b border-gray-100">
           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-            <h2 className="text-lg font-bold flex-1 text-[#0F172A] dark:text-[#F8FAFC]">My Clients</h2>
+            <h2 className="text-lg font-semibold flex-1 text-gray-900">My Clients</h2>
             {/* Status filter */}
             <select
               value={tableStatus}
               onChange={e => { setTableStatus(e.target.value); setTablePage(1); }}
-              className="h-12 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC] text-sm focus:outline-none focus:border-[var(--primary-color)] focus:ring-[3px] focus:ring-[rgba(216,154,0,0.1)]"
+              className="h-12 px-4 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
             >
               <option value="">All Status</option>
               <option value="prospect">Prospect (Lead)</option>
@@ -608,39 +625,44 @@ title="Follow-up Task Status"
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F8FAFC] dark:bg-[#0F172A] border-b border-[#F1F5F9] dark:border-[#1E293B]">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('name')}>
+                <th className="px-6 py-3 text-left font-semibold text-gray-700 uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('name')}>
                   Client <SortIcon col="name" />
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('company')}>
+                <th className="px-6 py-3 text-left font-semibold text-gray-700 uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('company')}>
                   Company <SortIcon col="company" />
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase text-xs tracking-wider">
+                <th className="px-6 py-3 text-left font-semibold text-gray-700 uppercase text-xs tracking-wider">
                   Contact
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('status')}>
+                <th className="px-6 py-3 text-left font-semibold text-gray-700 uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('status')}>
                   Status <SortIcon col="status" />
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('priority')}>
+                <th className="px-6 py-3 text-left font-semibold text-gray-700 uppercase text-xs tracking-wider cursor-pointer" onClick={() => handleSort('priority')}>
                   Priority <SortIcon col="priority" />
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase text-xs tracking-wider">
+                <th className="px-6 py-3 text-left font-semibold text-gray-700 uppercase text-xs tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#F1F5F9] dark:divide-[#1E293B]">
+            <tbody className="divide-y divide-gray-100">
               {tableLoading ? (
                 <tr>
-                  <td colSpan="6" className="px-4 py-10 text-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[var(--primary-color)] mx-auto" />
+                  <td colSpan="6" className="px-6 py-10 text-center">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600 mx-auto" />
                   </td>
                 </tr>
               ) : clients.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-4 py-10 text-center text-[#64748B] dark:text-[#94A3B8]">
-                    {tableSearch || tableStatus ? 'No clients match your search' : 'No clients yet'}
+                  <td colSpan="6" className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                        <Users className="w-8 h-8 text-gray-400" />
+                      </div>
+                      <p className="text-gray-500">{tableSearch || tableStatus ? 'No clients match your search' : 'No clients yet'}</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -648,37 +670,37 @@ title="Follow-up Task Status"
                   const statusStyle = STATUS_STYLES[client.status] || STATUS_STYLES.inactive;
                   const StatusIcon  = statusStyle.icon;
                   return (
-                    <tr key={client._id} className="hover:bg-[#F8FAFC] dark:hover:bg-[#0F172A] transition-colors duration-150">
-                      <td className="px-4 py-4">
+                    <tr key={client._id} className="hover:bg-gray-50 transition-colors duration-150">
+                      <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-[rgba(216,154,0,0.1)] dark:bg-[rgba(216,154,0,0.2)] rounded-full flex items-center justify-center flex-shrink-0">
-                            <span className="text-[var(--primary-color)] font-semibold text-sm">
+                          <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-purple-600 font-semibold text-sm">
                               {client.name?.charAt(0).toUpperCase()}
                             </span>
                           </div>
                           <div>
-                            <p className="font-medium text-[#0F172A] dark:text-[#F8FAFC]">{client.name}</p>
-                            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5">{client.position || '—'}</p>
+                            <p className="font-medium text-gray-900">{client.name}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">{client.position || '—'}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4 text-[#475569] dark:text-[#CBD5E1]">{client.company || '—'}</td>
-                      <td className="px-4 py-4">
-                        <p className="text-[#0F172A] dark:text-[#F8FAFC]">{client.phone}</p>
-                        <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5">{client.email}</p>
+                      <td className="px-6 py-4 text-gray-700">{client.company || '—'}</td>
+                      <td className="px-6 py-4">
+                        <p className="text-gray-900">{client.phone}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{client.email}</p>
                       </td>
-                      <td className="px-4 py-4">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusStyle.bg}`}>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium ${statusStyle.bg}`}>
                           <StatusIcon className="w-3 h-3" />
                           {client.status === 'prospect' ? 'Lead' : client.status?.charAt(0).toUpperCase() + client.status?.slice(1)}
                         </span>
                       </td>
-                      <td className="px-4 py-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${PRIORITY_STYLES[client.priority] || 'bg-[#F1F5F9] dark:bg-[#334155] text-[#475569] dark:text-[#CBD5E1]'}`}>
+                      <td className="px-6 py-4">
+                        <span className={`px-3 py-1 rounded-lg text-xs font-semibold ${PRIORITY_STYLES[client.priority] || 'bg-gray-100 text-gray-700'}`}>
                           {client.priority?.charAt(0).toUpperCase() + client.priority?.slice(1)}
                         </span>
                       </td>
-                      <td className="px-4 py-4">
+                      <td className="px-6 py-4">
                         <div className="flex items-center gap-1">
                           {client.phone && (
                             <button
