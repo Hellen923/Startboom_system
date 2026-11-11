@@ -1,7 +1,13 @@
 export const PLATFORM_BRAND = {
   name: 'CoreMint',
   logo: `${process.env.PUBLIC_URL || ''}/coremint.jpg`,
-  primaryColor: '#4F19C7', // CoreMint purple
+  logoLight: `${process.env.PUBLIC_URL || ''}/coremint lightmod.jpeg`,
+  logoDark: `${process.env.PUBLIC_URL || ''}/darkmode logo.jpeg`,
+  primaryColor: '#7C3AED', // CoreMint purple - Updated to unified purple
+};
+
+export const getPlatformLogo = (isDark) => {
+  return isDark ? PLATFORM_BRAND.logoDark : PLATFORM_BRAND.logoLight;
 };
 
 export const canUseTenantBranding = (account) => (
