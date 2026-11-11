@@ -818,22 +818,3 @@ const BranchModal = ({ branch, branches, isDark, onSave, onClose }) => {
 };
 
 export default Branches;
-={onClose}
-              className={`flex-1 px-4 py-2 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn-brand flex-1 px-4 py-2 rounded-lg"
-            >
-              Save Branch
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
-
-export default Branches;

@@ -667,10 +667,6 @@ const AdminDashboard = () => {
           </ResponsiveContainer>
         </div>
       </div>
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
 
       {/* Row 3: Monthly Sales & Conversion Rates */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
