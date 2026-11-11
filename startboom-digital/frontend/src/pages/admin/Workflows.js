@@ -50,7 +50,7 @@ const Workflows = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-[#F8F7FC]'}`}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -68,7 +68,7 @@ const Workflows = () => {
         <StatCard title="Executions" value={workflows.reduce((sum, w) => sum + (w.executionCount || 0), 0)} icon={TrendingUp} gradient={PROFESSIONAL_COLORS.gradients.purple} isDark={isDark} />
       </div>
 
-      <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
+      <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-sm`}>
         <div className="flex items-center justify-between mb-6">
           <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Workflows ({workflows.length})
@@ -132,7 +132,7 @@ const Workflows = () => {
 };
 
 const StatCard = ({ title, value, icon: Icon, gradient, isDark }) => (
-  <div className="rounded-xl p-6" style={{ background: isDark ? gradient : 'white', border: isDark ? 'none' : '1px solid #E5E7EB' }}>
+  <div className="rounded-xl p-6 shadow-sm" style={{ background: isDark ? gradient : 'white' }}>
     <div className="flex items-center justify-between mb-3">
       <div className={`p-2 rounded-lg ${isDark ? 'bg-white/10' : 'bg-gray-100'}`}>
         <Icon className="w-5 h-5" style={{ color: isDark ? 'white' : PROFESSIONAL_COLORS.primary.main }} />
