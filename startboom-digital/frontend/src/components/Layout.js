@@ -319,25 +319,42 @@ const agentNavSections = [
       : (tenantLogo || getPlatformLogo(isDark));
     const tenantName = isSuperAdmin ? PLATFORM_BRAND.name : (user?.tenant?.name || localStorage.getItem('tenantName') || PLATFORM_BRAND.name);
     const initial = tenantName.charAt(0).toUpperCase();
-    return (
-    <div className="flex items-center justify-between px-6 py-5 border-b sidebar-divider">
-      <div className="flex items-center space-x-3 min-w-0">
-        <div className="w-10 h-10 shrink-0 flex items-center justify-center">
-          {logo ? (
-            <img src={logo} alt={`${tenantName} logo`} className="max-w-full max-h-full object-contain" />
-          ) : (
-            <span className="text-[#4F19C7] font-bold text-2xl leading-none">{initial}</span>
-          )}
+    
+    // For superadmin: show full logo only, for tenants: show icon + text
+    if (isSuperAdmin) {
+      return (
+        <div className="flex items-center justify-center px-6 py-5 border-b sidebar-divider">
+          <div className="w-full flex items-center justify-center">
+            {logo ? (
+              <img src={logo} alt={`${tenantName} logo`} className="h-12 w-auto object-contain" />
+            ) : (
+              <span className="text-[#4F19C7] font-bold text-2xl">{PLATFORM_BRAND.name}</span>
+            )}
+          </div>
         </div>
-        <div className="min-w-0">
-          <h2 className="text-base font-bold text-[#17143D] leading-tight truncate">
-            {tenantName}
-          </h2>
-          <p className="text-[10px] font-semibold tracking-wider uppercase text-[#64748B] mt-0.5">{roleSubtitle}</p>
+      );
+    }
+    
+    // For tenants: show icon + tenant name + role
+    return (
+      <div className="flex items-center justify-between px-6 py-5 border-b sidebar-divider">
+        <div className="flex items-center space-x-3 min-w-0">
+          <div className="w-10 h-10 shrink-0 flex items-center justify-center">
+            {logo ? (
+              <img src={logo} alt={`${tenantName} logo`} className="max-w-full max-h-full object-contain" />
+            ) : (
+              <span className="text-[#4F19C7] font-bold text-2xl leading-none">{initial}</span>
+            )}
+          </div>
+          <div className="min-w-0">
+            <h2 className="text-base font-bold text-[#17143D] leading-tight truncate">
+              {tenantName}
+            </h2>
+            <p className="text-[10px] font-semibold tracking-wider uppercase text-[#64748B] mt-0.5">{roleSubtitle}</p>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
   };
 
   const SidebarNav = ({ onItemClick }) => {
