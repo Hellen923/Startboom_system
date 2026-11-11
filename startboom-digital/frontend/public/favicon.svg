@@ -1,0 +1,13 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Purple gradient squares pattern matching CoreMint logo -->
+  <rect width="64" height="64" fill="transparent"/>
+  
+  <!-- Top square - lightest purple -->
+  <rect x="12" y="8" width="16" height="16" rx="2" fill="#C084FC"/>
+  
+  <!-- Middle square - medium purple -->
+  <rect x="24" y="20" width="16" height="16" rx="2" fill="#A855F7"/>
+  
+  <!-- Bottom square - darkest purple -->
+  <rect x="12" y="32" width="16" height="16" rx="2" fill="#7C3AED"/>
+</svg>

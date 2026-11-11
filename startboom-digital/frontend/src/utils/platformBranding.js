@@ -1,8 +1,8 @@
 export const PLATFORM_BRAND = {
   name: 'CoreMint',
-  logo: `${process.env.PUBLIC_URL || ''}/coremint.jpg`,
-  logoLight: `${process.env.PUBLIC_URL || ''}/coremint lightmod.jpeg`,
-  logoDark: `${process.env.PUBLIC_URL || ''}/darkmode logo.jpeg`,
+  logo: `${process.env.PUBLIC_URL || ''}/coremint-transparent.png`,
+  logoLight: `${process.env.PUBLIC_URL || ''}/coremint-lightmode-transparent.png`,
+  logoDark: `${process.env.PUBLIC_URL || ''}/coremint-darkmode-transparent.png`,
   primaryColor: '#7C3AED', // CoreMint purple - Updated to unified purple
 };
 
