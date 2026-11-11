@@ -494,8 +494,8 @@ const ALL_NAV_ITEMS = {
     {
       title: 'Platform',
       items: [
-        { path: '/dashboard', icon: PieChart, label: 'Dashboard', description: 'Welcome to HoneyPot CRM — manage every tenant, user, and platform signal from one place.', requiredRole: ['superadmin'] },
-        { path: '/superadmin', icon: ShieldCheck, label: 'Command Center', description: 'Welcome to HoneyPot CRM — manage every tenant, user, and platform signal from one place.', requiredRole: ['superadmin'] },
+        { path: '/dashboard', icon: PieChart, label: 'Dashboard', description: 'Welcome to CoreMint CRM — manage every tenant, user, and platform signal from one place.', requiredRole: ['superadmin'] },
+        { path: '/superadmin', icon: ShieldCheck, label: 'Command Center', description: 'Welcome to CoreMint CRM — manage every tenant, user, and platform signal from one place.', requiredRole: ['superadmin'] },
         { path: '/superadmin/tenants', icon: Building2, label: 'Tenants', description: 'View, create, suspend, and manage all tenant organisations on the platform.', requiredRole: ['superadmin'] },
       ]
     },
@@ -513,7 +513,7 @@ const ALL_NAV_ITEMS = {
     {
       title: 'Workspace',
       items: [
-        { path: '/admin', icon: PieChart, label: 'Dashboard', description: 'Welcome to HoneyPot CRM — your organisation summary with quick access to key metrics.', requiredRole: ['admin', 'manager'] },
+        { path: '/admin', icon: PieChart, label: 'Dashboard', description: 'Welcome to CoreMint CRM — your organisation summary with quick access to key metrics.', requiredRole: ['admin', 'manager'] },
         { path: '/admin/branches', icon: Building2, label: 'Branch Locations', description: 'Manage multi-location offices and hierarchical branch structure.', requiredRole: ['admin', 'manager'], requiredPermission: 'branches:view' },
         { path: '/admin/departments', icon: Layers, label: 'Departments & Teams', description: 'Organise your company structure, manage teams, and assign custom roles.', requiredRole: ['admin', 'manager'], requiredPermission: 'departments:view' },
         { path: '/admin/users', icon: UserPlus, label: 'User Management', description: 'Add, edit, and manage users, roles, departments, and access permissions.', requiredRole: ['admin', 'manager'], requiredPermission: 'users:view' },
@@ -564,7 +564,7 @@ const ALL_NAV_ITEMS = {
     {
       title: 'Workspace',
       items: [
-        { path: '/agent', icon: PieChart, label: 'Dashboard', description: 'Welcome to HoneyPot CRM — where every opportunity finds its value.', requiredRole: ['agent'], requiredModule: null },
+        { path: '/agent', icon: PieChart, label: 'Dashboard', description: 'Welcome to CoreMint CRM — where every opportunity finds its value.', requiredRole: ['agent'], requiredModule: null },
         { path: '/agent/clients', icon: Users, label: 'Clients & Organizations', description: 'Manage your client accounts, track engagement, and build lasting relationships.', requiredRole: ['agent'], requiredPermission: 'clients:view', requiredModule: 'clients' },
         { path: '/agent/contacts', icon: BookUser, label: 'Contacts', description: 'Your full contact directory — people, positions, and organisations in one place.', requiredRole: ['agent'], requiredPermission: 'contacts:view', requiredModule: 'clients' },
         { path: '/agent/leads', icon: UserCheck, label: 'Leads', description: 'Capture, qualify, and convert prospects through your sales funnel.', requiredRole: ['agent'], requiredPermission: 'leads:view', requiredModule: 'clients' },
