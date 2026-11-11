@@ -483,61 +483,67 @@ const AdminDashboard = () => {
 
       {/* ── Company-Wide Cascading Metrics ── */}
       {!metricsLoading && companyMetrics && (
-        <WidgetContainer
-          title="Company-Wide Performance"
-          subtitle="Aggregated metrics across all departments and teams"
-          action={{
-            label: showDeptDetails ? 'Hide Departments' : 'Show Departments',
-            onClick: () => setShowDeptDetails(!showDeptDetails)
-          }}
-        >
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Company-Wide Performance</h3>
+              <p className="text-sm text-gray-500 mt-1">Aggregated metrics across all departments and teams</p>
+            </div>
+            <button
+              onClick={() => setShowDeptDetails(!showDeptDetails)}
+              className="px-4 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
+            >
+              {showDeptDetails ? 'Hide Departments' : 'Show Departments'}
+            </button>
+          </div>
+
           {/* Company Summary */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-              <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">Total Revenue</p>
-              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{formatUGX(companyMetrics.metrics?.totalRevenue || 0)}</p>
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+              <p className="text-xs text-blue-600 font-medium mb-1">Total Revenue</p>
+              <p className="text-2xl font-bold text-blue-900">{formatUGX(companyMetrics.metrics?.totalRevenue || 0)}</p>
             </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
-              <p className="text-xs text-green-600 dark:text-green-400 font-medium mb-1">Won Deals</p>
-              <p className="text-2xl font-bold text-green-900 dark:text-green-100">{companyMetrics.metrics?.wonDeals || 0}</p>
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+              <p className="text-xs text-green-600 font-medium mb-1">Won Deals</p>
+              <p className="text-2xl font-bold text-green-900">{companyMetrics.metrics?.wonDeals || 0}</p>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
-              <p className="text-xs text-purple-600 dark:text-purple-400 font-medium mb-1">Departments</p>
-              <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">{companyMetrics.departmentCount || 0}</p>
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+              <p className="text-xs text-purple-600 font-medium mb-1">Departments</p>
+              <p className="text-2xl font-bold text-purple-900">{companyMetrics.departmentCount || 0}</p>
             </div>
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-lg p-4 border border-orange-200 dark:border-orange-800">
-              <p className="text-xs text-orange-600 dark:text-orange-400 font-medium mb-1">Employees</p>
-              <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">{companyMetrics.metrics?.totalMembers || 0}</p>
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
+              <p className="text-xs text-orange-600 font-medium mb-1">Employees</p>
+              <p className="text-2xl font-bold text-orange-900">{companyMetrics.metrics?.totalMembers || 0}</p>
             </div>
           </div>
 
           {/* Department Breakdown */}
           {showDeptDetails && departmentMetricsData.length > 0 && (
             <div className="mt-4">
-              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Department Breakdown</h4>
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">Department Breakdown</h4>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                  <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Department</th>
-                      <th className="px-4 py-2 text-right font-semibold text-gray-700 dark:text-gray-300">Revenue</th>
-                      <th className="px-4 py-2 text-right font-semibold text-gray-700 dark:text-gray-300">Won Deals</th>
-                      <th className="px-4 py-2 text-right font-semibold text-gray-700 dark:text-gray-300">Teams</th>
-                      <th className="px-4 py-2 text-right font-semibold text-gray-700 dark:text-gray-300">Members</th>
-                      <th className="px-4 py-2 text-right font-semibold text-gray-700 dark:text-gray-300">Conv. Rate</th>
-                      <th className="px-4 py-2 text-right font-semibold text-gray-700 dark:text-gray-300">Avg/Member</th>
+                      <th className="px-4 py-2 text-left font-semibold text-gray-700">Department</th>
+                      <th className="px-4 py-2 text-right font-semibold text-gray-700">Revenue</th>
+                      <th className="px-4 py-2 text-right font-semibold text-gray-700">Won Deals</th>
+                      <th className="px-4 py-2 text-right font-semibold text-gray-700">Teams</th>
+                      <th className="px-4 py-2 text-right font-semibold text-gray-700">Members</th>
+                      <th className="px-4 py-2 text-right font-semibold text-gray-700">Conv. Rate</th>
+                      <th className="px-4 py-2 text-right font-semibold text-gray-700">Avg/Member</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  <tbody className="divide-y divide-gray-200">
                     {departmentMetricsData.map(dept => (
-                      <tr key={dept.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                        <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{dept.name}</td>
-                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{formatUGX(dept.revenue)}</td>
-                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{dept.wonDeals}</td>
-                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{dept.teamCount}</td>
-                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{dept.memberCount}</td>
-                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{dept.conversionRate.toFixed(1)}%</td>
-                        <td className="px-4 py-3 text-right text-gray-700 dark:text-gray-300">{formatUGX(dept.avgPerMember)}</td>
+                      <tr key={dept.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-3 font-medium text-gray-900">{dept.name}</td>
+                        <td className="px-4 py-3 text-right text-gray-700">{formatUGX(dept.revenue)}</td>
+                        <td className="px-4 py-3 text-right text-gray-700">{dept.wonDeals}</td>
+                        <td className="px-4 py-3 text-right text-gray-700">{dept.teamCount}</td>
+                        <td className="px-4 py-3 text-right text-gray-700">{dept.memberCount}</td>
+                        <td className="px-4 py-3 text-right text-gray-700">{dept.conversionRate.toFixed(1)}%</td>
+                        <td className="px-4 py-3 text-right text-gray-700">{formatUGX(dept.avgPerMember)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -545,52 +551,54 @@ const AdminDashboard = () => {
               </div>
             </div>
           )}
-        </WidgetContainer>
+        </div>
       )}
 
       {/* Deals Won vs Lost */}
-      <div className="chart-panel">
-        <div className={`${dm.unifiedCardHeader} flex-wrap gap-2`}>
-          <h3>Deals Won vs Deals Lost</h3>
-          <div className="flex items-center gap-4 text-sm ml-auto">
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+          <h3 className="text-lg font-semibold text-gray-900">Deals Won vs Deals Lost</h3>
+          <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-2">
-              <span className="inline-block w-3 h-3 rounded-full bg-green-400" />
-              <span>Won</span>
-              <span className="font-bold tabular-nums">{dealsWonLostTotals.won.toLocaleString()}</span>
+              <span className="inline-block w-3 h-3 rounded-full bg-green-500" />
+              <span className="text-gray-600">Won</span>
+              <span className="font-bold text-gray-900 tabular-nums">{dealsWonLostTotals.won.toLocaleString()}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="inline-block w-3 h-3 rounded-full bg-red-400" />
-              <span>Lost</span>
-              <span className="font-bold tabular-nums">{dealsWonLostTotals.lost.toLocaleString()}</span>
+              <span className="inline-block w-3 h-3 rounded-full bg-red-500" />
+              <span className="text-gray-600">Lost</span>
+              <span className="font-bold text-gray-900 tabular-nums">{dealsWonLostTotals.lost.toLocaleString()}</span>
             </div>
           </div>
         </div>
-        <div className={dm.chartBody}>
         {dealsWonLostTotals.won === 0 && dealsWonLostTotals.lost === 0 ? (
-          <p className={`text-sm text-center py-8 ${dm.textMuted}`}>No data</p>
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+              <TrendingUp className="w-8 h-8 text-gray-400" />
+            </div>
+            <p className="text-sm text-gray-500">No deal outcome data available</p>
+          </div>
         ) : (
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={dealsWonLostData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-              <XAxis dataKey="month" stroke={axis} />
-              <YAxis stroke={axis} allowDecimals={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis dataKey="month" stroke="#6B7280" style={{ fontSize: '12px' }} />
+              <YAxis stroke="#6B7280" allowDecimals={false} style={{ fontSize: '12px' }} />
               <Tooltip
-                formatter={(value, name, item) => [Number(value || 0).toLocaleString(), name || item?.dataKey || 'Value']}
-                contentStyle={tooltipStyle}
-                labelStyle={labelStyle}
-                itemStyle={itemStyle}
+                formatter={(value, name) => [Number(value || 0).toLocaleString(), name]}
+                contentStyle={{ backgroundColor: '#FFF', border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '12px' }}
+                labelStyle={{ color: '#374151', fontWeight: 600 }}
               />
-              <Legend wrapperStyle={{ color: legend }} />
+              <Legend wrapperStyle={{ fontSize: '12px', color: '#6B7280' }} />
               <Line type="monotone" dataKey="won" name="Won" stroke="#10b981" strokeWidth={3} dot={{ fill: '#10b981', r: 4 }} />
               <Line type="monotone" dataKey="lost" name="Lost" stroke="#ef4444" strokeWidth={3} dot={{ fill: '#ef4444', r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         )}
-        </div>
       </div>
 
 {/* Row 1: Sales by Agent & Closed Won Deals */}
-      <div className="chart-grid">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <StageValueChart 
           data={dealStagesByValueData}
           formatCurrency={formatUGX}
@@ -598,15 +606,18 @@ const AdminDashboard = () => {
           emptyMessage="No deal stage data available"
         />
 
-        <div className="chart-panel">
-          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Closed Won Deals by Agent</h3>
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Closed Won Deals by Agent</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={closedDealsByRegionData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-              <XAxis dataKey="month" stroke={axis} />
-              <YAxis stroke={axis} />
-              <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-              <Legend wrapperStyle={{ color: legend }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis dataKey="month" stroke="#6B7280" style={{ fontSize: '12px' }} />
+              <YAxis stroke="#6B7280" style={{ fontSize: '12px' }} />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#FFF', border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '12px' }}
+                labelStyle={{ color: '#374151', fontWeight: 600 }}
+              />
+              <Legend wrapperStyle={{ fontSize: '12px', color: '#6B7280' }} />
               {agentsList.map((agent, idx) => (
                 <Bar key={agent._id} dataKey={agent._id} name={agent.name} fill={ENTERPRISE_COLORS[idx % ENTERPRISE_COLORS.length]} />
               ))}
@@ -616,17 +627,20 @@ const AdminDashboard = () => {
       </div>
 
       {/* Row 2: Monthly Revenue & Company Deals */}
-      <div className="chart-grid">
-        <div className="chart-panel">
-          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Monthly Revenue by Agent</h3>
-          <p className={`text-xs mb-3 ${dm.textMuted}`}>Computed from each sale&apos;s final amount for the selected period.</p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Monthly Revenue by Agent</h3>
+          <p className="text-xs text-gray-500 mb-4">Computed from each sale's final amount for the selected period</p>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={monthlyRevenueByRegionData} layout="horizontal">
-              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-              <XAxis type="category" dataKey="month" stroke={axis} />
-              <YAxis type="number" stroke={axis} />
-              <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-              <Legend wrapperStyle={{ color: legend }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis type="category" dataKey="month" stroke="#6B7280" style={{ fontSize: '12px' }} />
+              <YAxis type="number" stroke="#6B7280" style={{ fontSize: '12px' }} />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#FFF', border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '12px' }}
+                labelStyle={{ color: '#374151', fontWeight: 600 }}
+              />
+              <Legend wrapperStyle={{ fontSize: '12px', color: '#6B7280' }} />
               {agentsList.map((agent, idx) => (
                 <Bar key={agent._id} dataKey={agent._id} name={agent.name} fill={ENTERPRISE_COLORS[idx % ENTERPRISE_COLORS.length]} />
               ))}
@@ -634,15 +648,18 @@ const AdminDashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        <div className="chart-panel">
-          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Company Total Deals</h3>
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Company Total Deals</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={companyDealsData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-              <XAxis dataKey="month" stroke={axis} />
-              <YAxis stroke={axis} />
-              <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-              <Legend wrapperStyle={{ color: legend }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis dataKey="month" stroke="#6B7280" style={{ fontSize: '12px' }} />
+              <YAxis stroke="#6B7280" style={{ fontSize: '12px' }} />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#FFF', border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '12px' }}
+                labelStyle={{ color: '#374151', fontWeight: 600 }}
+              />
+              <Legend wrapperStyle={{ fontSize: '12px', color: '#6B7280' }} />
               <Line type="monotone" dataKey="Open" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3 }} />
               <Line type="monotone" dataKey="Closed-Won" stroke="#10b981" strokeWidth={2} dot={{ r: 3 }} />
               <Line type="monotone" dataKey="Closed-Lost" stroke="#ef4444" strokeWidth={2} dot={{ r: 3 }} />
@@ -650,36 +667,52 @@ const AdminDashboard = () => {
           </ResponsiveContainer>
         </div>
       </div>
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
 
       {/* Row 3: Monthly Sales & Conversion Rates */}
-      <div className="chart-grid">
-        <div className="chart-panel">
-          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Monthly Sales</h3>
-          <span className={`text-sm ${dm.textSecondary}`}>Transactions</span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Monthly Sales</h3>
+          <span className="text-sm text-gray-500">Transactions</span>
           {salesCountData.length === 0 ? (
-            <p className={`text-sm text-center py-8 ${dm.textMuted}`}>No data</p>
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                <DollarSign className="w-8 h-8 text-gray-400" />
+              </div>
+              <p className="text-sm text-gray-500">No sales data available</p>
+            </div>
           ) : (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={salesCountData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-                <XAxis dataKey="month" stroke={axis} />
-                <YAxis stroke={axis} allowDecimals={false} />
-                <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <XAxis dataKey="month" stroke="#6B7280" style={{ fontSize: '12px' }} />
+                <YAxis stroke="#6B7280" allowDecimals={false} style={{ fontSize: '12px' }} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#FFF', border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '12px' }}
+                  labelStyle={{ color: '#374151', fontWeight: 600 }}
+                />
                 <Bar dataKey="sales" fill={ANALYTICS_PALETTE.revenue} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
         </div>
 
-        <div className="chart-panel">
-          <h3 className={`text-lg font-semibold mb-4 ${dm.textPrimary}`}>Conversion Rates by Agent</h3>
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Conversion Rates by Agent</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={conversionRatesData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={grid} />
-              <XAxis dataKey="month" stroke={axis} />
-              <YAxis stroke={axis} />
-              <Tooltip formatter={(value) => `${value}%`} contentStyle={tooltipStyle} labelStyle={labelStyle} itemStyle={itemStyle} />
-              <Legend wrapperStyle={{ color: legend }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis dataKey="month" stroke="#6B7280" style={{ fontSize: '12px' }} />
+              <YAxis stroke="#6B7280" style={{ fontSize: '12px' }} />
+              <Tooltip 
+                formatter={(value) => `${value}%`}
+                contentStyle={{ backgroundColor: '#FFF', border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '12px' }}
+                labelStyle={{ color: '#374151', fontWeight: 600 }}
+              />
+              <Legend wrapperStyle={{ fontSize: '12px', color: '#6B7280' }} />
               {agentsList.map((agent, idx) => (
                 <Line key={agent._id} type="monotone" dataKey={agent._id} name={agent.name} stroke={ENTERPRISE_COLORS[idx % ENTERPRISE_COLORS.length]} strokeWidth={2} dot={{ r: 3 }} />
               ))}
@@ -776,26 +809,29 @@ const UserTable = ({ users }) => {
   };
 
   return (
-    <div className={`rounded-xl shadow-sm border ${dm.card}`}>
-      <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5 border-b ${dm.border}`}>
-        <h3 className={`text-lg font-semibold ${dm.textPrimary}`}>Users</h3>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-6 border-b border-gray-100">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">Users</h3>
+          <p className="text-sm text-gray-500 mt-1">Manage and export user data</p>
+        </div>
         <div className="flex items-center gap-3">
           <input
             type="text"
             placeholder="Search users..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className={`px-3 py-2 rounded-lg text-sm w-48 ${dm.input}`}
+            className="h-10 px-4 rounded-xl text-sm w-48 border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
           />
           <button
             onClick={exportExcel}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors ${dm.btnSecondary}`}
+            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 transition-colors"
           >
             <Download className="w-4 h-4" /> Excel
           </button>
           <button
             onClick={exportPDF}
-            className="flex items-center gap-1.5 px-3 py-2 border border-blue-300 rounded-lg text-sm text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-800 dark:hover:bg-blue-900/30 transition-colors"
+            className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors"
           >
             <FileText className="w-4 h-4" /> PDF
           </button>
@@ -804,46 +840,53 @@ const UserTable = ({ users }) => {
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className={`table-header`}>
+          <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Name</th>
-              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Email</th>
-              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Role</th>
-              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Status</th>
-              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Deals</th>
-              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Sales Amount</th>
-              <th className="px-5 py-3 text-left font-medium uppercase text-xs tracking-wider">Joined</th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-700 text-xs uppercase tracking-wider">Name</th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-700 text-xs uppercase tracking-wider">Email</th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-700 text-xs uppercase tracking-wider">Role</th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-700 text-xs uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-700 text-xs uppercase tracking-wider">Deals</th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-700 text-xs uppercase tracking-wider">Sales Amount</th>
+              <th className="px-6 py-3 text-left font-semibold text-gray-700 text-xs uppercase tracking-wider">Joined</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {filtered.length === 0 ? (
-              <tr><td colSpan="7" className="px-5 py-10 text-center text-gray-500">No users found</td></tr>
+              <tr><td colSpan="7" className="px-6 py-12 text-center">
+                <div className="flex flex-col items-center justify-center">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                    <Users className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <p className="text-gray-500">No users found</p>
+                </div>
+              </td></tr>
             ) : (
               filtered.map(u => {
                 const status = u.isActive === false ? 'Inactive' : u.isFirstLogin ? 'Pending' : 'Active';
                 const statusStyle = status === 'Active' ? 'bg-green-100 text-green-700' : status === 'Pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700';
                 return (
                   <tr key={u._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-5 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-primary-600 font-semibold text-xs">{(u.name || '?').charAt(0).toUpperCase()}</span>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-purple-600 font-semibold text-sm">{(u.name || '?').charAt(0).toUpperCase()}</span>
                         </div>
                         <span className="font-medium text-gray-900">{u.name}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-gray-600">{u.email}</td>
-                    <td className="px-5 py-3">
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getRoleBadge(u.role)}`}>
+                    <td className="px-6 py-4 text-gray-600">{u.email}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 rounded-lg text-xs font-medium ${getRoleBadge(u.role)}`}>
                         {u.role?.charAt(0).toUpperCase() + u.role?.slice(1)}
                       </span>
                     </td>
-                    <td className="px-5 py-3">
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusStyle}`}>{status}</span>
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 rounded-lg text-xs font-medium ${statusStyle}`}>{status}</span>
                     </td>
-                    <td className="px-5 py-3 text-gray-700">{u.totalDeals || 0}</td>
-                    <td className="px-5 py-3 text-gray-700">UGX {Number(u.totalSalesAmount || 0).toLocaleString()}</td>
-                    <td className="px-5 py-3 text-gray-500 text-xs">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</td>
+                    <td className="px-6 py-4 text-gray-700 font-medium">{u.totalDeals || 0}</td>
+                    <td className="px-6 py-4 text-gray-700 font-medium">UGX {Number(u.totalSalesAmount || 0).toLocaleString()}</td>
+                    <td className="px-6 py-4 text-gray-500 text-xs">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</td>
                   </tr>
                 );
               })
@@ -852,8 +895,8 @@ const UserTable = ({ users }) => {
         </table>
       </div>
       {filtered.length > 0 && (
-        <div className="px-5 py-3 border-t border-gray-100 text-sm text-gray-500">
-          Showing {filtered.length} of {users.length} users
+        <div className="px-6 py-4 border-t border-gray-100 text-sm text-gray-600 bg-gray-50">
+          Showing <span className="font-semibold text-gray-900">{filtered.length}</span> of <span className="font-semibold text-gray-900">{users.length}</span> users
         </div>
       )}
     </div>
