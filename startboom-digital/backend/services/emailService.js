@@ -9,7 +9,7 @@ const sendViaBrevoAPI = async (mailOptions) => {
   if (!apiKey) return null; // not configured
 
   const fromAddress = process.env.BREVO_FROM || process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@coremintcrm.com';
-  const fromName = mailOptions.fromName || 'HoneyPot CRM';
+  const fromName = mailOptions.fromName || 'CoreMint CRM';
 
   const body = {
     sender: { name: fromName, email: fromAddress },
@@ -85,7 +85,7 @@ export const generateOTP = () => {
 
 const emailTemplates = {
   taskReminder: (templateData) => {
-    const { agentName, clientName, taskTitle, taskDescription, dueDate, isOverdue, appUrl, companyName = 'HoneyPot CRM' } = templateData;
+    const { agentName, clientName, taskTitle, taskDescription, dueDate, isOverdue, appUrl, companyName = 'CoreMint CRM' } = templateData;
 
     const formattedDate = new Date(dueDate).toLocaleString('en-US', {
       weekday: 'long', year: 'numeric', month: 'long',
@@ -378,7 +378,7 @@ const emailTemplates = {
   },
 
   agentWelcome: (templateData) => {
-    const { name, email, otp, companyName = 'HoneyPot CRM' } = templateData;
+    const { name, email, otp, companyName = 'CoreMint CRM' } = templateData;
     const appUrl = process.env.FRONTEND_URL || process.env.APP_URL || 'http://localhost:3000';
 
     return {
@@ -492,8 +492,8 @@ const emailTemplates = {
   },
 
   clientPortalWelcome: (templateData) => {
-    const { clientName, email, tempPassword, portalUrl, companyName = 'HoneyPot CRM' } = templateData;
-    const loginUrl = portalUrl || `${process.env.FRONTEND_URL || 'https://honeypot-crm.vercel.app'}/client-portal/login`;
+    const { clientName, email, tempPassword, portalUrl, companyName = 'CoreMint CRM' } = templateData;
+    const loginUrl = portalUrl || `${process.env.FRONTEND_URL || 'https://coremint-crm.vercel.app'}/client-portal/login`;
 
     return {
       subject: `Welcome to Your ${companyName} Client Portal`,
@@ -625,7 +625,7 @@ export const sendEmail = async (to, templateName, templateData) => {
     if (!template) throw new Error(`Email template '${templateName}' not found`);
 
     const emailContent = template(templateData);
-    const fromName = templateData.companyName || 'HoneyPot CRM';
+    const fromName = templateData.companyName || 'CoreMint CRM';
 
     // Try Brevo HTTP API first (works on Render — no SMTP port blocking)
     const brevoMsgId = await sendViaBrevoAPI({ to, subject: emailContent.subject, html: emailContent.html, fromName });
@@ -682,7 +682,7 @@ export const sendEmailWithAttachment = async (to, subject, htmlContent, attachme
 
     const transporter = await createTransporter();
     const result = await transporter.sendMail({
-      from: `"HoneyPot CRM" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+      from: `"CoreMint CRM" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
       to, subject,
       html: htmlContent || '<p>Please find the attached report.</p>',
       attachments
