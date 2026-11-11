@@ -1,7 +1,7 @@
 {
-  "name": "honeypot-crm-backend",
+  "name": "coremint-crm-backend",
   "version": "1.0.0",
-  "description": "HoneyPot CRM - Backend API",
+  "description": "CoreMint CRM - Backend API",
   "type": "module",
   "scripts": {
     "dev": "nodemon server.js",
