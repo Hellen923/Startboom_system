@@ -17,11 +17,11 @@ const getTenantInfo = () => {
   try {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     return {
-      name: user?.tenant?.name || user?.companyName || 'HoneyPot CRM',
+      name: user?.tenant?.name || user?.companyName || 'CoreMint CRM',
       logo: user?.tenant?.branding?.logo || user?.tenant?.settings?.logo || localStorage.getItem('tenant_logo') || null,
       color: getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || 'var(--primary-color)',
     };
-  } catch { return { name: 'HoneyPot CRM', logo: null, color: 'var(--primary-color)' }; }
+  } catch { return { name: 'CoreMint CRM', logo: null, color: 'var(--primary-color)' }; }
 };
 
 const downloadPDF = (title, headers, rows) => {
