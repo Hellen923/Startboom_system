@@ -143,7 +143,7 @@ const Pipelines = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-gray-50'}`}>
+    <div className="min-h-screen p-6 bg-[#F8F7FC]">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -158,7 +158,7 @@ const Pipelines = () => {
           <select
             value={filterEntity}
             onChange={(e) => setFilterEntity(e.target.value)}
-            className={`px-4 py-2 rounded-lg ${isDark ? 'bg-[#1E293B] text-white' : 'bg-white'} border ${isDark ? 'border-gray-700' : 'border-gray-300'}`}
+            className={`h-12 px-4 rounded-xl ${isDark ? 'bg-[#1E293B] text-white border-gray-700' : 'bg-white border-gray-200'} border focus:ring-2 focus:ring-primary-500`}
           >
             <option value="all">All Types</option>
             <option value="deal">Deals</option>
@@ -172,17 +172,17 @@ const Pipelines = () => {
               setEditingPipeline(null);
               setShowModal(true);
             }}
-            className="flex items-center space-x-2 px-6 py-3 btn-brand rounded-lg hover:shadow-lg transition-all"
+            className="flex items-center space-x-2 h-12 px-6 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-colors shadow-sm"
           >
             <Plus className="w-5 h-5" />
-            <span className="font-semibold">New Pipeline</span>
+            <span>New Pipeline</span>
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Pipeline List */}
-        <div className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
+        <div className={`rounded-xl shadow-sm p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
           <h2 className={`text-xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Pipelines ({pipelines.length})
           </h2>
@@ -229,7 +229,7 @@ const Pipelines = () => {
         </div>
 
         {/* Pipeline Details */}
-        <div className={`lg:col-span-2 rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}>
+        <div className={`lg:col-span-2 rounded-xl shadow-sm p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
           {selectedPipeline ? (
             <>
               {/* Pipeline Header */}
@@ -428,44 +428,44 @@ const PipelineModal = ({ pipeline, isDark, onSave, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`rounded-xl p-6 max-w-md w-full ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
+      <div className={`rounded-2xl shadow-2xl p-6 max-w-md w-full ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
         <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
           {pipeline ? 'Edit Pipeline' : 'New Pipeline'}
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-sm font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
               Pipeline Name *
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+              className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-600' : 'bg-white border-gray-200'} border focus:ring-2 focus:ring-primary-500`}
               required
             />
           </div>
 
           <div>
-            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-sm font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
               Description
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+              className={`w-full px-4 py-3 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-600' : 'bg-white border-gray-200'} border focus:ring-2 focus:ring-primary-500 resize-vertical min-h-[100px]`}
               rows="3"
             />
           </div>
 
           <div>
-            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-sm font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
               Entity Type *
             </label>
             <select
               value={formData.entityType}
               onChange={(e) => setFormData({ ...formData, entityType: e.target.value })}
-              className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+              className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-600' : 'bg-white border-gray-200'} border focus:ring-2 focus:ring-primary-500`}
               required
             >
               <option value="deal">Deals</option>
@@ -482,24 +482,24 @@ const PipelineModal = ({ pipeline, isDark, onSave, onClose }) => {
               type="checkbox"
               checked={formData.isDefault}
               onChange={(e) => setFormData({ ...formData, isDefault: e.target.checked })}
-              className="mr-2"
+              className="mr-2 h-4 w-4 rounded"
             />
             <label className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
               Set as default pipeline for this entity type
             </label>
           </div>
 
-          <div className="flex space-x-3 pt-4">
+          <div className="flex space-x-3 pt-6 border-t border-gray-100">
             <button
               type="button"
               onClick={onClose}
-              className={`flex-1 px-4 py-2 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}
+              className={`flex-1 h-12 px-6 rounded-xl font-semibold transition-colors ${isDark ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 btn-brand rounded-lg"
+              className="flex-1 h-12 px-6 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-colors shadow-sm"
             >
               Save Pipeline
             </button>
@@ -541,11 +541,11 @@ const StageModal = ({ stage, isDark, onSave, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className={`rounded-xl p-6 max-w-lg w-full my-8 ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
+      <div className={`rounded-2xl shadow-2xl p-6 max-w-lg w-full my-8 ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
         <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
           {stage ? 'Edit Stage' : 'New Stage'}
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
               Stage Name *

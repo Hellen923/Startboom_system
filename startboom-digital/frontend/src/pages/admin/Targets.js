@@ -181,91 +181,92 @@ const Targets = () => {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <Target className="w-7 h-7 text-primary-600" />
-          Targets & Commission
-        </h1>
-        <p className="text-gray-600 mt-1">Set monthly sales targets and commission rates for your agents</p>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Agents</p>
-              <p className="text-2xl font-bold text-gray-900 mt-2">{summary.totalAgents}</p>
-            </div>
-            <div className="p-3 bg-[#FEF3C7] rounded-full">
-              <Users className="w-6 h-6 text-blue-600" />
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">With Targets</p>
-              <p className="text-2xl font-bold text-gray-900 mt-2">{summary.agentsWithTargets}</p>
-            </div>
-            <div className="p-3 bg-green-100 rounded-full">
-              <Target className="w-6 h-6 text-green-600" />
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Avg Achievement</p>
-              <p className="text-2xl font-bold text-gray-900 mt-2">{summary.avgTargetAchievement.toFixed(0)}%</p>
-            </div>
-            <div className="p-3 bg-[#FEF3C7] rounded-full">
-              <TrendingUp className="w-6 h-6 text-[var(--primary-hover)]" />
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Commission</p>
-              <p className="text-lg font-bold text-gray-900 mt-2">{formatCurrency(summary.totalCommissionPaid)}</p>
-            </div>
-            <div className="p-3 bg-yellow-100 rounded-full">
-              <DollarSign className="w-6 h-6 text-yellow-600" />
-            </div>
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Agents Table - Grouped by Department */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Agent Targets & Performance</h2>
+    <div className="min-h-screen p-6 bg-[#F8F7FC]">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2 mb-2">
+            <Target className="w-7 h-7 text-purple-600" />
+            Targets & Commission
+          </h1>
+          <p className="text-gray-600">Set monthly sales targets and commission rates for your agents</p>
         </div>
+
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-xl shadow-sm px-6 py-4"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Agents</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">{summary.totalAgents}</p>
+              </div>
+              <div className="p-3 bg-purple-50 rounded-full">
+                <Users className="w-6 h-6 text-purple-600" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white rounded-xl shadow-sm px-6 py-4"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">With Targets</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">{summary.agentsWithTargets}</p>
+              </div>
+              <div className="p-3 bg-green-100 rounded-full">
+                <Target className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-xl shadow-sm px-6 py-4"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Avg Achievement</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">{summary.avgTargetAchievement.toFixed(0)}%</p>
+              </div>
+              <div className="p-3 bg-indigo-50 rounded-full">
+                <TrendingUp className="w-6 h-6 text-indigo-600" />
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white rounded-xl shadow-sm px-6 py-4"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Commission</p>
+                <p className="text-lg font-bold text-gray-900 mt-2">{formatCurrency(summary.totalCommissionPaid)}</p>
+              </div>
+              <div className="p-3 bg-yellow-100 rounded-full">
+                <DollarSign className="w-6 h-6 text-yellow-600" />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Agents Table - Grouped by Department */}
+        <div className="bg-white rounded-xl shadow-sm">
+          <div className="p-6 border-b border-gray-100">
+            <h2 className="text-xl font-semibold text-gray-900">Agent Targets & Performance</h2>
+          </div>
 
         {agents.length === 0 ? (
           <div className="p-12 text-center">
@@ -351,7 +352,7 @@ const Targets = () => {
                                   value={targetValues.monthlyTargetDeals}
                                   onChange={(e) => setTargetValues({...targetValues, monthlyTargetDeals: e.target.value})}
                                   placeholder="Deals"
-                                  className="w-20 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                  className="w-20 h-10 px-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 />
                               ) : (
                                 <div className="text-sm font-medium text-gray-900">
@@ -368,7 +369,7 @@ const Targets = () => {
                                   value={targetValues.monthlyTargetAmount}
                                   onChange={(e) => setTargetValues({...targetValues, monthlyTargetAmount: e.target.value})}
                                   placeholder="Amount"
-                                  className="w-28 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                  className="w-28 h-10 px-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 />
                               ) : (
                                 <div className="text-sm font-medium text-gray-900">
@@ -385,7 +386,7 @@ const Targets = () => {
                                   value={targetValues.monthlyTargetClients}
                                   onChange={(e) => setTargetValues({...targetValues, monthlyTargetClients: e.target.value})}
                                   placeholder="Clients"
-                                  className="w-20 px-2 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                  className="w-20 h-10 px-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 />
                               ) : (
                                 <div className="text-sm font-medium text-gray-900">
@@ -427,7 +428,7 @@ const Targets = () => {
                                   placeholder="Enter %"
                                   min="0"
                                   max="100"
-                                  className="w-20 px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                  className="w-20 h-10 px-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                 />
                               ) : (
                                 <div className="text-sm font-medium text-gray-900">
@@ -445,14 +446,14 @@ const Targets = () => {
                                 <div className="flex items-center gap-2">
                                   <button
                                     onClick={() => handleSaveTarget(agent._id)}
-                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+                                    className="inline-flex items-center gap-1 h-10 px-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-colors"
                                   >
                                     <CheckCircle size={16} />
                                     Save
                                   </button>
                                   <button
                                     onClick={handleCancelEdit}
-                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors"
+                                    className="inline-flex items-center gap-1 h-10 px-4 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl font-medium transition-colors"
                                   >
                                     <X size={16} />
                                     Cancel
@@ -461,7 +462,7 @@ const Targets = () => {
                               ) : (
                                 <button
                                   onClick={() => handleEditTarget(agent)}
-                                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary-50 hover:bg-primary-100 text-primary-700 rounded-lg font-medium transition-colors"
+                                  className="inline-flex items-center gap-1 h-10 px-4 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl font-medium transition-colors"
                                 >
                                   <Edit2 size={16} />
                                   Edit

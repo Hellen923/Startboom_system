@@ -263,11 +263,11 @@ const Departments = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className={`min-h-screen p-6 ${isDark ? 'bg-[#0F172A]' : 'bg-gray-50'}`}>
+    <div className="min-h-screen p-6 bg-[#F8F7FC]">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className={`text-3xl font-bold mb-1 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <h1 className={`text-3xl font-bold mb-2 ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Organization Structure
           </h1>
           <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -277,15 +277,15 @@ const Departments = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => { setEditingDept(null); setShowDeptModal(true); }}
-            className="flex items-center gap-2 px-4 py-2.5 btn-brand rounded-lg text-sm font-semibold"
+            className="flex items-center gap-2 h-12 px-6 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm"
           >
             <Plus className="w-4 h-4" />
             <span>New Department</span>
           </button>
           <button
             onClick={() => navigate('/admin/users')}
-            className={`px-4 py-2.5 rounded-lg flex items-center gap-2 transition-all ${
-              isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+            className={`h-12 px-6 rounded-xl flex items-center gap-2 transition-all ${
+              isDark ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' : 'bg-white border border-gray-200 hover:bg-gray-50 text-gray-700'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -367,7 +367,7 @@ const Departments = () => {
           return (
             <div
               key={dept._id}
-              className={`rounded-xl p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'} shadow-lg`}
+              className={`rounded-xl shadow-sm p-6 ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}
             >
               {/* Department Header */}
               <div className="flex items-start justify-between mb-4">
@@ -579,10 +579,10 @@ const Departments = () => {
 // Stat Card Component
 const StatCard = ({ title, value, icon: Icon, color, gradient, isDark }) => (
   <div
-    className="rounded-xl p-6"
+    className="rounded-xl shadow-sm p-6"
     style={{
       background: isDark ? gradient : 'white',
-      border: isDark ? 'none' : '1px solid #E5E7EB'
+      border: isDark ? 'none' : 'none'
     }}
   >
     <div className="flex items-center justify-between mb-3">
@@ -673,38 +673,38 @@ const DepartmentModal = ({ department, isDark, onSave, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
-        <h2 className={`text-2xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+      <div className={`rounded-2xl shadow-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto ${isDark ? 'bg-[#1E293B]' : 'bg-white'}`}>
+        <h2 className={`text-2xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
           {department ? 'Edit Department' : 'New Department'}
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-sm font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
               Department Name *
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+              className={`w-full h-12 px-4 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-600' : 'bg-white border-gray-200'} border focus:ring-2 focus:ring-primary-500`}
               required
             />
           </div>
           <div>
-            <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-sm font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
               Description
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className={`w-full px-4 py-2 rounded-lg ${isDark ? 'bg-[#334155] text-white' : 'bg-gray-100'}`}
+              className={`w-full px-4 py-3 rounded-xl ${isDark ? 'bg-[#334155] text-white border-gray-600' : 'bg-white border-gray-200'} border focus:ring-2 focus:ring-primary-500 resize-vertical min-h-[100px]`}
               rows="3"
             />
           </div>
 
           {/* Module Configuration */}
           <div>
-            <label className={`block text-sm font-medium mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+            <label className={`block text-sm font-semibold mb-3 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
               Department Modules
             </label>
             <p className={`text-xs mb-3 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
@@ -718,14 +718,14 @@ const DepartmentModal = ({ department, isDark, onSave, onClose }) => {
                     key={module.id}
                     type="button"
                     onClick={() => toggleModule(module.id)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
+                    className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm transition-all ${
                       isSelected
                         ? isDark
                           ? 'bg-primary-600 text-white'
                           : 'bg-primary-100 text-primary-700 border-2 border-primary-500'
                         : isDark
                         ? 'bg-[#334155] text-gray-300 hover:bg-gray-600'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent'
+                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border-2 border-transparent'
                     }`}
                   >
                     <span>{module.icon}</span>
@@ -737,17 +737,17 @@ const DepartmentModal = ({ department, isDark, onSave, onClose }) => {
             </div>
           </div>
 
-          <div className="flex space-x-3 pt-4">
+          <div className="flex space-x-3 pt-6 border-t border-gray-100">
             <button
               type="button"
               onClick={onClose}
-              className={`flex-1 px-4 py-2 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-gray-200'}`}
+              className={`flex-1 h-12 px-6 rounded-xl font-semibold transition-colors ${isDark ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}`}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 btn-brand rounded-lg"
+              className="flex-1 h-12 px-6 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-colors shadow-sm"
             >
               Save Department
             </button>
