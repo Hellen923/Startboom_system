@@ -35,6 +35,7 @@ import {
  } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useModules } from '../context/ModuleContext';
+import { useTheme } from '../context/ThemeContext';
 import { notificationsAPI } from '../services/api';
 import { generateNavigation } from '../utils/navigationBuilder';
 import NotificationCenter from './NotificationCenter';
@@ -42,7 +43,7 @@ import ProfileModal from './ProfileModal';
 import LogoutModal from './LogoutModal';
 import QuickActionModal from './QuickActionModal';
 import Taskbar from './Taskbar';
-import { PLATFORM_BRAND } from '../utils/platformBranding';
+import { PLATFORM_BRAND, getPlatformLogo } from '../utils/platformBranding';
 
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -63,11 +64,13 @@ const Layout = ({ children }) => {
   });
   const { user, logout } = useAuth();
   const { enabledModules, isUnrestricted } = useModules();
+  const { theme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
 
   const isAdmin = user?.role === 'admin' || user?.role === 'manager';
   const isSuperAdmin = user?.role === 'superadmin';
+  const isDark = theme?.mode === 'dark';
   
   // Toggle expanded state for collapsible modules
   const toggleModuleExpansion = (moduleId) => {
@@ -310,7 +313,10 @@ const agentNavSections = [
     const tenantLogo = !isSuperAdmin
       ? (user?.tenant?.branding?.logo || localStorage.getItem('tenant_logo'))
       : null;
-    const logo = isSuperAdmin ? PLATFORM_BRAND.logo : tenantLogo;
+    // For superadmin: use theme-aware platform logo, for tenants: use their custom logo or fallback to theme-aware
+    const logo = isSuperAdmin 
+      ? getPlatformLogo(isDark) 
+      : (tenantLogo || getPlatformLogo(isDark));
     const tenantName = isSuperAdmin ? PLATFORM_BRAND.name : (user?.tenant?.name || localStorage.getItem('tenantName') || PLATFORM_BRAND.name);
     const initial = tenantName.charAt(0).toUpperCase();
     return (
