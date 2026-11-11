@@ -693,8 +693,8 @@ router.post('/:id/enable-portal', async (req, res) => {
           clientName: client.name,
           email: client.email,
           tempPassword: tempPassword,
-          portalUrl: `${process.env.FRONTEND_URL || 'https://honeypot-crm.vercel.app'}/client-portal/login`,
-          companyName: req.user.tenantName || 'HoneyPot CRM'
+          portalUrl: `${process.env.FRONTEND_URL || 'https://coremint-crm.vercel.app'}/client-portal/login`,
+          companyName: req.user.tenantName || 'CoreMint CRM'
         });
         console.log(`✅ Portal invitation email sent to ${client.email}`);
       } catch (emailError) {
