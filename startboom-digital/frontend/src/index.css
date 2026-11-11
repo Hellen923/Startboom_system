@@ -5,6 +5,9 @@
 /* Leaflet map */
 @import 'leaflet/dist/leaflet.css';
 
+/* Theme Utilities for Dark Mode */
+@import './styles/theme-utilities.css';
+
 /* ============================================================
    COREMINT CRM — ENTERPRISE DESIGN SYSTEM
    "Next-Generation CRM" - Professional purple-led aesthetic

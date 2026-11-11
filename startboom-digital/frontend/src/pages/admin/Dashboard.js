@@ -17,11 +17,11 @@ const PERIODS = ['daily', 'weekly', 'monthly', 'yearly'];
 const ENTERPRISE_COLORS = ['#7C3AED', '#9333EA', '#A855F7', '#C084FC', '#E9D5FF', '#F3E8FF'];
 
 const StatCard = ({ icon: Icon, title, value }) => (
-  <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200">
+  <div className="rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200" style={{ background: 'var(--color-bg-card)' }}>
     <div className="flex items-center justify-between">
       <div className="flex-1">
-        <p className="text-sm font-medium text-gray-600">{title}</p>
-        <p className="text-3xl font-bold mt-2 text-gray-900">{typeof value === 'number' ? value.toLocaleString() : value}</p>
+        <p className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>{title}</p>
+        <p className="text-3xl font-bold mt-2" style={{ color: 'var(--color-text-primary)' }}>{typeof value === 'number' ? value.toLocaleString() : value}</p>
       </div>
       <div className="p-4 rounded-xl bg-purple-50">
         <Icon className="w-6 h-6 text-purple-600" />
@@ -438,15 +438,20 @@ const AdminDashboard = () => {
         <OnboardingWizard onComplete={() => setShowOnboarding(false)} />
       )}
 
-      <div className="space-y-6 pt-4 px-6 min-h-screen bg-[#F8F7FC]">
+      <div className="space-y-6 pt-4 px-6 min-h-screen" style={{ background: 'var(--color-bg-page)' }}>
         {/* Period & Department Filters */}
         <div className="flex justify-between items-center gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            <Building className="w-5 h-5 text-gray-500" />
+            <Building className="w-5 h-5" style={{ color: 'var(--color-text-muted)' }} />
             <select
               value={selectedDept}
               onChange={(e) => setSelectedDept(e.target.value)}
-              className="h-12 px-4 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white transition-all"
+              className="h-12 px-4 border rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+              style={{ 
+                background: 'var(--color-bg-card)',
+                borderColor: 'var(--color-border)',
+                color: 'var(--color-text-primary)'
+              }}
             >
               <option value="">All Departments</option>
               {departments.map(d => (
@@ -455,7 +460,7 @@ const AdminDashboard = () => {
             </select>
           </div>
           
-          <div className="inline-flex bg-white rounded-xl p-1 shadow-sm">
+          <div className="inline-flex rounded-xl p-1 shadow-sm" style={{ background: 'var(--color-bg-card)' }}>
             {PERIODS.map(p => (
               <button
                 key={p}
@@ -463,8 +468,9 @@ const AdminDashboard = () => {
                 className={`h-12 px-6 rounded-xl text-sm font-medium transition-all ${
                   p === period 
                     ? 'bg-purple-600 text-white shadow-sm' 
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    : 'hover:bg-gray-50'
                 }`}
+                style={p !== period ? { color: 'var(--color-text-secondary)' } : {}}
               >
                 {p[0].toUpperCase() + p.slice(1)}
               </button>
@@ -483,11 +489,11 @@ const AdminDashboard = () => {
 
       {/* ── Company-Wide Cascading Metrics ── */}
       {!metricsLoading && companyMetrics && (
-        <div className="bg-white rounded-xl p-6 shadow-sm">
+        <div className="rounded-xl p-6 shadow-sm" style={{ background: 'var(--color-bg-card)' }}>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Company-Wide Performance</h3>
-              <p className="text-sm text-gray-500 mt-1">Aggregated metrics across all departments and teams</p>
+              <h3 className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>Company-Wide Performance</h3>
+              <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>Aggregated metrics across all departments and teams</p>
             </div>
             <button
               onClick={() => setShowDeptDetails(!showDeptDetails)}

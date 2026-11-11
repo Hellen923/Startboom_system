@@ -1,0 +1,231 @@
+/* ============================================================
+   COREMINT THEME UTILITIES
+   Automatic dark mode support for all components
+   ============================================================ */
+
+/* Card and Surface Backgrounds */
+.theme-card {
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+}
+
+.theme-surface {
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+
+.theme-elevated {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+
+.theme-page-bg {
+  background: var(--color-bg-page);
+}
+
+/* Text Colors */
+.theme-text-primary {
+  color: var(--color-text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.theme-text-muted {
+  color: var(--color-text-muted);
+}
+
+/* Borders */
+.theme-border {
+  border-color: var(--color-border);
+}
+
+.theme-border-strong {
+  border-color: var(--color-border-strong);
+}
+
+/* Inputs */
+.theme-input {
+  background: var(--color-bg-input);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.theme-input:focus {
+  border-color: var(--primary-color);
+  ring-color: var(--primary-ring);
+}
+
+.theme-input::placeholder {
+  color: var(--color-text-placeholder);
+}
+
+/* Tables */
+.theme-table {
+  background: var(--color-bg-card);
+}
+
+.theme-table thead {
+  background: var(--color-bg-elevated);
+}
+
+.theme-table tbody tr:hover {
+  background: var(--color-bg-row-hover);
+}
+
+.theme-table th,
+.theme-table td {
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+/* Modals */
+.theme-modal {
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+}
+
+.theme-modal-header {
+  border-color: var(--color-border);
+}
+
+.theme-modal-footer {
+  border-color: var(--color-border);
+  background: var(--color-bg-elevated);
+}
+
+/* Dropdowns & Selects */
+.theme-select {
+  background: var(--color-bg-input);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.theme-select option {
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+}
+
+/* Charts */
+.theme-chart-container {
+  background: var(--color-bg-card);
+}
+
+/* Empty States */
+.theme-empty-state {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+}
+
+/* Override hardcoded Tailwind classes in dark mode */
+:root.dark .bg-white:not(.preserve-bg) {
+  background: var(--color-bg-card) !important;
+}
+
+:root.dark .bg-gray-50:not(.preserve-bg) {
+  background: var(--color-bg-elevated) !important;
+}
+
+:root.dark .bg-gray-100:not(.preserve-bg) {
+  background: var(--color-bg-muted) !important;
+}
+
+:root.dark .bg-\[#F8F7FC\]:not(.preserve-bg) {
+  background: var(--color-bg-page) !important;
+}
+
+:root.dark .text-gray-900:not(.preserve-text) {
+  color: var(--color-text-primary) !important;
+}
+
+:root.dark .text-gray-600:not(.preserve-text),
+:root.dark .text-gray-700:not(.preserve-text) {
+  color: var(--color-text-secondary) !important;
+}
+
+:root.dark .text-gray-500:not(.preserve-text),
+:root.dark .text-gray-400:not(.preserve-text) {
+  color: var(--color-text-muted) !important;
+}
+
+:root.dark .border-gray-200:not(.preserve-border),
+:root.dark .border-gray-300:not(.preserve-border) {
+  border-color: var(--color-border) !important;
+}
+
+:root.dark .border-gray-100:not(.preserve-border) {
+  border-color: var(--color-border-subtle) !important;
+}
+
+/* Chart specific overrides */
+:root.dark .recharts-surface {
+  background: transparent;
+}
+
+:root.dark .recharts-cartesian-grid line {
+  stroke: var(--color-chart-grid);
+}
+
+:root.dark .recharts-text {
+  fill: var(--color-text-muted);
+}
+
+/* Table Header Override */
+:root.dark .table-header,
+:root.dark thead.bg-gray-50 {
+  background: var(--color-bg-elevated) !important;
+}
+
+:root.dark thead.bg-gray-50 th {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Form Elements */
+:root.dark input[type="text"]:not(.preserve-bg),
+:root.dark input[type="email"]:not(.preserve-bg),
+:root.dark input[type="password"]:not(.preserve-bg),
+:root.dark input[type="number"]:not(.preserve-bg),
+:root.dark input[type="search"]:not(.preserve-bg),
+:root.dark input[type="tel"]:not(.preserve-bg),
+:root.dark textarea:not(.preserve-bg),
+:root.dark select:not(.preserve-bg) {
+  background: var(--color-bg-input) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text-primary) !important;
+}
+
+:root.dark input::placeholder,
+:root.dark textarea::placeholder {
+  color: var(--color-text-placeholder) !important;
+}
+
+/* Hover States */
+:root.dark .hover\:bg-gray-50:hover:not(.preserve-bg) {
+  background: var(--color-bg-hover) !important;
+}
+
+:root.dark .hover\:bg-gray-100:hover:not(.preserve-bg) {
+  background: var(--color-bg-hover) !important;
+}
+
+/* Preserve purple accent colors in dark mode */
+:root.dark .bg-purple-50,
+:root.dark .bg-purple-100,
+:root.dark .text-purple-600,
+:root.dark .text-purple-700,
+:root.dark .border-purple-200 {
+  /* Keep purple accents as-is */
+}
+
+/* Status colors should remain vibrant in dark mode */
+:root.dark .bg-green-100,
+:root.dark .bg-red-100,
+:root.dark .bg-yellow-100,
+:root.dark .bg-blue-100,
+:root.dark .text-green-600,
+:root.dark .text-red-600,
+:root.dark .text-yellow-600,
+:root.dark .text-blue-600 {
+  /* Keep status colors vibrant */
+}
