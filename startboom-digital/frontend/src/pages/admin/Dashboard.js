@@ -17,7 +17,7 @@ const PERIODS = ['daily', 'weekly', 'monthly', 'yearly'];
 const ENTERPRISE_COLORS = ['#7C3AED', '#9333EA', '#A855F7', '#C084FC', '#E9D5FF', '#F3E8FF'];
 
 const StatCard = ({ icon: Icon, title, value }) => (
-  <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
+  <div className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200">
     <div className="flex items-center justify-between">
       <div className="flex-1">
         <p className="text-sm font-medium text-gray-600">{title}</p>
@@ -455,12 +455,12 @@ const AdminDashboard = () => {
             </select>
           </div>
           
-          <div className="inline-flex bg-white rounded-xl p-1 shadow-sm border border-gray-100">
+          <div className="inline-flex bg-white rounded-xl p-1 shadow-sm">
             {PERIODS.map(p => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`h-12 px-6 rounded-xl text-sm font-medium transition-all ${
                   p === period 
                     ? 'bg-purple-600 text-white shadow-sm' 
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -483,7 +483,7 @@ const AdminDashboard = () => {
 
       {/* ── Company-Wide Cascading Metrics ── */}
       {!metricsLoading && companyMetrics && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Company-Wide Performance</h3>
@@ -491,7 +491,7 @@ const AdminDashboard = () => {
             </div>
             <button
               onClick={() => setShowDeptDetails(!showDeptDetails)}
-              className="px-4 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors"
+              className="h-12 px-4 text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-colors"
             >
               {showDeptDetails ? 'Hide Departments' : 'Show Departments'}
             </button>
@@ -499,19 +499,19 @@ const AdminDashboard = () => {
 
           {/* Company Summary */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 shadow-sm">
               <p className="text-xs text-blue-600 font-medium mb-1">Total Revenue</p>
               <p className="text-2xl font-bold text-blue-900">{formatUGX(companyMetrics.metrics?.totalRevenue || 0)}</p>
             </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 shadow-sm">
               <p className="text-xs text-green-600 font-medium mb-1">Won Deals</p>
               <p className="text-2xl font-bold text-green-900">{companyMetrics.metrics?.wonDeals || 0}</p>
             </div>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 shadow-sm">
               <p className="text-xs text-purple-600 font-medium mb-1">Departments</p>
               <p className="text-2xl font-bold text-purple-900">{companyMetrics.departmentCount || 0}</p>
             </div>
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 shadow-sm">
               <p className="text-xs text-orange-600 font-medium mb-1">Employees</p>
               <p className="text-2xl font-bold text-orange-900">{companyMetrics.metrics?.totalMembers || 0}</p>
             </div>
@@ -555,7 +555,7 @@ const AdminDashboard = () => {
       )}
 
       {/* Deals Won vs Lost */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <div className="bg-white rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
           <h3 className="text-lg font-semibold text-gray-900">Deals Won vs Deals Lost</h3>
           <div className="flex items-center gap-4 text-sm">
@@ -606,7 +606,7 @@ const AdminDashboard = () => {
           emptyMessage="No deal stage data available"
         />
 
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-xl p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Closed Won Deals by Agent</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={closedDealsByRegionData}>
@@ -628,7 +628,7 @@ const AdminDashboard = () => {
 
       {/* Row 2: Monthly Revenue & Company Deals */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-xl p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Monthly Revenue by Agent</h3>
           <p className="text-xs text-gray-500 mb-4">Computed from each sale's final amount for the selected period</p>
           <ResponsiveContainer width="100%" height={300}>

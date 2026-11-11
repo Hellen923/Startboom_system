@@ -71,7 +71,7 @@ const Analytics = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-[#F8F7FC] min-h-screen">
       {/* Header */}
       <div className="mb-6">
         <h1 className={`text-3xl font-bold ${dm.textPrimary}`}>Sales Analytics</h1>
@@ -110,7 +110,7 @@ const Analytics = () => {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Conversion Pie Chart */}
-        <div className={`rounded-lg shadow p-6 ${dm.card}`}>
+        <div className="rounded-xl shadow-sm p-6 bg-white">
           <h2 className={`text-xl font-bold mb-4 ${dm.textPrimary}`}>Conversion Overview</h2>
           {conversionData && (
             <ConversionChart data={conversionData} />
@@ -118,7 +118,7 @@ const Analytics = () => {
         </div>
 
         {/* Client Activity */}
-        <div className={`rounded-lg shadow p-6 ${dm.card}`}>
+        <div className="rounded-xl shadow-sm p-6 bg-white">
           <h2 className={`text-xl font-bold mb-4 ${dm.textPrimary}`}>Client Activity</h2>
           {clientActivity && (
             <ClientActivityChart data={clientActivity} />
@@ -127,7 +127,7 @@ const Analytics = () => {
       </div>
 
       {/* Leaderboard */}
-      <div className={`rounded-lg shadow p-6 ${dm.card}`}>
+      <div className="rounded-xl shadow-sm p-6 bg-white">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div className="flex items-center">
             <Award className="w-6 h-6 text-secondary-500 mr-2" />
@@ -137,7 +137,7 @@ const Analytics = () => {
             <select
               value={selectedDept}
               onChange={e => handleDeptFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500"
+              className="h-12 px-4 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500"
             >
               <option value="">All Departments</option>
               {departments.map(d => (
@@ -165,7 +165,7 @@ const StatsCard = ({ title, value, icon: Icon, color, subtitle }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`rounded-lg shadow p-6 ${dm.card}`}
+      className="rounded-xl shadow-sm p-6 bg-white"
     >
       <div className="flex items-center justify-between">
         <div>
