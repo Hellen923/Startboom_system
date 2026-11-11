@@ -13,18 +13,18 @@ import toast from 'react-hot-toast';
 
 const PERIODS = ['daily', 'weekly', 'monthly', 'yearly'];
 
-// Enterprise Chart Colors - NEVER all gold
-const ENTERPRISE_COLORS = getChartPalette();
+// Enterprise Chart Colors - Unified Purple Palette
+const ENTERPRISE_COLORS = ['#7C3AED', '#9333EA', '#A855F7', '#C084FC', '#E9D5FF', '#F3E8FF'];
 
 const StatCard = ({ icon: Icon, title, value }) => (
-  <div className={`stat-card hover:shadow-md transition-shadow ${dm.card}`}>
+  <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
     <div className="flex items-center justify-between">
       <div className="flex-1">
-        <p className={`text-sm font-medium ${dm.textSecondary}`}>{title}</p>
-        <p className={`text-3xl font-bold mt-2 ${dm.textPrimary}`}>{typeof value === 'number' ? value.toLocaleString() : value}</p>
+        <p className="text-sm font-medium text-gray-600">{title}</p>
+        <p className="text-3xl font-bold mt-2 text-gray-900">{typeof value === 'number' ? value.toLocaleString() : value}</p>
       </div>
-      <div className="p-3 rounded-full bg-primary-50 dark:bg-[var(--color-accent-surface)]">
-        <Icon className="w-6 h-6 text-primary-500" />
+      <div className="p-4 rounded-xl bg-purple-50">
+        <Icon className="w-6 h-6 text-purple-600" />
       </div>
     </div>
   </div>
@@ -438,7 +438,7 @@ const AdminDashboard = () => {
         <OnboardingWizard onComplete={() => setShowOnboarding(false)} />
       )}
 
-      <div className="space-y-6 pt-4 dashboard-page">
+      <div className="space-y-6 pt-4 px-6 min-h-screen bg-[#F8F7FC]">
         {/* Period & Department Filters */}
         <div className="flex justify-between items-center gap-4 flex-wrap">
           <div className="flex items-center gap-3">
@@ -446,7 +446,7 @@ const AdminDashboard = () => {
             <select
               value={selectedDept}
               onChange={(e) => setSelectedDept(e.target.value)}
-              className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 bg-white dark:bg-gray-800 dark:border-gray-700"
+              className="h-12 px-4 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white transition-all"
             >
               <option value="">All Departments</option>
               {departments.map(d => (
@@ -455,13 +455,16 @@ const AdminDashboard = () => {
             </select>
           </div>
           
-          <div className="tab-bar">
+          <div className="inline-flex bg-white rounded-xl p-1 shadow-sm border border-gray-100">
             {PERIODS.map(p => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className={p === period ? 'active' : ''}
-                data-active={p === period ? 'true' : undefined}
+                className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                  p === period 
+                    ? 'bg-purple-600 text-white shadow-sm' 
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
               >
                 {p[0].toUpperCase() + p.slice(1)}
               </button>
@@ -470,7 +473,7 @@ const AdminDashboard = () => {
         </div>
 
       {/* Stats Cards - Revenue, Users, and Departments */}
-      <div className="stat-grid cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard icon={DollarSign} title="Sales (This Month)" value={`UGX ${Number(totalRevenue || 0).toLocaleString('en-UG')}`} />
         <StatCard icon={Users} title="Users (All Time)" value={totalUsersAllTime} />
         <StatCard icon={Building} title="Departments" value={departments.length} />
