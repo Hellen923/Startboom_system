@@ -89,7 +89,7 @@ async function createDemoClient() {
     console.log('\n🎉 Demo Portal Client Created Successfully!\n');
     console.log('📧 Email: demo@portal.test');
     console.log('🔑 Password: Demo123!');
-    console.log('🌐 Login URL: https://honeypot-crm.vercel.app/client-portal/login\n');
+    console.log('🌐 Login URL: https://coremint-crm.vercel.app/client-portal/login\n');
 
     process.exit(0);
   } catch (error) {
