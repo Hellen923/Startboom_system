@@ -251,3 +251,41 @@ export const getEnabledModuleIds = (tenantModules) => {
   
   return enabled;
 };
+
+/**
+ * MODULE_HIERARCHY - Hierarchical organization of modules
+ * Used for collapsible navigation and module management
+ */
+export const MODULE_HIERARCHY = {
+  // Core modules - always visible
+  core: ['dashboard', 'user_management', 'clients', 'settings', 'messages'],
+  
+  // Optional collapsible modules
+  optional: {
+    sales_pipeline: {
+      id: 'sales_pipeline',
+      label: 'Sales & Pipeline',
+      subModules: ['deals', 'sales', 'forecasts']
+    },
+    products_inventory: {
+      id: 'products_inventory',
+      label: 'Products & Inventory',
+      subModules: ['products']
+    },
+    performance_analytics: {
+      id: 'performance_analytics',
+      label: 'Performance & Analytics',
+      subModules: ['reports', 'analytics', 'goals']
+    },
+    automation: {
+      id: 'automation',
+      label: 'Automation',
+      subModules: ['workflows', 'custom_fields']
+    },
+    activities_scheduling: {
+      id: 'activities_scheduling',
+      label: 'Activities & Scheduling',
+      subModules: ['schedules', 'tasks', 'meetings', 'issues']
+    }
+  }
+};
